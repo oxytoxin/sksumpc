@@ -1,0 +1,23 @@
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@config './tailwind.config.js';
+
+.fi-sidebar-header {
+    @apply h-24 flex justify-center ring-0 !shadow-none;
+}
+
+.fi-sidebar {
+    @apply !bg-white !shadow-xl;
+}
+
+.fi-main {
+    @apply !p-4;
+}
+
+.fi-page {
+    @apply outline outline-2 outline-gray-500 bg-white p-4;
+}
+
+.fi-topbar>nav {
+    @apply bg-primary-600 text-white;
+}
