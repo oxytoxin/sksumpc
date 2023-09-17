@@ -178,6 +178,7 @@ class MemberResource extends Resource
                             ->options(Religion::pluck('name', 'id')),
                     ]),
                 TableRepeater::make('dependents')
+                    ->default([])
                     ->schema([
                         TextInput::make('name'),
                         DatePicker::make('dob')->label('Date of Birth'),
