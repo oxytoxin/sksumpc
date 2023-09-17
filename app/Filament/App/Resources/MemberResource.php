@@ -148,7 +148,7 @@ class MemberResource extends Resource
                             ->maxLength(125),
                         Forms\Components\TextInput::make('middle_initial')
                             ->label('MI')
-                            ->dehydrateStateUsing(fn ($state) => strtoupper($state))
+                            ->dehydrateStateUsing(fn ($state) => $state ? strtoupper($state) : null)
                             ->maxLength(1),
                         Forms\Components\DatePicker::make('dob')
                             ->label('Date of Birth'),
