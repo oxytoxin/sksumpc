@@ -27,7 +27,7 @@ class AppPanelProvider extends PanelProvider
         return $panel
             ->id('app')
             ->path('')
-            ->domain(config('app.url'))
+            ->domain(config('app.env') == "local" ? "localhost" : config('app.url'))
             ->colors([
                 'primary' => "#3F9FEB",
             ])
@@ -49,6 +49,9 @@ class AppPanelProvider extends PanelProvider
             ->viteTheme('resources/css/filament/app/theme.css')
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->breadcrumbs(false)
+            ->darkMode(false)
+            ->favicon(asset('images/logo.png'));
     }
 }
