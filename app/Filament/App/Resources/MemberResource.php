@@ -128,6 +128,7 @@ class MemberResource extends Resource
                             ->schema([
                                 Forms\Components\Select::make('member_type_id')
                                     ->relationship('member_type', 'name')
+                                    ->default(1)
                                     ->required(),
                                 Forms\Components\TextInput::make('tin')
                                     ->label('TIN')
