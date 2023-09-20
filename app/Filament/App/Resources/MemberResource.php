@@ -219,6 +219,7 @@ class MemberResource extends Resource
                     ])->relationship('membership_acceptance'),
                 Section::make('Initial Capital Subscription')
                     ->schema([
+                        TextInput::make('number_of_terms')->numeric()->required()->readOnly()->default(ShareCapitalProvider::INITIAL_NUMBER_OF_TERMS)->minValue(ShareCapitalProvider::INITIAL_NUMBER_OF_TERMS)->maxValue(ShareCapitalProvider::INITIAL_NUMBER_OF_TERMS),
                         TextInput::make('number_of_shares')->numeric()->required()->readOnly()->default(ShareCapitalProvider::INITIAL_SHARES)->minValue(ShareCapitalProvider::INITIAL_SHARES)->maxValue(ShareCapitalProvider::INITIAL_SHARES),
                         TextInput::make('amount_subscribed')->numeric()->required()->readOnly()->default(ShareCapitalProvider::INITIAL_AMOUNT)->minValue(ShareCapitalProvider::INITIAL_AMOUNT)->maxValue(ShareCapitalProvider::INITIAL_AMOUNT),
                         TextInput::make('initial_amount_paid')->numeric()->prefix('P')->required()->default(ShareCapitalProvider::INITIAL_PAID)->minValue(ShareCapitalProvider::INITIAL_PAID),
