@@ -28,14 +28,6 @@ class CapitalSubscription extends Model
         return $this->hasMany(CapitalSubscriptionPayment::class);
     }
 
-    protected function outstanding_balance(): Attribute
-    {
-        return new Attribute(
-            get: fn () => $this->outstanding_balance,
-            set: fn () => $this->amount_subscribed
-        );
-    }
-
     protected static function booted(): void
     {
         static::creating(function (CapitalSubscription $cbu) {
