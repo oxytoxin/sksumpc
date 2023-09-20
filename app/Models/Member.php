@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Oxytoxin\ShareCapitalProvider;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -67,6 +68,6 @@ class Member extends Model implements HasMedia
 
     public function initial_capital_subscription(): HasOne
     {
-        return $this->hasOne(CapitalSubscription::class)->where('is_ics', true);
+        return $this->hasOne(CapitalSubscription::class)->where('code', ShareCapitalProvider::INITIAL_CAPITAL_CODE);
     }
 }

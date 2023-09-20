@@ -21,4 +21,8 @@ class Billing extends Page implements HasForms
                 ->seconds(false)
         ];
     }
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
 }

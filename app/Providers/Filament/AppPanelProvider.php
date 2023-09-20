@@ -52,6 +52,27 @@ class AppPanelProvider extends PanelProvider
             ])
             ->breadcrumbs(false)
             ->darkMode(false)
+            ->renderHook(
+                'panels::body.end',
+                fn (): string => Blade::render("
+                <div x-data='{
+                init(){
+                    Livewire.hook(`commit`, ({ succeed }) => {
+                        succeed(() => {
+                            setTimeout(() => {
+                                const firstErrorMessage = document.querySelector(`[data-validation-error]`)
+                    
+                                if (firstErrorMessage !== null) {
+                                    firstErrorMessage.scrollIntoView({ block: `center`, inline: `center` })
+                                }
+                            }, 0)
+                        })
+                    })
+                    }
+                }'>
+                </div>
+                ")
+            )
             ->favicon(asset('images/logo.png'));
     }
 }

@@ -11,4 +11,8 @@ class Collection extends Page
     protected static string $view = 'filament.app.pages.collection';
 
     protected static ?int $navigationSort = 10;
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
 }

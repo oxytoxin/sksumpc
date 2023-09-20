@@ -24,7 +24,7 @@ return new class extends Migration
         });
         User::create([
             'name' => 'SKSUMPC Administrator',
-            'email' => 'sksumpcadmin@sksu.edu.ph',
+            'email' => 'sksumpcadmin@gmail.com',
             'password' => Hash::make('password')
         ]);
     }

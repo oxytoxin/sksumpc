@@ -1,0 +1,11 @@
+<?php
+
+namespace App\Oxytoxin;
+
+class ShareCapitalProvider
+{
+    const INITIAL_SHARES = 20;
+    const INITIAL_AMOUNT = 25000;
+    const INITIAL_PAID = 6500;
+    const INITIAL_CAPITAL_CODE = 'Initial Capital Subscription';
+}

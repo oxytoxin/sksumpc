@@ -10,6 +10,7 @@ use App\Models\MembershipStatus;
 use App\Models\MemberType;
 use App\Models\Occupation;
 use App\Models\Religion;
+use App\Oxytoxin\ShareCapitalProvider;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
@@ -30,6 +31,7 @@ use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
 use Filament\Infolists\Components\Tabs;
 use Filament\Infolists\Components\Tabs\Tab;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\ViewEntry;
 use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
@@ -96,11 +98,13 @@ class MemberResource extends Resource
                                         TextEntry::make('initial_capital_subscription.number_of_shares')->label('# of Shares Subscribed')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                                         TextEntry::make('initial_capital_subscription.amount_subscribed')->label('Amount Subscribed')->money('PHP')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                                         TextEntry::make('initial_capital_subscription.initial_amount_paid')->label('Initial Amount Paid-up')->money('PHP')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
-
                                     ]),
                             ]),
                         Tab::make('CBU')
-                            ->schema([]),
+                            ->schema([
+                                ViewEntry::make('cbu')
+                                    ->view('filament.app.views.cbu')
+                            ]),
                         Tab::make('Savings')
                             ->schema([]),
                         Tab::make('Loan')
@@ -215,10 +219,10 @@ class MemberResource extends Resource
                     ])->relationship('membership_acceptance'),
                 Section::make('Initial Capital Subscription')
                     ->schema([
-                        TextInput::make('number_of_shares')->numeric()->required(),
-                        TextInput::make('amount_subscribed')->numeric()->required(),
-                        TextInput::make('initial_amount_paid')->numeric()->prefix('P')->required(),
-                        Hidden::make('is_ics')->default(true)
+                        TextInput::make('number_of_shares')->numeric()->required()->readOnly()->default(ShareCapitalProvider::INITIAL_SHARES)->minValue(ShareCapitalProvider::INITIAL_SHARES)->maxValue(ShareCapitalProvider::INITIAL_SHARES),
+                        TextInput::make('amount_subscribed')->numeric()->required()->readOnly()->default(ShareCapitalProvider::INITIAL_AMOUNT)->minValue(ShareCapitalProvider::INITIAL_AMOUNT)->maxValue(ShareCapitalProvider::INITIAL_AMOUNT),
+                        TextInput::make('initial_amount_paid')->numeric()->prefix('P')->required()->default(ShareCapitalProvider::INITIAL_PAID)->minValue(ShareCapitalProvider::INITIAL_PAID),
+                        Hidden::make('code')->default(ShareCapitalProvider::INITIAL_CAPITAL_CODE),
                     ])->relationship('initial_capital_subscription')
             ]);
     }
@@ -293,6 +297,7 @@ class MemberResource extends Resource
                 SelectFilter::make('member_type')
                     ->relationship('member_type', 'name')
             ])
+            ->persistFiltersInSession()
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])

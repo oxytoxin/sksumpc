@@ -11,4 +11,8 @@ class Disbursement extends Page
     protected static string $view = 'filament.app.pages.disbursement';
 
     protected static ?int $navigationSort = 9;
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
 }

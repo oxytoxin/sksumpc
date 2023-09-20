@@ -4,6 +4,8 @@ namespace App\Console\Commands;
 
 use App\Models\Member;
 use App\Models\MembershipStatus;
+use App\Oxytoxin\ShareCapitalProvider;
+use DB;
 use Illuminate\Console\Command;
 use Spatie\SimpleExcel\SimpleExcelReader;
 
@@ -28,6 +30,7 @@ class SeedMembers extends Command
      */
     public function handle()
     {
+        DB::beginTransaction();
         if (!Member::count()) {
             $rows = SimpleExcelReader::create(storage_path('csv/mpc_members.csv'))->getRows();
             $rows->each(function (array $memberData) {
@@ -70,14 +73,22 @@ class SeedMembers extends Command
                     $membershipStatus['amount_subscribed'] &&
                     $membershipStatus['initial_amount_paid']
                 ) {
-                    $member->initial_capital_subscription()->create([
-                        'is_ics' => true,
+                    $cbu = $member->initial_capital_subscription()->create([
+                        'code' => ShareCapitalProvider::INITIAL_CAPITAL_CODE,
                         'number_of_shares' => $membershipStatus['number_of_shares'],
+                        'number_of_terms' => 12,
                         'amount_subscribed' => $membershipStatus['amount_subscribed'],
                         'initial_amount_paid' => $membershipStatus['initial_amount_paid'],
+                    ]);
+
+                    $cbu->payments()->create([
+                        'amount' => $membershipStatus['initial_amount_paid'],
+                        'reference_number' => '#INITIALAMOUNTPAID',
+                        'type' => 'OR',
                     ]);
                 }
             });
         }
+        DB::commit();
     }
 }

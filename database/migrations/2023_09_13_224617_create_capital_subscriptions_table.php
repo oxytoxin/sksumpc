@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('capital_subscriptions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('member_id')->constrained();
-            $table->boolean('is_ics')->default(false);
+            $table->string('code');
+            $table->integer('number_of_terms')->default(12);
             $table->decimal('number_of_shares');
             $table->decimal('amount_subscribed', 14, 2);
             $table->decimal('initial_amount_paid', 14, 2);
