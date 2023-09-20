@@ -80,7 +80,11 @@ class SeedMembers extends Command
                         'amount_subscribed' => $membershipStatus['amount_subscribed'],
                         'initial_amount_paid' => $membershipStatus['initial_amount_paid'],
                     ]);
-
+                    $cbu->payments()->create([
+                        'amount' => 0,
+                        'reference_number' => '#ORIGINALAMOUNT',
+                        'type' => 'OR',
+                    ]);
                     $cbu->payments()->create([
                         'amount' => $membershipStatus['initial_amount_paid'],
                         'reference_number' => '#INITIALAMOUNTPAID',

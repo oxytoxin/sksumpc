@@ -74,13 +74,18 @@ class CbuTable extends Component implements HasForms, HasTable
                         TextInput::make('number_of_terms')->numeric()->readOnly(1)->default(36)->minValue(36)->maxValue(36),
                         TextInput::make('number_of_shares')->numeric()->minValue(1)->default(20),
                         TextInput::make('amount_subscribed')->prefix('P')->numeric()->minValue(1)->default(2000),
-                        TextInput::make('initial_amount_paid')->prefix('P')->numeric()->minValue(6500)->default(6500),
+                        TextInput::make('initial_amount_paid')->prefix('P')->numeric()->minValue(1)->default(2000),
                     ])
                     ->action(function ($data) {
                         DB::beginTransaction();
                         $cbu = $this->member->capital_subscriptions()->create([
                             ...$data,
                             'code' => Str::random(12)
+                        ]);
+                        $cbu->payments()->create([
+                            'amount' => 0,
+                            'reference_number' => '#ORIGINALAMOUNT',
+                            'type' => 'OR',
                         ]);
                         $cbu->payments()->create([
                             'amount' => $cbu->initial_amount_paid,

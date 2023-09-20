@@ -5,6 +5,7 @@ namespace App\Filament\App\Resources;
 use App\Filament\App\Resources\MemberResource\Pages;
 use App\Filament\App\Resources\MemberResource\RelationManagers;
 use App\Infolists\Components\DependentsEntry;
+use App\Models\CapitalSubscription;
 use App\Models\Member;
 use App\Models\MembershipStatus;
 use App\Models\MemberType;
@@ -12,6 +13,7 @@ use App\Models\Occupation;
 use App\Models\Religion;
 use App\Oxytoxin\ShareCapitalProvider;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
+use DB;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Fieldset;
@@ -23,6 +25,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Infolists\Components\Actions;
 use Filament\Infolists\Components\Actions\Action;
 use Filament\Infolists\Components\Grid as InfolistGrid;
@@ -218,13 +221,15 @@ class MemberResource extends Resource
                         Hidden::make('type')->default(MembershipStatus::ACCEPTANCE)
                     ])->relationship('membership_acceptance'),
                 Section::make('Initial Capital Subscription')
+                    ->hiddenOn('edit')
                     ->schema([
                         TextInput::make('number_of_terms')->numeric()->required()->readOnly()->default(ShareCapitalProvider::INITIAL_NUMBER_OF_TERMS)->minValue(ShareCapitalProvider::INITIAL_NUMBER_OF_TERMS)->maxValue(ShareCapitalProvider::INITIAL_NUMBER_OF_TERMS),
                         TextInput::make('number_of_shares')->numeric()->required()->readOnly()->default(ShareCapitalProvider::INITIAL_SHARES)->minValue(ShareCapitalProvider::INITIAL_SHARES)->maxValue(ShareCapitalProvider::INITIAL_SHARES),
-                        TextInput::make('amount_subscribed')->numeric()->required()->readOnly()->default(ShareCapitalProvider::INITIAL_AMOUNT)->minValue(ShareCapitalProvider::INITIAL_AMOUNT)->maxValue(ShareCapitalProvider::INITIAL_AMOUNT),
-                        TextInput::make('initial_amount_paid')->numeric()->prefix('P')->required()->default(ShareCapitalProvider::INITIAL_PAID)->minValue(ShareCapitalProvider::INITIAL_PAID),
+                        TextInput::make('initial_amount_paid')->numeric()->prefix('P')->live(onBlur: true)->required()->default(ShareCapitalProvider::INITIAL_PAID)->minValue(ShareCapitalProvider::INITIAL_PAID)
+                            ->afterStateUpdated(fn ($set, $state) => $set('amount_subscribed', ShareCapitalProvider::getSubscriptionAmount($state))),
+                        TextInput::make('amount_subscribed')->numeric()->required()->readOnly()->default(fn (Get $get, $state) => ShareCapitalProvider::getSubscriptionAmount($get('initial_amount_paid'))),
                         Hidden::make('code')->default(ShareCapitalProvider::INITIAL_CAPITAL_CODE),
-                    ])->relationship('initial_capital_subscription')
+                    ])
             ]);
     }
 
