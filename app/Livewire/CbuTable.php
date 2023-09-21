@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\CapitalSubscription;
 use App\Models\Member;
+use App\Oxytoxin\ShareCapitalProvider;
 use DB;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
@@ -71,9 +72,13 @@ class CbuTable extends Component implements HasForms, HasTable
             ->headerActions([
                 CreateAction::make()
                     ->form([
-                        TextInput::make('number_of_terms')->numeric()->readOnly(1)->default(36)->minValue(36)->maxValue(36),
-                        TextInput::make('number_of_shares')->numeric()->minValue(1)->default(20),
-                        TextInput::make('amount_subscribed')->prefix('P')->numeric()->minValue(1)->default(2000),
+                        TextInput::make('number_of_terms')->numeric()->readOnly()->default(36)->minValue(36)->maxValue(36),
+                        TextInput::make('number_of_shares')->numeric()->readOnly()->minValue(1)->default(20),
+                        TextInput::make('amount_subscribed')->prefix('P')->numeric()->minValue(1)->default(2000)
+                            ->live(true)
+                            ->afterStateUpdated(function ($set, $state) {
+                                $set('number_of_shares', ShareCapitalProvider::computeNumberOfSharesFromAmountSubscribed($state));
+                            }),
                         TextInput::make('initial_amount_paid')->prefix('P')->numeric()->minValue(1)->default(2000),
                     ])
                     ->action(function ($data) {
