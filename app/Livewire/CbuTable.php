@@ -6,7 +6,6 @@ use App\Models\CapitalSubscription;
 use App\Models\Member;
 use App\Oxytoxin\ShareCapitalProvider;
 use DB;
-use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -15,6 +14,7 @@ use Filament\Notifications\Notification;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -36,11 +36,17 @@ class CbuTable extends Component implements HasForms, HasTable
             ->query(CapitalSubscription::whereMemberId($this->member->id))
             ->columns([
                 TextColumn::make('code'),
-                TextColumn::make('number_of_shares'),
-                TextColumn::make('number_of_terms'),
-                TextColumn::make('amount_subscribed')->money('PHP'),
-                TextColumn::make('initial_amount_paid')->money('PHP'),
-                TextColumn::make('outstanding_balance')->money('PHP'),
+                TextColumn::make('number_of_shares')
+                    ->numeric()
+                    ->summarize(Sum::make()->label('')),
+                TextColumn::make('number_of_terms')
+                    ->summarize(Sum::make()->label('')),
+                TextColumn::make('amount_subscribed')->money('PHP')
+                    ->summarize(Sum::make()->money('PHP')->label('')),
+                TextColumn::make('initial_amount_paid')->money('PHP')
+                    ->summarize(Sum::make()->money('PHP')->label('')),
+                TextColumn::make('outstanding_balance')->money('PHP')
+                    ->summarize(Sum::make()->money('PHP')->label('')),
             ])
             ->filters([
                 //
