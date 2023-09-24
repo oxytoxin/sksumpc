@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -64,6 +65,11 @@ class Member extends Model implements HasMedia
     public function capital_subscriptions(): HasMany
     {
         return $this->hasMany(CapitalSubscription::class);
+    }
+
+    public function capital_subscription_payments(): HasManyThrough
+    {
+        return $this->hasManyThrough(CapitalSubscriptionPayment::class, CapitalSubscription::class);
     }
 
     public function initial_capital_subscription(): HasOne

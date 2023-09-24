@@ -30,8 +30,8 @@ class SeedMembers extends Command
      */
     public function handle()
     {
-        DB::beginTransaction();
         if (!Member::count()) {
+            DB::beginTransaction();
             $rows = SimpleExcelReader::create(storage_path('csv/mpc_members.csv'))->getRows();
             $rows->each(function (array $memberData) {
                 $memberData = collect($memberData)->map(fn ($d) => filled($d) ? trim($d) : null)->toArray();
@@ -68,31 +68,50 @@ class SeedMembers extends Command
                     ]);
                 }
 
-                if (
-                    $membershipStatus['number_of_shares'] &&
-                    $membershipStatus['amount_subscribed'] &&
-                    $membershipStatus['initial_amount_paid']
-                ) {
-                    $cbu = $member->initial_capital_subscription()->create([
-                        'code' => ShareCapitalProvider::INITIAL_CAPITAL_CODE,
-                        'number_of_shares' => $membershipStatus['number_of_shares'],
-                        'number_of_terms' => 12,
-                        'amount_subscribed' => $membershipStatus['amount_subscribed'],
-                        'initial_amount_paid' => $membershipStatus['initial_amount_paid'],
-                    ]);
-                    $cbu->payments()->create([
-                        'amount' => 0,
-                        'reference_number' => '#ORIGINALAMOUNT',
-                        'type' => 'OR',
-                    ]);
-                    $cbu->payments()->create([
-                        'amount' => $membershipStatus['initial_amount_paid'],
-                        'reference_number' => '#INITIALAMOUNTPAID',
-                        'type' => 'OR',
-                    ]);
-                }
+                // if (
+                //     $membershipStatus['number_of_shares'] &&
+                //     $membershipStatus['amount_subscribed'] &&
+                //     $membershipStatus['initial_amount_paid']
+                // ) {
+                //     $cbu = $member->initial_capital_subscription()->create([
+                //         'code' => ShareCapitalProvider::INITIAL_CAPITAL_CODE,
+                //         'number_of_shares' => $membershipStatus['number_of_shares'],
+                //         'number_of_terms' => 12,
+                //         'amount_subscribed' => $membershipStatus['amount_subscribed'],
+                //         'initial_amount_paid' => $membershipStatus['initial_amount_paid'],
+                //     ]);
+                //     $cbu->payments()->create([
+                //         'amount' => 0,
+                //         'reference_number' => '#ORIGINALAMOUNT',
+                //         'type' => 'OR',
+                //     ]);
+                //     $cbu->payments()->create([
+                //         'amount' => $membershipStatus['initial_amount_paid'],
+                //         'reference_number' => '#INITIALAMOUNTPAID',
+                //         'type' => 'OR',
+                //     ]);
+                // }
             });
+            DB::commit();
         }
+        DB::beginTransaction();
+        $rows = SimpleExcelReader::create(storage_path('csv/cbu.csv'))->getRows();
+        $rows->each(function ($data) {
+            $member = Member::whereFirstName($data['first_name'])->whereLastName($data['last_name'])->first();
+            if ($member) {
+                $cbu = $member->initial_capital_subscription()->create([
+                    'code' => ShareCapitalProvider::EXISTING_CAPITAL_CODE,
+                    'number_of_shares' => $data['shares_subscribed'],
+                    'number_of_terms' => ShareCapitalProvider::ADDITIONAL_NUMBER_OF_TERMS,
+                    'initial_amount_paid' => $data['amount_shares_paid_total'],
+                ]);
+                $cbu->payments()->create([
+                    'amount' => $data['amount_shares_paid_total'],
+                    'reference_number' => '#BALANCEFORWARDED',
+                    'type' => 'OR',
+                ]);
+            }
+        });
         DB::commit();
     }
 }

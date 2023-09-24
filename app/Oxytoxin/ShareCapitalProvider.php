@@ -11,6 +11,7 @@ class ShareCapitalProvider
     const INITIAL_NUMBER_OF_TERMS = 12;
     const ADDITIONAL_NUMBER_OF_TERMS = 36;
     const INITIAL_CAPITAL_CODE = 'Initial Capital Subscription';
+    const EXISTING_CAPITAL_CODE = 'Existing Capital Subscription';
 
     public static function getSubscriptionAmount(int|float $amount): int|float
     {

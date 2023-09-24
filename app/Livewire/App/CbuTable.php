@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\App;
 
 use App\Models\CapitalSubscription;
 use App\Models\Member;
@@ -105,13 +105,17 @@ class CbuTable extends Component implements HasForms, HasTable
                         ]);
                         DB::commit();
                         Notification::make()->title('Capital subscription created!')->success()->send();
-                    })
+                    }),
+                ViewAction::make('subsidiary_ledger')
+                    ->icon('heroicon-o-clipboard-document-list')
+                    ->label('Subsidiary Ledger')
+                    ->url(route('filament.app.resources.members.subsidiary-ledger', ['member' => $this->member]))
             ])
             ->bulkActions([]);
     }
 
     public function render(): View
     {
-        return view('livewire.cbu-table');
+        return view('livewire.app.cbu-table');
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Filament\App\Resources;
 
 use App\Filament\App\Resources\MemberResource\Pages;
+use App\Filament\App\Resources\MemberResource\Pages\SubsidiaryLedger;
 use App\Filament\App\Resources\MemberResource\RelationManagers;
 use App\Infolists\Components\DependentsEntry;
 use App\Models\CapitalSubscription;
@@ -106,13 +107,13 @@ class MemberResource extends Resource
                         Tab::make('CBU')
                             ->schema([
                                 ViewEntry::make('cbu')
-                                    ->view('filament.app.views.cbu')
+                                    ->view('filament.app.views.cbu-table')
                             ]),
                         Tab::make('Savings')
                             ->schema([]),
                         Tab::make('Loan')
                             ->schema([]),
-                    ])
+                    ])->persistTabInQueryString()
             ])
             ->columns(1);
     }
@@ -243,6 +244,7 @@ class MemberResource extends Resource
                 Tables\Columns\TextColumn::make('first_name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('last_name')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('middle_initial')
                     ->label('MI')
@@ -312,6 +314,7 @@ class MemberResource extends Resource
                 Tables\Actions\CreateAction::make(),
             ])
             ->recordUrl(fn (Member $record) => MemberResource::getUrl('view', ['record' => $record]))
+            ->defaultSort('last_name')
             ->paginated([10, 25, 50]);
     }
 
@@ -329,6 +332,7 @@ class MemberResource extends Resource
             'create' => Pages\CreateMember::route('/create'),
             'view' => Pages\ViewMember::route('/{record}'),
             'edit' => Pages\EditMember::route('/{record}/edit'),
+            'subsidiary-ledger' => SubsidiaryLedger::route('subsidiary-ledger/{member}'),
         ];
     }
 }
