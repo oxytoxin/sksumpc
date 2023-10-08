@@ -224,7 +224,7 @@ class MemberResource extends Resource
                 Forms\Components\TextInput::make('present_employer'),
                 Forms\Components\TextInput::make('annual_income')
                     ->mask(fn ($state) => RawJs::make('$money'))
-                    ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state))
+                    ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state ?? 0))
                     ->prefix('P')
                     ->minValue(0),
 
