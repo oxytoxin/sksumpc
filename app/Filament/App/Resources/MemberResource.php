@@ -251,8 +251,7 @@ class MemberResource extends Resource
                             ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state))
                             ->prefix('P')
                             ->required()
-                            ->default(ShareCapitalProvider::INITIAL_PAID)
-                            ->minValue(ShareCapitalProvider::INITIAL_PAID),
+                            ->default(ShareCapitalProvider::INITIAL_PAID),
                         TextInput::make('amount_subscribed')->mask(fn ($state) => RawJs::make('$money'))
                             ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state))
                             ->prefix('P')
