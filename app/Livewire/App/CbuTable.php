@@ -6,14 +6,18 @@ use App\Models\CapitalSubscription;
 use App\Models\Member;
 use App\Oxytoxin\ShareCapitalProvider;
 use DB;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -36,6 +40,7 @@ class CbuTable extends Component implements HasForms, HasTable
             ->query(CapitalSubscription::whereMemberId($this->member->id))
             ->columns([
                 TextColumn::make('code'),
+                TextColumn::make('transaction_date')->date('F d, Y'),
                 TextColumn::make('number_of_shares')
                     ->numeric()
                     ->summarize(Sum::make()->label('')),
@@ -47,6 +52,7 @@ class CbuTable extends Component implements HasForms, HasTable
                     ->summarize(Sum::make()->money('PHP')->label('')),
                 TextColumn::make('outstanding_balance')->money('PHP')
                     ->summarize(Sum::make()->money('PHP')->label('')),
+                IconColumn::make('is_common')->boolean(),
             ])
             ->filters([
                 //
@@ -65,10 +71,12 @@ class CbuTable extends Component implements HasForms, HasTable
                             ])
                             ->default('OR')
                             ->selectablePlaceholder(false)
+                            ->live()
                             ->required(),
                         TextInput::make('reference_number')->required(),
                         TextInput::make('amount')->required()->numeric()->minValue(1)->prefix('P'),
                         TextInput::make('remarks'),
+                        DatePicker::make('transaction_date')->default(today())->native(false)->label('Date'),
                     ])
                     ->action(function ($record, $data) {
                         $record->payments()->create($data);
@@ -77,31 +85,57 @@ class CbuTable extends Component implements HasForms, HasTable
             ])
             ->headerActions([
                 CreateAction::make()
+                    ->visible(fn () => !$this->member->capital_subscriptions()->where('outstanding_balance', '>', 0)->exists())
+                    ->createAnother(false)
                     ->form([
-                        TextInput::make('number_of_terms')->numeric()->readOnly()->default(36)->minValue(36)->maxValue(36),
-                        TextInput::make('number_of_shares')->numeric()->readOnly()->minValue(1)->default(20),
-                        TextInput::make('amount_subscribed')->prefix('P')->numeric()->minValue(1)->default(2000)
+                        Placeholder::make('number_of_terms')->content(ShareCapitalProvider::ADDITIONAL_NUMBER_OF_TERMS),
+                        TextInput::make('number_of_shares')->numeric()->minValue(1)->default(144)
                             ->live(true)
-                            ->afterStateUpdated(function ($set, $state) {
-                                $set('number_of_shares', ShareCapitalProvider::computeNumberOfSharesFromAmountSubscribed($state));
+                            ->afterStateUpdated(function ($set, $state, $get) {
+                                $data = ShareCapitalProvider::fromNumberOfShares($state, ShareCapitalProvider::ADDITIONAL_NUMBER_OF_TERMS);
+                                $set('amount_subscribed', $data['amount_subscribed']);
+                                $set('monthly_payment', $data['monthly_payment']);
+                            }),
+                        TextInput::make('amount_subscribed')->prefix('P')->numeric()->minValue(1)->default(72000)
+                            ->live(true)
+                            ->afterStateUpdated(function ($set, $state, $get) {
+                                $data = ShareCapitalProvider::fromAmountSubscribed($state, ShareCapitalProvider::ADDITIONAL_NUMBER_OF_TERMS);
+                                $set('monthly_payment', $data['monthly_payment']);
+                                $set('number_of_shares', $data['number_of_shares']);
+                            }),
+                        TextInput::make('monthly_payment')->prefix('P')->numeric()->minValue(1)->default(2000)
+                            ->live(true)
+                            ->afterStateUpdated(function ($set, $state, $get) {
+                                $data = ShareCapitalProvider::fromMonthlyPayment($state, ShareCapitalProvider::ADDITIONAL_NUMBER_OF_TERMS);
+                                $set('amount_subscribed', $data['amount_subscribed']);
+                                $set('number_of_shares', $data['number_of_shares']);
                             }),
                         TextInput::make('initial_amount_paid')->prefix('P')->numeric()->minValue(1)->default(2000),
                     ])
                     ->action(function ($data) {
+                        unset($data['monthly_payment']);
                         DB::beginTransaction();
+                        $this->member->capital_subscriptions()->update([
+                            'is_common' => false
+                        ]);
                         $cbu = $this->member->capital_subscriptions()->create([
                             ...$data,
-                            'code' => Str::random(12)
+                            'par_value' => ShareCapitalProvider::PAR_VALUE,
+                            'is_common' => true,
+                            'code' => Str::random(12),
+                            'transaction_date' => today()
                         ]);
                         $cbu->payments()->create([
                             'amount' => 0,
                             'reference_number' => '#ORIGINALAMOUNT',
                             'type' => 'OR',
+                            'transaction_date' => today()
                         ]);
                         $cbu->payments()->create([
                             'amount' => $cbu->initial_amount_paid,
                             'reference_number' => '#INITIALAMOUNTPAID',
                             'type' => 'OR',
+                            'transaction_date' => today()
                         ]);
                         DB::commit();
                         Notification::make()->title('Capital subscription created!')->success()->send();
@@ -109,7 +143,7 @@ class CbuTable extends Component implements HasForms, HasTable
                 ViewAction::make('subsidiary_ledger')
                     ->icon('heroicon-o-clipboard-document-list')
                     ->label('Subsidiary Ledger')
-                    ->url(route('filament.app.resources.members.subsidiary-ledger', ['member' => $this->member]))
+                    ->url(route('filament.app.resources.members.cbu-subsidiary-ledger', ['member' => $this->member]))
             ])
             ->bulkActions([]);
     }

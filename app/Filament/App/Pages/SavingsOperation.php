@@ -22,7 +22,7 @@ class SavingsOperation extends Page
             ->schema([
                 Tabs::make()
                     ->tabs([
-                        Tab::make('REGULAR')
+                        Tab::make('SAVINGS')
                             ->schema([
                                 ViewEntry::make('summary')->view('filament.app.views.savings-regular')
                             ]),

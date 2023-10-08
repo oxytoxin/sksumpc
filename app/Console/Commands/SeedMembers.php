@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Member;
 use App\Models\MembershipStatus;
 use App\Oxytoxin\ShareCapitalProvider;
+use DateTimeImmutable;
 use DB;
 use Illuminate\Console\Command;
 use Spatie\SimpleExcel\SimpleExcelReader;
@@ -32,86 +33,123 @@ class SeedMembers extends Command
     {
         if (!Member::count()) {
             DB::beginTransaction();
-            $rows = SimpleExcelReader::create(storage_path('csv/mpc_members.csv'))->getRows();
+            $rows = SimpleExcelReader::create(storage_path('csv/PROFILING.xlsx'))->getRows();
             $rows->each(function (array $memberData) {
-                $memberData = collect($memberData)->map(fn ($d) => filled($d) ? trim($d) : null)->toArray();
-                $membershipStatus = $memberData;
-                unset(
-                    $memberData['member_type'],
-                    $memberData['membership_number'],
-                    $memberData['occupation'],
-                    $memberData['religion'],
-                    $memberData['acceptance_bod_resolution'],
-                    $memberData['accepted_at'],
-                    $memberData['termination_bod_resolution'],
-                    $memberData['terminated_at'],
-                    $memberData['number_of_shares'],
-                    $memberData['amount_subscribed'],
-                    $memberData['initial_amount_paid'],
-                );
+                try {
+                    $memberData = collect($memberData)->map(fn ($d) => filled($d) ? trim($d instanceof DateTimeImmutable ? strtoupper($d->format('m/d/Y')) : strtoupper($d)) : null)->toArray();
+                    $membershipStatus = $memberData;
+                    unset(
+                        $memberData['member_type'],
+                        $memberData['membership_number'],
+                        $memberData['occupation'],
+                        $memberData['religion'],
+                        $memberData['acceptance_bod_resolution'],
+                        $memberData['accepted_at'],
+                        $memberData['termination_bod_resolution'],
+                        $memberData['terminated_at'],
+                        $memberData['number_of_shares'],
+                        $memberData['amount_subscribed'],
+                        $memberData['initial_amount_paid'],
+                        $memberData['no_dependents'],
+                    );
 
-                $memberData['dependents'] = [];
-                $memberData['other_income_sources'] = [];
-                $member = Member::create($memberData);
-                if ($membershipStatus['accepted_at']) {
-                    $member->membership_acceptance()->create([
-                        'type' => MembershipStatus::ACCEPTANCE,
-                        'bod_resolution' => $membershipStatus['acceptance_bod_resolution'],
-                        'effectivity_date' => $membershipStatus['accepted_at'],
-                    ]);
-                }
-                if ($membershipStatus['terminated_at']) {
-                    $member->membership_termination()->create([
-                        'type' => MembershipStatus::TERMINATION,
-                        'bod_resolution' => $membershipStatus['termination_bod_resolution'],
-                        'effectivity_date' => $membershipStatus['terminated_at'],
-                    ]);
-                }
+                    $memberData['dependents'] = [];
+                    $memberData['other_income_sources'] = [];
+                    $member = Member::create($memberData);
+                    if ($membershipStatus['accepted_at']) {
+                        $member->membership_acceptance()->create([
+                            'type' => MembershipStatus::ACCEPTANCE,
+                            'bod_resolution' => $membershipStatus['acceptance_bod_resolution'],
+                            'effectivity_date' => $membershipStatus['accepted_at'],
+                        ]);
+                    }
+                    if ($membershipStatus['terminated_at']) {
+                        $member->membership_termination()->create([
+                            'type' => MembershipStatus::TERMINATION,
+                            'bod_resolution' => $membershipStatus['termination_bod_resolution'],
+                            'effectivity_date' => $membershipStatus['terminated_at'],
+                        ]);
+                    }
 
-                // if (
-                //     $membershipStatus['number_of_shares'] &&
-                //     $membershipStatus['amount_subscribed'] &&
-                //     $membershipStatus['initial_amount_paid']
-                // ) {
-                //     $cbu = $member->initial_capital_subscription()->create([
-                //         'code' => ShareCapitalProvider::INITIAL_CAPITAL_CODE,
-                //         'number_of_shares' => $membershipStatus['number_of_shares'],
-                //         'number_of_terms' => 12,
-                //         'amount_subscribed' => $membershipStatus['amount_subscribed'],
-                //         'initial_amount_paid' => $membershipStatus['initial_amount_paid'],
-                //     ]);
-                //     $cbu->payments()->create([
-                //         'amount' => 0,
-                //         'reference_number' => '#ORIGINALAMOUNT',
-                //         'type' => 'OR',
-                //     ]);
-                //     $cbu->payments()->create([
-                //         'amount' => $membershipStatus['initial_amount_paid'],
-                //         'reference_number' => '#INITIALAMOUNTPAID',
-                //         'type' => 'OR',
-                //     ]);
-                // }
+                    if (
+                        $membershipStatus['number_of_shares'] &&
+                        $membershipStatus['amount_subscribed'] &&
+                        $membershipStatus['initial_amount_paid']
+                    ) {
+                        $cbu = $member->initial_capital_subscription()->create([
+                            'code' => ShareCapitalProvider::INITIAL_CAPITAL_CODE,
+                            'number_of_shares' => $membershipStatus['number_of_shares'],
+                            'number_of_terms' => ShareCapitalProvider::INITIAL_NUMBER_OF_TERMS,
+                            'amount_subscribed' => $membershipStatus['amount_subscribed'],
+                            'par_value' => $membershipStatus['amount_subscribed'] / $membershipStatus['number_of_shares'],
+                            'initial_amount_paid' => $membershipStatus['initial_amount_paid'],
+                            'is_common' => true,
+                            'transaction_date' => today(),
+                        ]);
+                        $cbu->payments()->create([
+                            'amount' => 0,
+                            'reference_number' => '#ORIGINALAMOUNT',
+                            'type' => 'OR',
+                            'transaction_date' => today(),
+                        ]);
+                        $cbu->payments()->create([
+                            'amount' => $membershipStatus['initial_amount_paid'],
+                            'reference_number' => '#INITIALAMOUNTPAID',
+                            'type' => 'OR',
+                            'transaction_date' => today(),
+                        ]);
+                    }
+                } catch (\Throwable $e) {
+                    dd($membershipStatus, $e->getMessage());
+                }
             });
             DB::commit();
         }
         DB::beginTransaction();
-        $rows = SimpleExcelReader::create(storage_path('csv/cbu.csv'))->getRows();
+        $rows = SimpleExcelReader::create(storage_path('csv/CBU.xlsx'))->fromSheetName('REGULAR')->getRows();
         $rows->each(function ($data) {
-            $member = Member::whereFirstName($data['first_name'])->whereLastName($data['last_name'])->first();
-            if ($member) {
-                $cbu = $member->initial_capital_subscription()->create([
+            $this->seedCBU($data);
+        });
+        $rows = SimpleExcelReader::create(storage_path('csv/CBU.xlsx'))->fromSheetName('ASSOCIATE')->getRows();
+        $rows->each(function ($data) {
+            $this->seedCBU($data);
+        });
+        $rows = SimpleExcelReader::create(storage_path('csv/CBU.xlsx'))->fromSheetName('LABORATORY')->getRows();
+        $rows->each(function ($data) {
+            $this->seedCBU($data);
+        });
+        DB::commit();
+    }
+
+    private function seedCBU($data)
+    {
+        $member = Member::where('mpc_code', $data['mpc_code'])->first();
+        if ($member) {
+            try {
+                $existing = $member->capital_subscriptions()->first();
+                $cbu = $member->capital_subscriptions()->create([
                     'code' => ShareCapitalProvider::EXISTING_CAPITAL_CODE,
                     'number_of_shares' => $data['shares_subscribed'],
                     'number_of_terms' => ShareCapitalProvider::ADDITIONAL_NUMBER_OF_TERMS,
                     'initial_amount_paid' => $data['amount_shares_paid_total'],
+                    'is_common' => $existing ? true : false,
+                    'par_value' => $data['amount_shares_subscribed'] / $data['shares_subscribed'],
+                    'amount_subscribed' => $data['amount_shares_subscribed'],
+                    'transaction_date' => today(),
                 ]);
                 $cbu->payments()->create([
                     'amount' => $data['amount_shares_paid_total'],
                     'reference_number' => '#BALANCEFORWARDED',
                     'type' => 'OR',
+                    'transaction_date' => today(),
                 ]);
+
+                $existing?->update([
+                    'is_common' => false,
+                ]);
+            } catch (\Throwable $e) {
+                dd($data, $e->getMessage());
             }
-        });
-        DB::commit();
+        }
     }
 }

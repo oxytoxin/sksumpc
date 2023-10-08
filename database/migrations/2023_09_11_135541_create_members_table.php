@@ -16,6 +16,7 @@ return new class extends Migration
     {
         Schema::create('members', function (Blueprint $table) {
             $table->id();
+            $table->string('mpc_code')->index();
             $table->foreignId('member_type_id')->constrained();
             $table->foreignId('user_id')->nullable()->constrained();
             $table->string('first_name');
@@ -33,8 +34,8 @@ return new class extends Migration
             $table->foreignId('occupation_id')->nullable()->constrained();
             $table->string('present_employer')->nullable();
             $table->string('highest_educational_attainment')->nullable();
-            $table->json('dependents');
-            $table->json('other_income_sources');
+            $table->json('dependents')->default('(JSON_ARRAY())');
+            $table->json('other_income_sources')->default('(JSON_ARRAY())');
             $table->integer('dependents_count')->virtualAs('JSON_LENGTH(dependents)');
             $table->foreignId('religion_id')->nullable()->constrained();
             $table->decimal('annual_income', 14, 2, true)->nullable();

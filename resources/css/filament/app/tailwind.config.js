@@ -4,7 +4,9 @@ export default {
     presets: [preset],
     content: [
         './app/Filament/App/**/*.php',
+        './app/Livewire/App/**/*.php',
         './resources/views/filament/app/**/*.blade.php',
+        './resources/views/livewire/app/**/*.blade.php',
         './vendor/filament/**/*.blade.php',
         '../../../../awcodes/filament-table-repeater/resources/**/*.blade.php',
     ],

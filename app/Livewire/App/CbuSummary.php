@@ -23,20 +23,21 @@ class CbuSummary extends Component implements HasForms, HasTable
 
     private function number_of_shares_paid($record)
     {
-        return intdiv($record->payments_sum_amount, ShareCapitalProvider::PAR_VALUE);
+        return intdiv($record->payments_sum_amount, $record->par_value);
     }
 
     private function amount_shares_paid($record)
     {
-        return $this->number_of_shares_paid($record) * ShareCapitalProvider::PAR_VALUE;
+        return $this->number_of_shares_paid($record) * $record->par_value;
     }
 
     public function table(Table $table): Table
     {
         return $table
-            ->query(CapitalSubscription::query())
+            ->query(CapitalSubscription::query()->where('is_common', true))
             ->columns([
                 TextColumn::make('member.full_name')
+                    ->searchable()
                     ->label('Name'),
                 TextColumn::make('number_of_shares')
                     ->label("No. of Shares Subscribed")
@@ -76,7 +77,7 @@ class CbuSummary extends Component implements HasForms, HasTable
                     ->money('PHP')
                     ->wrapHeader()
                     ->alignCenter(),
-
+                TextColumn::make('transaction_date')->date('F d, Y'),
 
             ])
             ->filters([

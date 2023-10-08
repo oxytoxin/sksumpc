@@ -7,18 +7,21 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @mixin IdeHelperMembershipStatus
+ * @mixin IdeHelperSaving
  */
-class MembershipStatus extends Model
+class Saving extends Model
 {
     use HasFactory;
 
     protected $casts = [
-        'effectivity_date' => 'immutable_date'
+        'amount' => 'decimal:2',
+        'number_of_days' => 'integer',
+        'interest_rate' => 'decimal:2',
+        'interest' => 'decimal:2',
+        'accrued' => 'boolean',
+        'transaction_date' => 'immutable_date',
+        'interest_date' => 'immutable_date',
     ];
-
-    const ACCEPTANCE = 1;
-    const TERMINATION = 2;
 
     public function member(): BelongsTo
     {

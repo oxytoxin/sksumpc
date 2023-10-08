@@ -8,15 +8,21 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @mixin IdeHelperCapitalSubscription
+ */
 class CapitalSubscription extends Model
 {
     use HasFactory;
 
     protected $casts = [
+        'is_common' => 'boolean',
         'number_of_shares' => 'integer',
+        'par_value' => 'decimal:2',
         'amount_subscribed' => 'decimal:2',
         'initial_amount_paid' => 'decimal:2',
-        'number_of_terms' => 'integer'
+        'number_of_terms' => 'integer',
+        'transaction_date' => 'immutable_date'
     ];
 
     public function member(): BelongsTo
@@ -32,14 +38,14 @@ class CapitalSubscription extends Model
     protected static function booted(): void
     {
         static::creating(function (CapitalSubscription $cbu) {
-            $cbu->outstanding_balance = $cbu->number_of_shares * ShareCapitalProvider::PAR_VALUE;
+            $cbu->outstanding_balance = $cbu->amount_subscribed;
         });
     }
 
     public function amountSharesSubscribed(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->number_of_shares * ShareCapitalProvider::PAR_VALUE
+            get: fn () => $this->number_of_shares * $this->par_value
         );
     }
 }

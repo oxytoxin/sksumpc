@@ -27,6 +27,9 @@ return new class extends Migration
         MemberType::create([
             'name' => 'LABORATORY'
         ]);
+        MemberType::create([
+            'name' => 'RETIREE'
+        ]);
     }
 
     /**

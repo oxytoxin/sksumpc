@@ -1,0 +1,123 @@
+<?php
+
+namespace App\Livewire\App;
+
+use App\Models\Member;
+use Filament\Tables;
+use App\Models\Saving;
+use App\Oxytoxin\SavingsProvider;
+use Carbon\Carbon;
+use DB;
+use Livewire\Component;
+use Filament\Tables\Table;
+use Illuminate\Contracts\View\View;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Actions\CreateAction;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Support\Colors\Color;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Concerns\InteractsWithTable;
+
+class SavingsTable extends Component implements HasForms, HasTable
+{
+    use InteractsWithForms;
+    use InteractsWithTable;
+
+    public $member_id;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Saving::whereMemberId($this->member_id))
+            ->recordClasses(fn ($record) => $record->amount > 0 ? 'bg-green-200' : 'bg-red-200')
+            ->columns([
+                TextColumn::make('amount')->money('PHP'),
+                TextColumn::make('transaction_date')->date('F d, Y'),
+                TextColumn::make('number_of_days'),
+                TextColumn::make('balance')->money('PHP'),
+                TextColumn::make('interest')->money('PHP'),
+            ])
+            ->filters([
+                //
+            ])
+            ->actions([
+                DeleteAction::make()
+            ])
+            ->headerActions([
+                CreateAction::make('Deposit')
+                    ->label('Deposit')
+                    ->modalHeading('Deposit Savings')
+                    ->form([
+                        DatePicker::make('transaction_date')->required()->default(today()),
+                        TextInput::make('reference_number')->required(),
+                        TextInput::make('amount')->prefix('PHP')
+                            ->required()
+                            ->numeric()
+                            ->minValue(1),
+                    ])
+                    ->action(function ($data) {
+                        DB::beginTransaction();
+                        $member =  Member::find($this->member_id);
+                        $member->savings_no_interest()->each(function ($saving) use ($data) {
+                            $saving->update([
+                                'interest' => SavingsProvider::calculateInterest($saving->balance, $saving->interest_rate, Carbon::make($data['transaction_date'])->diffInDays($saving->transaction_date)),
+                                'interest_date' => $data['transaction_date'],
+                            ]);
+                        });
+                        Saving::create([
+                            ...$data,
+                            'interest_rate' => SavingsProvider::INTEREST_RATE,
+                            'member_id' => $this->member_id,
+                            'balance' => $member->savings()->sum('amount') + $data['amount'],
+                        ]);
+                        DB::commit();
+                    })
+                    ->createAnother(false),
+                CreateAction::make('Withdraw')
+                    ->label('Withdraw')
+                    ->modalHeading('Withdraw Savings')
+                    ->color(Color::Red)
+                    ->form([
+                        DatePicker::make('transaction_date')->required()->default(today()),
+                        TextInput::make('reference_number')->required(),
+                        TextInput::make('amount')->prefix('PHP')
+                            ->required()
+                            ->numeric()
+                            ->minValue(1),
+                    ])
+                    ->action(function ($data) {
+                        $data['amount'] = $data['amount'] * -1;
+                        DB::beginTransaction();
+                        $member =  Member::find($this->member_id);
+                        $member->savings_no_interest()->each(function ($saving) use ($data) {
+                            $saving->update([
+                                'interest' => SavingsProvider::calculateInterest($saving->balance, $saving->interest_rate, Carbon::make($data['transaction_date'])->diffInDays($saving->transaction_date)),
+                                'interest_date' => $data['transaction_date'],
+                            ]);
+                        });
+                        Saving::create([
+                            ...$data,
+                            'interest_rate' => SavingsProvider::INTEREST_RATE,
+                            'member_id' => $this->member_id,
+                            'balance' => $member->savings()->sum('amount') + $data['amount'],
+                        ]);
+                        DB::commit();
+                    })
+                    ->createAnother(false),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    //
+                ]),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.app.savings-table');
+    }
+}

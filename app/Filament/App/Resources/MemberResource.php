@@ -3,7 +3,8 @@
 namespace App\Filament\App\Resources;
 
 use App\Filament\App\Resources\MemberResource\Pages;
-use App\Filament\App\Resources\MemberResource\Pages\SubsidiaryLedger;
+use App\Filament\App\Resources\MemberResource\Pages\CbuSubsidiaryLedger;
+use App\Filament\App\Resources\MemberResource\Pages\LoanSubsidiaryLedger;
 use App\Filament\App\Resources\MemberResource\RelationManagers;
 use App\Infolists\Components\DependentsEntry;
 use App\Models\CapitalSubscription;
@@ -109,10 +110,16 @@ class MemberResource extends Resource
                                 ViewEntry::make('cbu')
                                     ->view('filament.app.views.cbu-table')
                             ]),
-                        Tab::make('Savings')
-                            ->schema([]),
+                        Tab::make('MSO')
+                            ->schema([
+                                ViewEntry::make('mso')
+                                    ->view('filament.app.views.mso-table')
+                            ]),
                         Tab::make('Loan')
-                            ->schema([]),
+                            ->schema([
+                                ViewEntry::make('loan')
+                                    ->view('filament.app.views.loans-table')
+                            ]),
                     ])->persistTabInQueryString()
             ])
             ->columns(1);
@@ -238,10 +245,12 @@ class MemberResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')
-                    ->label('ID')
+                Tables\Columns\TextColumn::make('mpc_code')
+                    ->label('Code')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('first_name')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('last_name')
                     ->sortable()
@@ -332,7 +341,8 @@ class MemberResource extends Resource
             'create' => Pages\CreateMember::route('/create'),
             'view' => Pages\ViewMember::route('/{record}'),
             'edit' => Pages\EditMember::route('/{record}/edit'),
-            'subsidiary-ledger' => SubsidiaryLedger::route('subsidiary-ledger/{member}'),
+            'cbu-subsidiary-ledger' => CbuSubsidiaryLedger::route('cbu-subsidiary-ledger/{member}'),
+            'loan-subsidiary-ledger' => LoanSubsidiaryLedger::route('loan-subsidiary-ledger/{member}'),
         ];
     }
 }

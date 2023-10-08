@@ -14,11 +14,14 @@ return new class extends Migration
         Schema::create('capital_subscriptions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('member_id')->constrained();
+            $table->boolean('is_common');
             $table->string('code');
             $table->integer('number_of_terms')->default(12);
             $table->integer('number_of_shares');
             $table->decimal('amount_subscribed', 14, 2)->default(1000);
             $table->decimal('initial_amount_paid', 14, 2);
+            $table->decimal('par_value');
+            $table->date('transaction_date');
             $table->timestamps();
         });
     }

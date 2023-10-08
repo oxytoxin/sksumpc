@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('capital_subscription_payments', function (Blueprint $table) {
+        Schema::create('loan_payments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('capital_subscription_id')->constrained();
+            $table->foreignId('loan_id')->constrained();
             $table->string('type')->default('OR');
             $table->decimal('amount', 14, 2);
             $table->decimal('running_balance', 14, 2);
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('capital_subscription_payments');
+        Schema::dropIfExists('loan_payments');
     }
 };

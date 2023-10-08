@@ -18,8 +18,27 @@ class ShareCapitalProvider
         return round((static::INITIAL_AMOUNT - $amount) / static::INITIAL_NUMBER_OF_TERMS, 2);
     }
 
-    public static function computeNumberOfSharesFromAmountSubscribed($amount): int|float
+    public static function fromAmountSubscribed($amount, $terms): array
     {
-        return $amount * static::ADDITIONAL_NUMBER_OF_TERMS / static::PAR_VALUE;
+        return [
+            'monthly_payment' => $amount / $terms,
+            'number_of_shares' => $amount / static::PAR_VALUE,
+        ];
+    }
+
+    public static function fromMonthlyPayment($amount, $terms): array
+    {
+        return [
+            'number_of_shares' => $amount * $terms /  static::PAR_VALUE,
+            'amount_subscribed' => $amount * $terms,
+        ];
+    }
+
+    public static function fromNumberOfShares($shares, $terms): array
+    {
+        return [
+            'monthly_payment' => floatval($shares) * static::PAR_VALUE / $terms,
+            'amount_subscribed' => floatval($shares) * static::PAR_VALUE,
+        ];
     }
 }

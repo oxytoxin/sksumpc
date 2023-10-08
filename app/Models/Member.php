@@ -26,11 +26,6 @@ class Member extends Model implements HasMedia
         'annual_income' => 'decimal:2',
     ];
 
-    protected $attributes = [
-        'dependents' => "[]",
-        'other_income_sources' => "[]",
-    ];
-
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('profile_photo')
@@ -67,6 +62,11 @@ class Member extends Model implements HasMedia
         return $this->hasMany(CapitalSubscription::class);
     }
 
+    public function capital_subscriptions_common(): HasOne
+    {
+        return $this->hasOne(CapitalSubscription::class)->where('is_common', true)->latestOfMany();
+    }
+
     public function capital_subscription_payments(): HasManyThrough
     {
         return $this->hasManyThrough(CapitalSubscriptionPayment::class, CapitalSubscription::class);
@@ -75,5 +75,30 @@ class Member extends Model implements HasMedia
     public function initial_capital_subscription(): HasOne
     {
         return $this->hasOne(CapitalSubscription::class)->where('code', ShareCapitalProvider::INITIAL_CAPITAL_CODE);
+    }
+
+    public function savings(): HasMany
+    {
+        return $this->hasMany(Saving::class);
+    }
+
+    public function savings_no_interest(): HasMany
+    {
+        return $this->hasMany(Saving::class)->whereNull('interest_date');
+    }
+
+    public function imprests(): HasMany
+    {
+        return $this->hasMany(Imprest::class);
+    }
+
+    public function imprests_no_interest(): HasMany
+    {
+        return $this->hasMany(Imprest::class)->whereNull('interest_date');
+    }
+
+    public function loans(): HasMany
+    {
+        return $this->hasMany(Loan::class);
     }
 }

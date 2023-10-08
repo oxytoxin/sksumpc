@@ -22,26 +22,27 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\HtmlString;
 use stdClass;
 
-class SubsidiaryLedger extends Page implements HasTable
+class CbuSubsidiaryLedger extends Page implements HasTable
 {
     use InteractsWithTable;
 
     protected static string $resource = MemberResource::class;
 
-    protected static string $view = 'filament.app.resources.member-resource.pages.subsidiary-ledger';
+    protected static string $view = 'filament.app.resources.member-resource.pages.cbu-subsidiary-ledger';
 
     public Member $member;
 
     public function getHeading(): string|Htmlable
     {
-        return 'Subsidiary Ledger for ' . $this->member->full_name;
+        return 'CBU Subsidiary Ledger for ' . $this->member->full_name;
     }
+
     public function table(Table $table): Table
     {
         return $table
             ->query(CapitalSubscriptionPayment::query()->whereRelation('capital_subscription', 'member_id', $this->member->id))
             ->columns([
-                TextColumn::make('created_at')
+                TextColumn::make('transaction_date')
                     ->date('m/d/Y')
                     ->label('DATE'),
                 TextColumn::make('reference_number')
@@ -51,8 +52,7 @@ class SubsidiaryLedger extends Page implements HasTable
                 TextColumn::make('amount')
                     ->label('CR')
                     ->money('PHP')
-                    ->summarize(Sum::make()->label('')->money('PHP'))
-                    ->alignCenter(),
+                    ->summarize(Sum::make()->label('')->money('PHP')),
                 TextColumn::make('ob')
                     ->label('Outstanding Balance')
                     ->state(function (Table $table, $record) {
@@ -62,7 +62,7 @@ class SubsidiaryLedger extends Page implements HasTable
                 TextColumn::make('remarks'),
             ])
             ->filters([
-                Filter::make('created_at')
+                Filter::make('transaction_date')
                     ->form([
                         DatePicker::make('from')
                             ->default(today()->subYear()),
@@ -71,7 +71,7 @@ class SubsidiaryLedger extends Page implements HasTable
                     ])
                     ->columns(8)
                     ->columnSpanFull()
-                    ->query(fn (Builder $query, array $data) => $query->whereDate('created_at', '>=', $data['from'])->whereDate('created_at', '<=', $data['to']))
+                    ->query(fn (Builder $query, array $data) => $query->whereDate('transaction_date', '>=', $data['from'])->whereDate('transaction_date', '<=', $data['to']))
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
             ->paginated(['all']);
