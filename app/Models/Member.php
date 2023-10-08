@@ -26,6 +26,14 @@ class Member extends Model implements HasMedia
         'annual_income' => 'decimal:2',
     ];
 
+    protected static function booted(): void
+    {
+        static::created(function (Member $member) {
+            $member->mpc_code = 'MPCSKSU' . $member->id;
+            $member->save();
+        });
+    }
+
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('profile_photo')

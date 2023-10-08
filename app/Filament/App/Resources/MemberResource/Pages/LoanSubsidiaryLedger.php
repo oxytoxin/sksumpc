@@ -14,6 +14,7 @@ use Filament\Tables\Columns\Summarizers\Sum;
 use App\Filament\App\Resources\MemberResource;
 use App\Models\LoanPayment;
 use Filament\Resources\Pages\Page;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
@@ -70,6 +71,11 @@ class LoanSubsidiaryLedger extends Page implements HasTable
                     ->columns(8)
                     ->columnSpanFull()
                     ->query(fn (Builder $query, array $data) => $query->whereDate('transaction_date', '>=', $data['from'])->whereDate('transaction_date', '<=', $data['to']))
+            ])
+            ->headerActions([
+                Action::make('back')
+                    ->label('Back to Loans')
+                    ->url(route('filament.app.resources.members.view', ['record' => $this->member, 'tab' => '-loan-tab']))
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
             ->paginated(['all']);

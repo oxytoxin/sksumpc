@@ -15,7 +15,7 @@ class ShareCapitalProvider
 
     public static function getSubscriptionAmount(int|float $amount): int|float
     {
-        return round((static::INITIAL_AMOUNT - $amount) / static::INITIAL_NUMBER_OF_TERMS, 2);
+        return round($amount * static::INITIAL_NUMBER_OF_TERMS, 2);
     }
 
     public static function fromAmountSubscribed($amount, $terms): array

@@ -37,3 +37,7 @@
 .fi-in-image{
     @apply justify-center;
 }
+
+.fi-in-entry-wrp > div {
+    @apply sm:grid-cols-4;
+}

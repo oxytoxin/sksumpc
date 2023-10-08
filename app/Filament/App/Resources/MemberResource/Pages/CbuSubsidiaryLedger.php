@@ -9,6 +9,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
 use Filament\Resources\Pages\Page;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
@@ -74,6 +75,11 @@ class CbuSubsidiaryLedger extends Page implements HasTable
                     ->query(fn (Builder $query, array $data) => $query->whereDate('transaction_date', '>=', $data['from'])->whereDate('transaction_date', '<=', $data['to']))
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
+            ->headerActions([
+                Action::make('back')
+                    ->label('Back to CBU')
+                    ->url(route('filament.app.resources.members.view', ['record' => $this->member, 'tab' => '-cbu-tab']))
+            ])
             ->paginated(['all']);
     }
 }

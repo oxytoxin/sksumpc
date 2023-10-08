@@ -41,9 +41,12 @@ use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\IconPosition;
+use Filament\Support\RawJs;
 use Filament\Tables;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+
+use function Filament\Support\format_money;
 
 class MemberResource extends Resource
 {
@@ -83,6 +86,7 @@ class MemberResource extends Resource
                                     TextEntry::make('contact_number')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                                     TextEntry::make('religion.name')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                                     TextEntry::make('highest_educational_attainment')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
+                                    TextEntry::make('tin')->extraAttributes(['class' => 'font-semibold'])->inlineLabel()->label('TIN'),
                                 ]),
                                 InfolistSection::make()
                                     ->schema([
@@ -93,7 +97,8 @@ class MemberResource extends Resource
                                     ]),
                                 InfolistSection::make()
                                     ->schema([
-                                        DependentsEntry::make('dependents')->label('Number of Dependents'),
+                                        DependentsEntry::make('dependents')->label('Number of Dependents')
+                                            ->inlineLabel(),
                                     ]),
                                 InfolistSection::make('Initial Capital Subscription')
                                     ->schema([
@@ -218,7 +223,8 @@ class MemberResource extends Resource
                     ->maxLength(125),
                 Forms\Components\TextInput::make('present_employer'),
                 Forms\Components\TextInput::make('annual_income')
-                    ->numeric()
+                    ->mask(fn ($state) => RawJs::make('$money'))
+                    ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state))
                     ->prefix('P')
                     ->minValue(0),
 
@@ -231,11 +237,28 @@ class MemberResource extends Resource
                 Section::make('Initial Capital Subscription')
                     ->hiddenOn('edit')
                     ->schema([
-                        TextInput::make('number_of_terms')->numeric()->required()->readOnly()->default(ShareCapitalProvider::INITIAL_NUMBER_OF_TERMS)->minValue(ShareCapitalProvider::INITIAL_NUMBER_OF_TERMS)->maxValue(ShareCapitalProvider::INITIAL_NUMBER_OF_TERMS),
-                        TextInput::make('number_of_shares')->numeric()->required()->readOnly()->default(ShareCapitalProvider::INITIAL_SHARES)->minValue(ShareCapitalProvider::INITIAL_SHARES)->maxValue(ShareCapitalProvider::INITIAL_SHARES),
-                        TextInput::make('initial_amount_paid')->numeric()->prefix('P')->live(onBlur: true)->required()->default(ShareCapitalProvider::INITIAL_PAID)->minValue(ShareCapitalProvider::INITIAL_PAID)
-                            ->afterStateUpdated(fn ($set, $state) => $set('amount_subscribed', ShareCapitalProvider::getSubscriptionAmount($state))),
-                        TextInput::make('amount_subscribed')->numeric()->required()->readOnly()->default(fn (Get $get, $state) => ShareCapitalProvider::getSubscriptionAmount($get('initial_amount_paid'))),
+                        TextInput::make('number_of_terms')
+                            ->numeric()->required()->readOnly()
+                            ->default(ShareCapitalProvider::INITIAL_NUMBER_OF_TERMS)
+                            ->minValue(ShareCapitalProvider::INITIAL_NUMBER_OF_TERMS)
+                            ->maxValue(ShareCapitalProvider::INITIAL_NUMBER_OF_TERMS),
+                        TextInput::make('number_of_shares')
+                            ->numeric()->required()->readOnly()
+                            ->default(ShareCapitalProvider::INITIAL_SHARES)
+                            ->minValue(ShareCapitalProvider::INITIAL_SHARES)
+                            ->maxValue(ShareCapitalProvider::INITIAL_SHARES),
+                        TextInput::make('initial_amount_paid')->mask(fn ($state) => RawJs::make('$money'))
+                            ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state))
+                            ->prefix('P')
+                            ->required()
+                            ->default(ShareCapitalProvider::INITIAL_PAID)
+                            ->minValue(ShareCapitalProvider::INITIAL_PAID),
+                        TextInput::make('amount_subscribed')->mask(fn ($state) => RawJs::make('$money'))
+                            ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state))
+                            ->prefix('P')
+                            ->required()
+                            ->readOnly()
+                            ->default(fn () => ShareCapitalProvider::fromNumberOfShares(ShareCapitalProvider::INITIAL_SHARES, ShareCapitalProvider::INITIAL_NUMBER_OF_TERMS)['amount_subscribed']),
                         Hidden::make('code')->default(ShareCapitalProvider::INITIAL_CAPITAL_CODE),
                     ])
             ]);

@@ -16,7 +16,7 @@ return new class extends Migration
     {
         Schema::create('members', function (Blueprint $table) {
             $table->id();
-            $table->string('mpc_code')->index();
+            $table->string('mpc_code')->index()->unique()->nullable();
             $table->foreignId('member_type_id')->constrained();
             $table->foreignId('user_id')->nullable()->constrained();
             $table->string('first_name');

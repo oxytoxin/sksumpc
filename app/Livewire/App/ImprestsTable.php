@@ -38,8 +38,8 @@ class ImprestsTable extends Component implements HasForms, HasTable
             ->recordClasses(fn ($record) => $record->amount > 0 ? 'bg-green-200' : 'bg-red-200')
             ->columns([
                 TextColumn::make('transaction_date')->date('m/d/Y'),
-                TextColumn::make('amount')->money('PHP'),
                 TextColumn::make('reference_number'),
+                TextColumn::make('amount')->money('PHP'),
                 TextColumn::make('number_of_days'),
                 TextColumn::make('balance')->money('PHP'),
                 TextColumn::make('interest')->money('PHP'),
