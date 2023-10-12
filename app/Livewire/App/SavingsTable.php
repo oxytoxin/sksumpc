@@ -5,6 +5,7 @@ namespace App\Livewire\App;
 use App\Models\Member;
 use Filament\Tables;
 use App\Models\Saving;
+use App\Oxytoxin\SavingsData;
 use App\Oxytoxin\SavingsProvider;
 use Carbon\Carbon;
 use DB;
@@ -17,10 +18,15 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Notifications\Notification;
 use Filament\Support\Colors\Color;
 use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
+use Illuminate\Validation\ValidationException;
+
+use function Filament\Support\format_money;
 
 class SavingsTable extends Component implements HasForms, HasTable
 {
@@ -37,7 +43,8 @@ class SavingsTable extends Component implements HasForms, HasTable
             ->columns([
                 TextColumn::make('transaction_date')->date('F d, Y'),
                 TextColumn::make('reference_number'),
-                TextColumn::make('amount')->money('PHP'),
+                TextColumn::make('withdrawal')->label('Withdrawal')->money('PHP'),
+                TextColumn::make('deposit')->label('Deposit/Interest')->money('PHP'),
                 TextColumn::make('number_of_days'),
                 TextColumn::make('balance')->money('PHP'),
                 TextColumn::make('interest')->money('PHP'),
@@ -94,21 +101,14 @@ class SavingsTable extends Component implements HasForms, HasTable
                         $data['amount'] = $data['amount'] * -1;
                         DB::beginTransaction();
                         $member =  Member::find($this->member_id);
-                        $member->savings_no_interest()->each(function ($saving) use ($data) {
-                            $saving->update([
-                                'interest' => SavingsProvider::calculateInterest($saving->balance, $saving->interest_rate, Carbon::make($data['transaction_date'])->diffInDays($saving->transaction_date)),
-                                'interest_date' => $data['transaction_date'],
-                            ]);
-                        });
-                        Saving::create([
-                            ...$data,
-                            'interest_rate' => SavingsProvider::INTEREST_RATE,
-                            'member_id' => $this->member_id,
-                            'balance' => $member->savings()->sum('amount') + $data['amount'],
-                        ]);
+                        SavingsProvider::createSavings($member, (new SavingsData(...$data)));
                         DB::commit();
                     })
                     ->createAnother(false),
+                ViewAction::make('subsidiary_ledger')
+                    ->icon('heroicon-o-clipboard-document-list')
+                    ->label('Subsidiary Ledger')
+                    ->url(route('filament.app.resources.members.savings-subsidiary-ledger', ['member' => $this->member_id]))
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

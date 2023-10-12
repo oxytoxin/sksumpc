@@ -16,6 +16,7 @@ use Filament\Support\Colors\Color;
 use Filament\Tables;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -23,6 +24,7 @@ use Filament\Tables\Table;
 use Livewire\Component;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
+use Livewire\Attributes\On;
 
 class ImprestsTable extends Component implements HasForms, HasTable
 {
@@ -30,6 +32,11 @@ class ImprestsTable extends Component implements HasForms, HasTable
     use InteractsWithTable;
 
     public $member_id;
+
+    #[On('refresh')]
+    public function loanCreated()
+    {
+    }
 
     public function table(Table $table): Table
     {
@@ -39,7 +46,8 @@ class ImprestsTable extends Component implements HasForms, HasTable
             ->columns([
                 TextColumn::make('transaction_date')->date('m/d/Y'),
                 TextColumn::make('reference_number'),
-                TextColumn::make('amount')->money('PHP'),
+                TextColumn::make('withdrawal')->label('Withdrawal')->money('PHP'),
+                TextColumn::make('deposit')->label('Deposit/Interest')->money('PHP'),
                 TextColumn::make('number_of_days'),
                 TextColumn::make('balance')->money('PHP'),
                 TextColumn::make('interest')->money('PHP'),
@@ -86,6 +94,10 @@ class ImprestsTable extends Component implements HasForms, HasTable
                         DB::commit();
                     })
                     ->createAnother(false),
+                ViewAction::make('subsidiary_ledger')
+                    ->icon('heroicon-o-clipboard-document-list')
+                    ->label('Subsidiary Ledger')
+                    ->url(route('filament.app.resources.members.imprest-subsidiary-ledger', ['member' => $this->member_id]))
             ])
             ->actions([
                 DeleteAction::make()

@@ -21,7 +21,7 @@ return new class extends Migration
             $table->decimal('net_amount', 14, 2)->virtualAs('gross_amount - deductions_amount');
             $table->json('deductions')->default(DB::raw('(JSON_ARRAY())'));
             $table->integer('number_of_terms');
-            $table->decimal('interest_rate', 8, 2);
+            $table->decimal('interest_rate', 7, 4);
             $table->decimal('interest', 14, 2);
             $table->decimal('monthly_payment', 14, 2);
             $table->date('release_date');

@@ -14,86 +14,150 @@ return new class extends Migration
     {
         Schema::create('loan_types', function (Blueprint $table) {
             $table->id();
-            $table->decimal('interest', 7, 3);
             $table->string('code');
             $table->string('name');
+            $table->decimal('interest_rate', 7, 3)->default(0);
+            $table->decimal('service_fee', 7, 4)->default(0);
+            $table->decimal('cbu_common', 7, 4)->default(0);
+            $table->decimal('imprest', 7, 4)->default(0);
+            $table->decimal('insurance', 7, 4)->default(0);
             $table->timestamps();
         });
 
         LoanType::create([
-            'interest' => 0.01,
             'code' => 'CL',
-            'name' => 'Commodity Loan'
+            'name' => 'Commodity Loan',
+            'interest_rate' => 0.01,
+            'service_fee' => 0.005,
+            'cbu_common' => 0.02,
+            'imprest' => 0.01,
+            'insurance' => 0.0192
         ]);
         LoanType::create([
-            'interest' => 0.01,
             'code' => 'PL',
-            'name' => 'Providential Loan'
+            'name' => 'Providential Loan',
+            'interest_rate' => 0.01,
+            'service_fee' => 0.005,
+            'cbu_common' => 0.02,
+            'imprest' => 0.01,
+            'insurance' => 0.0192
         ]);
         LoanType::create([
-            'interest' => 0.01,
             'code' => 'EL',
-            'name' => 'Emergency Loan'
+            'name' => 'Emergency Loan',
+            'interest_rate' => 0.01,
+            'service_fee' => 0.003,
+            'cbu_common' => 0.02,
+            'imprest' => 0.01,
+            'insurance' => 0.0192
         ]);
         LoanType::create([
-            'interest' => 0.01,
             'code' => 'RL',
-            'name' => 'Regular Loan'
+            'name' => 'Regular Loan',
+            'interest_rate' => 0.01,
+            'service_fee' => 0.005,
+            'cbu_common' => 0.02,
+            'imprest' => 0.01,
+            'insurance' => 0.0192
         ]);
         LoanType::create([
-            'interest' => 0.01,
             'code' => 'ACL',
-            'name' => 'Additional Commodity Loan'
+            'name' => 'Additional Commodity Loan',
+            'interest_rate' => 0.01,
+            'service_fee' => 0.005,
+            'cbu_common' => 0.02,
+            'imprest' => 0.01,
+            'insurance' => 0.0192
         ]);
         LoanType::create([
-            'interest' => 0.01,
             'code' => 'SL',
-            'name' => 'Special Loan'
+            'name' => 'Special Loan',
+            'interest_rate' => 0.01,
+            'service_fee' => 0.003,
+            'cbu_common' => 0.02,
+            'imprest' => 0.01,
+            'insurance' => 0.0192
         ]);
         LoanType::create([
-            'interest' => 0.015,
             'code' => 'KL',
-            'name' => 'Kabuhayan Loan'
+            'name' => 'Kabuhayan Loan',
+            'interest_rate' => 0.015,
+            'service_fee' => 0.005,
+            'cbu_common' => 0.02,
+            'imprest' => 0.01,
+            'insurance' => 0.0192
         ]);
         LoanType::create([
-            'interest' => 0.01,
             'code' => 'FNPL',
-            'name' => 'Fly Now Pay Later Loan'
+            'name' => 'Fly Now Pay Later Loan',
+            'interest_rate' => 0.01,
+            'service_fee' => 0.005,
+            'cbu_common' => 0.02,
+            'imprest' => 0.01,
+            'insurance' => 0.0192
         ]);
         LoanType::create([
-            'interest' => 0.01,
             'code' => 'LBP-ATM',
-            'name' => 'LBP-ATM CARD Loan'
+            'name' => 'LBP-ATM CARD Loan',
+            'interest_rate' => 0.01,
+            'service_fee' => 0.005,
+            'cbu_common' => 0.02,
+            'imprest' => 0.01,
+            'insurance' => 0.0192
         ]);
         LoanType::create([
-            'interest' => 0.01,
             'code' => 'LBP-RL',
-            'name' => 'LBP-Regular Loan'
+            'name' => 'LBP-Regular Loan',
+            'interest_rate' => 0.01,
+            'service_fee' => 0.005,
+            'cbu_common' => 0.02,
+            'imprest' => 0.01,
+            'insurance' => 0.0192
         ]);
         LoanType::create([
-            'interest' => 0.01,
             'code' => 'RES-LBP ATM',
-            'name' => 'Restructuring-LBP ATM'
+            'name' => 'Restructuring-LBP ATM',
+            'interest_rate' => 0.01,
+            'service_fee' => 0.005,
+            'cbu_common' => 0.02,
+            'imprest' => 0.01,
+            'insurance' => 0.0192
         ]);
         LoanType::create([
-            'interest' => 0.01,
             'code' => 'RES-KL',
-            'name' => 'Restructuring-KL'
+            'name' => 'Restructuring-KL',
+            'interest_rate' => 0.01,
+            'service_fee' => 0.005,
+            'cbu_common' => 0.02,
+            'imprest' => 0.01,
+            'insurance' => 0.0192
         ]);
         LoanType::create([
-            'interest' => 0.01,
             'code' => 'RES-PL',
-            'name' => 'Restructuring-PL'
+            'name' => 'Restructuring-PL',
+            'interest_rate' => 0.01,
+            'service_fee' => 0.005,
+            'cbu_common' => 0.02,
+            'imprest' => 0.01,
+            'insurance' => 0.0192
         ]);
         LoanType::create([
-            'interest' => 0.01,
             'code' => 'RES-LBP CL',
-            'name' => 'RES-LBP Commodity Loan'
+            'name' => 'RES-LBP Commodity Loan',
+            'interest_rate' => 0.01,
+            'service_fee' => 0.005,
+            'cbu_common' => 0.02,
+            'imprest' => 0.01,
+            'insurance' => 0.0192
         ]);
         LoanType::create([
-            'interest' => 0.01,
             'code' => 'RES-RL',
-            'name' => 'Restructuring-RL'
+            'name' => 'Restructuring-RL',
+            'interest_rate' => 0.01,
+            'service_fee' => 0.005,
+            'cbu_common' => 0.02,
+            'imprest' => 0.01,
+            'insurance' => 0.0192
         ]);
     }
 

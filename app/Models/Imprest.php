@@ -16,7 +16,7 @@ class Imprest extends Model
     protected $casts = [
         'amount' => 'decimal:2',
         'number_of_days' => 'integer',
-        'interest_rate' => 'decimal:2',
+        'interest_rate' => 'decimal:4',
         'interest' => 'decimal:2',
         'accrued' => 'boolean',
         'transaction_date' => 'immutable_date',

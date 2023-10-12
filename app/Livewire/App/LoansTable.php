@@ -10,6 +10,7 @@ use App\Oxytoxin\LoansProvider;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
@@ -25,6 +26,8 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Livewire\Component;
 use Illuminate\Contracts\View\View;
@@ -58,11 +61,19 @@ class LoansTable extends Component implements HasForms, HasTable
                 TextColumn::make('transaction_date')->date('F d, Y')
             ])
             ->filters([
-                //
-            ])
+                SelectFilter::make('status')
+                    ->options([
+                        'ongoing' => 'On-going',
+                        'paid' => 'Paid',
+                    ])
+                    ->default('ongoing')
+                    ->query(function (Builder $query, $data) {
+                        $query
+                            ->when($data['value'] == 'paid', fn ($query) => $query->where('outstanding_balance', 0))
+                            ->when($data['value'] == 'ongoing', fn ($query) => $query->where('outstanding_balance', '>', 0));
+                    })
+            ], layout: FiltersLayout::AboveContent)
             ->actions([
-                ViewAction::make()
-                    ->modalContent(fn ($record) => view('filament.app.views.loan-payments', ['loan' => $record])),
                 Action::make('Pay')
                     ->icon('heroicon-o-banknotes')
                     ->form([
@@ -85,12 +96,14 @@ class LoansTable extends Component implements HasForms, HasTable
                         $record->payments()->create($data);
                         Notification::make()->title('Payment made for loan!')->success()->send();
                     })
+                    ->visible(fn ($record) => $record->outstanding_balance > 0),
+                ViewAction::make()
+                    ->modalContent(fn ($record) => view('filament.app.views.loan-payments', ['loan' => $record])),
             ])
             ->headerActions([
                 CreateAction::make()
                     ->fillForm([
                         'number_of_terms' => LoansProvider::LOAN_TERMS[12],
-                        'deductions' => SystemConfiguration::first()?->content,
                         'transaction_date' => today(),
                         'release_date' => today(),
                     ])
@@ -98,12 +111,19 @@ class LoansTable extends Component implements HasForms, HasTable
                         Select::make('loan_type_id')
                             ->relationship('loan_type', 'name')
                             ->live()
+                            ->afterStateUpdated(function ($state, $set, $get) {
+                                if ($loanType = LoanType::find($state)) {
+                                    $deductions = LoansProvider::computeDeductions($loanType, $get('gross_amount') ?? 0, $this->member);
+                                    $set('deductions', $deductions);
+                                }
+                            })
                             ->required(),
                         TextInput::make('reference_number')->required(),
                         DatePicker::make('transaction_date')->required()->native(false),
                         TextInput::make('gross_amount')->required()->numeric()->prefix('PHP')->live(true)->afterStateUpdated(function ($state, $set, $get) {
-                            foreach ($get('deductions') as $key => $deduction) {
-                                $set("deductions.$key.amount", round($state * $deduction['percentage'] / 100, 2));
+                            if ($loanType = LoanType::find($get('loan_type_id'))) {
+                                $deductions = LoansProvider::computeDeductions($loanType, $state ?? 0, $this->member);
+                                $set('deductions', $deductions);
                             }
                         }),
                         Select::make('number_of_terms')
@@ -112,7 +132,7 @@ class LoansTable extends Component implements HasForms, HasTable
                         Grid::make(3)
                             ->schema([
                                 Placeholder::make('interest_rate')
-                                    ->content(fn ($get) => str(LoanType::find($get('loan_type_id'))?->interest * 100 ?? 0)->append('%')->toString()),
+                                    ->content(fn ($get) => str(LoanType::find($get('loan_type_id'))?->interest_rate * 100 ?? 0)->append('%')->toString()),
                                 Placeholder::make('interest')
                                     ->content(fn ($get) => format_money(LoansProvider::computeInterest($get('gross_amount'), LoanType::find($get('loan_type_id')), $get('number_of_terms')), 'PHP')),
                                 Placeholder::make('monthly_payment')
@@ -120,34 +140,31 @@ class LoansTable extends Component implements HasForms, HasTable
                             ]),
                         TableRepeater::make('deductions')
                             ->schema([
-                                TextInput::make('name'),
-                                TextInput::make('percentage')->formatStateUsing(fn ($state) => $state * 100)
-                                    ->live(true)
-                                    ->afterStateUpdated(fn ($set, $get, $state) => $set('amount', $get('../../gross_amount') * $state / 100))
-                                    ->dehydrateStateUsing(fn ($state)  => $state / 100),
-                                TextInput::make('amount')->readOnly()->numeric()->prefix('PHP')
+                                TextInput::make('name')->readOnly(fn ($get) => boolval($get('readonly'))),
+                                TextInput::make('amount')->numeric()->prefix('PHP')->readOnly(fn ($get) => boolval($get('readonly'))),
+                                Hidden::make('readonly')->default(false),
                             ])
+                            ->orderColumn(false)
                             ->hideLabels(),
-                        // TableRepeater::make('other_deductions')
-                        //     ->schema([
-                        //         TextInput::make('name'),
-                        //         TextInput::make('amount')->numeric()->prefix('PHP')
-                        //     ])
-                        //     ->hideLabels(),
-                        Placeholder::make('deductions_amount')
-                            ->content(fn ($get) => format_money(collect($get('deductions'))->sum('amount'), 'PHP')),
+                        Grid::make(2)
+                            ->schema([
+                                Placeholder::make('deductions_amount')
+                                    ->content(fn ($get) => format_money(collect($get('deductions'))->sum('amount'), 'PHP')),
+                                Placeholder::make('net_amount')
+                                    ->content(fn ($get) => format_money(($get('gross_amount') ?? 0) - collect($get('deductions'))->sum('amount'), 'PHP')),
+                            ]),
                         DatePicker::make('release_date')->required()->native(false),
                     ])
                     ->action(function ($data) {
                         $loanType = LoanType::find($data['loan_type_id']);
                         Loan::create([
                             ...$data,
-                            'interest_rate' => $loanType->interest,
+                            'interest_rate' => $loanType->interest_rate,
                             'interest' => LoansProvider::computeInterest($data['gross_amount'], $loanType, $data['number_of_terms']),
                             'member_id' => $this->member->id,
                             'monthly_payment' => LoansProvider::computeMonthlyPayment($data['gross_amount'], $loanType, $data['number_of_terms']),
-                            'deductions_amount' => collect($data['deductions'])->sum('amount')
                         ]);
+                        $this->dispatch('refresh');
                         Notification::make()->title('New loan created.')->success()->send();
                     })
                     ->createAnother(false),

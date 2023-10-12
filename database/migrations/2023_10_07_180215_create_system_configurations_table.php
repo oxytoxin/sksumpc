@@ -18,28 +18,6 @@ return new class extends Migration
             $table->json('content')->default(DB::raw('(JSON_ARRAY())'));
             $table->timestamps();
         });
-
-        SystemConfiguration::create([
-            'name' => 'Load Deductions',
-            'content' => [
-                [
-                    'name' => "Service Fee",
-                    'percentage' => 0.005,
-                ],
-                [
-                    'name' => "CBU-Common",
-                    'percentage' => 0.02,
-                ],
-                [
-                    'name' => "Imprest Savings",
-                    'percentage' => 0.01,
-                ],
-                [
-                    'name' => "Insurance-LOAN",
-                    'percentage' => 0.0192,
-                ],
-            ]
-        ]);
     }
 
     /**

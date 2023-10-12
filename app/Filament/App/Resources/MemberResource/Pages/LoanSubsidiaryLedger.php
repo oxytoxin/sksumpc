@@ -64,7 +64,7 @@ class LoanSubsidiaryLedger extends Page implements HasTable
                 Filter::make('transaction_date')
                     ->form([
                         DatePicker::make('from')
-                            ->default(today()->subYear()),
+                            ->default(today()->startOfYear()),
                         DatePicker::make('to')
                             ->default(today()),
                     ])

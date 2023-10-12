@@ -16,7 +16,9 @@ return new class extends Migration
             $table->foreignId('member_id')->constrained();
             $table->string('reference_number');
             $table->decimal('amount', 14, 2);
-            $table->decimal('interest_rate', 7, 2);
+            $table->decimal('deposit', 14, 2)->nullable()->virtualAs('IF(amount >= 0, amount, null)');
+            $table->decimal('withdrawal', 14, 2)->nullable()->virtualAs('IF(amount < 0, amount * -1, null)');
+            $table->decimal('interest_rate', 7, 4);
             $table->decimal('interest', 14, 2)->default(0);
             $table->date('transaction_date');
             $table->date('interest_date')->nullable();

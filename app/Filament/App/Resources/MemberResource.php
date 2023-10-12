@@ -4,7 +4,9 @@ namespace App\Filament\App\Resources;
 
 use App\Filament\App\Resources\MemberResource\Pages;
 use App\Filament\App\Resources\MemberResource\Pages\CbuSubsidiaryLedger;
+use App\Filament\App\Resources\MemberResource\Pages\ImprestSubsidiaryLedger;
 use App\Filament\App\Resources\MemberResource\Pages\LoanSubsidiaryLedger;
+use App\Filament\App\Resources\MemberResource\Pages\SavingsSubsidiaryLedger;
 use App\Filament\App\Resources\MemberResource\RelationManagers;
 use App\Infolists\Components\DependentsEntry;
 use App\Models\CapitalSubscription;
@@ -298,39 +300,6 @@ class MemberResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('member_type.name')
                     ->sortable(),
-                // Tables\Columns\TextColumn::make('address')
-                //     ->searchable()
-                //     ->toggleable(isToggledHiddenByDefault: true),
-                // Tables\Columns\TextColumn::make('occupation.name')
-                //     ->toggleable(isToggledHiddenByDefault: true),
-                // Tables\Columns\TextColumn::make('highest_educational_attainment')
-                //     ->searchable()
-                //     ->toggleable(isToggledHiddenByDefault: true),
-                // Tables\Columns\TextColumn::make('dependents_count')
-                //     ->label('Dependents')
-                //     ->numeric()
-                //     ->sortable()
-                //     ->toggleable(isToggledHiddenByDefault: true),
-                // Tables\Columns\TextColumn::make('religion.name')
-                //     ->toggleable(isToggledHiddenByDefault: true),
-                // Tables\Columns\TextColumn::make('annual_income')
-                //     ->money('PHP')
-                //     ->sortable()
-                //     ->toggleable(isToggledHiddenByDefault: true),
-                // Tables\Columns\TextColumn::make('accepted_at')
-                //     ->date()
-                //     ->sortable()
-                //     ->toggleable(isToggledHiddenByDefault: true),
-                // Tables\Columns\TextColumn::make('acceptance_bod_resolution')
-                //     ->searchable()
-                //     ->toggleable(isToggledHiddenByDefault: true),
-                // Tables\Columns\TextColumn::make('terminated_at')
-                //     ->date()
-                //     ->sortable()
-                //     ->toggleable(isToggledHiddenByDefault: true),
-                // Tables\Columns\TextColumn::make('termination_bod_resolution')
-                //     ->searchable()
-                //     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 SelectFilter::make('member_type')
@@ -365,6 +334,8 @@ class MemberResource extends Resource
             'edit' => Pages\EditMember::route('/{record}/edit'),
             'cbu-subsidiary-ledger' => CbuSubsidiaryLedger::route('cbu-subsidiary-ledger/{member}'),
             'loan-subsidiary-ledger' => LoanSubsidiaryLedger::route('loan-subsidiary-ledger/{member}'),
+            'savings-subsidiary-ledger' => SavingsSubsidiaryLedger::route('savings-subsidiary-ledger/{member}'),
+            'imprest-subsidiary-ledger' => ImprestSubsidiaryLedger::route('imprest-subsidiary-ledger/{member}'),
         ];
     }
 }

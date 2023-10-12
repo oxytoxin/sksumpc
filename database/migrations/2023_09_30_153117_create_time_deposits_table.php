@@ -23,7 +23,7 @@ return new class extends Migration
             $table->decimal('interest_rate', 7, 2);
             $table->decimal('interest', 14, 2)->virtualAs('maturity_amount - amount');
             $table->date('transaction_date');
-            $table->string('tdc_number');
+            $table->string('tdc_number')->unique();
             $table->timestamps();
         });
     }

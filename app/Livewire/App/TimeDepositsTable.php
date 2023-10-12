@@ -20,6 +20,8 @@ use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Livewire\Component;
 use Illuminate\Contracts\View\View;
@@ -47,8 +49,18 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                 TextColumn::make('withdrawal_date')->date('m/d/Y'),
             ])
             ->filters([
-                //
-            ])
+                SelectFilter::make('status')
+                    ->options([
+                        'ongoing' => 'On-going',
+                        'matured' => 'Matured',
+                    ])
+                    ->default('ongoing')
+                    ->query(function (Builder $query, $data) {
+                        $query
+                            ->when($data['value'] == 'matured', fn ($query) => $query->whereNotNull('withdrawal_date'))
+                            ->when($data['value'] == 'ongoing', fn ($query) => $query->whereNull('withdrawal_date'));
+                    })
+            ], layout: FiltersLayout::AboveContent)
             ->actions([
                 Action::make('claim')
                     ->form([
@@ -69,14 +81,15 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                     ->form(fn (TimeDeposit $record) => [
                         DatePicker::make('withdrawal_date')
                             ->required()
+                            ->native(false)
                             ->default(today()),
-                        DatePicker::make('transaction_date')->required()->default(today())->native(false)->live()->afterStateUpdated(fn (Set $set, $state) => $set('maturity_date', TimeDepositsProvider::getMaturityDate($state))),
+                        DatePicker::make('transaction_date')->label('Roll-over date')->required()->default(today())->native(false)->live()->afterStateUpdated(fn (Set $set, $state) => $set('maturity_date', TimeDepositsProvider::getMaturityDate($state))),
                         DatePicker::make('maturity_date')->required()->readOnly()->default(TimeDepositsProvider::getMaturityDate(today()))->native(false),
                         TextInput::make('reference_number')->required(),
                         Placeholder::make('amount')->content(fn () => format_money($record->maturity_amount, 'PHP')),
                         Placeholder::make('number_of_days')->content(TimeDepositsProvider::NUMBER_OF_DAYS),
                         Placeholder::make('maturity_amount')->content(fn () => format_money(TimeDepositsProvider::getMaturityAmount($record->maturity_amount), 'PHP')),
-                        TextInput::make('tdc_number')->label('TDC Number')->required(),
+                        TextInput::make('tdc_number')->label('TDC Number')->required()->unique('time_deposits', 'tdc_number')->validationAttribute('TDC Number'),
                     ])
                     ->action(function ($record, $data) {
                         DB::beginTransaction();
@@ -111,7 +124,7 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                             ->minValue(TimeDepositsProvider::MINIMUM_DEPOSIT)->default(TimeDepositsProvider::MINIMUM_DEPOSIT),
                         Placeholder::make('number_of_days')->content(TimeDepositsProvider::NUMBER_OF_DAYS),
                         Placeholder::make('maturity_amount')->content(fn (Get $get) => format_money(TimeDepositsProvider::getMaturityAmount(floatval($get('amount'))), 'PHP')),
-                        TextInput::make('tdc_number')->label('TDC Number')->required(),
+                        TextInput::make('tdc_number')->label('TDC Number')->required()->unique('time_deposits', 'tdc_number')->validationAttribute('TDC Number'),
                     ])
                     ->action(function ($data) {
                         TimeDeposit::create([

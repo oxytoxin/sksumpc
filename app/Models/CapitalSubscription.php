@@ -17,7 +17,7 @@ class CapitalSubscription extends Model
 
     protected $casts = [
         'is_common' => 'boolean',
-        'number_of_shares' => 'integer',
+        'number_of_shares' => 'decimal:2',
         'par_value' => 'decimal:2',
         'amount_subscribed' => 'decimal:2',
         'initial_amount_paid' => 'decimal:2',
@@ -39,6 +39,14 @@ class CapitalSubscription extends Model
     {
         static::creating(function (CapitalSubscription $cbu) {
             $cbu->outstanding_balance = $cbu->amount_subscribed;
+        });
+        static::created(function (CapitalSubscription $cbu) {
+            $cbu->payments()->create([
+                'amount' => 0,
+                'reference_number' => '#ORIGINALAMOUNT',
+                'type' => 'OR',
+                'transaction_date' => $cbu->transaction_date
+            ]);
         });
     }
 

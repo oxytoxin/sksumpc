@@ -4,7 +4,9 @@ namespace App\Oxytoxin;
 
 use App\Models\Member;
 use App\Models\Imprest;
+use Filament\Notifications\Notification;
 use Illuminate\Support\Carbon;
+use Illuminate\Validation\ValidationException;
 
 class ImprestsProvider
 {
@@ -28,6 +30,13 @@ class ImprestsProvider
                 'interest_date' => $data->transaction_date,
             ]);
         });
+        $isWithdrawal = $data->amount < 0;
+        if ($isWithdrawal && ($member->imprests()->sum('amount') + $data->amount < 500)) {
+            Notification::make()->title('Invalid Amount')->body('A P500 balance should remain.')->danger()->send();
+            throw ValidationException::withMessages([
+                'mountedTableActionsData.0.amount' => 'Invalid Amount. A P500 balance should remain.'
+            ]);
+        }
         return Imprest::create([
             'transaction_date' => $data->transaction_date,
             'reference_number' => $data->reference_number,

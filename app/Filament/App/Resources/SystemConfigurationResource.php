@@ -34,9 +34,7 @@ class SystemConfigurationResource extends Resource
                 TableRepeater::make('content')
                     ->schema([
                         TextInput::make('name'),
-                        TextInput::make('percentage')->numeric()
-                            ->formatStateUsing(fn ($state) => $state * 100)
-                            ->dehydrateStateUsing(fn ($state)  => $state / 100),
+                        TextInput::make('value'),
                     ])->hideLabels(),
             ])->columns(1);
     }

@@ -22,10 +22,14 @@ use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Livewire\Component;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Str;
+use Livewire\Attributes\On;
 
 class CbuTable extends Component implements HasForms, HasTable
 {
@@ -33,6 +37,11 @@ class CbuTable extends Component implements HasForms, HasTable
     use InteractsWithTable;
 
     public Member $member;
+
+    #[On('refresh')]
+    public function loanCreated()
+    {
+    }
 
     public function table(Table $table): Table
     {
@@ -55,8 +64,17 @@ class CbuTable extends Component implements HasForms, HasTable
                 IconColumn::make('is_common')->boolean(),
             ])
             ->filters([
-                //
-            ])
+                SelectFilter::make('status')
+                    ->options([
+                        'ongoing' => 'On-going',
+                        'paid' => 'Paid',
+                    ])
+                    ->query(function (Builder $query, $data) {
+                        $query
+                            ->when($data['value'] == 'paid', fn ($query) => $query->where('outstanding_balance', 0))
+                            ->when($data['value'] == 'ongoing', fn ($query) => $query->where('outstanding_balance', '>', 0));
+                    })
+            ], layout: FiltersLayout::AboveContent)
             ->actions([
                 ViewAction::make()
                     ->modalContent(fn ($record) => view('filament.app.views.cbu-payments', ['cbu' => $record])),
@@ -123,19 +141,12 @@ class CbuTable extends Component implements HasForms, HasTable
                             'par_value' => ShareCapitalProvider::PAR_VALUE,
                             'is_common' => true,
                             'code' => Str::random(12),
-                            'transaction_date' => today()
-                        ]);
-                        $cbu->payments()->create([
-                            'amount' => 0,
-                            'reference_number' => '#ORIGINALAMOUNT',
-                            'type' => 'OR',
-                            'transaction_date' => today()
                         ]);
                         $cbu->payments()->create([
                             'amount' => $cbu->initial_amount_paid,
                             'reference_number' => '#INITIALAMOUNTPAID',
                             'type' => 'OR',
-                            'transaction_date' => today()
+                            'transaction_date' => $cbu->transaction_date
                         ]);
                         DB::commit();
                         Notification::make()->title('Capital subscription created!')->success()->send();

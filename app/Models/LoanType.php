@@ -13,6 +13,15 @@ class LoanType extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'interest_rate' => 'decimal:4',
+        'interest' => 'decimal:2',
+        'service_fee' => 'decimal:4',
+        'cbu_common' => 'decimal:4',
+        'imprest' => 'decimal:4',
+        'insurance' => 'decimal:4',
+    ];
+
     public function loans(): HasMany
     {
         return $this->hasMany(Loan::class);

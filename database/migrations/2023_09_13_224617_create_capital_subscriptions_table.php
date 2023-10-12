@@ -17,7 +17,7 @@ return new class extends Migration
             $table->boolean('is_common');
             $table->string('code');
             $table->integer('number_of_terms')->default(12);
-            $table->integer('number_of_shares');
+            $table->decimal('number_of_shares', 14, 2);
             $table->decimal('amount_subscribed', 14, 2)->default(1000);
             $table->decimal('initial_amount_paid', 14, 2);
             $table->decimal('par_value');
