@@ -100,6 +100,8 @@ class CbuTable extends Component implements HasForms, HasTable
                         $record->payments()->create($data);
                         Notification::make()->title('Payment made for capital subscription!')->success()->send();
                     })
+                    ->visible(fn ($record) => $record->outstanding_balance > 0),
+
             ])
             ->headerActions([
                 CreateAction::make()
