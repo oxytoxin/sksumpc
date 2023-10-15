@@ -36,12 +36,6 @@ class CreateMember extends CreateRecord
             'par_value' => ShareCapitalProvider::PAR_VALUE,
         ]);
         $cbu->payments()->create([
-            'amount' => 0,
-            'reference_number' => '#ORIGINALAMOUNT',
-            'type' => 'OR',
-            'transaction_date' => today(),
-        ]);
-        $cbu->payments()->create([
             'amount' => $cbu->initial_amount_paid,
             'reference_number' => '#INITIALAMOUNTPAID',
             'type' => 'OR',

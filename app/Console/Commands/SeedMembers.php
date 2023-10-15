@@ -87,12 +87,6 @@ class SeedMembers extends Command
                             'transaction_date' => today(),
                         ]);
                         $cbu->payments()->create([
-                            'amount' => 0,
-                            'reference_number' => '#ORIGINALAMOUNT',
-                            'type' => 'OR',
-                            'transaction_date' => today(),
-                        ]);
-                        $cbu->payments()->create([
                             'amount' => $membershipStatus['initial_amount_paid'],
                             'reference_number' => '#INITIALAMOUNTPAID',
                             'type' => 'OR',

@@ -5,6 +5,7 @@ namespace App\Filament\App\Resources;
 use App\Filament\App\Resources\MemberResource\Pages;
 use App\Filament\App\Resources\MemberResource\Pages\CbuSubsidiaryLedger;
 use App\Filament\App\Resources\MemberResource\Pages\ImprestSubsidiaryLedger;
+use App\Filament\App\Resources\MemberResource\Pages\LoanAmortizationSchedule;
 use App\Filament\App\Resources\MemberResource\Pages\LoanSubsidiaryLedger;
 use App\Filament\App\Resources\MemberResource\Pages\SavingsSubsidiaryLedger;
 use App\Filament\App\Resources\MemberResource\RelationManagers;
@@ -333,9 +334,10 @@ class MemberResource extends Resource
             'view' => Pages\ViewMember::route('/{record}'),
             'edit' => Pages\EditMember::route('/{record}/edit'),
             'cbu-subsidiary-ledger' => CbuSubsidiaryLedger::route('cbu-subsidiary-ledger/{member}'),
-            'loan-subsidiary-ledger' => LoanSubsidiaryLedger::route('loan-subsidiary-ledger/{member}'),
             'savings-subsidiary-ledger' => SavingsSubsidiaryLedger::route('savings-subsidiary-ledger/{member}'),
             'imprest-subsidiary-ledger' => ImprestSubsidiaryLedger::route('imprest-subsidiary-ledger/{member}'),
+            'loan-subsidiary-ledger' => LoanSubsidiaryLedger::route('loan-subsidiary-ledger/{loan}'),
+            'loan-amortization-schedule' => LoanAmortizationSchedule::route('loan-amortization-schedule/{loan}'),
         ];
     }
 }

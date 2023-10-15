@@ -21,6 +21,7 @@ class Loan extends Model
     use HasFactory;
 
     protected $casts = [
+        'original_amount' => 'boolean',
         'gross_amount' => 'decimal:2',
         'deductions_amount' => 'decimal:2',
         'net_amount' => 'decimal:2',
@@ -43,6 +44,11 @@ class Loan extends Model
         return collect($this->deductions)->map(fn ($d) => $d['name'] . ': ' . format_money($d['amount'], 'PHP'))->toArray();
     }
 
+    public function getMaturityDateAttribute()
+    {
+        return $this->transaction_date->addMonthsNoOverflow($this->number_of_terms);
+    }
+
     public function loan_type(): BelongsTo
     {
         return $this->belongsTo(LoanType::class);
@@ -55,17 +61,8 @@ class Loan extends Model
 
     protected static function booted(): void
     {
-        static::created(function (Loan $loan) {
-            $loan->payments()->create([
-                'type' => 'JV',
-                'reference_number' => '#ORIGINALAMOUNT',
-                'amount' => 0,
-                'transaction_date' => $loan->transaction_date,
-            ]);
-        });
-
         static::creating(function (Loan $loan) {
-            $loan->outstanding_balance = $loan->gross_amount + $loan->interest;
+            $loan->outstanding_balance = $loan->gross_amount;
             $loan->deductions_amount = collect($loan->deductions)->sum('amount');
             DB::beginTransaction();
             $cbu_amount = collect($loan->deductions)->firstWhere('code', 'cbu_common')['amount'];

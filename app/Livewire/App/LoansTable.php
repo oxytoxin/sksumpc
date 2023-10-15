@@ -21,6 +21,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -83,12 +84,12 @@ class LoansTable extends Component implements HasForms, HasTable
                                 'JV' => 'JV',
                                 'CV' => 'CV',
                             ])
-                            ->default('JV')
+                            ->default('OR')
                             ->selectablePlaceholder(false)
                             ->live()
                             ->required(),
                         TextInput::make('reference_number')->required(),
-                        TextInput::make('amount')->required()->numeric()->minValue(1)->prefix('P'),
+                        TextInput::make('amount')->required()->numeric()->minValue(1)->prefix('P')->default(fn ($record) => $record->monthly_payment),
                         TextInput::make('remarks'),
                         DatePicker::make('transaction_date')->default(today())->native(false)->label('Date'),
                     ])
@@ -97,8 +98,23 @@ class LoansTable extends Component implements HasForms, HasTable
                         Notification::make()->title('Payment made for loan!')->success()->send();
                     })
                     ->visible(fn ($record) => $record->outstanding_balance > 0),
-                ViewAction::make()
-                    ->modalContent(fn ($record) => view('filament.app.views.loan-payments', ['loan' => $record])),
+                ActionGroup::make([
+                    Action::make('payments')
+                        ->icon('heroicon-o-currency-dollar')
+                        ->modalContent(fn ($record) => view('filament.app.views.loan-payments', ['loan' => $record])),
+                    Action::make('amortization')
+                        ->label('Amortization Schedule')
+                        ->icon('heroicon-o-calendar-days')
+                        ->url(fn ($record) => route('filament.app.resources.members.loan-amortization-schedule', ['loan' => $record])),
+                    Action::make('sl')
+                        ->label('Subsidiary Ledger')
+                        ->icon('heroicon-o-queue-list')
+                        ->url(fn ($record) => route('filament.app.resources.members.loan-subsidiary-ledger', ['loan' => $record])),
+                ])
+                    ->button()
+                    ->outlined()
+                    ->icon(false)
+                    ->label('View')
             ])
             ->headerActions([
                 CreateAction::make()
@@ -134,9 +150,9 @@ class LoansTable extends Component implements HasForms, HasTable
                                 Placeholder::make('interest_rate')
                                     ->content(fn ($get) => str(LoanType::find($get('loan_type_id'))?->interest_rate * 100 ?? 0)->append('%')->toString()),
                                 Placeholder::make('interest')
-                                    ->content(fn ($get) => format_money(LoansProvider::computeInterest($get('gross_amount'), LoanType::find($get('loan_type_id')), $get('number_of_terms')), 'PHP')),
+                                    ->content(fn ($get) => format_money(LoansProvider::computeInterest($get('gross_amount'), LoanType::find($get('loan_type_id')), $get('number_of_terms'), $get('transaction_date')), 'PHP')),
                                 Placeholder::make('monthly_payment')
-                                    ->content(fn ($get) => format_money(LoansProvider::computeMonthlyPayment($get('gross_amount'), LoanType::find($get('loan_type_id')), $get('number_of_terms')), 'PHP')),
+                                    ->content(fn ($get) => format_money(LoansProvider::computeMonthlyPayment($get('gross_amount'), LoanType::find($get('loan_type_id')), $get('number_of_terms'), $get('transaction_date')), 'PHP')),
                             ]),
                         TableRepeater::make('deductions')
                             ->schema([
@@ -160,18 +176,14 @@ class LoansTable extends Component implements HasForms, HasTable
                         Loan::create([
                             ...$data,
                             'interest_rate' => $loanType->interest_rate,
-                            'interest' => LoansProvider::computeInterest($data['gross_amount'], $loanType, $data['number_of_terms']),
+                            'interest' => LoansProvider::computeInterest($data['gross_amount'], $loanType, $data['number_of_terms'], $data['transaction_date']),
                             'member_id' => $this->member->id,
-                            'monthly_payment' => LoansProvider::computeMonthlyPayment($data['gross_amount'], $loanType, $data['number_of_terms']),
+                            'monthly_payment' => LoansProvider::computeMonthlyPayment($data['gross_amount'], $loanType, $data['number_of_terms'], $data['transaction_date']),
                         ]);
                         $this->dispatch('refresh');
                         Notification::make()->title('New loan created.')->success()->send();
                     })
                     ->createAnother(false),
-                ViewAction::make('subsidiary_ledger')
-                    ->icon('heroicon-o-clipboard-document-list')
-                    ->label('Subsidiary Ledger')
-                    ->url(route('filament.app.resources.members.loan-subsidiary-ledger', ['member' => $this->member]))
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

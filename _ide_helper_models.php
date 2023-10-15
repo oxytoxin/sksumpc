@@ -19,7 +19,7 @@ namespace App\Models{
  * @property bool $is_common
  * @property string $code
  * @property int $number_of_terms
- * @property int $number_of_shares
+ * @property string $number_of_shares
  * @property string $amount_subscribed
  * @property string $initial_amount_paid
  * @property string $outstanding_balance
@@ -92,6 +92,8 @@ namespace App\Models{
  * @property int $member_id
  * @property string $reference_number
  * @property string $amount
+ * @property string|null $deposit
+ * @property string|null $withdrawal
  * @property string $interest_rate
  * @property string $interest
  * @property \Carbon\CarbonImmutable $transaction_date
@@ -109,6 +111,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Imprest whereAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Imprest whereBalance($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Imprest whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Imprest whereDeposit($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Imprest whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Imprest whereInterest($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Imprest whereInterestDate($value)
@@ -118,6 +121,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Imprest whereReferenceNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Imprest whereTransactionDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Imprest whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Imprest whereWithdrawal($value)
  * @mixin \Eloquent
  */
 	class IdeHelperImprest {}
@@ -145,6 +149,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read mixed $deductions_list
+ * @property-read mixed $maturity_date
  * @property-read \App\Models\LoanType $loan_type
  * @property-read \App\Models\Member $member
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\LoanPayment> $payments
@@ -212,9 +217,13 @@ namespace App\Models{
  * App\Models\LoanType
  *
  * @property int $id
- * @property string $interest
  * @property string $code
  * @property string $name
+ * @property string $interest_rate
+ * @property string $service_fee
+ * @property string $cbu_common
+ * @property string $imprest
+ * @property string $insurance
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Loan> $loans
@@ -222,11 +231,15 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|LoanType newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|LoanType newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|LoanType query()
+ * @method static \Illuminate\Database\Eloquent\Builder|LoanType whereCbuCommon($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LoanType whereCode($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LoanType whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LoanType whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LoanType whereInterest($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LoanType whereImprest($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LoanType whereInsurance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LoanType whereInterestRate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LoanType whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LoanType whereServiceFee($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LoanType whereUpdatedAt($value)
  * @mixin \Eloquent
  */
@@ -238,7 +251,7 @@ namespace App\Models{
  * App\Models\Member
  *
  * @property int $id
- * @property string $mpc_code
+ * @property string|null $mpc_code
  * @property int $member_type_id
  * @property int|null $user_id
  * @property string $first_name
@@ -417,6 +430,8 @@ namespace App\Models{
  * @property int $member_id
  * @property string $reference_number
  * @property string $amount
+ * @property string|null $deposit
+ * @property string|null $withdrawal
  * @property string $interest_rate
  * @property string $interest
  * @property \Carbon\CarbonImmutable $transaction_date
@@ -434,6 +449,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Saving whereAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Saving whereBalance($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Saving whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Saving whereDeposit($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Saving whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Saving whereInterest($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Saving whereInterestDate($value)
@@ -443,6 +459,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Saving whereReferenceNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Saving whereTransactionDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Saving whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Saving whereWithdrawal($value)
  * @mixin \Eloquent
  */
 	class IdeHelperSaving {}

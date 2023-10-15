@@ -10,6 +10,14 @@
         </tr>
     </thead>
     <tbody>
+        {{-- <tr class="border-2 border-black">
+            <td class="border-2 border-black"></td>
+            <td class="border-2 border-black"></td>
+            <td class="border-2 border-black"></td>
+            <td class="border-2 border-black">{{ Filament\Support\format_money($payment->amount, 'PHP') }}</td>
+            <td class="border-2 border-black">{{ Filament\Support\format_money($loan->gross_amount, 'PHP') }}</td>
+            <td class="border-2 border-black">{{ $payment->remarks }}</td>
+        </tr> --}}
         @forelse ($loan->payments as $payment)
             <tr class="border-2 border-black">
                 <td class="border-2 border-black">{{ $payment->created_at->format('m/d/Y') }}</td>
