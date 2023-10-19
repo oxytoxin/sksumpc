@@ -91,7 +91,8 @@ class CbuTable extends Component implements HasForms, HasTable
                             ->selectablePlaceholder(false)
                             ->live()
                             ->required(),
-                        TextInput::make('reference_number')->required(),
+                        TextInput::make('reference_number')->required()
+                            ->unique('capital_subscription_payments'),
                         TextInput::make('amount')->required()->numeric()->minValue(1)->prefix('P'),
                         TextInput::make('remarks'),
                         DatePicker::make('transaction_date')->default(today())->native(false)->label('Date'),

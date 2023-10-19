@@ -30,7 +30,8 @@ class SavingsProvider
                 'interest_date' => $data->transaction_date,
             ]);
         });
-        if ($member->savings()->sum('amount') + $data->amount < 500) {
+        $isWithdrawal = $data->amount < 0;
+        if ($isWithdrawal && $member->savings()->sum('amount') + $data->amount < 500) {
             Notification::make()->title('Invalid Amount')->body('A P500 balance should remain.')->danger()->send();
             throw ValidationException::withMessages([
                 'mountedTableActionsData.0.amount' => 'Invalid Amount. A P500 balance should remain.'

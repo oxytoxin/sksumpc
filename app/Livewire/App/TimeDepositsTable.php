@@ -4,6 +4,10 @@ namespace App\Livewire\App;
 
 use App\Models\Member;
 use App\Models\TimeDeposit;
+use App\Oxytoxin\ImprestData;
+use App\Oxytoxin\ImprestsProvider;
+use App\Oxytoxin\SavingsData;
+use App\Oxytoxin\SavingsProvider;
 use App\Oxytoxin\TimeDepositsProvider;
 use DB;
 use Filament\Forms\Components\DatePicker;
@@ -16,6 +20,7 @@ use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -85,7 +90,8 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                             ->default(today()),
                         DatePicker::make('transaction_date')->label('Roll-over date')->required()->default(today())->native(false)->live()->afterStateUpdated(fn (Set $set, $state) => $set('maturity_date', TimeDepositsProvider::getMaturityDate($state))),
                         DatePicker::make('maturity_date')->required()->readOnly()->default(TimeDepositsProvider::getMaturityDate(today()))->native(false),
-                        TextInput::make('reference_number')->required(),
+                        TextInput::make('reference_number')->required()
+                            ->unique('time_deposits'),
                         Placeholder::make('amount')->content(fn () => format_money($record->maturity_amount, 'PHP')),
                         Placeholder::make('number_of_days')->content(TimeDepositsProvider::NUMBER_OF_DAYS),
                         Placeholder::make('maturity_amount')->content(fn () => format_money(TimeDepositsProvider::getMaturityAmount($record->maturity_amount), 'PHP')),
@@ -108,14 +114,50 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                     })
                     ->visible(fn (TimeDeposit $record) => $record->maturity_date->isBefore(today()) && is_null($record->withdrawal_date))
                     ->icon('heroicon-o-banknotes')
+                    ->button(),
+                ActionGroup::make([
+                    Action::make('to_savings')
+                        ->form([
+                            DatePicker::make('withdrawal_date')
+                                ->required()
+                                ->default(today()),
+                        ])
+                        ->action(function ($record, $data) {
+                            $record->update([
+                                'withdrawal_date' => $data['withdrawal_date']
+                            ]);
+                            SavingsProvider::createSavings(Member::find($this->member_id), (new SavingsData($data['withdrawal_date'], '#FROMTIMEDEPOSITS', $record->maturity_amount)));
+                            Notification::make()->title('Time deposite claimed.')->success()->send();
+                        })
+                        ->visible(fn (TimeDeposit $record) => $record->maturity_date->isBefore(today()) && is_null($record->withdrawal_date))
+                        ->icon('heroicon-o-banknotes'),
+                    Action::make('to_imprests')
+                        ->form([
+                            DatePicker::make('withdrawal_date')
+                                ->required()
+                                ->default(today()),
+                        ])
+                        ->action(function ($record, $data) {
+                            $record->update([
+                                'withdrawal_date' => $data['withdrawal_date']
+                            ]);
+                            ImprestsProvider::createImprest(Member::find($this->member_id), (new ImprestData($data['withdrawal_date'], '#FROMTIMEDEPOSITS', $record->maturity_amount)));
+                            Notification::make()->title('Time deposite claimed.')->success()->send();
+                        })
+                        ->visible(fn (TimeDeposit $record) => $record->maturity_date->isBefore(today()) && is_null($record->withdrawal_date))
+                        ->icon('heroicon-o-banknotes'),
+                ])
                     ->button()
+                    ->icon(false)
+                    ->label('Transfer'),
             ])
             ->headerActions([
                 CreateAction::make()
                     ->form([
                         DatePicker::make('transaction_date')->required()->default(today())->native(false)->live()->afterStateUpdated(fn (Set $set, $state) => $set('maturity_date', TimeDepositsProvider::getMaturityDate($state))),
                         DatePicker::make('maturity_date')->required()->readOnly()->default(TimeDepositsProvider::getMaturityDate(today()))->native(false),
-                        TextInput::make('reference_number')->required(),
+                        TextInput::make('reference_number')->required()
+                            ->unique('time_deposits'),
                         TextInput::make('amount')->prefix('PHP')
                             ->live(onBlur: true)
                             ->required()

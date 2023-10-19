@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('member_id')->constrained();
             $table->foreignId('loan_type_id')->constrained();
-            $table->string('reference_number')->nullable();
+            $table->string('reference_number');
             $table->decimal('gross_amount', 14, 2);
             $table->decimal('deductions_amount', 14, 2);
             $table->decimal('net_amount', 14, 2)->virtualAs('gross_amount - deductions_amount');

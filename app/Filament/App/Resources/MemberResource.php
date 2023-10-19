@@ -81,22 +81,20 @@ class MemberResource extends Resource
                                         'M' => 'Male',
                                         'F' => 'Female',
                                     })->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
-                                    TextEntry::make('civil_status')->formatStateUsing(fn ($state) => match ($state) {
-                                        'S' => 'Single',
-                                        'M' => 'Married',
-                                        'W' => 'Widowed',
-                                    })->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
+                                    TextEntry::make('civil_status.name')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                                     TextEntry::make('contact_number')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                                     TextEntry::make('religion.name')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                                     TextEntry::make('highest_educational_attainment')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                                     TextEntry::make('tin')->extraAttributes(['class' => 'font-semibold'])->inlineLabel()->label('TIN'),
+                                    TextEntry::make('member_type.name')->extraAttributes(['class' => 'font-semibold'])->inlineLabel()->label('Member Type'),
+                                    TextEntry::make('division.name')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                                 ]),
                                 InfolistSection::make()
                                     ->schema([
                                         TextEntry::make('occupation.name')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                                         TextEntry::make('present_employer')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                                         TextEntry::make('annual_income')->money('PHP')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
-                                        TextEntry::make('other_income_sources')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
+                                        TextEntry::make('other_income_sources')->money('PHP')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                                     ]),
                                 InfolistSection::make()
                                     ->schema([
@@ -151,8 +149,25 @@ class MemberResource extends Resource
                             ->schema([
                                 Forms\Components\Select::make('member_type_id')
                                     ->relationship('member_type', 'name')
-                                    ->default(1)
+                                    ->live()
+                                    ->afterStateUpdated(function ($state, $set) {
+                                        if ($state == 1) {
+                                            $set('present_employer', 'SKSU-Sultan Kudarat State University');
+                                            $set('number_of_shares', ShareCapitalProvider::REGULAR_INITIAL_SHARES);
+                                            $set('amount_subscribed', number_format(ShareCapitalProvider::REGULAR_INITIAL_AMOUNT, 2));
+                                            $set('initial_amount_paid', number_format(ShareCapitalProvider::REGULAR_INITIAL_PAID, 2));
+                                            $set('monthly_payment', number_format(ShareCapitalProvider::fromNumberOfShares(ShareCapitalProvider::REGULAR_INITIAL_SHARES, ShareCapitalProvider::INITIAL_NUMBER_OF_TERMS)['monthly_payment'], 2));
+                                        }
+                                        if ($state == 2) {
+                                            $set('number_of_shares', ShareCapitalProvider::ASSOCIATE_INITIAL_SHARES);
+                                            $set('amount_subscribed', number_format(ShareCapitalProvider::ASSOCIATE_INITIAL_AMOUNT, 2));
+                                            $set('initial_amount_paid', number_format(ShareCapitalProvider::ASSOCIATE_INITIAL_PAID, 2));
+                                            $set('monthly_payment', number_format(ShareCapitalProvider::fromNumberOfShares(ShareCapitalProvider::ASSOCIATE_INITIAL_SHARES, ShareCapitalProvider::INITIAL_NUMBER_OF_TERMS)['monthly_payment'], 2));
+                                        }
+                                    })
                                     ->required(),
+                                Forms\Components\Select::make('division_id')
+                                    ->relationship('division', 'name'),
                                 Forms\Components\TextInput::make('tin')
                                     ->label('TIN')
                                     ->maxLength(30),
@@ -174,6 +189,9 @@ class MemberResource extends Resource
                             ->dehydrateStateUsing(fn ($state) => $state ? strtoupper($state) : null)
                             ->maxLength(1),
                         Forms\Components\DatePicker::make('dob')
+                            ->before(today()->subYearsNoOverflow(10))
+                            ->validationAttribute('Date of Birth')
+                            ->required()
                             ->label('Date of Birth'),
                         Forms\Components\TextInput::make('place_of_birth')
                             ->label('Place of Birth')
@@ -189,13 +207,9 @@ class MemberResource extends Resource
                                 'M' => 'Male',
                                 'F' => 'Female',
                             ]),
-                        Forms\Components\Select::make('civil_status')
-                            ->options([
-                                'S' => 'Single',
-                                'M' => 'Married',
-                                'W' => 'Widowed',
-                            ])
-                            ->default('S'),
+                        Forms\Components\Select::make('civil_status_id')
+                            ->relationship('civil_status', 'name')
+                            ->default(1),
                         Forms\Components\Select::make('religion_id')
                             ->relationship('religion', 'name')
                             ->options(Religion::pluck('name', 'id')),
@@ -220,8 +234,7 @@ class MemberResource extends Resource
                 Forms\Components\Select::make('occupation_id')
                     ->relationship('occupation', 'name')
                     ->options(Occupation::pluck('name', 'id')),
-                Forms\Components\TagsInput::make('other_income_sources')
-                    ->placeholder('Add Income Source'),
+
                 Forms\Components\TextInput::make('highest_educational_attainment')
                     ->maxLength(125),
                 Forms\Components\TextInput::make('present_employer'),
@@ -230,6 +243,10 @@ class MemberResource extends Resource
                     ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state ?? 0))
                     ->prefix('P')
                     ->minValue(0),
+                Forms\Components\TextInput::make('other_income_sources')
+                    ->mask(fn ($state) => RawJs::make('$money'))
+                    ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state ?? 0))
+                    ->prefix('P'),
 
                 Section::make('Membership Acceptance')
                     ->schema([
@@ -242,25 +259,24 @@ class MemberResource extends Resource
                     ->schema([
                         TextInput::make('number_of_terms')
                             ->numeric()->required()->readOnly()
-                            ->default(ShareCapitalProvider::INITIAL_NUMBER_OF_TERMS)
-                            ->minValue(ShareCapitalProvider::INITIAL_NUMBER_OF_TERMS)
-                            ->maxValue(ShareCapitalProvider::INITIAL_NUMBER_OF_TERMS),
+                            ->default(ShareCapitalProvider::INITIAL_NUMBER_OF_TERMS),
                         TextInput::make('number_of_shares')
                             ->numeric()->required()->readOnly()
-                            ->default(ShareCapitalProvider::INITIAL_SHARES)
-                            ->minValue(ShareCapitalProvider::INITIAL_SHARES)
-                            ->maxValue(ShareCapitalProvider::INITIAL_SHARES),
+                            ->default(0),
                         TextInput::make('initial_amount_paid')->mask(fn ($state) => RawJs::make('$money'))
                             ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state))
                             ->prefix('P')
                             ->required()
-                            ->default(ShareCapitalProvider::INITIAL_PAID),
+                            ->default(0),
+                        TextInput::make('monthly_payment')
+                            ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state))
+                            ->prefix('P')->default(0)->readOnly()->dehydrated(false),
                         TextInput::make('amount_subscribed')->mask(fn ($state) => RawJs::make('$money'))
                             ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state))
                             ->prefix('P')
                             ->required()
                             ->readOnly()
-                            ->default(fn () => ShareCapitalProvider::fromNumberOfShares(ShareCapitalProvider::INITIAL_SHARES, ShareCapitalProvider::INITIAL_NUMBER_OF_TERMS)['amount_subscribed']),
+                            ->default(0),
                         Hidden::make('code')->default(ShareCapitalProvider::INITIAL_CAPITAL_CODE),
                     ])
             ]);
@@ -291,7 +307,7 @@ class MemberResource extends Resource
                     ->numeric()
                     ->alignCenter()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('civil_status')
+                Tables\Columns\TextColumn::make('civil_status.name')
                     ->alignCenter(),
                 Tables\Columns\TextColumn::make('gender')
                     ->alignCenter(),

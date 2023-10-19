@@ -95,7 +95,7 @@ class LoansProvider
             [
                 'name' => 'Insurance-LOAN',
                 'amount' => round($loanType->insurance * $gross_amount, 2),
-                'readonly' => true,
+                'readonly' => false,
                 'code' => 'insurance',
             ],
         ];

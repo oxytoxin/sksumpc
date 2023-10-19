@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('type')->default('OR');
             $table->decimal('amount', 14, 2);
             $table->decimal('running_balance', 14, 2);
-            $table->string('reference_number')->nullable();
+            $table->string('reference_number');
             $table->string('remarks')->nullable();
             $table->date('transaction_date');
             $table->timestamps();

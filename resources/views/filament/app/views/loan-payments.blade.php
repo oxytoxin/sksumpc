@@ -5,7 +5,7 @@
             <th class="border-2 border-black text-left">REF#</th>
             <th class="border-2 border-black text-left">DEBIT</th>
             <th class="border-2 border-black text-left">CREDIT</th>
-            <th class="border-2 border-black text-left">RUNNING BALANCE</th>
+            <th class="border-2 border-black text-left">OUTSTANDING BALANCE</th>
             <th class="border-2 border-black text-left">REMARKS</th>
         </tr>
     </thead>

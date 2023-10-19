@@ -19,6 +19,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
+use Filament\Support\RawJs;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
@@ -33,6 +34,7 @@ use Filament\Tables\Table;
 use Livewire\Component;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
+use PDO;
 use Str;
 use function Filament\Support\format_money;
 
@@ -88,7 +90,8 @@ class LoansTable extends Component implements HasForms, HasTable
                             ->selectablePlaceholder(false)
                             ->live()
                             ->required(),
-                        TextInput::make('reference_number')->required(),
+                        TextInput::make('reference_number')->required()
+                            ->unique('loan_payments'),
                         TextInput::make('amount')->required()->numeric()->minValue(1)->prefix('P')->default(fn ($record) => $record->monthly_payment),
                         TextInput::make('remarks'),
                         DatePicker::make('transaction_date')->default(today())->native(false)->label('Date'),
@@ -129,19 +132,28 @@ class LoansTable extends Component implements HasForms, HasTable
                             ->live()
                             ->afterStateUpdated(function ($state, $set, $get) {
                                 if ($loanType = LoanType::find($state)) {
-                                    $deductions = LoansProvider::computeDeductions($loanType, $get('gross_amount') ?? 0, $this->member);
+                                    $deductions = LoansProvider::computeDeductions($loanType, str_replace(',', '', $get('gross_amount') ?? 0), $this->member);
                                     $set('deductions', $deductions);
                                 }
                             })
                             ->required(),
-                        TextInput::make('reference_number')->required(),
+                        TextInput::make('reference_number')->required()
+                            ->unique('loans'),
                         DatePicker::make('transaction_date')->required()->native(false),
-                        TextInput::make('gross_amount')->required()->numeric()->prefix('PHP')->live(true)->afterStateUpdated(function ($state, $set, $get) {
-                            if ($loanType = LoanType::find($get('loan_type_id'))) {
-                                $deductions = LoansProvider::computeDeductions($loanType, $state ?? 0, $this->member);
-                                $set('deductions', $deductions);
-                            }
-                        }),
+                        TextInput::make('gross_amount')->required()
+                            ->live(true)->afterStateUpdated(function ($state, $set, $get) {
+                                if ($loanType = LoanType::find($get('loan_type_id'))) {
+                                    $deductions = LoansProvider::computeDeductions($loanType, str_replace(',', '', $state ?? 0), $this->member);
+                                    $deductions = collect($deductions)->map(function ($d) {
+                                        $d['amount'] = number_format($d['amount'], 2);
+                                        return $d;
+                                    })->toArray();
+                                    $set('deductions', $deductions);
+                                }
+                            })
+                            ->mask(fn ($state) => RawJs::make('$money'))
+                            ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state ?? 0))
+                            ->prefix('P'),
                         Select::make('number_of_terms')
                             ->options(LoansProvider::LOAN_TERMS)
                             ->live(),
@@ -150,24 +162,35 @@ class LoansTable extends Component implements HasForms, HasTable
                                 Placeholder::make('interest_rate')
                                     ->content(fn ($get) => str(LoanType::find($get('loan_type_id'))?->interest_rate * 100 ?? 0)->append('%')->toString()),
                                 Placeholder::make('interest')
-                                    ->content(fn ($get) => format_money(LoansProvider::computeInterest($get('gross_amount'), LoanType::find($get('loan_type_id')), $get('number_of_terms'), $get('transaction_date')), 'PHP')),
+                                    ->content(fn ($get) => format_money(LoansProvider::computeInterest(str_replace(',', '', $get('gross_amount') ?? 0), LoanType::find($get('loan_type_id')), $get('number_of_terms'), $get('transaction_date')), 'PHP')),
                                 Placeholder::make('monthly_payment')
-                                    ->content(fn ($get) => format_money(LoansProvider::computeMonthlyPayment($get('gross_amount'), LoanType::find($get('loan_type_id')), $get('number_of_terms'), $get('transaction_date')), 'PHP')),
+                                    ->content(fn ($get) => format_money(LoansProvider::computeMonthlyPayment(str_replace(',', '', $get('gross_amount') ?? 0), LoanType::find($get('loan_type_id')), $get('number_of_terms'), $get('transaction_date')), 'PHP')),
                             ]),
                         TableRepeater::make('deductions')
                             ->schema([
                                 TextInput::make('name')->readOnly(fn ($get) => boolval($get('readonly'))),
-                                TextInput::make('amount')->numeric()->prefix('PHP')->readOnly(fn ($get) => boolval($get('readonly'))),
+                                TextInput::make('amount')
+                                    ->mask(fn ($state) => RawJs::make('$money'))
+                                    ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state ?? 0))
+                                    ->prefix('P')
+                                    ->readOnly(fn ($get) => boolval($get('readonly'))),
                                 Hidden::make('readonly')->default(false),
                             ])
+                            ->live(true)
                             ->orderColumn(false)
                             ->hideLabels(),
                         Grid::make(2)
                             ->schema([
                                 Placeholder::make('deductions_amount')
-                                    ->content(fn ($get) => format_money(collect($get('deductions'))->sum('amount'), 'PHP')),
+                                    ->content(fn ($get) => format_money(collect($get('deductions'))->map(function ($d) {
+                                        $d['amount'] = str_replace(',', '', $d['amount']);
+                                        return $d;
+                                    })->sum('amount'), 'PHP')),
                                 Placeholder::make('net_amount')
-                                    ->content(fn ($get) => format_money(($get('gross_amount') ?? 0) - collect($get('deductions'))->sum('amount'), 'PHP')),
+                                    ->content(fn ($get) => format_money(floatval(str_replace(',', '', $get('gross_amount') ?? 0)) - collect($get('deductions'))->map(function ($d) {
+                                        $d['amount'] = str_replace(',', '', $d['amount']);
+                                        return $d;
+                                    })->sum('amount'), 'PHP')),
                             ]),
                         DatePicker::make('release_date')->required()->native(false),
                     ])

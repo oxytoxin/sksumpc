@@ -17,7 +17,8 @@ return new class extends Migration
         Schema::create('members', function (Blueprint $table) {
             $table->id();
             $table->string('mpc_code')->index()->unique()->nullable();
-            $table->foreignId('member_type_id')->constrained();
+            $table->foreignId('member_type_id')->constrained()->nullable();
+            $table->foreignId('division_id')->nullable()->constrained();
             $table->foreignId('user_id')->nullable()->constrained();
             $table->string('first_name');
             $table->string('last_name');
@@ -26,7 +27,7 @@ return new class extends Migration
             $table->string('alt_full_name')->virtualAs("CONCAT(last_name, ', ', first_name, ' ', IFNULL(CONCAT(middle_initial, '.'), ''))");
             $table->string('tin')->nullable();
             $table->string('gender')->nullable();
-            $table->string('civil_status')->nullable();
+            $table->foreignId('civil_status_id')->nullable()->constrained();
             $table->date('dob')->nullable();
             $table->string('place_of_birth')->nullable();
             $table->integer('age')->virtualAs('TIMESTAMPDIFF(YEAR,dob,CURDATE())')->nullable();

@@ -4,8 +4,11 @@ namespace App\Livewire\App;
 
 use App\Models\Imprest;
 use App\Models\Member;
+use App\Models\Saving;
 use App\Oxytoxin\ImprestData;
 use App\Oxytoxin\ImprestsProvider;
+use App\Oxytoxin\SavingsData;
+use App\Oxytoxin\SavingsProvider;
 use Carbon\Carbon;
 use DB;
 use Filament\Forms\Components\DatePicker;
@@ -13,6 +16,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Support\Colors\Color;
+use Filament\Support\RawJs;
 use Filament\Tables;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
@@ -61,7 +65,8 @@ class ImprestsTable extends Component implements HasForms, HasTable
                     ->modalHeading('Deposit Imprest')
                     ->form([
                         DatePicker::make('transaction_date')->required()->default(today()),
-                        TextInput::make('reference_number')->required(),
+                        TextInput::make('reference_number')->required()
+                            ->unique('imprests'),
                         TextInput::make('amount')->prefix('PHP')
                             ->required()
                             ->numeric()
@@ -80,7 +85,8 @@ class ImprestsTable extends Component implements HasForms, HasTable
                     ->color(Color::Red)
                     ->form([
                         DatePicker::make('transaction_date')->required()->default(today()),
-                        TextInput::make('reference_number')->required(),
+                        TextInput::make('reference_number')->required()
+                            ->unique('imprests'),
                         TextInput::make('amount')->prefix('PHP')
                             ->required()
                             ->numeric()
@@ -90,6 +96,30 @@ class ImprestsTable extends Component implements HasForms, HasTable
                         $data['amount'] = $data['amount'] * -1;
                         DB::beginTransaction();
                         $member =  Member::find($this->member_id);
+                        ImprestsProvider::createImprest($member, (new ImprestData(...$data)));
+                        DB::commit();
+                    })
+                    ->createAnother(false),
+                CreateAction::make('to_savings')
+                    ->label('Transfer to Savings')
+                    ->modalHeading('Transfer to Savings')
+                    ->color(Color::Amber)
+                    ->form([
+                        DatePicker::make('transaction_date')->required()->default(today()),
+                        TextInput::make('amount')->prefix('PHP')
+                            ->required()
+                            ->mask(fn ($state) => RawJs::make('$money'))
+                            ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state ?? 0))
+                            ->prefix('P')
+                            ->minValue(1),
+                    ])
+                    ->action(function ($data) {
+                        DB::beginTransaction();
+                        $member =  Member::find($this->member_id);
+                        $data['reference_number'] = '#TRANSFERFROMIMPRESTS';
+                        SavingsProvider::createSavings($member, (new SavingsData(...$data)));
+                        $data['amount'] = $data['amount'] * -1;
+                        $data['reference_number'] = '#TRANSFERTOSAVINGS';
                         ImprestsProvider::createImprest($member, (new ImprestData(...$data)));
                         DB::commit();
                     })

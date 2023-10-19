@@ -38,11 +38,18 @@ class SeedMembers extends Command
                 try {
                     $memberData = collect($memberData)->map(fn ($d) => filled($d) ? trim($d instanceof DateTimeImmutable ? strtoupper($d->format('m/d/Y')) : strtoupper($d)) : null)->toArray();
                     $membershipStatus = $memberData;
+                    $memberData['civil_status_id'] = match ($memberData['civil_status']) {
+                        'S' => 1,
+                        'M' => 2,
+                        'W' => 3,
+                        default => null
+                    };
                     unset(
                         $memberData['member_type'],
                         $memberData['membership_number'],
                         $memberData['occupation'],
                         $memberData['religion'],
+                        $memberData['civil_status'],
                         $memberData['acceptance_bod_resolution'],
                         $memberData['accepted_at'],
                         $memberData['termination_bod_resolution'],
@@ -55,6 +62,10 @@ class SeedMembers extends Command
 
                     $memberData['dependents'] = [];
                     $memberData['other_income_sources'] = [];
+
+                    if ($memberData['member_type_id'] == 1) {
+                        $memberData['present_employer'] = 'SKSU-Sultan Kudarat State University';
+                    }
                     $member = Member::create($memberData);
                     if ($membershipStatus['accepted_at']) {
                         $member->membership_acceptance()->create([

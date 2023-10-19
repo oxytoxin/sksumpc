@@ -37,17 +37,16 @@ class SavingsSubsidiaryLedger extends Page implements HasTable
     {
         return $table
             ->query(Saving::query()->where('member_id', $this->member->id))
+            ->recordClasses(fn ($record) => $record->amount > 0 ? 'bg-green-200' : 'bg-red-200')
             ->columns([
                 TextColumn::make('transaction_date')
                     ->date('m/d/Y')
                     ->label('DATE'),
                 TextColumn::make('reference_number')
                     ->label('REF.#'),
-                TextColumn::make('dr')
-                    ->label('DR'),
-                TextColumn::make('amount')
-                    ->label('CR')
-                    ->money('PHP')
+                TextColumn::make('withdrawal')->label('DR')->money('PHP')
+                    ->summarize(Sum::make()->label('')->money('PHP')),
+                TextColumn::make('deposit')->label('CR')->money('PHP')
                     ->summarize(Sum::make()->label('')->money('PHP')),
                 TextColumn::make('remarks'),
             ])
