@@ -157,12 +157,15 @@ class MemberResource extends Resource
                                             $set('amount_subscribed', number_format(ShareCapitalProvider::REGULAR_INITIAL_AMOUNT, 2));
                                             $set('initial_amount_paid', number_format(ShareCapitalProvider::REGULAR_INITIAL_PAID, 2));
                                             $set('monthly_payment', number_format(ShareCapitalProvider::fromNumberOfShares(ShareCapitalProvider::REGULAR_INITIAL_SHARES, ShareCapitalProvider::INITIAL_NUMBER_OF_TERMS)['monthly_payment'], 2));
+                                            return;
                                         }
+                                        $set('present_employer', '');
                                         if ($state == 2) {
                                             $set('number_of_shares', ShareCapitalProvider::ASSOCIATE_INITIAL_SHARES);
                                             $set('amount_subscribed', number_format(ShareCapitalProvider::ASSOCIATE_INITIAL_AMOUNT, 2));
                                             $set('initial_amount_paid', number_format(ShareCapitalProvider::ASSOCIATE_INITIAL_PAID, 2));
                                             $set('monthly_payment', number_format(ShareCapitalProvider::fromNumberOfShares(ShareCapitalProvider::ASSOCIATE_INITIAL_SHARES, ShareCapitalProvider::INITIAL_NUMBER_OF_TERMS)['monthly_payment'], 2));
+                                            return;
                                         }
                                     })
                                     ->required(),
