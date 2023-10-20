@@ -14,6 +14,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
+use Filament\Support\RawJs;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\ViewAction;
@@ -109,29 +110,33 @@ class CbuTable extends Component implements HasForms, HasTable
                     ->visible(fn () => !$this->member->capital_subscriptions()->where('outstanding_balance', '>', 0)->exists())
                     ->createAnother(false)
                     ->form([
+                        DatePicker::make('transaction_date')->required()->default(today()),
                         Placeholder::make('number_of_terms')->content(ShareCapitalProvider::ADDITIONAL_NUMBER_OF_TERMS),
                         TextInput::make('number_of_shares')->numeric()->minValue(1)->default(144)
                             ->live(true)
                             ->afterStateUpdated(function ($set, $state, $get) {
-                                $data = ShareCapitalProvider::fromNumberOfShares($state, ShareCapitalProvider::ADDITIONAL_NUMBER_OF_TERMS);
+                                $data = ShareCapitalProvider::fromNumberOfShares(str_replace(',', '', $state ?? 0), ShareCapitalProvider::ADDITIONAL_NUMBER_OF_TERMS);
                                 $set('amount_subscribed', $data['amount_subscribed']);
                                 $set('monthly_payment', $data['monthly_payment']);
                             }),
-                        TextInput::make('amount_subscribed')->prefix('P')->numeric()->minValue(1)->default(72000)
+                        TextInput::make('amount_subscribed')->mask(fn ($state) => RawJs::make('$money'))
+                            ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state ?? 0))->minValue(1)->default(72000)
                             ->live(true)
                             ->afterStateUpdated(function ($set, $state, $get) {
-                                $data = ShareCapitalProvider::fromAmountSubscribed($state, ShareCapitalProvider::ADDITIONAL_NUMBER_OF_TERMS);
+                                $data = ShareCapitalProvider::fromAmountSubscribed(str_replace(',', '', $state ?? 0), ShareCapitalProvider::ADDITIONAL_NUMBER_OF_TERMS);
                                 $set('monthly_payment', $data['monthly_payment']);
                                 $set('number_of_shares', $data['number_of_shares']);
                             }),
-                        TextInput::make('monthly_payment')->prefix('P')->numeric()->minValue(1)->default(2000)
+                        TextInput::make('monthly_payment')->mask(fn ($state) => RawJs::make('$money'))
+                            ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state ?? 0))->minValue(1)->default(2000)
                             ->live(true)
                             ->afterStateUpdated(function ($set, $state, $get) {
-                                $data = ShareCapitalProvider::fromMonthlyPayment($state, ShareCapitalProvider::ADDITIONAL_NUMBER_OF_TERMS);
+                                $data = ShareCapitalProvider::fromMonthlyPayment(str_replace(',', '', $state ?? 0), ShareCapitalProvider::ADDITIONAL_NUMBER_OF_TERMS);
                                 $set('amount_subscribed', $data['amount_subscribed']);
                                 $set('number_of_shares', $data['number_of_shares']);
                             }),
-                        TextInput::make('initial_amount_paid')->prefix('P')->numeric()->minValue(1)->default(2000),
+                        TextInput::make('initial_amount_paid')->mask(fn ($state) => RawJs::make('$money'))
+                            ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state ?? 0))->minValue(1)->default(2000),
                     ])
                     ->action(function ($data) {
                         unset($data['monthly_payment']);

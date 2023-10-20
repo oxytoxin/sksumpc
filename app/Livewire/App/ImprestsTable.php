@@ -129,9 +129,7 @@ class ImprestsTable extends Component implements HasForms, HasTable
                     ->label('Subsidiary Ledger')
                     ->url(route('filament.app.resources.members.imprest-subsidiary-ledger', ['member' => $this->member_id]))
             ])
-            ->actions([
-                DeleteAction::make()
-            ])
+            ->actions([])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([]),
             ]);

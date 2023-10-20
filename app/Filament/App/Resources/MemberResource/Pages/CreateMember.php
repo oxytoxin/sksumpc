@@ -21,7 +21,7 @@ class CreateMember extends CreateRecord
             'amount_subscribed' => $amount_subscribed,
             'code' => $code,
         ] = $data;
-        unset($data['number_of_terms'], $data['number_of_shares'], $data['initial_amount_paid'], $data['amount_subscribed'], $data['code']);
+        unset($data['number_of_terms'], $data['number_of_shares'], $data['initial_amount_paid'], $data['amount_subscribed'], $data['code'], $data['monthly_payment']);
         DB::beginTransaction();
         $member = static::getModel()::create($data);
         $cbu = $member->capital_subscriptions()->createQuietly([
@@ -30,7 +30,7 @@ class CreateMember extends CreateRecord
             'initial_amount_paid' => $initial_amount_paid,
             'amount_subscribed' => $amount_subscribed,
             'code' => $code,
-            'outstanding_balance' => 25000,
+            'outstanding_balance' => $amount_subscribed,
             'is_common' => true,
             'transaction_date' => today(),
             'par_value' => ShareCapitalProvider::PAR_VALUE,

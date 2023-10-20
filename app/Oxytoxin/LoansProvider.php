@@ -101,9 +101,12 @@ class LoansProvider
         ];
         $existing = $member?->loans()->where('loan_type_id', $loanType->id)->where('outstanding_balance', '>', 0)->first();
         if ($existing) {
+            $days = $existing->transaction_date->diffInDays(today());
+            $interest = $existing->interest_rate * $existing->outstanding_balance * ($days / LoansProvider::DAYS_IN_MONTH);
+
             $deductions[] = [
                 'name' => 'Loan Buy-out',
-                'amount' => $existing->outstanding_balance,
+                'amount' => $interest + $existing->outstanding_balance,
                 'readonly' => true,
                 'code' => 'buy_out',
                 'loan_id' => $existing->id,

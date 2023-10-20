@@ -72,7 +72,7 @@ class LoansTable extends Component implements HasForms, HasTable
                     ->default('ongoing')
                     ->query(function (Builder $query, $data) {
                         $query
-                            ->when($data['value'] == 'paid', fn ($query) => $query->where('outstanding_balance', 0))
+                            ->when($data['value'] == 'paid', fn ($query) => $query->where('outstanding_balance', '<=', 0))
                             ->when($data['value'] == 'ongoing', fn ($query) => $query->where('outstanding_balance', '>', 0));
                     })
             ], layout: FiltersLayout::AboveContent)
@@ -121,11 +121,19 @@ class LoansTable extends Component implements HasForms, HasTable
             ])
             ->headerActions([
                 CreateAction::make()
-                    ->fillForm([
-                        'number_of_terms' => LoansProvider::LOAN_TERMS[12],
-                        'transaction_date' => today(),
-                        'release_date' => today(),
-                    ])
+                    ->fillForm(function () {
+
+                        $gross_amount = match ($this->member->member_type_id) {
+                            1 => ($this->member->capital_subscriptions()->sum('amount_subscribed') ?? 0) * 3,
+                            default => ($this->member->capital_subscriptions()->sum('amount_subscribed') ?? 0) * 0.8
+                        };
+                        return [
+                            'number_of_terms' => LoansProvider::LOAN_TERMS[12],
+                            'transaction_date' => today(),
+                            'release_date' => today(),
+                            'gross_amount' => $gross_amount,
+                        ];
+                    })
                     ->form([
                         Select::make('loan_type_id')
                             ->relationship('loan_type', 'name')

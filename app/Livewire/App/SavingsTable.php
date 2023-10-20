@@ -55,9 +55,7 @@ class SavingsTable extends Component implements HasForms, HasTable
             ->filters([
                 //
             ])
-            ->actions([
-                DeleteAction::make()
-            ])
+            ->actions([])
             ->headerActions([
                 CreateAction::make('Deposit')
                     ->label('Deposit')

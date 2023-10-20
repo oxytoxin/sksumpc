@@ -257,26 +257,38 @@ class MemberResource extends Resource
                 Section::make('Initial Capital Subscription')
                     ->hiddenOn('edit')
                     ->schema([
-                        TextInput::make('number_of_terms')
-                            ->numeric()->required()->readOnly()
-                            ->default(ShareCapitalProvider::INITIAL_NUMBER_OF_TERMS),
-                        TextInput::make('number_of_shares')
-                            ->numeric()->required()->readOnly()
-                            ->default(0),
-                        TextInput::make('initial_amount_paid')->mask(fn ($state) => RawJs::make('$money'))
-                            ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state))
-                            ->prefix('P')
-                            ->required()
-                            ->default(0),
-                        TextInput::make('monthly_payment')
-                            ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state))
-                            ->prefix('P')->default(0)->readOnly()->dehydrated(false),
-                        TextInput::make('amount_subscribed')->mask(fn ($state) => RawJs::make('$money'))
-                            ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state))
-                            ->prefix('P')
-                            ->required()
-                            ->readOnly()
-                            ->default(0),
+                        TextInput::make('number_of_terms')->readOnly()->minValue(0)->default(ShareCapitalProvider::INITIAL_NUMBER_OF_TERMS),
+                        TextInput::make('number_of_shares')->minValue(0)->default(0)
+                            ->live(true)
+                            ->afterStateUpdated(function ($set, $state, $get) {
+                                $data = ShareCapitalProvider::fromNumberOfShares($state, ShareCapitalProvider::INITIAL_NUMBER_OF_TERMS);
+                                $set('amount_subscribed', $data['amount_subscribed']);
+                                $set('monthly_payment', $data['monthly_payment']);
+                            }),
+                        TextInput::make('amount_subscribed')->prefix('P')
+                            ->mask(fn ($state) => RawJs::make('$money'))
+                            ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state ?? 0))
+                            ->minValue(0)->default(0)
+                            ->live(true)
+                            ->afterStateUpdated(function ($set, $state, $get) {
+                                $data = ShareCapitalProvider::fromAmountSubscribed($state, ShareCapitalProvider::INITIAL_NUMBER_OF_TERMS);
+                                $set('monthly_payment', $data['monthly_payment']);
+                                $set('number_of_shares', $data['number_of_shares']);
+                            }),
+                        TextInput::make('monthly_payment')->prefix('P')
+                            ->mask(fn ($state) => RawJs::make('$money'))
+                            ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state ?? 0))
+                            ->minValue(0)->default(0)
+                            ->live(true)
+                            ->afterStateUpdated(function ($set, $state, $get) {
+                                $data = ShareCapitalProvider::fromMonthlyPayment($state, ShareCapitalProvider::INITIAL_NUMBER_OF_TERMS);
+                                $set('amount_subscribed', $data['amount_subscribed']);
+                                $set('number_of_shares', $data['number_of_shares']);
+                            }),
+                        TextInput::make('initial_amount_paid')->prefix('P')
+                            ->mask(fn ($state) => RawJs::make('$money'))
+                            ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state ?? 0))
+                            ->minValue(0)->default(0),
                         Hidden::make('code')->default(ShareCapitalProvider::INITIAL_CAPITAL_CODE),
                     ])
             ]);
@@ -325,6 +337,14 @@ class MemberResource extends Resource
             ->persistFiltersInSession()
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->action(function (Member $record) {
+                        try {
+                            $record->delete();
+                        } catch (\Throwable $th) {
+                            Notification::make()->title('Member has existing records.')->danger()->send();
+                        }
+                    })
             ])
             ->bulkActions([])
             ->emptyStateActions([
