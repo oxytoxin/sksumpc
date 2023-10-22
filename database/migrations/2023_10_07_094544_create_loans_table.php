@@ -26,6 +26,7 @@ return new class extends Migration
             $table->decimal('monthly_payment', 14, 2);
             $table->date('release_date');
             $table->date('transaction_date');
+            $table->boolean('posted')->default(false);
             $table->timestamps();
         });
     }

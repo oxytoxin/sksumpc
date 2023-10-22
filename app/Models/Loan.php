@@ -6,10 +6,12 @@ use App\Oxytoxin\ImprestData;
 use App\Oxytoxin\ImprestsProvider;
 use App\Oxytoxin\ShareCapitalProvider;
 use DB;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Str;
 use function Filament\Support\format_money;
 
@@ -32,6 +34,7 @@ class Loan extends Model
         'monthly_payment' => 'decimal:2',
         'release_date' => 'immutable_date',
         'transaction_date' => 'immutable_date',
+        'posted' => 'boolean',
     ];
 
     public function member(): BelongsTo
@@ -59,45 +62,67 @@ class Loan extends Model
         return $this->hasMany(LoanPayment::class);
     }
 
+    public function last_payment(): HasOne
+    {
+        return $this->hasOne(LoanPayment::class)->latestOfMany();
+    }
+
+    public function scopePending(Builder $query)
+    {
+        return $query->wherePosted(false);
+    }
+
+    public function scopePosted(Builder $query)
+    {
+        return $query->wherePosted(true);
+    }
+
     protected static function booted(): void
     {
-        static::creating(function (Loan $loan) {
+        static::saved(function (Loan $loan) {
+            if ($loan->changes) {
+            }
+        });
+        static::saving(function (Loan $loan) {
             $loan->outstanding_balance = $loan->gross_amount;
             $loan->deductions_amount = collect($loan->deductions)->sum('amount');
-            DB::beginTransaction();
-            $cbu_amount = collect($loan->deductions)->firstWhere('code', 'cbu_common')['amount'];
-            $cbu = $loan->member->capital_subscriptions()->create([
-                'number_of_terms' => 0,
-                'number_of_shares' => $cbu_amount / ShareCapitalProvider::PAR_VALUE,
-                'amount_subscribed' => $cbu_amount,
-                'initial_amount_paid' => $cbu_amount,
-                'par_value' => ShareCapitalProvider::PAR_VALUE,
-                'is_common' => false,
-                'code' => Str::random(12),
-                'transaction_date' => $loan->transaction_date
-            ]);
-            $cbu->payments()->create([
-                'type' => 'JV',
-                'reference_number' => $loan->reference_number,
-                'amount' => $cbu_amount,
-                'transaction_date' => $loan->transaction_date,
-            ]);
-            ImprestsProvider::createImprest($loan->member, (new ImprestData(
-                transaction_date: $loan->transaction_date,
-                reference_number: $loan->reference_number,
-                amount: collect($loan->deductions)->firstWhere('code', 'imprest')['amount'],
-            )));
-            $buyOut = collect($loan->deductions)->firstWhere('code', 'buy_out');
-            if ($buyOut) {
-                $existing = $loan->member->loans()->find($buyOut['loan_id']);
-                $existing?->payments()->create([
+
+            if ($loan->posted) {
+                DB::beginTransaction();
+                $cbu_amount = collect($loan->deductions)->firstWhere('code', 'cbu_common')['amount'];
+                $cbu = $loan->member->capital_subscriptions()->create([
+                    'number_of_terms' => 0,
+                    'number_of_shares' => $cbu_amount / ShareCapitalProvider::PAR_VALUE,
+                    'amount_subscribed' => $cbu_amount,
+                    'initial_amount_paid' => $cbu_amount,
+                    'par_value' => ShareCapitalProvider::PAR_VALUE,
+                    'is_common' => false,
+                    'code' => Str::random(12),
+                    'transaction_date' => $loan->transaction_date
+                ]);
+                $cbu->payments()->create([
                     'type' => 'JV',
                     'reference_number' => $loan->reference_number,
-                    'amount' => $buyOut['amount'],
+                    'amount' => $cbu_amount,
                     'transaction_date' => $loan->transaction_date,
                 ]);
+                ImprestsProvider::createImprest($loan->member, (new ImprestData(
+                    transaction_date: $loan->transaction_date,
+                    reference_number: $loan->reference_number,
+                    amount: collect($loan->deductions)->firstWhere('code', 'imprest')['amount'],
+                )));
+                $buyOut = collect($loan->deductions)->firstWhere('code', 'buy_out');
+                if ($buyOut) {
+                    $existing = $loan->member->loans()->find($buyOut['loan_id']);
+                    $existing?->payments()->create([
+                        'type' => 'JV',
+                        'reference_number' => $loan->reference_number,
+                        'amount' => $buyOut['amount'],
+                        'transaction_date' => $loan->transaction_date,
+                    ]);
+                }
+                DB::commit();
             }
-            DB::commit();
         });
     }
 }

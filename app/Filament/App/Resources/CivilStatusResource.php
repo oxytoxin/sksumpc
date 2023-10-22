@@ -19,9 +19,14 @@ class CivilStatusResource extends Resource
 {
     protected static ?string $model = CivilStatus::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-building-office';
+    protected static ?string $navigationGroup = 'Management';
 
     protected static ?int $navigationSort = 18;
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
 
     public static function form(Form $form): Form
     {

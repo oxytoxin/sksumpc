@@ -14,7 +14,7 @@ class ListMembers extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()->icon('heroicon-o-plus')->iconPosition(IconPosition::After),
+            Actions\CreateAction::make()->icon('heroicon-o-plus')->iconPosition(IconPosition::After)->visible(auth()->user()->can('manage members')),
         ];
     }
 }

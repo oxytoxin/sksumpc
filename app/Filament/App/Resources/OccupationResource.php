@@ -17,9 +17,14 @@ class OccupationResource extends Resource
 {
     protected static ?string $model = Occupation::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-wrench-screwdriver';
+    protected static ?string $navigationGroup = 'Management';
 
     protected static ?int $navigationSort = 17;
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
 
     public static function form(Form $form): Form
     {

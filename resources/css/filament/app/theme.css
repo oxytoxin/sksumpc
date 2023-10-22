@@ -41,3 +41,7 @@
 .fi-in-entry-wrp > div {
     @apply sm:grid-cols-4;
 }
+
+.fi-in-component-ctn{
+    @apply gap-1;
+}

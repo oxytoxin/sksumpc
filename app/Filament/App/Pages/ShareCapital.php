@@ -16,6 +16,11 @@ class ShareCapital extends Page
 
     protected static ?int $navigationSort = 4;
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return true;
+    }
+
     public function infolist(Infolist $infolist)
     {
         return $infolist

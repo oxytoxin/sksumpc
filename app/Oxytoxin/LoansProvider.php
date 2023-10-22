@@ -69,7 +69,7 @@ class LoansProvider
         return round($t, 2);
     }
 
-    public static function computeDeductions(?LoanType $loanType, $gross_amount, ?Member $member): array
+    public static function computeDeductions(?LoanType $loanType, $gross_amount, ?Member $member, $existing_loan_id = null): array
     {
         if (!$loanType)
             return [];
@@ -99,11 +99,10 @@ class LoansProvider
                 'code' => 'insurance',
             ],
         ];
-        $existing = $member?->loans()->where('loan_type_id', $loanType->id)->where('outstanding_balance', '>', 0)->first();
+        $existing = $member?->loans()->where('loan_type_id', $loanType->id)->where('outstanding_balance', '>', 0)->whereNot('id', $existing_loan_id)->first();
         if ($existing) {
             $days = $existing->transaction_date->diffInDays(today());
             $interest = $existing->interest_rate * $existing->outstanding_balance * ($days / LoansProvider::DAYS_IN_MONTH);
-
             $deductions[] = [
                 'name' => 'Loan Buy-out',
                 'amount' => $interest + $existing->outstanding_balance,

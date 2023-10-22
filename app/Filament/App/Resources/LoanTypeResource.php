@@ -17,9 +17,14 @@ class LoanTypeResource extends Resource
 {
     protected static ?string $model = LoanType::class;
 
-    protected static ?string $navigationIcon = 'icon-loan';
+    protected static ?string $navigationGroup = 'Management';
 
     protected static ?int $navigationSort = 6;
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()->can('manage loans');
+    }
 
     public static function form(Form $form): Form
     {

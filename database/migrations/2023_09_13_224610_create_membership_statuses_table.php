@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('membership_statuses', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('member_id')->constrained();
+            $table->foreignId('member_id')->constrained()->cascadeOnDelete();
             $table->tinyInteger('type');
             $table->string('bod_resolution')->nullable();
             $table->date('effectivity_date');

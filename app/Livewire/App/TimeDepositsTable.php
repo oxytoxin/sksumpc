@@ -18,6 +18,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
+use Filament\Support\Colors\Color;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
@@ -67,6 +68,24 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                     })
             ], layout: FiltersLayout::AboveContent)
             ->actions([
+                Action::make('Terminate')
+                    ->form([
+                        Placeholder::make('note')->content(fn ($record) => "Pretermination will deduct 1% interest (" . format_money($record->amount * 0.01, 'PHP') . ") from original capital."),
+                        DatePicker::make('withdrawal_date')
+                            ->required()
+                            ->default(today()),
+                    ])
+                    ->action(function ($record, $data) {
+                        $record->update([
+                            'maturity_amount' => $record->amount - $record->amount * 0.01,
+                            'withdrawal_date' => $data['withdrawal_date']
+                        ]);
+                        Notification::make()->title('Time deposite claimed.')->success()->send();
+                    })
+                    ->color(Color::Red)
+                    ->visible(fn (TimeDeposit $record) => $record->transaction_date->isAfter(today()->subMonths(6)) && is_null($record->withdrawal_date))
+                    ->icon('heroicon-o-banknotes')
+                    ->button(),
                 Action::make('claim')
                     ->form([
                         DatePicker::make('withdrawal_date')

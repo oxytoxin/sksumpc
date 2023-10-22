@@ -19,9 +19,14 @@ class DivisionResource extends Resource
 {
     protected static ?string $model = Division::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-group';
+    protected static ?string $navigationGroup = 'Management';
 
     protected static ?int $navigationSort = 16;
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
 
     public static function form(Form $form): Form
     {

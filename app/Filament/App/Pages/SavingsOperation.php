@@ -16,6 +16,11 @@ class SavingsOperation extends Page
 
     protected static ?int $navigationSort = 7;
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
     public function infolist(Infolist $infolist)
     {
         return $infolist

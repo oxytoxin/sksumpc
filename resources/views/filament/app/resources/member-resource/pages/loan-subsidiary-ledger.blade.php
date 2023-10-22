@@ -36,19 +36,19 @@
                 <tr>
                     <td class="border border-black px-2">{{ $payment->transaction_date->format('m/d/Y') }}</td>
                     <td class="border border-black px-2">{{ $payment->reference_number }}</td>
-                    <td class="border border-black px-2 text-right">{{ format_money($schedule[$key]['amortization'], 'PHP') }}</td>
-                    <td class="border border-black px-2 text-right">{{ format_money($schedule[$key]['interest'], 'PHP') }}</td>
-                    <td class="border border-black px-2 text-right">{{ format_money($schedule[$key]['principal'], 'PHP') }}</td>
-                    <td class="border border-black px-2 text-right">{{ format_money($schedule[$key]['outstanding_balance'], 'PHP') }}</td>
+                    <td class="border border-black px-2 text-right">{{ format_money($payment->amount, 'PHP') }}</td>
+                    <td class="border border-black px-2 text-right">{{ format_money($payment->interest, 'PHP') }}</td>
+                    <td class="border border-black px-2 text-right">{{ format_money($payment->principal, 'PHP') }}</td>
+                    <td class="border border-black px-2 text-right">{{ format_money($payment->running_balance, 'PHP') }}</td>
                     <td class="border border-black px-2"></td>
                 </tr>
             @endforeach
             <tr>
                 <td class="border border-black px-2"></td>
                 <td class="border border-black px-2">TOTAL</td>
-                <td class="border border-black px-2 text-right">{{ format_money(collect($schedule)->take(count($loan->payments))->sum('amortization'),'PHP') }}</td>
-                <td class="border border-black px-2 text-right">{{ format_money(collect($schedule)->take(count($loan->payments))->sum('interest'),'PHP') }}</td>
-                <td class="border border-black px-2 text-right">{{ format_money(collect($schedule)->take(count($loan->payments))->sum('principal'),'PHP') }}</td>
+                <td class="border border-black px-2 text-right">{{ format_money(collect($loan->payments)->sum('amount'), 'PHP') }}</td>
+                <td class="border border-black px-2 text-right">{{ format_money(collect($loan->payments)->sum('interest'), 'PHP') }}</td>
+                <td class="border border-black px-2 text-right">{{ format_money(collect($loan->payments)->sum('principal'), 'PHP') }}</td>
                 <td class="border border-black px-2 text-right"></td>
                 <td class="border border-black px-2 text-right"></td>
             </tr>

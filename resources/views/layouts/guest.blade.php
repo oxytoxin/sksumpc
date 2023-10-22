@@ -17,7 +17,7 @@
 </head>
 
 <body class="font-sans text-gray-900 antialiased">
-    <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
+    <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0">
         <div>
             <a href="/">
                 <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
@@ -25,10 +25,15 @@
         </div>
         @env('local')
         <div class="space-y-2">
-            <x-login-link email="sksumpcadmin@gmail.com" label="Login as admin" />
+            <x-login-link email="sksumpcadmin@gmail.com" label="Login as manager" />
+            <x-login-link email="sksumpccashier@gmail.com" label="Login as cashier" />
+            <x-login-link email="sksumpccbu@gmail.com" label="Login as cbu" />
+            <x-login-link email="sksumpcmso@gmail.com" label="Login as mso" />
+            <x-login-link email="sksumpcloan@gmail.com" label="Login as loan" />
+            <x-login-link email="sksumpcbookkeeper@gmail.com" label="Login as bookkeeper" />
         </div>
         @endenv
-        <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
+        <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-lg overflow-hidden sm:rounded-lg">
             {{ $slot }}
         </div>
     </div>

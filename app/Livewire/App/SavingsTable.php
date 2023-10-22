@@ -72,18 +72,7 @@ class SavingsTable extends Component implements HasForms, HasTable
                     ->action(function ($data) {
                         DB::beginTransaction();
                         $member =  Member::find($this->member_id);
-                        $member->savings_no_interest()->each(function ($saving) use ($data) {
-                            $saving->update([
-                                'interest' => SavingsProvider::calculateInterest($saving->balance, $saving->interest_rate, Carbon::make($data['transaction_date'])->diffInDays($saving->transaction_date)),
-                                'interest_date' => $data['transaction_date'],
-                            ]);
-                        });
-                        Saving::create([
-                            ...$data,
-                            'interest_rate' => SavingsProvider::INTEREST_RATE,
-                            'member_id' => $this->member_id,
-                            'balance' => $member->savings()->sum('amount') + $data['amount'],
-                        ]);
+                        SavingsProvider::createSavings($member, (new SavingsData(...$data)));
                         DB::commit();
                     })
                     ->createAnother(false),

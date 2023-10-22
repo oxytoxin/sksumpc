@@ -16,6 +16,8 @@ return new class extends Migration
             $table->id();
             $table->string('code');
             $table->string('name');
+            $table->decimal('minimum_cbu', 14, 2)->default(0);
+            $table->decimal('max_amount', 14, 2)->default();
             $table->decimal('interest_rate', 7, 3)->default(0);
             $table->decimal('service_fee', 7, 4)->default(0);
             $table->decimal('cbu_common', 7, 4)->default(0);
@@ -27,6 +29,8 @@ return new class extends Migration
         LoanType::create([
             'code' => 'CL',
             'name' => 'Commodity Loan',
+            'minimum_cbu' => 50000,
+            'max_amount' => 150000,
             'interest_rate' => 0.01,
             'service_fee' => 0.005,
             'cbu_common' => 0.02,
@@ -36,6 +40,8 @@ return new class extends Migration
         LoanType::create([
             'code' => 'PL',
             'name' => 'Providential Loan',
+            'minimum_cbu' => 23334,
+            'max_amount' => 70000,
             'interest_rate' => 0.01,
             'service_fee' => 0.005,
             'cbu_common' => 0.02,
@@ -45,6 +51,7 @@ return new class extends Migration
         LoanType::create([
             'code' => 'EL',
             'name' => 'Emergency Loan',
+            'max_amount' => 30000,
             'interest_rate' => 0.01,
             'service_fee' => 0.003,
             'cbu_common' => 0.02,
@@ -54,6 +61,8 @@ return new class extends Migration
         LoanType::create([
             'code' => 'RL',
             'name' => 'Regular Loan',
+            'minimum_cbu' => 117000,
+            'max_amount' => 350000,
             'interest_rate' => 0.01,
             'service_fee' => 0.005,
             'cbu_common' => 0.02,
@@ -81,6 +90,8 @@ return new class extends Migration
         LoanType::create([
             'code' => 'KL',
             'name' => 'Kabuhayan Loan',
+            'minimum_cbu' => 16667,
+            'max_amount' => 50000,
             'interest_rate' => 0.015,
             'service_fee' => 0.005,
             'cbu_common' => 0.02,
@@ -90,6 +101,8 @@ return new class extends Migration
         LoanType::create([
             'code' => 'FNPL',
             'name' => 'Fly Now Pay Later Loan',
+            'minimum_cbu' => 10000,
+            'max_amount' => 30000,
             'interest_rate' => 0.01,
             'service_fee' => 0.005,
             'cbu_common' => 0.02,
@@ -99,6 +112,8 @@ return new class extends Migration
         LoanType::create([
             'code' => 'LBP-ATM',
             'name' => 'LBP-ATM CARD Loan',
+            'minimum_cbu' => 117000,
+            'max_amount' => 350000,
             'interest_rate' => 0.01,
             'service_fee' => 0.005,
             'cbu_common' => 0.02,
@@ -117,6 +132,8 @@ return new class extends Migration
         LoanType::create([
             'code' => 'RES-LBP ATM',
             'name' => 'Restructuring-LBP ATM',
+            'minimum_cbu' => 117000,
+            'max_amount' => 350000,
             'interest_rate' => 0.01,
             'service_fee' => 0.005,
             'cbu_common' => 0.02,
@@ -144,6 +161,7 @@ return new class extends Migration
         LoanType::create([
             'code' => 'RES-LBP CL',
             'name' => 'RES-LBP Commodity Loan',
+            'minimum_cbu' => 50000,
             'interest_rate' => 0.01,
             'service_fee' => 0.005,
             'cbu_common' => 0.02,

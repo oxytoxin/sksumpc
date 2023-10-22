@@ -16,6 +16,8 @@ use App\Models\MembershipStatus;
 use App\Models\MemberType;
 use App\Models\Occupation;
 use App\Models\Religion;
+use App\Models\User;
+use App\Oxytoxin\OverrideProvider;
 use App\Oxytoxin\ShareCapitalProvider;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 use DB;
@@ -48,6 +50,7 @@ use Filament\Support\RawJs;
 use Filament\Tables;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Hash;
 
 use function Filament\Support\format_money;
 
@@ -115,17 +118,20 @@ class MemberResource extends Resource
                             ->schema([
                                 ViewEntry::make('cbu')
                                     ->view('filament.app.views.cbu-table')
-                            ]),
+                            ])
+                            ->visible(auth()->user()->canany(['manage payments', 'manage cbu'])),
                         Tab::make('MSO')
                             ->schema([
                                 ViewEntry::make('mso')
                                     ->view('filament.app.views.mso-table')
-                            ]),
+                            ])
+                            ->visible(auth()->user()->canany(['manage payments', 'manage mso'])),
                         Tab::make('Loan')
                             ->schema([
                                 ViewEntry::make('loan')
                                     ->view('filament.app.views.loans-table')
-                            ]),
+                            ])
+                            ->visible(auth()->user()->canany(['manage payments', 'manage loans'])),
                     ])->persistTabInQueryString()
             ])
             ->columns(1);
@@ -339,19 +345,34 @@ class MemberResource extends Resource
             ])
             ->persistFiltersInSession()
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()->visible(auth()->user()->can('manage members')),
                 Tables\Actions\DeleteAction::make()
-                    ->action(function (Member $record) {
+                    ->form([
+                        TextInput::make('passkey')
+                            ->hint("Manager's Password")
+                            ->required()
+                            ->password(),
+                    ])
+                    ->action(function (Member $record, $data) {
+                        if (!OverrideProvider::promptManagerPasskey($data['passkey'])) return;
+                        DB::beginTransaction();
                         try {
-                            $record->delete();
+                            if ($record->capital_subscription_payments()->count() <= 1) {
+                                $record->capital_subscriptions()->delete();
+                                $record->delete();
+                            } else
+                                return Notification::make()->title('Member has existing payments.')->danger()->send();
                         } catch (\Throwable $th) {
-                            Notification::make()->title('Member has existing records.')->danger()->send();
+                            DB::rollBack();
+                            return Notification::make()->title('Member has existing payments.')->danger()->send();
                         }
-                    })
+                        Notification::make()->title('Member deleted.')->success()->send();
+                        DB::commit();
+                    })->visible(auth()->user()->can('manage members'))
             ])
             ->bulkActions([])
             ->emptyStateActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()->visible(auth()->user()->can('manage members')),
             ])
             ->recordUrl(fn (Member $record) => MemberResource::getUrl('view', ['record' => $record]))
             ->defaultSort('last_name')
@@ -372,6 +393,7 @@ class MemberResource extends Resource
             'create' => Pages\CreateMember::route('/create'),
             'view' => Pages\ViewMember::route('/{record}'),
             'edit' => Pages\EditMember::route('/{record}/edit'),
+            'loan.edit' => Pages\EditMemberLoan::route('/{record}/{loan}/edit'),
             'cbu-subsidiary-ledger' => CbuSubsidiaryLedger::route('cbu-subsidiary-ledger/{member}'),
             'savings-subsidiary-ledger' => SavingsSubsidiaryLedger::route('savings-subsidiary-ledger/{member}'),
             'imprest-subsidiary-ledger' => ImprestSubsidiaryLedger::route('imprest-subsidiary-ledger/{member}'),

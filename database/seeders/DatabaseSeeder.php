@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->call(UserRoleSeeder::class);
         Artisan::call('app:seed-members');
     }
 }
