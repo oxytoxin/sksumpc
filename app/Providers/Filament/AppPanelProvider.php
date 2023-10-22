@@ -2,29 +2,31 @@
 
 namespace App\Providers\Filament;
 
-use Filament\Http\Middleware\Authenticate;
-use Filament\Http\Middleware\DisableBladeIconComponents;
-use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Navigation\NavigationGroup;
 use Filament\Pages;
 use Filament\Panel;
+use Filament\Widgets;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\Widgets;
-use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
-use Illuminate\Cookie\Middleware\EncryptCookies;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
-use Illuminate\Routing\Middleware\SubstituteBindings;
-use Illuminate\Session\Middleware\AuthenticateSession;
-use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
+use Filament\Navigation\NavigationGroup;
+use Filament\Http\Middleware\Authenticate;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Filament\Http\Middleware\DisableBladeIconComponents;
+use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 
 class AppPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
+        $css = Vite::asset('resources/css/app.css');
         return $panel
             ->id('app')
             ->path('')
@@ -77,6 +79,21 @@ class AppPanelProvider extends PanelProvider
                     }
                 }'>
                 </div>
+                <script>
+                    function printOut(data, title) {
+                        var mywindow = window.open('', title, 'height=1000,width=1000');
+                        mywindow.document.write('<html><head>');
+                        mywindow.document.write('<title>' + title + '</title>');
+                        mywindow.document.write(`<link rel='stylesheet' href='{$css}' /></head><body >`);
+                        mywindow.document.write(data);
+                        mywindow.document.close();
+                        mywindow.focus();
+                        setTimeout(() => {
+                            mywindow.print();
+                        }, 1000);
+                        return false;
+                    }
+                </script>
                 ")
             )
             ->favicon(asset('images/logo.jpg'));

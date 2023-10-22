@@ -31,10 +31,7 @@ class ShareCapital extends Page
                             ->schema([
                                 ViewEntry::make('summary')->view('filament.app.views.cbu-summary')
                             ]),
-                        Tab::make('GL')
-                            ->schema([
-                                ViewEntry::make('summary')->view('filament.app.views.cbu-gl')
-                            ]),
+
                     ])
             ]);
     }

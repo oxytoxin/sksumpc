@@ -25,7 +25,7 @@ class CivilStatusResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return false;
+        return auth()->user()->hasRole('manager');
     }
 
     public static function form(Form $form): Form

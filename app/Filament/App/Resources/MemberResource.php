@@ -6,6 +6,7 @@ use App\Filament\App\Resources\MemberResource\Pages;
 use App\Filament\App\Resources\MemberResource\Pages\CbuSubsidiaryLedger;
 use App\Filament\App\Resources\MemberResource\Pages\ImprestSubsidiaryLedger;
 use App\Filament\App\Resources\MemberResource\Pages\LoanAmortizationSchedule;
+use App\Filament\App\Resources\MemberResource\Pages\LoanDisclosureSheet;
 use App\Filament\App\Resources\MemberResource\Pages\LoanSubsidiaryLedger;
 use App\Filament\App\Resources\MemberResource\Pages\SavingsSubsidiaryLedger;
 use App\Filament\App\Resources\MemberResource\RelationManagers;
@@ -399,6 +400,7 @@ class MemberResource extends Resource
             'imprest-subsidiary-ledger' => ImprestSubsidiaryLedger::route('imprest-subsidiary-ledger/{member}'),
             'loan-subsidiary-ledger' => LoanSubsidiaryLedger::route('loan-subsidiary-ledger/{loan}'),
             'loan-amortization-schedule' => LoanAmortizationSchedule::route('loan-amortization-schedule/{loan}'),
+            'loan-disclosure-sheet' => LoanDisclosureSheet::route('loan-disclosure-sheet/{loan}'),
         ];
     }
 }

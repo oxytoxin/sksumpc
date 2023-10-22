@@ -21,7 +21,7 @@ use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\HtmlString;
-use stdClass;
+
 
 class CbuSubsidiaryLedger extends Page implements HasTable
 {
@@ -42,6 +42,7 @@ class CbuSubsidiaryLedger extends Page implements HasTable
     {
         return $table
             ->query(CapitalSubscriptionPayment::query()->whereRelation('capital_subscription', 'member_id', $this->member->id))
+            ->content(fn () => view('filament.app.views.cbu-sl', ['member' => $this->member]))
             ->columns([
                 TextColumn::make('transaction_date')
                     ->date('m/d/Y')
@@ -52,8 +53,7 @@ class CbuSubsidiaryLedger extends Page implements HasTable
                     ->label('DR'),
                 TextColumn::make('amount')
                     ->label('CR')
-                    ->money('PHP')
-                    ->summarize(Sum::make()->label('')->money('PHP')),
+                    ->money('PHP'),
                 TextColumn::make('ob')
                     ->label('Outstanding Balance')
                     ->state(function (Table $table, $record) {
