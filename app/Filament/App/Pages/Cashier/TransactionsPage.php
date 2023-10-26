@@ -35,6 +35,11 @@ class TransactionsPage extends Page implements HasForms
 
     protected static ?string $navigationLabel = 'Transaction';
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()->can('manage payments');
+    }
+
     public function getHeading(): string|Htmlable
     {
         return 'Transaction';

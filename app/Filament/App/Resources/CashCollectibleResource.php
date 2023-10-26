@@ -19,6 +19,11 @@ class CashCollectibleResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-currency-dollar';
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()->can('manage payments');
+    }
+
     public static function form(Form $form): Form
     {
         return $form
