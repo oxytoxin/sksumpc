@@ -28,9 +28,15 @@ class TimeDeposit extends Model
         return $this->belongsTo(Member::class);
     }
 
+    public function cashier()
+    {
+        return $this->belongsTo(User::class, 'cashier_id');
+    }
+
     protected static function booted()
     {
         static::creating(function (TimeDeposit $td) {
+            $td->cashier_id = auth()->id();
             $td->interest_rate = TimeDepositsProvider::getInterestRate($td->amount);
             $td->number_of_days = TimeDepositsProvider::NUMBER_OF_DAYS;
             $td->maturity_amount = TimeDepositsProvider::getMaturityAmount($td->amount);

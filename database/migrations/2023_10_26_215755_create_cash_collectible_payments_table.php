@@ -11,19 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('time_deposits', function (Blueprint $table) {
+        Schema::create('cash_collectible_payments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('member_id')->constrained();
+            $table->foreignId('cash_collectible_id')->constrained();
+            $table->foreignId('member_id')->constrained()->nullable();
+            $table->string('payee');
             $table->string('reference_number');
-            $table->date('maturity_date');
-            $table->date('withdrawal_date')->nullable();
             $table->decimal('amount', 14, 2);
-            $table->integer('number_of_days')->default(180);
-            $table->decimal('maturity_amount', 14, 2);
-            $table->decimal('interest_rate', 7, 2);
-            $table->decimal('interest', 14, 2)->virtualAs('maturity_amount - amount');
             $table->date('transaction_date');
-            $table->string('tdc_number')->unique();
             $table->foreignId('cashier_id')->nullable()->constrained('users', 'id')->nullOnDelete();
 
             $table->timestamps();
@@ -35,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('time_deposits');
+        Schema::dropIfExists('cash_collectible_payments');
     }
 };

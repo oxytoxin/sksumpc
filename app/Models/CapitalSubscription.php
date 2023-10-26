@@ -20,7 +20,6 @@ class CapitalSubscription extends Model
         'number_of_shares' => 'decimal:2',
         'par_value' => 'decimal:2',
         'amount_subscribed' => 'decimal:2',
-        'initial_amount_paid' => 'decimal:2',
         'number_of_terms' => 'integer',
         'transaction_date' => 'immutable_date'
     ];

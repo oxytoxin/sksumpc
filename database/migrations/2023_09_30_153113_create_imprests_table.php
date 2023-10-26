@@ -25,6 +25,8 @@ return new class extends Migration
             $table->integer('number_of_days')->virtualAs('COALESCE(DATEDIFF(COALESCE(interest_date, CURDATE()), transaction_date), 0)');
             $table->decimal('balance', 14, 2);
             $table->boolean('accrued')->default(false);
+            $table->foreignId('cashier_id')->nullable()->constrained('users', 'id')->nullOnDelete();
+
             $table->timestamps();
         });
     }

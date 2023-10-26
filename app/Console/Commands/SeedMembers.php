@@ -93,15 +93,17 @@ class SeedMembers extends Command
                             'number_of_terms' => ShareCapitalProvider::INITIAL_NUMBER_OF_TERMS,
                             'amount_subscribed' => $membershipStatus['amount_subscribed'],
                             'par_value' => $membershipStatus['amount_subscribed'] / $membershipStatus['number_of_shares'],
-                            'initial_amount_paid' => $membershipStatus['initial_amount_paid'],
                             'is_common' => true,
                             'transaction_date' => today(),
                         ]);
-                        $cbu->payments()->create([
+                        $payment = $cbu->payments()->create([
                             'amount' => $membershipStatus['initial_amount_paid'],
                             'reference_number' => '#INITIALAMOUNTPAID',
                             'type' => 'OR',
                             'transaction_date' => today(),
+                        ]);
+                        $payment->update([
+                            'cashier_id' => 1
                         ]);
                     }
                 } catch (\Throwable $e) {
@@ -136,17 +138,19 @@ class SeedMembers extends Command
                     'code' => ShareCapitalProvider::EXISTING_CAPITAL_CODE,
                     'number_of_shares' => $data['shares_subscribed'],
                     'number_of_terms' => ShareCapitalProvider::ADDITIONAL_NUMBER_OF_TERMS,
-                    'initial_amount_paid' => $data['amount_shares_paid_total'],
                     'is_common' => $existing ? true : false,
                     'par_value' => $data['amount_shares_subscribed'] / $data['shares_subscribed'],
                     'amount_subscribed' => $data['amount_shares_subscribed'],
                     'transaction_date' => today(),
                 ]);
-                $cbu->payments()->create([
+                $payment = $cbu->payments()->create([
                     'amount' => $data['amount_shares_paid_total'],
                     'reference_number' => '#BALANCEFORWARDED',
                     'type' => 'OR',
                     'transaction_date' => today(),
+                ]);
+                $payment->update([
+                    'cashier_id' => 1
                 ]);
 
                 $existing?->update([

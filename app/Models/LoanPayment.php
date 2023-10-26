@@ -26,6 +26,11 @@ class LoanPayment extends Model
         return $this->belongsTo(Loan::class);
     }
 
+    public function cashier()
+    {
+        return $this->belongsTo(User::class, 'cashier_id');
+    }
+
     protected static function booted(): void
     {
         static::creating(function (LoanPayment $loanPayment) {
@@ -35,6 +40,7 @@ class LoanPayment extends Model
             $loanPayment->interest = $interest;
             $loanPayment->principal = $loanPayment->amount - $interest;
             $loanPayment->running_balance = $loanPayment->loan->outstanding_balance - $loanPayment->principal;
+            $loanPayment->cashier_id = auth()->id();
         });
     }
 }

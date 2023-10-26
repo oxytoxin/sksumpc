@@ -17,17 +17,17 @@ class CreateMember extends CreateRecord
         [
             'number_of_terms' => $number_of_terms,
             'number_of_shares' => $number_of_shares,
-            'initial_amount_paid' => $initial_amount_paid,
+            // 'initial_amount_paid' => $initial_amount_paid,
             'amount_subscribed' => $amount_subscribed,
             'code' => $code,
         ] = $data;
         unset($data['number_of_terms'], $data['number_of_shares'], $data['initial_amount_paid'], $data['amount_subscribed'], $data['code'], $data['monthly_payment']);
         DB::beginTransaction();
         $member = static::getModel()::create($data);
-        $cbu = $member->capital_subscriptions()->createQuietly([
+        $cbu = $member->capital_subscriptions()->create([
             'number_of_terms' => $number_of_terms,
             'number_of_shares' => $number_of_shares,
-            'initial_amount_paid' => $initial_amount_paid,
+            // 'initial_amount_paid' => $initial_amount_paid,
             'amount_subscribed' => $amount_subscribed,
             'code' => $code,
             'outstanding_balance' => $amount_subscribed,
@@ -35,12 +35,12 @@ class CreateMember extends CreateRecord
             'transaction_date' => today(),
             'par_value' => ShareCapitalProvider::PAR_VALUE,
         ]);
-        $cbu->payments()->create([
-            'amount' => $cbu->initial_amount_paid,
-            'reference_number' => '#INITIALAMOUNTPAID',
-            'type' => 'OR',
-            'transaction_date' => today(),
-        ]);
+        // $cbu->payments()->create([
+        //     'amount' => $cbu->initial_amount_paid,
+        //     'reference_number' => '#INITIALAMOUNTPAID',
+        //     'type' => 'OR',
+        //     'transaction_date' => today(),
+        // ]);
         DB::commit();
         return $member;
     }

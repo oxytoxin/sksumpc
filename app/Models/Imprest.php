@@ -27,4 +27,17 @@ class Imprest extends Model
     {
         return $this->belongsTo(Member::class);
     }
+
+    public function cashier()
+    {
+        return $this->belongsTo(User::class, 'cashier_id');
+    }
+
+
+    protected static function booted()
+    {
+        static::creating(function (Imprest $imprest) {
+            $imprest->cashier_id = auth()->id();
+        });
+    }
 }

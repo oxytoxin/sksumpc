@@ -26,7 +26,7 @@ class AppPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        $css = Vite::asset('resources/css/app.css');
+        $customcss = Vite::asset('resources/css/filament/app/theme.css');
         return $panel
             ->id('app')
             ->path('')
@@ -84,7 +84,7 @@ class AppPanelProvider extends PanelProvider
                         var mywindow = window.open('', title, 'height=1000,width=1000');
                         mywindow.document.write('<html><head>');
                         mywindow.document.write('<title>' + title + '</title>');
-                        mywindow.document.write(`<link rel='stylesheet' href='{$css}' /></head><body >`);
+                        mywindow.document.write(`<link rel='stylesheet' href='{$customcss}' /></head><body >`);
                         mywindow.document.write(data);
                         mywindow.document.close();
                         mywindow.focus();

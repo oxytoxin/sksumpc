@@ -112,7 +112,6 @@ class MemberResource extends Resource
                                         TextEntry::make('member_type.name')->label('Type of Member')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                                         TextEntry::make('initial_capital_subscription.number_of_shares')->label('# of Shares Subscribed')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                                         TextEntry::make('initial_capital_subscription.amount_subscribed')->label('Amount Subscribed')->money('PHP')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
-                                        TextEntry::make('initial_capital_subscription.initial_amount_paid')->label('Initial Amount Paid-up')->money('PHP')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                                     ]),
                             ]),
                         Tab::make('CBU')
@@ -295,10 +294,10 @@ class MemberResource extends Resource
                                 $set('amount_subscribed', $data['amount_subscribed']);
                                 $set('number_of_shares', $data['number_of_shares']);
                             }),
-                        TextInput::make('initial_amount_paid')->prefix('P')
-                            ->mask(fn ($state) => RawJs::make('$money'))
-                            ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state ?? 0))
-                            ->minValue(0)->default(0),
+                        // TextInput::make('initial_amount_paid')->prefix('P')
+                        //     ->mask(fn ($state) => RawJs::make('$money'))
+                        //     ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state ?? 0))
+                        //     ->minValue(0)->default(0),
                         Hidden::make('code')->default(ShareCapitalProvider::INITIAL_CAPITAL_CODE),
                     ])
             ]);

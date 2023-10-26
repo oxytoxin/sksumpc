@@ -26,7 +26,13 @@ class CapitalSubscriptionPayment extends Model
     protected static function booted(): void
     {
         static::creating(function (CapitalSubscriptionPayment $cbu_payment) {
+            $cbu_payment->cashier_id = auth()->id();
             $cbu_payment->running_balance = $cbu_payment->capital_subscription->outstanding_balance - $cbu_payment->amount;
         });
+    }
+
+    public function cashier()
+    {
+        return $this->belongsTo(User::class, 'cashier_id');
     }
 }

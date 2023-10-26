@@ -58,8 +58,6 @@ class CbuTable extends Component implements HasForms, HasTable
                     ->summarize(Sum::make()->label('')),
                 TextColumn::make('amount_subscribed')->money('PHP')
                     ->summarize(Sum::make()->money('PHP')->label('')),
-                TextColumn::make('initial_amount_paid')->money('PHP')
-                    ->summarize(Sum::make()->money('PHP')->label('')),
                 TextColumn::make('outstanding_balance')->money('PHP')
                     ->summarize(Sum::make()->money('PHP')->label('')),
                 IconColumn::make('is_common')->boolean(),
@@ -110,7 +108,7 @@ class CbuTable extends Component implements HasForms, HasTable
             ])
             ->headerActions([
                 CreateAction::make()
-                    ->visible(fn () => !$this->member->capital_subscriptions()->where('outstanding_balance', '>', 0)->exists())
+                    ->visible(fn () => !$this->member->capital_subscriptions()->where('outstanding_balance', '>', 0)->exists() && auth()->user()->can('manage cbu'))
                     ->createAnother(false)
                     ->form([
                         DatePicker::make('transaction_date')->required()->default(today()),
@@ -138,8 +136,6 @@ class CbuTable extends Component implements HasForms, HasTable
                                 $set('amount_subscribed', $data['amount_subscribed']);
                                 $set('number_of_shares', $data['number_of_shares']);
                             }),
-                        TextInput::make('initial_amount_paid')->mask(fn ($state) => RawJs::make('$money'))
-                            ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state ?? 0))->minValue(1)->default(2000),
                     ])
                     ->action(function ($data) {
                         unset($data['monthly_payment']);
@@ -152,12 +148,6 @@ class CbuTable extends Component implements HasForms, HasTable
                             'par_value' => ShareCapitalProvider::PAR_VALUE,
                             'is_common' => true,
                             'code' => Str::random(12),
-                        ]);
-                        $cbu->payments()->create([
-                            'amount' => $cbu->initial_amount_paid,
-                            'reference_number' => '#INITIALAMOUNTPAID',
-                            'type' => 'OR',
-                            'transaction_date' => $cbu->transaction_date
                         ]);
                         DB::commit();
                         Notification::make()->title('Capital subscription created!')->success()->send();

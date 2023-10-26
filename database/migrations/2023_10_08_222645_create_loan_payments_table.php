@@ -22,6 +22,8 @@ return new class extends Migration
             $table->string('reference_number');
             $table->string('remarks')->nullable();
             $table->date('transaction_date');
+            $table->foreignId('cashier_id')->nullable()->constrained('users', 'id')->nullOnDelete();
+
             $table->timestamps();
         });
     }

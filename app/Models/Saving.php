@@ -27,4 +27,17 @@ class Saving extends Model
     {
         return $this->belongsTo(Member::class);
     }
+
+    public function cashier()
+    {
+        return $this->belongsTo(User::class, 'cashier_id');
+    }
+
+
+    protected static function booted()
+    {
+        static::creating(function (Saving $saving) {
+            $saving->cashier_id = auth()->id();
+        });
+    }
 }

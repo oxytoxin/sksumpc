@@ -1,4 +1,5 @@
 import preset from '../../../../vendor/filament/filament/tailwind.config.preset'
+import defaultTheme from 'tailwindcss/defaultTheme';
 
 export default {
     presets: [preset],
@@ -10,4 +11,11 @@ export default {
         './vendor/filament/**/*.blade.php',
         '../../../../awcodes/filament-table-repeater/resources/**/*.blade.php',
     ],
+    theme: {
+        extend: {
+            fontFamily: {
+                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+            },
+        },
+    },
 }

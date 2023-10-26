@@ -235,6 +235,7 @@ class LoansTable extends Component implements HasForms, HasTable
             ])
             ->headerActions([
                 CreateAction::make()
+                    ->visible(auth()->user()->can('manage loans'))
                     ->fillForm(function () {
                         $gross_amount = match ($this->member->member_type_id) {
                             1 => ($this->member->capital_subscriptions()->sum('amount_subscribed') ?? 0) * 3,

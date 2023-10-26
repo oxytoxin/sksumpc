@@ -54,4 +54,29 @@ class User extends Authenticatable implements FilamentUser
     {
         return true;
     }
+
+    public function cashier_loan_payments()
+    {
+        return $this->hasMany(LoanPayment::class, 'cashier_id');
+    }
+
+    public function cashier_savings()
+    {
+        return $this->hasMany(Saving::class, 'cashier_id');
+    }
+
+    public function cashier_imprests()
+    {
+        return $this->hasMany(Imprest::class, 'cashier_id');
+    }
+
+    public function cashier_time_deposits()
+    {
+        return $this->hasMany(TimeDeposit::class, 'cashier_id');
+    }
+
+    public function cashier_cash_collectible_payments()
+    {
+        return $this->hasMany(CashCollectiblePayment::class, 'cashier_id');
+    }
 }
