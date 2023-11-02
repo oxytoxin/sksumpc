@@ -25,7 +25,7 @@ class MemberTypeResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return auth()->user()->hasRole('manager');
+        return auth()->user()->hasRole('manager') || auth()->user()->can('manage cbu');
     }
 
     public static function form(Form $form): Form
