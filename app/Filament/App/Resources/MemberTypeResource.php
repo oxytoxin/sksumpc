@@ -2,16 +2,18 @@
 
 namespace App\Filament\App\Resources;
 
-use App\Filament\App\Resources\MemberTypeResource\Pages;
-use App\Filament\App\Resources\MemberTypeResource\RelationManagers;
-use App\Models\MemberType;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Forms\Form;
+use App\Models\MemberType;
 use Filament\Tables\Table;
+use Filament\Resources\Resource;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\App\Resources\MemberTypeResource\Pages;
+use App\Filament\App\Resources\MemberTypeResource\RelationManagers;
 
 class MemberTypeResource extends Resource
 {
@@ -30,9 +32,18 @@ class MemberTypeResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
+                TextInput::make('name')
                     ->required()
                     ->maxLength(125),
+                TextInput::make('default_number_of_shares')
+                    ->required()
+                    ->numeric(),
+                TextInput::make('default_amount_subscribed')
+                    ->required()
+                    ->moneymask(),
+                TextInput::make('minimum_initial_payment')
+                    ->required()
+                    ->moneymask(),
             ]);
     }
 
@@ -40,16 +51,11 @@ class MemberTypeResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('default_number_of_shares'),
+                TextColumn::make('default_amount_subscribed')->money('PHP'),
+                TextColumn::make('minimum_initial_payment')->money('PHP'),
             ])
             ->filters([
                 //
