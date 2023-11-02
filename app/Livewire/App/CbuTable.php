@@ -32,6 +32,8 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Support\Str;
 use Livewire\Attributes\On;
 
+use function Filament\Support\format_money;
+
 class CbuTable extends Component implements HasForms, HasTable
 {
     use InteractsWithForms;
@@ -51,11 +53,13 @@ class CbuTable extends Component implements HasForms, HasTable
             ->columns([
                 TextColumn::make('code'),
                 TextColumn::make('transaction_date')->date('F d, Y'),
+                TextColumn::make('par_value')->money('PHP'),
                 TextColumn::make('number_of_shares')
                     ->numeric()
                     ->summarize(Sum::make()->label('')),
                 TextColumn::make('number_of_terms')
                     ->summarize(Sum::make()->label('')),
+                TextColumn::make('monthly_payment')->money('PHP'),
                 TextColumn::make('amount_subscribed')->money('PHP')
                     ->summarize(Sum::make()->money('PHP')->label('')),
                 TextColumn::make('outstanding_balance')->money('PHP')
@@ -81,21 +85,13 @@ class CbuTable extends Component implements HasForms, HasTable
                     ->icon('heroicon-o-banknotes')
                     ->form([
                         Select::make('type')
-                            ->options([
-                                'OR' => 'OR',
-                                'JV' => 'JV',
-                                'CV' => 'CV',
-                            ])
-                            ->default('OR')
-                            ->selectablePlaceholder(false)
-                            ->live()
+                            ->paymenttype()
                             ->required(),
                         TextInput::make('reference_number')->required()
                             ->unique('capital_subscription_payments'),
-                        TextInput::make('amount')->required()
-                            ->mask(fn ($state) => RawJs::make('$money'))
-                            ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state ?? 0))
-                            ->minValue(1)->prefix('P'),
+                        TextInput::make('amount')
+                            ->required()
+                            ->moneymask(),
                         TextInput::make('remarks'),
                         DatePicker::make('transaction_date')->default(today())->native(false)->label('Date'),
                     ])
@@ -103,7 +99,41 @@ class CbuTable extends Component implements HasForms, HasTable
                         $record->payments()->create($data);
                         Notification::make()->title('Payment made for capital subscription!')->success()->send();
                     })
-                    ->visible(fn ($record) => $record->outstanding_balance > 0),
+                    ->visible(fn ($record) => $record->outstanding_balance > 0 && $record->payments()->exists()),
+                Action::make('initial_payment')
+                    ->label('Initial Payment')
+                    ->icon('heroicon-o-banknotes')
+                    ->form([
+                        Select::make('type')
+                            ->paymenttype()
+                            ->required(),
+                        TextInput::make('reference_number')->required()
+                            ->unique('capital_subscription_payments'),
+                        TextInput::make('amount')
+                            ->required()
+                            ->moneymask()
+                            ->minValue(fn ($record) => $record->member->member_type->minimum_initial_payment)
+                            ->afterStateUpdated(function ($set, $record, $state) {
+                                $set('monthly_payment', ($record->amount_subscribed - $state) / $record->number_of_terms);
+                            }),
+                        TextInput::make('monthly_payment')
+                            ->required()
+                            ->moneymask()
+                            ->afterStateUpdated(function ($set, $record, $state) {
+                                $set('amount', $record->amount_subscribed - ($record->number_of_terms * $state));
+                            }),
+                        TextInput::make('remarks'),
+                        DatePicker::make('transaction_date')->default(today())->native(false)->label('Date'),
+                    ])
+                    ->action(function ($record, $data) {
+                        $record->update([
+                            'monthly_payment' => $data['monthly_payment']
+                        ]);
+                        unset($data['monthly_payment']);
+                        $record->payments()->create($data);
+                        Notification::make()->title('Payment made for capital subscription!')->success()->send();
+                    })
+                    ->hidden(fn ($record) => $record->payments()->exists()),
 
             ])
             ->headerActions([
@@ -116,24 +146,16 @@ class CbuTable extends Component implements HasForms, HasTable
                         TextInput::make('number_of_shares')->numeric()->minValue(1)->default(144)
                             ->live(true)
                             ->afterStateUpdated(function ($set, $state, $get) {
-                                $data = ShareCapitalProvider::fromNumberOfShares(str_replace(',', '', $state ?? 0), ShareCapitalProvider::ADDITIONAL_NUMBER_OF_TERMS);
+                                $data = ShareCapitalProvider::fromNumberOfShares($state, ShareCapitalProvider::ADDITIONAL_NUMBER_OF_TERMS);
                                 $set('amount_subscribed', $data['amount_subscribed']);
                                 $set('monthly_payment', $data['monthly_payment']);
                             }),
-                        TextInput::make('amount_subscribed')->mask(fn ($state) => RawJs::make('$money'))
-                            ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state ?? 0))->minValue(1)->default(72000)
-                            ->live(true)
+                        TextInput::make('amount_subscribed')
+                            ->default(72000)
+                            ->moneymask()
                             ->afterStateUpdated(function ($set, $state, $get) {
-                                $data = ShareCapitalProvider::fromAmountSubscribed(str_replace(',', '', $state ?? 0), ShareCapitalProvider::ADDITIONAL_NUMBER_OF_TERMS);
+                                $data = ShareCapitalProvider::fromAmountSubscribed($state, ShareCapitalProvider::ADDITIONAL_NUMBER_OF_TERMS);
                                 $set('monthly_payment', $data['monthly_payment']);
-                                $set('number_of_shares', $data['number_of_shares']);
-                            }),
-                        TextInput::make('monthly_payment')->mask(fn ($state) => RawJs::make('$money'))
-                            ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state ?? 0))->minValue(1)->default(2000)
-                            ->live(true)
-                            ->afterStateUpdated(function ($set, $state, $get) {
-                                $data = ShareCapitalProvider::fromMonthlyPayment(str_replace(',', '', $state ?? 0), ShareCapitalProvider::ADDITIONAL_NUMBER_OF_TERMS);
-                                $set('amount_subscribed', $data['amount_subscribed']);
                                 $set('number_of_shares', $data['number_of_shares']);
                             }),
                     ])
@@ -145,6 +167,7 @@ class CbuTable extends Component implements HasForms, HasTable
                         ]);
                         $cbu = $this->member->capital_subscriptions()->create([
                             ...$data,
+                            'number_of_terms' => ShareCapitalProvider::ADDITIONAL_NUMBER_OF_TERMS,
                             'par_value' => ShareCapitalProvider::PAR_VALUE,
                             'is_common' => true,
                             'code' => Str::random(12),

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('time_deposits', function (Blueprint $table) {
             $table->id();
             $table->foreignId('member_id')->constrained();
+            $table->string('type')->default('OR');
             $table->string('reference_number');
             $table->date('maturity_date');
             $table->date('withdrawal_date')->nullable();

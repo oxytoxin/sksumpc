@@ -16,10 +16,10 @@
                         <p>TIN: 005-811-330</p>
                     </div>
                     <p>Contact No: 09557966507/email address: sksu.mpc@gmail.com</p>
-                    <h4 class="text-3xl mt-8 font-bold">SUBSIDIARY LEDGER FOR CBU</h4>
                 </div>
             </div>
         </div>
+        <h4 class="text-3xl text-center mt-8 font-bold">SUBSIDIARY LEDGER FOR CBU</h4>
         <div class="my-4">
             <h4>Name: {{ $member->full_name }}</h4>
             <h4>Campus: {{ $member->division?->name }}</h4>
@@ -54,6 +54,7 @@
                 @endforeach
             </tbody>
         </table>
+        <x-app.cashier.reports.signatories :signatories="$signatories" />
     </div>
     <div class="p-4 flex justify-end">
         <x-filament::button icon="heroicon-o-printer" @click="printOut($refs.print.outerHTML, 'CBU Subsidiary Ledger')">Print</x-filament::button>

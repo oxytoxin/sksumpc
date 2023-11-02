@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
-use Carbon\Carbon;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Support\RawJs;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
@@ -14,6 +16,25 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        TextInput::macro('moneymask', function () {
+            $this->prefix('P')
+                ->live(true)
+                ->numeric()
+                ->minValue(0);
+            return $this;
+        });
+
+        Select::macro('paymenttype', function () {
+            $this->options([
+                'OR' => 'OR',
+                'JV' => 'JV',
+                'CV' => 'CV',
+            ])
+                ->default('OR')
+                ->selectablePlaceholder(false)
+                ->live();
+            return $this;
+        });
     }
 
     /**

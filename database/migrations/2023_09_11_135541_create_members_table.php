@@ -36,10 +36,10 @@ return new class extends Migration
             $table->string('present_employer')->nullable();
             $table->string('highest_educational_attainment')->nullable();
             $table->json('dependents')->default('(JSON_ARRAY())');
-            $table->json('other_income_sources')->default('(JSON_ARRAY())');
             $table->integer('dependents_count')->virtualAs('JSON_LENGTH(dependents)');
             $table->foreignId('religion_id')->nullable()->constrained();
             $table->decimal('annual_income', 14, 2, true)->nullable();
+            $table->decimal('other_income_sources', 14, 2, true)->nullable();
             $table->timestamps();
         });
     }

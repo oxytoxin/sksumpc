@@ -2,38 +2,40 @@
 
 namespace App\Livewire\App;
 
-use App\Models\Member;
-use App\Models\TimeDeposit;
-use App\Oxytoxin\ImprestData;
-use App\Oxytoxin\ImprestsProvider;
-use App\Oxytoxin\SavingsData;
-use App\Oxytoxin\SavingsProvider;
-use App\Oxytoxin\TimeDepositsProvider;
 use DB;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
+use Filament\Tables;
+use App\Models\Member;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Filament\Notifications\Notification;
-use Filament\Support\Colors\Color;
-use Filament\Tables;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Concerns\InteractsWithTable;
-use Filament\Tables\Contracts\HasTable;
-use Filament\Tables\Enums\FiltersLayout;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Table;
 use Livewire\Component;
+use Filament\Tables\Table;
+use App\Models\TimeDeposit;
+use App\Oxytoxin\ImprestData;
+use App\Oxytoxin\SavingsData;
+use App\Oxytoxin\SavingsProvider;
+use App\Oxytoxin\ImprestsProvider;
+use Filament\Support\Colors\Color;
+use Filament\Tables\Actions\Action;
 use Illuminate\Contracts\View\View;
+use Filament\Forms\Components\Select;
+use App\Oxytoxin\TimeDepositsProvider;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
+use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
-
+use Filament\Forms\Components\Placeholder;
 use function Filament\Support\format_money;
+
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Tables\Concerns\InteractsWithTable;
 
 class TimeDepositsTable extends Component implements HasForms, HasTable
 {
@@ -59,12 +61,14 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                     ->options([
                         'ongoing' => 'On-going',
                         'matured' => 'Matured',
+                        'terminated' => 'Terminated',
                     ])
                     ->default('ongoing')
                     ->query(function (Builder $query, $data) {
                         $query
                             ->when($data['value'] == 'matured', fn ($query) => $query->whereNotNull('withdrawal_date'))
-                            ->when($data['value'] == 'ongoing', fn ($query) => $query->whereNull('withdrawal_date'));
+                            ->when($data['value'] == 'ongoing', fn ($query) => $query->whereNull('withdrawal_date'))
+                            ->when($data['value'] == 'terminated', fn ($query) => $query->whereRaw('withdrawal_date <= maturity_date'));
                     })
             ], layout: FiltersLayout::AboveContent)
             ->actions([
@@ -109,6 +113,9 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                             ->default(today()),
                         DatePicker::make('transaction_date')->label('Roll-over date')->required()->default(today())->native(false)->live()->afterStateUpdated(fn (Set $set, $state) => $set('maturity_date', TimeDepositsProvider::getMaturityDate($state))),
                         DatePicker::make('maturity_date')->required()->readOnly()->default(TimeDepositsProvider::getMaturityDate(today()))->native(false),
+                        Select::make('type')
+                            ->paymenttype()
+                            ->required(),
                         TextInput::make('reference_number')->required()
                             ->unique('time_deposits'),
                         Placeholder::make('amount')->content(fn () => format_money($record->maturity_amount, 'PHP')),
@@ -145,7 +152,7 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                             $record->update([
                                 'withdrawal_date' => $data['withdrawal_date']
                             ]);
-                            SavingsProvider::createSavings(Member::find($this->member_id), (new SavingsData($data['withdrawal_date'], '#FROMTIMEDEPOSITS', $record->maturity_amount)));
+                            SavingsProvider::createSavings(Member::find($this->member_id), (new SavingsData($data['withdrawal_date'], 'OR', '#FROMTIMEDEPOSITS', $record->maturity_amount)));
                             Notification::make()->title('Time deposite claimed.')->success()->send();
                         })
                         ->visible(fn (TimeDeposit $record) => $record->maturity_date->isBefore(today()) && is_null($record->withdrawal_date))
@@ -160,7 +167,7 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                             $record->update([
                                 'withdrawal_date' => $data['withdrawal_date']
                             ]);
-                            ImprestsProvider::createImprest(Member::find($this->member_id), (new ImprestData($data['withdrawal_date'], '#FROMTIMEDEPOSITS', $record->maturity_amount)));
+                            ImprestsProvider::createImprest(Member::find($this->member_id), (new ImprestData($data['withdrawal_date'], 'OR', '#FROMTIMEDEPOSITS', $record->maturity_amount)));
                             Notification::make()->title('Time deposite claimed.')->success()->send();
                         })
                         ->visible(fn (TimeDeposit $record) => $record->maturity_date->isBefore(today()) && is_null($record->withdrawal_date))
@@ -175,13 +182,15 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                     ->form([
                         DatePicker::make('transaction_date')->required()->default(today())->native(false)->live()->afterStateUpdated(fn (Set $set, $state) => $set('maturity_date', TimeDepositsProvider::getMaturityDate($state))),
                         DatePicker::make('maturity_date')->required()->readOnly()->default(TimeDepositsProvider::getMaturityDate(today()))->native(false),
+                        Select::make('type')
+                            ->paymenttype()
+                            ->required(),
                         TextInput::make('reference_number')->required()
                             ->unique('time_deposits'),
-                        TextInput::make('amount')->prefix('PHP')
-                            ->live(onBlur: true)
+                        TextInput::make('amount')
                             ->required()
+                            ->moneymask()
                             ->afterStateUpdated(fn (Set $set, $state) => $set('maturity_amount', TimeDepositsProvider::getMaturityAmount(floatval($state))))
-                            ->numeric()
                             ->minValue(TimeDepositsProvider::MINIMUM_DEPOSIT)->default(TimeDepositsProvider::MINIMUM_DEPOSIT),
                         Placeholder::make('number_of_days')->content(TimeDepositsProvider::NUMBER_OF_DAYS),
                         Placeholder::make('maturity_amount')->content(fn (Get $get) => format_money(TimeDepositsProvider::getMaturityAmount(floatval($get('amount'))), 'PHP')),

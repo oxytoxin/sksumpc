@@ -39,6 +39,7 @@ class SavingsProvider
         }
         return Saving::create([
             'transaction_date' => $data->transaction_date,
+            'type' => $data->type,
             'reference_number' => $data->reference_number,
             'amount' => $data->amount,
             'interest_rate' => SavingsProvider::INTEREST_RATE,

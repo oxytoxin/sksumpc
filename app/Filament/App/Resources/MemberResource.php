@@ -73,6 +73,12 @@ class MemberResource extends Resource
                     ->tabs([
                         Tab::make('Profile')
                             ->schema([
+                                Actions::make([
+                                    Action::make('membership')
+                                        ->label('Back to Membership Module')
+                                        ->color('success')
+                                        ->url(route('filament.app.resources.members.index'))
+                                ]),
                                 InfolistSection::make([
                                     SpatieMediaLibraryImageEntry::make('profile_photo')
                                         ->label('')
@@ -116,18 +122,36 @@ class MemberResource extends Resource
                             ]),
                         Tab::make('CBU')
                             ->schema([
+                                Actions::make([
+                                    Action::make('membership')
+                                        ->label('Back to Membership Module')
+                                        ->color('success')
+                                        ->url(route('filament.app.resources.members.index'))
+                                ]),
                                 ViewEntry::make('cbu')
                                     ->view('filament.app.views.cbu-table')
                             ])
                             ->visible(auth()->user()->canany(['manage payments', 'manage cbu'])),
                         Tab::make('MSO')
                             ->schema([
+                                Actions::make([
+                                    Action::make('membership')
+                                        ->label('Back to Membership Module')
+                                        ->color('success')
+                                        ->url(route('filament.app.resources.members.index'))
+                                ]),
                                 ViewEntry::make('mso')
                                     ->view('filament.app.views.mso-table')
                             ])
                             ->visible(auth()->user()->canany(['manage payments', 'manage mso'])),
                         Tab::make('Loan')
                             ->schema([
+                                Actions::make([
+                                    Action::make('membership')
+                                        ->label('Back to Membership Module')
+                                        ->color('success')
+                                        ->url(route('filament.app.resources.members.index'))
+                                ]),
                                 ViewEntry::make('loan')
                                     ->view('filament.app.views.loans-table')
                             ])
@@ -157,22 +181,19 @@ class MemberResource extends Resource
                                     ->relationship('member_type', 'name')
                                     ->live()
                                     ->afterStateUpdated(function ($state, $set) {
-                                        if ($state == 1) {
+                                        $member_type = MemberType::find($state);
+                                        if ($member_type?->id == 2) {
+                                            $set('number_of_shares', $member_type->default_number_of_shares);
+                                            $set('amount_subscribed', $member_type->default_amount_subscribed);
+                                            return;
+                                        }
+                                        if ($member_type?->id == 1) {
                                             $set('present_employer', 'SKSU-Sultan Kudarat State University');
-                                            $set('number_of_shares', ShareCapitalProvider::REGULAR_INITIAL_SHARES);
-                                            $set('amount_subscribed', number_format(ShareCapitalProvider::REGULAR_INITIAL_AMOUNT, 2));
-                                            $set('initial_amount_paid', number_format(ShareCapitalProvider::REGULAR_INITIAL_PAID, 2));
-                                            $set('monthly_payment', number_format(ShareCapitalProvider::fromNumberOfShares(ShareCapitalProvider::REGULAR_INITIAL_SHARES, ShareCapitalProvider::INITIAL_NUMBER_OF_TERMS)['monthly_payment'], 2));
+                                            $set('number_of_shares', $member_type->default_number_of_shares);
+                                            $set('amount_subscribed', $member_type->default_amount_subscribed);
                                             return;
                                         }
                                         $set('present_employer', '');
-                                        if ($state == 2) {
-                                            $set('number_of_shares', ShareCapitalProvider::ASSOCIATE_INITIAL_SHARES);
-                                            $set('amount_subscribed', number_format(ShareCapitalProvider::ASSOCIATE_INITIAL_AMOUNT, 2));
-                                            $set('initial_amount_paid', number_format(ShareCapitalProvider::ASSOCIATE_INITIAL_PAID, 2));
-                                            $set('monthly_payment', number_format(ShareCapitalProvider::fromNumberOfShares(ShareCapitalProvider::ASSOCIATE_INITIAL_SHARES, ShareCapitalProvider::INITIAL_NUMBER_OF_TERMS)['monthly_payment'], 2));
-                                            return;
-                                        }
                                     })
                                     ->required(),
                                 Forms\Components\Select::make('division_id')
@@ -187,10 +208,12 @@ class MemberResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('first_name')
                             ->label('First Name')
+                            ->dehydrateStateUsing(fn ($state) => strtoupper($state))
                             ->required()
                             ->maxLength(125),
                         Forms\Components\TextInput::make('last_name')
                             ->label('Last Name')
+                            ->dehydrateStateUsing(fn ($state) => strtoupper($state))
                             ->required()
                             ->maxLength(125),
                         Forms\Components\TextInput::make('middle_initial')
@@ -248,15 +271,10 @@ class MemberResource extends Resource
                     ->maxLength(125),
                 Forms\Components\TextInput::make('present_employer'),
                 Forms\Components\TextInput::make('annual_income')
-                    ->mask(fn ($state) => RawJs::make('$money'))
-                    ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state ?? 0))
-                    ->prefix('P')
+                    ->moneymask()
                     ->minValue(0),
                 Forms\Components\TextInput::make('other_income_sources')
-                    ->mask(fn ($state) => RawJs::make('$money'))
-                    ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state ?? 0))
-                    ->prefix('P'),
-
+                    ->moneymask(),
                 Section::make('Membership Acceptance')
                     ->schema([
                         TextInput::make('bod_resolution')->numeric(),
@@ -271,33 +289,14 @@ class MemberResource extends Resource
                             ->live(true)
                             ->afterStateUpdated(function ($set, $state, $get) {
                                 $data = ShareCapitalProvider::fromNumberOfShares($state, ShareCapitalProvider::INITIAL_NUMBER_OF_TERMS);
-                                $set('amount_subscribed', $data['amount_subscribed']);
-                                $set('monthly_payment', $data['monthly_payment']);
+                                $set('amount_subscribed', number_format($data['amount_subscribed'], 2));
                             }),
-                        TextInput::make('amount_subscribed')->prefix('P')
-                            ->mask(fn ($state) => RawJs::make('$money'))
-                            ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state ?? 0))
-                            ->minValue(0)->default(0)
-                            ->live(true)
+                        TextInput::make('amount_subscribed')
+                            ->moneymask()->default(0)
                             ->afterStateUpdated(function ($set, $state, $get) {
                                 $data = ShareCapitalProvider::fromAmountSubscribed($state, ShareCapitalProvider::INITIAL_NUMBER_OF_TERMS);
-                                $set('monthly_payment', $data['monthly_payment']);
                                 $set('number_of_shares', $data['number_of_shares']);
                             }),
-                        TextInput::make('monthly_payment')->prefix('P')
-                            ->mask(fn ($state) => RawJs::make('$money'))
-                            ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state ?? 0))
-                            ->minValue(0)->default(0)
-                            ->live(true)
-                            ->afterStateUpdated(function ($set, $state, $get) {
-                                $data = ShareCapitalProvider::fromMonthlyPayment($state, ShareCapitalProvider::INITIAL_NUMBER_OF_TERMS);
-                                $set('amount_subscribed', $data['amount_subscribed']);
-                                $set('number_of_shares', $data['number_of_shares']);
-                            }),
-                        // TextInput::make('initial_amount_paid')->prefix('P')
-                        //     ->mask(fn ($state) => RawJs::make('$money'))
-                        //     ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state ?? 0))
-                        //     ->minValue(0)->default(0),
                         Hidden::make('code')->default(ShareCapitalProvider::INITIAL_CAPITAL_CODE),
                     ])
             ]);

@@ -39,6 +39,16 @@ class CapitalSubscription extends Model
         static::creating(function (CapitalSubscription $cbu) {
             $cbu->outstanding_balance = $cbu->amount_subscribed;
         });
+
+        static::created(function (CapitalSubscription $cbu) {
+            if ($cbu->member->capital_subscriptions()->count() == 1) {
+                $code = 'Initial Capital Subscription';
+            } else {
+                $code = str('ACS-')->append(today()->format('Y'))->append('-')->append(str_pad($cbu->id, 6, '0', STR_PAD_LEFT));
+            }
+            $cbu->code = $code;
+            $cbu->save();
+        });
     }
 
     public function amountSharesSubscribed(): Attribute

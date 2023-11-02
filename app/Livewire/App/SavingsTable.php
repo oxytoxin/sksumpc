@@ -2,34 +2,36 @@
 
 namespace App\Livewire\App;
 
-use App\Models\Member;
-use Filament\Tables;
-use App\Models\Saving;
-use App\Oxytoxin\ImprestData;
-use App\Oxytoxin\ImprestsProvider;
-use App\Oxytoxin\SavingsData;
-use App\Oxytoxin\SavingsProvider;
-use Carbon\Carbon;
 use DB;
+use Carbon\Carbon;
+use Filament\Tables;
+use App\Models\Member;
+use App\Models\Saving;
 use Livewire\Component;
 use Filament\Tables\Table;
-use Illuminate\Contracts\View\View;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Tables\Contracts\HasTable;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\DatePicker;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Notifications\Notification;
-use Filament\Support\Colors\Color;
 use Filament\Support\RawJs;
-use Filament\Tables\Actions\DeleteAction;
+use App\Oxytoxin\ImprestData;
+use App\Oxytoxin\SavingsData;
+use App\Oxytoxin\SavingsProvider;
+use App\Oxytoxin\ImprestsProvider;
+use Filament\Support\Colors\Color;
+use Illuminate\Contracts\View\View;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Concerns\InteractsWithTable;
-use Illuminate\Validation\ValidationException;
-
+use Filament\Tables\Contracts\HasTable;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
+use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Actions\DeleteAction;
 use function Filament\Support\format_money;
+use Filament\Tables\Actions\BulkActionGroup;
+
+use Illuminate\Validation\ValidationException;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Tables\Concerns\InteractsWithTable;
 
 class SavingsTable extends Component implements HasForms, HasTable
 {
@@ -62,12 +64,14 @@ class SavingsTable extends Component implements HasForms, HasTable
                     ->modalHeading('Deposit Savings')
                     ->form([
                         DatePicker::make('transaction_date')->required()->default(today()),
+                        Select::make('type')
+                            ->paymenttype()
+                            ->required(),
                         TextInput::make('reference_number')->required()
                             ->unique('savings'),
-                        TextInput::make('amount')->prefix('PHP')
+                        TextInput::make('amount')
                             ->required()
-                            ->numeric()
-                            ->minValue(1),
+                            ->moneymask(),
                     ])
                     ->action(function ($data) {
                         DB::beginTransaction();
@@ -82,12 +86,14 @@ class SavingsTable extends Component implements HasForms, HasTable
                     ->color(Color::Red)
                     ->form([
                         DatePicker::make('transaction_date')->required()->default(today()),
+                        Select::make('type')
+                            ->paymenttype()
+                            ->required(),
                         TextInput::make('reference_number')->required()
                             ->unique('savings'),
-                        TextInput::make('amount')->prefix('PHP')
+                        TextInput::make('amount')
                             ->required()
-                            ->numeric()
-                            ->minValue(1),
+                            ->moneymask(),
                     ])
                     ->action(function ($data) {
                         $data['amount'] = $data['amount'] * -1;
@@ -103,16 +109,14 @@ class SavingsTable extends Component implements HasForms, HasTable
                     ->color(Color::Amber)
                     ->form([
                         DatePicker::make('transaction_date')->required()->default(today()),
-                        TextInput::make('amount')->prefix('PHP')
+                        TextInput::make('amount')
                             ->required()
-                            ->mask(fn ($state) => RawJs::make('$money'))
-                            ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state ?? 0))
-                            ->prefix('P')
-                            ->minValue(1),
+                            ->moneymask(),
                     ])
                     ->action(function ($data) {
                         DB::beginTransaction();
                         $member =  Member::find($this->member_id);
+                        $data['type'] = 'OR';
                         $data['reference_number'] = '#TRANSFERFROMSAVINGS';
                         ImprestsProvider::createImprest($member, (new ImprestData(...$data)));
                         $data['amount'] = $data['amount'] * -1;

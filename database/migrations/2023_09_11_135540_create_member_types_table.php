@@ -15,14 +15,23 @@ return new class extends Migration
         Schema::create('member_types', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->decimal('default_number_of_shares', 8, 2)->default(0);
+            $table->decimal('default_amount_subscribed', 14, 2)->default(0);
+            $table->decimal('minimum_initial_payment', 14, 2)->default(0);
             $table->timestamps();
         });
 
         MemberType::create([
-            'name' => 'REGULAR'
+            'name' => 'REGULAR',
+            'minimum_initial_payment' => 6500,
+            'default_amount_subscribed' => 25000,
+            'default_number_of_shares' => 50,
         ]);
         MemberType::create([
-            'name' => 'ASSOCIATE'
+            'name' => 'ASSOCIATE',
+            'minimum_initial_payment' => 2500,
+            'default_amount_subscribed' => 10000,
+            'default_number_of_shares' => 20,
         ]);
         MemberType::create([
             'name' => 'LABORATORY'

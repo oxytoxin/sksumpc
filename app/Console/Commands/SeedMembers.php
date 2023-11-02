@@ -61,7 +61,7 @@ class SeedMembers extends Command
                     );
 
                     $memberData['dependents'] = [];
-                    $memberData['other_income_sources'] = [];
+                    $memberData['other_income_sources'] = null;
 
                     if ($memberData['member_type_id'] == 1) {
                         $memberData['present_employer'] = 'SKSU-Sultan Kudarat State University';

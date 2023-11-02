@@ -72,7 +72,7 @@ class EditMemberLoan extends Page implements HasForms
                 TextInput::make('gross_amount')->required()
                     ->live(true)->afterStateUpdated(function ($state, $set, $get) {
                         if ($loanType = LoanType::find($get('loan_type_id'))) {
-                            $deductions = LoansProvider::computeDeductions($loanType, str_replace(',', '', $state ?? 0), $this->member, $this->loan->id);
+                            $deductions = LoansProvider::computeDeductions($loanType, $state, $this->member, $this->loan->id);
                             $deductions = collect($deductions)->map(function ($d) {
                                 $d['amount'] = number_format($d['amount'], 2);
                                 return $d;
@@ -80,9 +80,7 @@ class EditMemberLoan extends Page implements HasForms
                             $set('deductions', $deductions);
                         }
                     })
-                    ->mask(fn ($state) => RawJs::make('$money'))
-                    ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state ?? 0))
-                    ->prefix('P'),
+                    ->moneymask(),
                 Select::make('number_of_terms')
                     ->options(LoansProvider::LOAN_TERMS)
                     ->live(),

@@ -39,6 +39,7 @@ class ImprestsProvider
         }
         return Imprest::create([
             'transaction_date' => $data->transaction_date,
+            'type' => $data->type,
             'reference_number' => $data->reference_number,
             'amount' => $data->amount,
             'interest_rate' => ImprestsProvider::INTEREST_RATE,

@@ -112,9 +112,9 @@ class LoansTable extends Component implements HasForms, HasTable
                             ->unique('loans', 'reference_number', ignoreRecord: true),
                         DatePicker::make('transaction_date')->required()->native(false),
                         TextInput::make('gross_amount')->required()
-                            ->live(true)->afterStateUpdated(function ($state, $set, $get, $record) {
+                            ->afterStateUpdated(function ($state, $set, $get, $record) {
                                 if ($loanType = LoanType::find($get('loan_type_id'))) {
-                                    $deductions = LoansProvider::computeDeductions($loanType, str_replace(',', '', $state ?? 0), $this->member, $record->id);
+                                    $deductions = LoansProvider::computeDeductions($loanType, $state, $this->member, $record->id);
                                     $deductions = collect($deductions)->map(function ($d) {
                                         $d['amount'] = number_format($d['amount'], 2);
                                         return $d;
@@ -122,9 +122,7 @@ class LoansTable extends Component implements HasForms, HasTable
                                     $set('deductions', $deductions);
                                 }
                             })
-                            ->mask(fn ($state) => RawJs::make('$money($input)'))
-                            ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state ?? 0))
-                            ->prefix('P'),
+                            ->moneymask(),
                         Select::make('number_of_terms')
                             ->options(LoansProvider::LOAN_TERMS)
                             ->live(),
@@ -141,9 +139,7 @@ class LoansTable extends Component implements HasForms, HasTable
                             ->schema([
                                 TextInput::make('name')->readOnly(fn ($get) => boolval($get('readonly'))),
                                 TextInput::make('amount')
-                                    ->mask(fn ($state) => RawJs::make('$money'))
-                                    ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state ?? 0))
-                                    ->prefix('P')
+                                    ->moneymask()
                                     ->readOnly(fn ($get) => boolval($get('readonly'))),
                                 Hidden::make('readonly')->default(false),
                             ])
@@ -187,14 +183,7 @@ class LoansTable extends Component implements HasForms, HasTable
                     ->icon('heroicon-o-banknotes')
                     ->form([
                         Select::make('type')
-                            ->options([
-                                'OR' => 'OR',
-                                'JV' => 'JV',
-                                'CV' => 'CV',
-                            ])
-                            ->default('OR')
-                            ->selectablePlaceholder(false)
-                            ->live()
+                            ->paymenttype()
                             ->required(),
                         TextInput::make('reference_number')->required()
                             ->unique('loan_payments'),
@@ -263,9 +252,9 @@ class LoansTable extends Component implements HasForms, HasTable
                             ->unique('loans'),
                         DatePicker::make('transaction_date')->required()->native(false),
                         TextInput::make('gross_amount')->required()
-                            ->live(true)->afterStateUpdated(function ($state, $set, $get) {
+                            ->afterStateUpdated(function ($state, $set, $get) {
                                 if ($loanType = LoanType::find($get('loan_type_id'))) {
-                                    $deductions = LoansProvider::computeDeductions($loanType, str_replace(',', '', $state ?? 0), $this->member);
+                                    $deductions = LoansProvider::computeDeductions($loanType, $state, $this->member);
                                     $deductions = collect($deductions)->map(function ($d) {
                                         $d['amount'] = number_format($d['amount'], 2);
                                         return $d;
@@ -273,9 +262,7 @@ class LoansTable extends Component implements HasForms, HasTable
                                     $set('deductions', $deductions);
                                 }
                             })
-                            ->mask(fn ($state) => RawJs::make('$money'))
-                            ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state ?? 0))
-                            ->prefix('P'),
+                            ->moneymask(),
                         Select::make('number_of_terms')
                             ->options(LoansProvider::LOAN_TERMS)
                             ->live(),
@@ -292,9 +279,7 @@ class LoansTable extends Component implements HasForms, HasTable
                             ->schema([
                                 TextInput::make('name')->readOnly(fn ($get) => boolval($get('readonly'))),
                                 TextInput::make('amount')
-                                    ->mask(fn ($state) => RawJs::make('$money'))
-                                    ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state ?? 0))
-                                    ->prefix('P')
+                                    ->moneymask()
                                     ->readOnly(fn ($get) => boolval($get('readonly'))),
                                 Hidden::make('readonly')->default(false),
                             ])

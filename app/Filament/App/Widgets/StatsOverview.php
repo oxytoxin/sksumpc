@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Widgets;
 
+use App\Models\Member;
 use Filament\Support\Colors\Color;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -10,8 +11,11 @@ class StatsOverview extends BaseWidget
 {
     protected function getStats(): array
     {
+        $for_cbu_renewal = Member::withSum('capital_subscriptions', 'outstanding_balance')
+            ->having('capital_subscriptions_sum_outstanding_balance', '<=', 0)
+            ->count();
         return [
-            Stat::make('New Members', '192.1k')
+            Stat::make('Members for CBU Renewal', $for_cbu_renewal)
                 ->description('...')
                 ->color(Color::Green)
                 ->descriptionIcon('heroicon-m-arrow-trending-up'),

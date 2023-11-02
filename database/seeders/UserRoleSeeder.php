@@ -21,7 +21,7 @@ class UserRoleSeeder extends Seeder
             'name' => 'manager'
         ]);
         $user = User::create([
-            'name' => 'SKSUMPC Administrator',
+            'name' => 'FLORA C. DAMANDAMAN',
             'email' => 'sksumpcadmin@gmail.com',
             'password' => Hash::make('password')
         ]);
@@ -32,7 +32,7 @@ class UserRoleSeeder extends Seeder
             'name' => 'cashier'
         ]);
         $user = User::create([
-            'name' => 'SKSUMPC Cashier',
+            'name' => 'CRISTY A. MANTOS',
             'email' => 'sksumpccashier@gmail.com',
             'password' => Hash::make('password')
         ]);
@@ -47,7 +47,7 @@ class UserRoleSeeder extends Seeder
             'name' => 'cbu-staff'
         ]);
         $user = User::create([
-            'name' => 'SKSUMPC CBU Staff',
+            'name' => 'ADRIAN VOLTAIRE POLO',
             'email' => 'sksumpccbu@gmail.com',
             'password' => Hash::make('password')
         ]);
@@ -97,12 +97,27 @@ class UserRoleSeeder extends Seeder
             'name' => 'book-keeper'
         ]);
         $user = User::create([
-            'name' => 'SKSUMPC Bookkeeper',
+            'name' => 'ADRIAN VOLTAIRE POLO',
             'email' => 'sksumpcbookkeeper@gmail.com',
             'password' => Hash::make('password')
         ]);
         $permission = Permission::create([
             'name' => 'manage bookkeeping'
+        ]);
+        $role->givePermissionTo($permission);
+        $user->assignRole($role);
+
+        // Treasurer
+        $role = Role::create([
+            'name' => 'treasurer'
+        ]);
+        $user = User::create([
+            'name' => 'DESIREE G. LEGASPI',
+            'email' => 'sksumpctreasurer@gmail.com',
+            'password' => Hash::make('password')
+        ]);
+        $permission = Permission::create([
+            'name' => 'manage treasury'
         ]);
         $role->givePermissionTo($permission);
         $user->assignRole($role);

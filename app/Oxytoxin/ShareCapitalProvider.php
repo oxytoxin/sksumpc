@@ -4,12 +4,6 @@ namespace App\Oxytoxin;
 
 class ShareCapitalProvider
 {
-    const REGULAR_INITIAL_SHARES = 50;
-    const REGULAR_INITIAL_AMOUNT = 25000;
-    const REGULAR_INITIAL_PAID = 6500;
-    const ASSOCIATE_INITIAL_SHARES = 20;
-    const ASSOCIATE_INITIAL_AMOUNT = 10000;
-    const ASSOCIATE_INITIAL_PAID = 2500;
     const PAR_VALUE = 500;
     const INITIAL_NUMBER_OF_TERMS = 12;
     const ADDITIONAL_NUMBER_OF_TERMS = 36;

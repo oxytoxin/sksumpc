@@ -4,9 +4,9 @@
 
 <x-filament-panels::page>
     @php
-        $savings = auth()
+        $imprests = auth()
             ->user()
-            ->cashier_savings()
+            ->cashier_imprests()
             ->with('member')
             ->whereDate('transaction_date', today())
             ->get();
@@ -23,7 +23,7 @@
                     </div>
                 </div>
             </div>
-            <h4 class="text-xl mt-8 font-bold text-center">DAILY SUMMARY OF MEMBER'S SAVINGS DEPOSIT AND WITHDRAWAL</h4>
+            <h4 class="text-xl mt-8 font-bold text-center">DAILY SUMMARY OF MEMBER'S IMPRESTS DEPOSIT AND WITHDRAWAL</h4>
             <p class="text-center">{{ today()->format('l, F d, Y') }}</p>
 
             <div class="my-8">
@@ -41,15 +41,15 @@
                         @php
                             $total = 0;
                         @endphp
-                        @forelse ($savings as $saving)
+                        @forelse ($imprests as $imprest)
                             @php
-                                $total += $saving->amount;
+                                $total += $imprest->amount;
                             @endphp
                             <tr>
                                 <th class="text-center border-2 border-black">{{ $loop->iteration }}</th>
-                                <td class="text-center border-2 border-black whitespace-nowrap px-2">{{ $saving->member->full_name }}</td>
-                                <td class="text-center border-2 border-black">{{ $saving->deposit ? format_money($saving->deposit, 'PHP') : '' }}</td>
-                                <td class="text-center border-2 border-black">{{ $saving->withdrawal ? format_money($saving->withdrawal, 'PHP') : '' }}</td>
+                                <td class="text-center border-2 border-black whitespace-nowrap px-2">{{ $imprest->member->full_name }}</td>
+                                <td class="text-center border-2 border-black">{{ $imprest->deposit ? format_money($imprest->deposit, 'PHP') : '' }}</td>
+                                <td class="text-center border-2 border-black">{{ $imprest->withdrawal ? format_money($imprest->withdrawal, 'PHP') : '' }}</td>
                                 <td class="text-center border-2 border-black">{{ format_money($total, 'PHP') }}</td>
                             </tr>
                         @empty
@@ -57,7 +57,6 @@
                                 <td colspan="5" class="text-center border-2 border-black">No transactions today.</td>
                             </tr>
                         @endforelse
-
                     </tbody>
                 </table>
             </div>
@@ -68,4 +67,5 @@
             <x-filament::button icon="heroicon-o-printer" @click="printOut($refs.print.outerHTML, 'CBU Subsidiary Ledger')">Print</x-filament::button>
         </div>
     </div>
+
 </x-filament-panels::page>

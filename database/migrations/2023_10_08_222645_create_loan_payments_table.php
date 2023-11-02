@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('loan_payments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('loan_id')->constrained();
-            $table->string('type')->default('OR');
             $table->decimal('amount', 14, 2);
             $table->decimal('interest', 14, 2);
             $table->decimal('principal', 14, 2);
             $table->decimal('running_balance', 14, 2);
+            $table->string('type')->default('OR');
             $table->string('reference_number');
             $table->string('remarks')->nullable();
             $table->date('transaction_date');

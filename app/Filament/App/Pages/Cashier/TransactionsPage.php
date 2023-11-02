@@ -2,28 +2,35 @@
 
 namespace App\Filament\App\Pages\Cashier;
 
-use App\Models\CapitalSubscription;
-use App\Models\CashCollectible;
+use DB;
 use App\Models\Loan;
 use App\Models\Member;
-use App\Oxytoxin\ImprestData;
-use App\Oxytoxin\ImprestsProvider;
-use App\Oxytoxin\SavingsData;
-use App\Oxytoxin\SavingsProvider;
-use DB;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Forms\Form;
 use Filament\Pages\Page;
+use App\Models\TimeDeposit;
 use Filament\Support\RawJs;
+use App\Oxytoxin\ImprestData;
+use App\Oxytoxin\SavingsData;
+use App\Models\CashCollectible;
+use App\Oxytoxin\SavingsProvider;
+use App\Oxytoxin\ImprestsProvider;
+use App\Models\CapitalSubscription;
 use Filament\Forms\Components\Select;
+use App\Oxytoxin\TimeDepositsProvider;
+use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Section;
-use Illuminate\Contracts\Support\Htmlable;
-use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Notifications\Notification;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Placeholder;
+use Illuminate\Contracts\Support\Htmlable;
+use function Filament\Support\format_money;
+
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Concerns\InteractsWithForms;
 
 class TransactionsPage extends Page implements HasForms
 {
@@ -34,6 +41,8 @@ class TransactionsPage extends Page implements HasForms
     protected static string $view = 'filament.app.pages.transactions-page';
 
     protected static ?string $navigationLabel = 'Transaction';
+
+    protected static ?int $navigationSort = 3;
 
     public static function shouldRegisterNavigation(): bool
     {
@@ -53,6 +62,7 @@ class TransactionsPage extends Page implements HasForms
                     ->schema([
                         Actions::make([
                             Action::make('pay_cbu')
+                                ->label('Pay CBU')
                                 ->form([
                                     Select::make('member_id')
                                         ->label('Member')
@@ -63,24 +73,15 @@ class TransactionsPage extends Page implements HasForms
                                         ->preload(),
                                     Select::make('capital_subscription_id')
                                         ->label('Capital Subscription')
-                                        ->options(fn ($get) => CapitalSubscription::whereMemberId($get('member_id'))->pluck('code', 'id'))
+                                        ->options(fn ($get) => CapitalSubscription::whereMemberId($get('member_id'))->where('outstanding_balance', '>', 0)->pluck('code', 'id'))
                                         ->required(),
                                     Select::make('type')
-                                        ->options([
-                                            'OR' => 'OR',
-                                            'JV' => 'JV',
-                                            'CV' => 'CV',
-                                        ])
-                                        ->default('OR')
-                                        ->selectablePlaceholder(false)
-                                        ->live()
+                                        ->paymenttype()
                                         ->required(),
                                     TextInput::make('reference_number')->required()
                                         ->unique('capital_subscription_payments'),
                                     TextInput::make('amount')->required()
-                                        ->mask(fn ($state) => RawJs::make('$money'))
-                                        ->dehydrateStateUsing(fn ($state) => str_replace(',', '', $state ?? 0))
-                                        ->minValue(1)->prefix('P'),
+                                        ->moneymask(),
                                     TextInput::make('remarks'),
                                     DatePicker::make('transaction_date')->default(today())->native(false)->label('Date'),
                                 ])
@@ -107,12 +108,14 @@ class TransactionsPage extends Page implements HasForms
                                         ->default('1')
                                         ->required(),
                                     DatePicker::make('transaction_date')->required()->default(today()),
+                                    Select::make('type')
+                                        ->paymenttype()
+                                        ->required(),
                                     TextInput::make('reference_number')->required()
                                         ->unique('savings'),
-                                    TextInput::make('amount')->prefix('PHP')
+                                    TextInput::make('amount')
                                         ->required()
-                                        ->numeric()
-                                        ->minValue(1),
+                                        ->moneymask(),
                                 ])
                                 ->action(function ($data) {
                                     $data['amount'] = $data['amount'] * $data['action'];
@@ -140,12 +143,14 @@ class TransactionsPage extends Page implements HasForms
                                         ->default('1')
                                         ->required(),
                                     DatePicker::make('transaction_date')->required()->default(today()),
+                                    Select::make('type')
+                                        ->paymenttype()
+                                        ->required(),
                                     TextInput::make('reference_number')->required()
                                         ->unique('imprests'),
-                                    TextInput::make('amount')->prefix('PHP')
+                                    TextInput::make('amount')
                                         ->required()
-                                        ->numeric()
-                                        ->minValue(1),
+                                        ->moneymask(),
                                 ])
                                 ->action(function ($data) {
                                     $data['amount'] = $data['amount'] * $data['action'];
@@ -155,6 +160,39 @@ class TransactionsPage extends Page implements HasForms
                                     ImprestsProvider::createImprest($member, (new ImprestData(...$data)));
                                     DB::commit();
                                     Notification::make()->title('Imprests transaction completed!')->success()->send();
+                                }),
+                            Action::make('New Time Deposit')
+                                ->form([
+                                    Select::make('member_id')
+                                        ->label('Member')
+                                        ->options(Member::pluck('full_name', 'id'))
+                                        ->searchable()
+                                        ->live()
+                                        ->required()
+                                        ->preload(),
+                                    DatePicker::make('transaction_date')->required()->default(today())->native(false)->live()->afterStateUpdated(fn (Set $set, $state) => $set('maturity_date', TimeDepositsProvider::getMaturityDate($state))),
+                                    DatePicker::make('maturity_date')->required()->readOnly()->default(TimeDepositsProvider::getMaturityDate(today()))->native(false),
+                                    Select::make('type')
+                                        ->paymenttype()
+                                        ->required(),
+                                    TextInput::make('reference_number')->required()
+                                        ->unique('time_deposits'),
+                                    TextInput::make('amount')
+                                        ->required()
+                                        ->moneymask()
+                                        ->afterStateUpdated(fn (Set $set, $state) => $set('maturity_amount', TimeDepositsProvider::getMaturityAmount(floatval($state))))
+                                        ->minValue(TimeDepositsProvider::MINIMUM_DEPOSIT)->default(TimeDepositsProvider::MINIMUM_DEPOSIT),
+                                    Placeholder::make('number_of_days')->content(TimeDepositsProvider::NUMBER_OF_DAYS),
+                                    Placeholder::make('maturity_amount')->content(fn (Get $get) => format_money(TimeDepositsProvider::getMaturityAmount(floatval($get('amount'))), 'PHP')),
+                                    TextInput::make('tdc_number')->label('TDC Number')->required()->unique('time_deposits', 'tdc_number')->validationAttribute('TDC Number'),
+                                ])
+                                ->action(function ($data) {
+                                    DB::beginTransaction();
+                                    TimeDeposit::create([
+                                        ...$data,
+                                    ]);
+                                    DB::commit();
+                                    Notification::make()->title('Time deposit transaction completed!')->success()->send();
                                 }),
                             Action::make('pay_loan')
                                 ->form([
@@ -174,18 +212,11 @@ class TransactionsPage extends Page implements HasForms
                                         ->required()
                                         ->preload(),
                                     Select::make('type')
-                                        ->options([
-                                            'OR' => 'OR',
-                                            'JV' => 'JV',
-                                            'CV' => 'CV',
-                                        ])
-                                        ->default('OR')
-                                        ->selectablePlaceholder(false)
-                                        ->live()
+                                        ->paymenttype()
                                         ->required(),
                                     TextInput::make('reference_number')->required()
                                         ->unique('loan_payments'),
-                                    TextInput::make('amount')->required()->numeric()->minValue(1)->prefix('P'),
+                                    TextInput::make('amount')->required()->moneymask(),
                                     TextInput::make('remarks'),
                                     DatePicker::make('transaction_date')->default(today())->native(false)->label('Date'),
 
@@ -212,9 +243,12 @@ class TransactionsPage extends Page implements HasForms
                                         ->preload(),
                                     TextInput::make('payee')
                                         ->required(),
+                                    Select::make('type')
+                                        ->paymenttype()
+                                        ->required(),
                                     TextInput::make('reference_number')->required()
                                         ->unique('cash_collectible_payments'),
-                                    TextInput::make('amount')->required()->numeric()->minValue(1)->prefix('P'),
+                                    TextInput::make('amount')->required()->moneymask(),
                                     DatePicker::make('transaction_date')->default(today())->native(false)->label('Date'),
 
                                 ])
@@ -222,18 +256,11 @@ class TransactionsPage extends Page implements HasForms
                                     $record = CashCollectible::find($data['cash_collectible_id']);
                                     unset($data['cash_collectible_id']);
                                     $record->payments()->create($data);
-                                    Notification::make()->title('Payment made for ' . $record->name . ' !')->success()->send();
+                                    Notification::make()->title('Payment made for ' . $record->name . '!')->success()->send();
                                 }),
                         ])
                     ]),
-                Section::make('Reports')
-                    ->schema([
-                        Actions::make([
-                            Action::make('daily_summary_savings')
-                                ->label('Daily Summary for Savings')
-                                ->url(route('filament.app.pages.daily-summary-savings'))
-                        ])
-                    ]),
+
             ]);
     }
 }

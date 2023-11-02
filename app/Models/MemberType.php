@@ -12,6 +12,10 @@ class MemberType extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'minimum_initial_payment' => 'decimal:2',
+    ];
+
     public function members()
     {
         return $this->hasMany(Member::class);

@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Resources\MemberResource\Pages;
 
+use App\Filament\App\Pages\Cashier\Reports\HasSignatories;
 use App\Filament\App\Resources\MemberResource;
 use App\Models\CapitalSubscriptionPayment;
 use App\Models\Member;
@@ -20,12 +21,11 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\HtmlString;
 
 
 class CbuSubsidiaryLedger extends Page implements HasTable
 {
-    use InteractsWithTable;
+    use InteractsWithTable, HasSignatories;
 
     protected static string $resource = MemberResource::class;
 
@@ -42,7 +42,7 @@ class CbuSubsidiaryLedger extends Page implements HasTable
     {
         return $table
             ->query(CapitalSubscriptionPayment::query()->whereRelation('capital_subscription', 'member_id', $this->member->id))
-            ->content(fn () => view('filament.app.views.cbu-sl', ['member' => $this->member]))
+            ->content(fn () => view('filament.app.views.cbu-sl', ['member' => $this->member, 'signatories' => $this->signatories]))
             ->columns([
                 TextColumn::make('transaction_date')
                     ->date('m/d/Y')

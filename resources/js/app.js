@@ -1,7 +1,6 @@
+import SimpleMaskMoney from 'simple-mask-money';
 import './bootstrap';
+import Currency from '@tadashi/currency';
 
-import Alpine from 'alpinejs';
-
-window.Alpine = Alpine;
-
-Alpine.start();
+window.SimpleMaskMoney = SimpleMaskMoney;
+window.Currency = Currency;

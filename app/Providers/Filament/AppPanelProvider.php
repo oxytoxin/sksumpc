@@ -19,6 +19,8 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Support\Assets\Js;
+use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 
@@ -60,6 +62,12 @@ class AppPanelProvider extends PanelProvider
             ])
             ->breadcrumbs(false)
             ->darkMode(false)
+            ->renderHook(
+                'panels::head.end',
+                fn () => Blade::render("
+                    @vite('resources/js/app.js')
+                ")
+            )
             ->renderHook(
                 'panels::body.end',
                 fn (): string => Blade::render("
