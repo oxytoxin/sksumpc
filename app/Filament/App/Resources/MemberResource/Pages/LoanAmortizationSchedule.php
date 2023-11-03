@@ -18,6 +18,6 @@ class LoanAmortizationSchedule extends Page
 
     public function mount()
     {
-        $this->schedule = LoansProvider::generateAmortizationSchedule($this->loan);
+        $this->loan->load('loan_amortizations');
     }
 }

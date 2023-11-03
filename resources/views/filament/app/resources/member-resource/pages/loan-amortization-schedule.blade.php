@@ -8,7 +8,7 @@
         <h3>Date Granted: {{ $loan->transaction_date->format('M d, Y') }}</h3>
         <h3>Maturity Date: {{ $loan->maturity_date->format('M d, Y') }}</h3>
         <h3>Terms of Payment: {{ $loan->number_of_terms }}</h3>
-        <h3>Maturity Date: {{ $loan->interest_rate * 100 }}%</h3>
+        <h3>Interest Rate: {{ $loan->interest_rate * 100 }}%</h3>
     </div>
     <table class="table">
         <thead>
@@ -34,15 +34,15 @@
                 <td class="border border-black px-2 text-right">{{ format_money($loan->gross_amount, 'PHP') }}</td>
                 <td class="border border-black px-2"></td>
             </tr>
-            @foreach ($schedule as $item)
+            @foreach ($loan->loan_amortizations as $loan_amortization)
                 <tr>
-                    <td class="border border-black px-2">{{ $item['term'] }}</td>
-                    <td class="border border-black px-2">{{ $item['date'] }}</td>
-                    <td class="border border-black px-2 text-center">{{ $item['days'] }}</td>
-                    <td class="border border-black px-2 text-right">{{ format_money($item['amortization'], 'PHP') }}</td>
-                    <td class="border border-black px-2 text-right">{{ format_money($item['interest'], 'PHP') }}</td>
-                    <td class="border border-black px-2 text-right">{{ format_money($item['principal'], 'PHP') }}</td>
-                    <td class="border border-black px-2 text-right">{{ format_money($item['outstanding_balance'], 'PHP') }}</td>
+                    <td class="border border-black px-2">{{ $loan_amortization->term }}</td>
+                    <td class="border border-black px-2">{{ $loan_amortization->date }}</td>
+                    <td class="border border-black px-2 text-center">{{ $loan_amortization->days }}</td>
+                    <td class="border border-black px-2 text-right">{{ format_money($loan_amortization->amortization, 'PHP') }}</td>
+                    <td class="border border-black px-2 text-right">{{ format_money($loan_amortization->interest, 'PHP') }}</td>
+                    <td class="border border-black px-2 text-right">{{ format_money($loan_amortization->principal, 'PHP') }}</td>
+                    <td class="border border-black px-2 text-right">{{ format_money($loan_amortization->outstanding_balance, 'PHP') }}</td>
                     <td class="border border-black px-2"></td>
                 </tr>
             @endforeach
@@ -50,9 +50,9 @@
                 <td class="border border-black px-2"></td>
                 <td class="border border-black px-2">TOTAL</td>
                 <td class="border border-black px-2 text-center"></td>
-                <td class="border border-black px-2 text-right">{{ format_money(collect($schedule)->sum('amortization'), 'PHP') }}</td>
-                <td class="border border-black px-2 text-right">{{ format_money(collect($schedule)->sum('interest'), 'PHP') }}</td>
-                <td class="border border-black px-2 text-right">{{ format_money(collect($schedule)->sum('principal'), 'PHP') }}</td>
+                <td class="border border-black px-2 text-right">{{ format_money($loan->loan_amortizations->sum('amortization'), 'PHP') }}</td>
+                <td class="border border-black px-2 text-right">{{ format_money($loan->loan_amortizations->sum('interest'), 'PHP') }}</td>
+                <td class="border border-black px-2 text-right">{{ format_money($loan->loan_amortizations->sum('principal'), 'PHP') }}</td>
                 <td class="border border-black px-2 text-right"></td>
                 <td class="border border-black px-2"></td>
             </tr>

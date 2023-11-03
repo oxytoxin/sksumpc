@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Oxytoxin\ImprestData;
 use App\Oxytoxin\ImprestsProvider;
+use App\Oxytoxin\LoansProvider;
 use App\Oxytoxin\ShareCapitalProvider;
 use DB;
 use Illuminate\Contracts\Database\Eloquent\Builder;
@@ -77,18 +78,32 @@ class Loan extends Model
         return $query->wherePosted(true);
     }
 
+    public function loan_amortizations()
+    {
+        return $this->hasMany(LoanAmortization::class);
+    }
+
+    public function paid_loan_amortizations()
+    {
+        return $this->hasMany(LoanAmortization::class)->whereNotNull('amount_paid');
+    }
+
+    public function active_loan_amortization()
+    {
+        return $this->hasOne(LoanAmortization::class)->whereNull('amount_paid')->orWhere('arrears', '>', 0);
+    }
+
     protected static function booted(): void
     {
-        static::saved(function (Loan $loan) {
-            if ($loan->changes) {
-            }
-        });
+
         static::saving(function (Loan $loan) {
             $loan->outstanding_balance = $loan->gross_amount;
             $loan->deductions_amount = collect($loan->deductions)->sum('amount');
 
             if ($loan->posted) {
                 DB::beginTransaction();
+                $amortization_schedule = LoansProvider::generateAmortizationSchedule($loan);
+                $loan->loan_amortizations()->createMany($amortization_schedule);
                 $cbu_amount = collect($loan->deductions)->firstWhere('code', 'cbu_common')['amount'];
                 $cbu = $loan->member->capital_subscriptions()->create([
                     'number_of_terms' => 0,
@@ -121,6 +136,8 @@ class Loan extends Model
                         'transaction_date' => $loan->transaction_date,
                     ]);
                 }
+
+
                 DB::commit();
             }
         });
