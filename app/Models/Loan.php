@@ -94,7 +94,6 @@ class Loan extends Model
                     'number_of_terms' => 0,
                     'number_of_shares' => $cbu_amount / ShareCapitalProvider::PAR_VALUE,
                     'amount_subscribed' => $cbu_amount,
-                    'initial_amount_paid' => $cbu_amount,
                     'par_value' => ShareCapitalProvider::PAR_VALUE,
                     'is_common' => false,
                     'code' => Str::random(12),
@@ -108,6 +107,7 @@ class Loan extends Model
                 ]);
                 ImprestsProvider::createImprest($loan->member, (new ImprestData(
                     transaction_date: $loan->transaction_date,
+                    type: 'OR',
                     reference_number: $loan->reference_number,
                     amount: collect($loan->deductions)->firstWhere('code', 'imprest')['amount'],
                 )));
