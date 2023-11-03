@@ -58,11 +58,7 @@ class LoanResource extends Resource
                     ->hidden(fn ($record) => $record->posted)
                     ->requiresConfirmation()
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ])
+            ->bulkActions([])
             ->emptyStateActions([]);
     }
 

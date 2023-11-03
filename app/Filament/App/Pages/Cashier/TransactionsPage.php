@@ -205,7 +205,7 @@ class TransactionsPage extends Page implements HasForms
                                         ->preload(),
                                     Select::make('loan_id')
                                         ->label('Loan')
-                                        ->options(fn ($get) => Loan::whereMemberId($get('member_id'))->where('outstanding_balance', '>', 0)->pluck('reference_number', 'id'))
+                                        ->options(fn ($get) => Loan::whereMemberId($get('member_id'))->where('posted', true)->where('outstanding_balance', '>', 0)->pluck('reference_number', 'id'))
                                         ->searchable()
                                         ->live()
                                         ->afterStateUpdated(fn ($set, $state) => $set('amount', Loan::find($state)->monthly_payment))
