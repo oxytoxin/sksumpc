@@ -20,6 +20,7 @@ return new class extends Migration
             $table->decimal('number_of_shares', 14, 2);
             $table->decimal('amount_subscribed', 14, 2)->default(1000);
             $table->decimal('monthly_payment', 14, 2)->nullable();
+            $table->decimal('initial_amount_paid', 14, 2)->nullable();
             $table->decimal('par_value');
             $table->date('transaction_date');
             $table->timestamps();

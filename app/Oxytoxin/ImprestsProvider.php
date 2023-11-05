@@ -12,6 +12,7 @@ class ImprestsProvider
 {
     const INTEREST_RATE = 0.02;
     const MINIMUM_AMOUNT_FOR_INTEREST = 1000;
+    const FROM_TRANSFER_CODE = '#TRANSFERFROMIMPRESTS';
 
     public static function calculateInterest($amount, $interest, $days)
     {
@@ -39,7 +40,7 @@ class ImprestsProvider
         }
         return Imprest::create([
             'transaction_date' => $data->transaction_date,
-            'type' => $data->type,
+            'payment_type_id' => $data->payment_type_id,
             'reference_number' => $data->reference_number,
             'amount' => $data->amount,
             'interest_rate' => ImprestsProvider::INTEREST_RATE,

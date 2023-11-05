@@ -67,7 +67,7 @@ class ImprestsTable extends Component implements HasForms, HasTable
                     ->modalHeading('Deposit Imprest')
                     ->form([
                         DatePicker::make('transaction_date')->required()->default(today()),
-                        Select::make('type')
+                        Select::make('payment_type_id')
                             ->paymenttype()
                             ->required(),
                         TextInput::make('reference_number')->required()
@@ -90,17 +90,16 @@ class ImprestsTable extends Component implements HasForms, HasTable
                     ->color(Color::Red)
                     ->form([
                         DatePicker::make('transaction_date')->required()->default(today()),
-                        Select::make('type')
+                        Select::make('payment_type_id')
                             ->paymenttype()
                             ->required(),
-                        TextInput::make('reference_number')->required()
-                            ->unique('imprests'),
                         TextInput::make('amount')
                             ->required()
                             ->moneymask(),
                     ])
                     ->action(function ($data) {
                         $data['amount'] = $data['amount'] * -1;
+                        $data['reference_number'] = '';
                         DB::beginTransaction();
                         $member =  Member::find($this->member_id);
                         ImprestsProvider::createImprest($member, (new ImprestData(...$data)));
@@ -122,10 +121,11 @@ class ImprestsTable extends Component implements HasForms, HasTable
                         $member =  Member::find($this->member_id);
                         $data['type'] = 'OR';
                         $data['reference_number'] = '#TRANSFERFROMIMPRESTS';
-                        SavingsProvider::createSavings($member, (new SavingsData(...$data)));
                         $data['amount'] = $data['amount'] * -1;
-                        $data['reference_number'] = '#TRANSFERTOSAVINGS';
-                        ImprestsProvider::createImprest($member, (new ImprestData(...$data)));
+                        $im = ImprestsProvider::createImprest($member, (new ImprestData(...$data)));
+                        $data['amount'] = $data['amount'] * -1;
+                        $data['reference_number'] = $im->reference_number;
+                        SavingsProvider::createSavings($member, (new SavingsData(...$data)));
                         DB::commit();
                     })
                     ->createAnother(false),

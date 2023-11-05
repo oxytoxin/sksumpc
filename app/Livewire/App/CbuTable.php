@@ -84,7 +84,7 @@ class CbuTable extends Component implements HasForms, HasTable
                 Action::make('Pay')
                     ->icon('heroicon-o-banknotes')
                     ->form([
-                        Select::make('type')
+                        Select::make('payment_type_id')
                             ->paymenttype()
                             ->required(),
                         TextInput::make('reference_number')->required()
@@ -104,7 +104,7 @@ class CbuTable extends Component implements HasForms, HasTable
                     ->label('Initial Payment')
                     ->icon('heroicon-o-banknotes')
                     ->form([
-                        Select::make('type')
+                        Select::make('payment_type_id')
                             ->paymenttype()
                             ->required(),
                         TextInput::make('reference_number')->required()
@@ -112,16 +112,13 @@ class CbuTable extends Component implements HasForms, HasTable
                         TextInput::make('amount')
                             ->required()
                             ->moneymask()
-                            ->minValue(fn ($record) => $record->member->member_type->minimum_initial_payment)
-                            ->afterStateUpdated(function ($set, $record, $state) {
-                                $set('monthly_payment', ($record->amount_subscribed - $state) / $record->number_of_terms);
-                            }),
+                            ->default(fn ($record) => $record->initial_amount_paid)
+                            ->readOnly(),
                         TextInput::make('monthly_payment')
                             ->required()
                             ->moneymask()
-                            ->afterStateUpdated(function ($set, $record, $state) {
-                                $set('amount', $record->amount_subscribed - ($record->number_of_terms * $state));
-                            }),
+                            ->default(fn ($record) => $record->monthly_payment)
+                            ->readOnly(),
                         TextInput::make('remarks'),
                         DatePicker::make('transaction_date')->default(today())->native(false)->label('Date'),
                     ])
@@ -146,17 +143,36 @@ class CbuTable extends Component implements HasForms, HasTable
                         TextInput::make('number_of_shares')->numeric()->minValue(1)->default(144)
                             ->live(true)
                             ->afterStateUpdated(function ($set, $state, $get) {
-                                $data = ShareCapitalProvider::fromNumberOfShares($state, ShareCapitalProvider::ADDITIONAL_NUMBER_OF_TERMS);
-                                $set('amount_subscribed', $data['amount_subscribed']);
-                                $set('monthly_payment', $data['monthly_payment']);
+                                $amount_subscribed = ($state ?? 0) * ShareCapitalProvider::PAR_VALUE;
+                                $monthly_payment = ($amount_subscribed - ($get('initial_amount_paid') ?? 0)) / ShareCapitalProvider::ADDITIONAL_NUMBER_OF_TERMS;
+                                $set('amount_subscribed', $amount_subscribed);
+                                $set('monthly_payment', $monthly_payment);
+                            }),
+                        TextInput::make('initial_amount_paid')
+                            ->required()
+                            ->moneymask()
+                            ->default($this->member->member_type->minimum_initial_payment)
+                            ->afterStateUpdated(function ($set, $get, $record, $state) {
+                                $monthly_payment = (($get('amount_subscribed') ?? 0) - ($state ?? 0)) / ShareCapitalProvider::ADDITIONAL_NUMBER_OF_TERMS;
+                                $set('monthly_payment', $monthly_payment);
+                            }),
+                        TextInput::make('monthly_payment')
+                            ->required()
+                            ->moneymask()
+                            ->afterStateUpdated(function ($set, $get, $record, $state) {
+                                $amount_subscribed = ($state ?? 0) * ShareCapitalProvider::ADDITIONAL_NUMBER_OF_TERMS;
+                                $number_of_shares = $amount_subscribed / ShareCapitalProvider::PAR_VALUE;
+                                $set('amount_subscribed', $amount_subscribed);
+                                $set('number_of_shares', $number_of_shares);
                             }),
                         TextInput::make('amount_subscribed')
                             ->default(72000)
                             ->moneymask()
                             ->afterStateUpdated(function ($set, $state, $get) {
-                                $data = ShareCapitalProvider::fromAmountSubscribed($state, ShareCapitalProvider::ADDITIONAL_NUMBER_OF_TERMS);
-                                $set('monthly_payment', $data['monthly_payment']);
-                                $set('number_of_shares', $data['number_of_shares']);
+                                $number_of_shares = ($state ?? 0) / ShareCapitalProvider::PAR_VALUE;
+                                $monthly_payment = (($state ?? 0) - ($get('initial_amount_paid') ?? 0)) / ShareCapitalProvider::ADDITIONAL_NUMBER_OF_TERMS;
+                                $set('monthly_payment', $monthly_payment);
+                                $set('number_of_shares', $number_of_shares);
                             }),
                     ])
                     ->action(function ($data) {

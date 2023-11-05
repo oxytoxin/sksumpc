@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('capital_subscription_payments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('capital_subscription_id')->constrained()->cascadeOnDelete();
-            $table->string('type')->default('OR');
+            $table->foreignId('payment_type_id');
             $table->decimal('amount', 14, 2);
             $table->decimal('running_balance', 14, 2);
             $table->string('reference_number');

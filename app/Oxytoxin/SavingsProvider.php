@@ -12,6 +12,7 @@ class SavingsProvider
 {
     const INTEREST_RATE = 0.01;
     const MINIMUM_AMOUNT_FOR_INTEREST = 1000;
+    const FROM_TRANSFER_CODE = '#TRANSFERFROMSAVINGS';
 
     public static function calculateInterest($amount, $interest, $days)
     {
@@ -30,6 +31,7 @@ class SavingsProvider
                 'interest_date' => $data->transaction_date,
             ]);
         });
+
         $isWithdrawal = $data->amount < 0;
         if ($isWithdrawal && $member->savings()->sum('amount') + $data->amount < 500) {
             Notification::make()->title('Invalid Amount')->body('A P500 balance should remain.')->danger()->send();
@@ -39,7 +41,7 @@ class SavingsProvider
         }
         return Saving::create([
             'transaction_date' => $data->transaction_date,
-            'type' => $data->type,
+            'payment_type_id' => $data->payment_type_id,
             'reference_number' => $data->reference_number,
             'amount' => $data->amount,
             'interest_rate' => SavingsProvider::INTEREST_RATE,

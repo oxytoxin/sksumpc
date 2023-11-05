@@ -75,7 +75,7 @@ class TransactionsPage extends Page implements HasForms
                                         ->label('Capital Subscription')
                                         ->options(fn ($get) => CapitalSubscription::whereMemberId($get('member_id'))->where('outstanding_balance', '>', 0)->pluck('code', 'id'))
                                         ->required(),
-                                    Select::make('type')
+                                    Select::make('payment_type_id')
                                         ->paymenttype()
                                         ->required(),
                                     TextInput::make('reference_number')->required()
@@ -105,13 +105,15 @@ class TransactionsPage extends Page implements HasForms
                                             '-1' => 'Withdraw',
                                             '1' => 'Deposit'
                                         ])
+                                        ->live()
                                         ->default('1')
                                         ->required(),
                                     DatePicker::make('transaction_date')->required()->default(today()),
-                                    Select::make('type')
+                                    Select::make('payment_type_id')
                                         ->paymenttype()
                                         ->required(),
                                     TextInput::make('reference_number')->required()
+                                        ->visible(fn ($get) => $get('action') == '1')
                                         ->unique('savings'),
                                     TextInput::make('amount')
                                         ->required()
@@ -122,6 +124,7 @@ class TransactionsPage extends Page implements HasForms
                                     DB::beginTransaction();
                                     $member =  Member::find($data['member_id']);
                                     unset($data['member_id'], $data['action']);
+                                    $data['reference_number'] ??= '';
                                     SavingsProvider::createSavings($member, (new SavingsData(...$data)));
                                     DB::commit();
                                     Notification::make()->title('Savings transaction completed!')->success()->send();
@@ -140,13 +143,15 @@ class TransactionsPage extends Page implements HasForms
                                             '-1' => 'Withdraw',
                                             '1' => 'Deposit'
                                         ])
+                                        ->live()
                                         ->default('1')
                                         ->required(),
                                     DatePicker::make('transaction_date')->required()->default(today()),
-                                    Select::make('type')
+                                    Select::make('payment_type_id')
                                         ->paymenttype()
                                         ->required(),
                                     TextInput::make('reference_number')->required()
+                                        ->visible(fn ($get) => $get('action') == '1')
                                         ->unique('imprests'),
                                     TextInput::make('amount')
                                         ->required()
@@ -157,6 +162,7 @@ class TransactionsPage extends Page implements HasForms
                                     DB::beginTransaction();
                                     $member =  Member::find($data['member_id']);
                                     unset($data['member_id'], $data['action']);
+                                    $data['reference_number'] ??= '';
                                     ImprestsProvider::createImprest($member, (new ImprestData(...$data)));
                                     DB::commit();
                                     Notification::make()->title('Imprests transaction completed!')->success()->send();
@@ -172,7 +178,7 @@ class TransactionsPage extends Page implements HasForms
                                         ->preload(),
                                     DatePicker::make('transaction_date')->required()->default(today())->native(false)->live()->afterStateUpdated(fn (Set $set, $state) => $set('maturity_date', TimeDepositsProvider::getMaturityDate($state))),
                                     DatePicker::make('maturity_date')->required()->readOnly()->default(TimeDepositsProvider::getMaturityDate(today()))->native(false),
-                                    Select::make('type')
+                                    Select::make('payment_type_id')
                                         ->paymenttype()
                                         ->required(),
                                     TextInput::make('reference_number')->required()
@@ -211,7 +217,7 @@ class TransactionsPage extends Page implements HasForms
                                         ->afterStateUpdated(fn ($set, $state) => $set('amount', Loan::find($state)->monthly_payment))
                                         ->required()
                                         ->preload(),
-                                    Select::make('type')
+                                    Select::make('payment_type_id')
                                         ->paymenttype()
                                         ->required(),
                                     TextInput::make('reference_number')->required()
@@ -243,7 +249,7 @@ class TransactionsPage extends Page implements HasForms
                                         ->preload(),
                                     TextInput::make('payee')
                                         ->required(),
-                                    Select::make('type')
+                                    Select::make('payment_type_id')
                                         ->paymenttype()
                                         ->required(),
                                     TextInput::make('reference_number')->required()

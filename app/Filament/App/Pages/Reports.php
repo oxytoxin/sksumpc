@@ -20,6 +20,11 @@ class Reports extends Page implements HasForms
 
     protected static ?int $navigationSort = 14;
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()->can('manage payments');
+    }
+
     public function form(Form $form): Form
     {
         return $form->schema([
@@ -35,6 +40,9 @@ class Reports extends Page implements HasForms
                         Action::make('daily_summary_time_deposits')
                             ->label('Daily Summary for Time Deposits')
                             ->url(route('filament.app.pages.daily-summary-time-deposits')),
+                        Action::make('daily_summary_cash_collectibles')
+                            ->label('Daily Summary for Cash Collectibles')
+                            ->url(route('filament.app.pages.daily-summary-cash-collectibles')),
                     ])
                 ]),
         ]);

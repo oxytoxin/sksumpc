@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\PaymentType;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Support\RawJs;
@@ -25,12 +26,9 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Select::macro('paymenttype', function () {
-            $this->options([
-                'OR' => 'OR',
-                'JV' => 'JV',
-                'CV' => 'CV',
-            ])
-                ->default('OR')
+            $this->options(PaymentType::pluck('name', 'id'))
+                ->default(1)
+                ->label('Payment Type')
                 ->selectablePlaceholder(false)
                 ->live();
             return $this;

@@ -99,7 +99,7 @@ class SeedMembers extends Command
                         $payment = $cbu->payments()->create([
                             'amount' => $membershipStatus['initial_amount_paid'],
                             'reference_number' => '#INITIALAMOUNTPAID',
-                            'type' => 'OR',
+                            'payment_type_id' => 1,
                             'transaction_date' => today(),
                         ]);
                         $payment->update([
@@ -146,7 +146,7 @@ class SeedMembers extends Command
                 $payment = $cbu->payments()->create([
                     'amount' => $data['amount_shares_paid_total'],
                     'reference_number' => '#BALANCEFORWARDED',
-                    'type' => 'OR',
+                    'payment_type_id' => 1,
                     'transaction_date' => today(),
                 ]);
                 $payment->update([

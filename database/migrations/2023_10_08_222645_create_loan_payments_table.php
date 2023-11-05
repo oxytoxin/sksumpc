@@ -18,7 +18,7 @@ return new class extends Migration
             $table->decimal('interest', 14, 2);
             $table->decimal('principal', 14, 2);
             $table->decimal('running_balance', 14, 2);
-            $table->string('type')->default('OR');
+            $table->foreignId('payment_type_id');
             $table->string('reference_number');
             $table->string('remarks')->nullable();
             $table->date('transaction_date');

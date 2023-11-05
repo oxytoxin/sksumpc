@@ -182,7 +182,7 @@ class LoansTable extends Component implements HasForms, HasTable
                 Action::make('Pay')
                     ->icon('heroicon-o-banknotes')
                     ->form([
-                        Select::make('type')
+                        Select::make('payment_type_id')
                             ->paymenttype()
                             ->required(),
                         TextInput::make('reference_number')->required()

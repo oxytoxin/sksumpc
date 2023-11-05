@@ -20,6 +20,7 @@ class CapitalSubscription extends Model
         'number_of_shares' => 'decimal:2',
         'par_value' => 'decimal:2',
         'amount_subscribed' => 'decimal:2',
+        'initial_amount_paid' => 'decimal:2',
         'number_of_terms' => 'integer',
         'transaction_date' => 'immutable_date'
     ];
@@ -38,6 +39,7 @@ class CapitalSubscription extends Model
     {
         static::creating(function (CapitalSubscription $cbu) {
             $cbu->outstanding_balance = $cbu->amount_subscribed;
+            $cbu->initial_amount_paid ??= $cbu->member->member_type->minimum_initial_payment;
         });
 
         static::created(function (CapitalSubscription $cbu) {
