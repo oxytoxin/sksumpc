@@ -39,10 +39,18 @@
         <div class="mt-8">
             <h3 class="font-bold text-center">SUMMARY ON DAILY COLLECTIONS REPORT</h3>
             <div class="grid grid-cols-2">
+                @php
+                    $total = 0;
+                @endphp
                 @foreach ($cash_collectibles as $payment_type => $cash_collectible_items)
                     <h3 class="font-bold text-right">{{ $payment_type }}:</h3>
                     <h4 class="text-right">{{ format_money(collect($cash_collectible_items)->sum('total_amount'), 'PHP') }}</h4>
+                    @php
+                        $total += collect($cash_collectible_items)->sum('total_amount');
+                    @endphp
                 @endforeach
+                <h3 class="font-bold">TOTAL COLLECTIONS:</h3>
+                <h4 class="text-right">{{ format_money($total, 'PHP') }}</h4>
             </div>
         </div>
         <x-slot:signatories>
