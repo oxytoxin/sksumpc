@@ -115,14 +115,14 @@ class Loan extends Model
                     'transaction_date' => $loan->transaction_date
                 ]);
                 $cbu->payments()->create([
-                    'type' => 'JV',
+                    'payment_type_id' => 2,
                     'reference_number' => $loan->reference_number,
                     'amount' => $cbu_amount,
                     'transaction_date' => $loan->transaction_date,
                 ]);
                 ImprestsProvider::createImprest($loan->member, (new ImprestData(
                     transaction_date: $loan->transaction_date,
-                    type: 'OR',
+                    payment_type_id: 1,
                     reference_number: $loan->reference_number,
                     amount: collect($loan->deductions)->firstWhere('code', 'imprest')['amount'],
                 )));
@@ -130,7 +130,7 @@ class Loan extends Model
                 if ($buyOut) {
                     $existing = $loan->member->loans()->find($buyOut['loan_id']);
                     $existing?->payments()->create([
-                        'type' => 'JV',
+                        'payment_type_id' => 2,
                         'reference_number' => $loan->reference_number,
                         'amount' => $buyOut['amount'],
                         'transaction_date' => $loan->transaction_date,
