@@ -3,31 +3,31 @@
 namespace App\Filament\App\Resources;
 
 use Filament\Forms;
-use App\Models\Loan;
 use Filament\Tables;
+use App\Models\Imprest;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\Action;
 use Filament\Tables\Filters\Filter;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\DatePicker;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\App\Resources\LoanResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\App\Resources\LoanResource\Pages\ListLoans;
-use App\Filament\App\Resources\LoanResource\RelationManagers;
+use App\Filament\App\Resources\ImprestResource\Pages;
+use App\Filament\App\Resources\ImprestResource\RelationManagers;
+use App\Filament\App\Resources\ImprestResource\Pages\EditImprest;
+use App\Filament\App\Resources\ImprestResource\Pages\ListImprests;
+use App\Filament\App\Resources\ImprestResource\Pages\CreateImprest;
 
-class LoanResource extends Resource
+class ImprestResource extends Resource
 {
-    protected static ?string $model = Loan::class;
+    protected static ?string $model = Imprest::class;
 
-    protected static ?string $navigationIcon = 'icon-loan';
-
-    protected static ?int $navigationSort = 6;
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $navigationGroup = 'Transactions History';
+
+    protected static ?int $navigationSort = 3;
 
     public static function shouldRegisterNavigation(): bool
     {
@@ -47,10 +47,11 @@ class LoanResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('member.full_name'),
-                TextColumn::make('gross_amount')->money('PHP'),
-                TextColumn::make('deductions_amount')->money('PHP'),
-                TextColumn::make('net_amount')->money('PHP'),
-                IconColumn::make('posted')->boolean()->alignCenter()
+                TextColumn::make('reference_number'),
+                TextColumn::make('deposit')->money('PHP'),
+                TextColumn::make('withdrawal')->money('PHP'),
+                TextColumn::make('transaction_date')->date('F d, Y'),
+                TextColumn::make('cashier.name')->label('Cashier'),
             ])
             ->filters([
                 Filter::make('transaction_date')
@@ -70,16 +71,9 @@ class LoanResource extends Resource
                             );
                     })
             ])
-            ->actions([
-                Action::make('approve')
-                    ->action(fn ($record) => $record->update([
-                        'posted' => true
-                    ]))
-                    ->hidden(fn ($record) => $record->posted)
-                    ->requiresConfirmation()
-            ])
-            ->bulkActions([])
-            ->emptyStateActions([]);
+            ->defaultSort('transaction_date', 'desc')
+            ->actions([])
+            ->bulkActions([]);
     }
 
     public static function getRelations(): array
@@ -92,7 +86,7 @@ class LoanResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListLoans::route('/'),
+            'index' => Pages\ListImprests::route('/'),
         ];
     }
 }

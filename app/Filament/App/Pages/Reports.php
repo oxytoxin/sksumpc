@@ -5,9 +5,11 @@ namespace App\Filament\App\Pages;
 use Filament\Forms\Form;
 use Filament\Pages\Page;
 use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\View;
 use Filament\Forms\Concerns\InteractsWithForms;
 
 class Reports extends Page implements HasForms
@@ -28,22 +30,36 @@ class Reports extends Page implements HasForms
     public function form(Form $form): Form
     {
         return $form->schema([
-            Section::make('')
+            Tabs::make()
                 ->schema([
-                    Actions::make([
-                        Action::make('daily_summary_savings')
-                            ->label('Daily Summary for Savings')
-                            ->url(route('filament.app.pages.daily-summary-savings')),
-                        Action::make('daily_summary_imprests')
-                            ->label('Daily Summary for Imprests')
-                            ->url(route('filament.app.pages.daily-summary-imprests')),
-                        Action::make('daily_summary_time_deposits')
-                            ->label('Daily Summary for Time Deposits')
-                            ->url(route('filament.app.pages.daily-summary-time-deposits')),
-                        Action::make('daily_summary_cash_collectibles')
-                            ->label('Daily Summary for Cash Collectibles')
-                            ->url(route('filament.app.pages.daily-summary-cash-collectibles')),
-                    ])
+                    Tab::make('Daily Summaries')
+                        ->schema([
+                            Actions::make([
+                                Action::make('daily_summary_capital_subscriptions')
+                                    ->label('Daily Summary for CBU')
+                                    ->url(route('filament.app.pages.daily-summary-capital-subscriptions')),
+                                Action::make('daily_summary_savings')
+                                    ->label('Daily Summary for Savings')
+                                    ->url(route('filament.app.pages.daily-summary-savings')),
+                                Action::make('daily_summary_imprests')
+                                    ->label('Daily Summary for Imprests')
+                                    ->url(route('filament.app.pages.daily-summary-imprests')),
+                                Action::make('daily_summary_time_deposits')
+                                    ->label('Daily Summary for Time Deposits')
+                                    ->url(route('filament.app.pages.daily-summary-time-deposits')),
+                                Action::make('daily_summary_cash_collectibles')
+                                    ->label('Daily Summary for Cash Collectibles')
+                                    ->url(route('filament.app.pages.daily-summary-cash-collectibles')),
+                            ])
+                        ]),
+                    Tab::make('Cash Beginnings')
+                        ->schema([
+                            View::make('filament.app.views.cash-beginnings-table')
+                        ]),
+                    Tab::make('Cash Floating')
+                        ->schema([
+                            View::make('filament.app.views.cash-floating')
+                        ]),
                 ]),
         ]);
     }

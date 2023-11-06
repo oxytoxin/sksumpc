@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('member_id')->constrained();
             $table->foreignId('payment_type_id');
             $table->string('reference_number');
+            $table->string('identifier')->virtualAs("concat('TD-', reference_number)");
             $table->date('maturity_date');
             $table->date('withdrawal_date')->nullable();
             $table->decimal('amount', 14, 2);

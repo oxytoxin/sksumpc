@@ -2,30 +2,29 @@
 
 namespace App\Filament\App\Resources;
 
+use App\Filament\App\Resources\CapitalSubscriptionPaymentResource\Pages;
+use App\Filament\App\Resources\CapitalSubscriptionPaymentResource\RelationManagers;
+use App\Models\CapitalSubscriptionPayment;
 use Filament\Forms;
-use App\Models\Loan;
-use Filament\Tables;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Filament\Resources\Resource;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Filters\Filter;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\App\Resources\LoanResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\App\Resources\LoanResource\Pages\ListLoans;
-use App\Filament\App\Resources\LoanResource\RelationManagers;
 
-class LoanResource extends Resource
+class CapitalSubscriptionPaymentResource extends Resource
 {
-    protected static ?string $model = Loan::class;
+    protected static ?string $model = CapitalSubscriptionPayment::class;
 
-    protected static ?string $navigationIcon = 'icon-loan';
+    protected static ?string $modelLabel = 'Share Capital Payments';
 
-    protected static ?int $navigationSort = 6;
+    protected static ?string $navigationIcon = 'icon-share-capital';
+
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $navigationGroup = 'Transactions History';
 
@@ -46,11 +45,11 @@ class LoanResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('member.full_name'),
-                TextColumn::make('gross_amount')->money('PHP'),
-                TextColumn::make('deductions_amount')->money('PHP'),
-                TextColumn::make('net_amount')->money('PHP'),
-                IconColumn::make('posted')->boolean()->alignCenter()
+                TextColumn::make('capital_subscription.member.full_name'),
+                TextColumn::make('reference_number'),
+                TextColumn::make('amount')->money('PHP'),
+                TextColumn::make('transaction_date')->date('F d, Y'),
+                TextColumn::make('cashier.name')->label('Cashier'),
             ])
             ->filters([
                 Filter::make('transaction_date')
@@ -70,16 +69,9 @@ class LoanResource extends Resource
                             );
                     })
             ])
-            ->actions([
-                Action::make('approve')
-                    ->action(fn ($record) => $record->update([
-                        'posted' => true
-                    ]))
-                    ->hidden(fn ($record) => $record->posted)
-                    ->requiresConfirmation()
-            ])
-            ->bulkActions([])
-            ->emptyStateActions([]);
+            ->defaultSort('transaction_date', 'desc')
+            ->actions([])
+            ->bulkActions([]);
     }
 
     public static function getRelations(): array
@@ -92,7 +84,7 @@ class LoanResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListLoans::route('/'),
+            'index' => Pages\ListCapitalSubscriptionPayments::route('/'),
         ];
     }
 }

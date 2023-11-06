@@ -23,10 +23,10 @@ class PaymentTypesSeeder extends Seeder
             'name' => 'CV'
         ]);
         PaymentType::create([
-            'name' => 'Cash'
+            'name' => 'CASH'
         ]);
         PaymentType::create([
-            'name' => 'Check'
+            'name' => 'CHECK'
         ]);
         PaymentType::create([
             'name' => 'ADA/ADV'

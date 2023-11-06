@@ -14,11 +14,13 @@ class ShareCapital extends Page
 
     protected static string $view = 'filament.app.pages.share-capital';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 1;
+
+    protected static ?string $navigationGroup = 'Transactions History';
 
     public static function shouldRegisterNavigation(): bool
     {
-        return auth()->user()->can('manage cbu');
+        return auth()->user()->canAny(['manage cbu', 'manage bookkeeping']);
     }
 
     public function infolist(Infolist $infolist)

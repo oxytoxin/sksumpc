@@ -14,13 +14,31 @@ class CashCollectiblesSeeder extends Seeder
     public function run(): void
     {
         CashCollectible::create([
-            'name' => 'Rice&Groceries'
+            'name' => 'RICE&GROCERIES'
         ]);
         CashCollectible::create([
-            'name' => 'Dorm'
+            'name' => 'DORMITORY'
         ]);
         CashCollectible::create([
-            'name' => 'Others'
+            'name' => 'PLANE TICKET'
+        ]);
+        CashCollectible::create([
+            'name' => 'CLOTH'
+        ]);
+        CashCollectible::create([
+            'name' => 'INSURANCE'
+        ]);
+        CashCollectible::create([
+            'name' => 'MISCELLANEOUS'
+        ]);
+        CashCollectible::create([
+            'name' => 'CONSIGNMENT'
+        ]);
+        CashCollectible::create([
+            'name' => 'BOOKS'
+        ]);
+        CashCollectible::create([
+            'name' => 'LAND RENTAL'
         ]);
     }
 }

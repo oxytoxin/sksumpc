@@ -94,13 +94,13 @@ class SeedMembers extends Command
                             'amount_subscribed' => $membershipStatus['amount_subscribed'],
                             'par_value' => $membershipStatus['amount_subscribed'] / $membershipStatus['number_of_shares'],
                             'is_common' => true,
-                            'transaction_date' => today(),
+                            'transaction_date' => today()->subYear()->endOfYear(),
                         ]);
                         $payment = $cbu->payments()->create([
                             'amount' => $membershipStatus['initial_amount_paid'],
                             'reference_number' => '#INITIALAMOUNTPAID',
                             'payment_type_id' => 1,
-                            'transaction_date' => today(),
+                            'transaction_date' => today()->subYear()->endOfYear(),
                         ]);
                         $payment->update([
                             'cashier_id' => 1
@@ -141,13 +141,13 @@ class SeedMembers extends Command
                     'is_common' => $existing ? true : false,
                     'par_value' => $data['amount_shares_subscribed'] / $data['shares_subscribed'],
                     'amount_subscribed' => $data['amount_shares_subscribed'],
-                    'transaction_date' => today(),
+                    'transaction_date' => today()->subYear()->endOfYear(),
                 ]);
                 $payment = $cbu->payments()->create([
                     'amount' => $data['amount_shares_paid_total'],
                     'reference_number' => '#BALANCEFORWARDED',
                     'payment_type_id' => 1,
-                    'transaction_date' => today(),
+                    'transaction_date' => today()->subYear()->endOfYear(),
                 ]);
                 $payment->update([
                     'cashier_id' => 1

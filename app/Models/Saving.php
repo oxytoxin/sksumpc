@@ -16,6 +16,8 @@ class Saving extends Model
 
     protected $casts = [
         'amount' => 'decimal:2',
+        'deposit' => 'decimal:2',
+        'withdrawal' => 'decimal:2',
         'number_of_days' => 'integer',
         'interest_rate' => 'decimal:2',
         'interest' => 'decimal:2',
