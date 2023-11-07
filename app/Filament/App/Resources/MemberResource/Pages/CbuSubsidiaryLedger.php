@@ -82,7 +82,7 @@ class CbuSubsidiaryLedger extends Page implements HasTable
                 Filter::make('transaction_date')
                     ->form([
                         DatePicker::make('from')
-                            ->default(today()->subYear()->addMonthsNoOverflow(6)),
+                            ->default(today()->subYear()),
                         DatePicker::make('to')
                             ->default(today()),
                     ])
