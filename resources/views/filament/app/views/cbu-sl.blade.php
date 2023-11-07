@@ -8,14 +8,15 @@
                 <img src="{{ asset('images/logo.jpg') }}" alt="logo" class="h-32">
                 <div class="flex flex-col items-center">
                     <p>Sultan Kudarat State University</p>
-                    <p>MULTI-PURPOSER COOPERATIVE</p>
+                    <p>MULTI-PURPOSE COOPERATIVE</p>
+                    <p>(SKSU-MPC)</p>
                     <p>Bo. 2, EJC Montilla, Tacurong City</p>
                     <p>CDA Reg. No.: 9520-12000926</p>
                     <div class="flex space-x-12">
                         <p>CIN: 0103120093</p>
                         <p>TIN: 005-811-330</p>
                     </div>
-                    <p>Contact No: 09557966507/email address: sksu.mpc@gmail.com</p>
+                    <p>Contact No: 09958203202/email address: sksu.mpc@gmail.com</p>
                 </div>
             </div>
         </div>
@@ -44,11 +45,11 @@
                         <th class="text-left px-4 border-2 border-black">{{ $record->transaction_date->format('m/d/Y') }}</th>
                         <td class="text-left px-4 border-2 border-black">{{ $record->reference_number }}</td>
                         <td class="text-center border-2 border-black"></td>
-                        <td class="text-right px-4 border-2 border-black">{{ format_money($record->amount, 'PHP') }}</td>
+                        <td class="text-right px-4 border-2 border-black">{{ number_format($record->amount, 2) }}</td>
                         @php
                             $total += $record->amount;
                         @endphp
-                        <td class="text-right px-4 border-2 border-black">{{ format_money($total, 'PHP') }}</td>
+                        <td class="text-right px-4 border-2 border-black">{{ number_format($total, 2) }}</td>
                         <td class="text-center border-2 border-black">{{ $record->remarks }}</td>
                     </tr>
                 @endforeach

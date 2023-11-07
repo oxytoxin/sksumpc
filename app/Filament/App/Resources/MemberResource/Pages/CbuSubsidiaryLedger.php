@@ -2,25 +2,26 @@
 
 namespace App\Filament\App\Resources\MemberResource\Pages;
 
-use App\Filament\App\Pages\Cashier\Reports\HasSignatories;
-use App\Filament\App\Resources\MemberResource;
-use App\Models\CapitalSubscriptionPayment;
+use App\Models\User;
 use App\Models\Member;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Select;
+use Filament\Tables\Table;
 use Filament\Resources\Pages\Page;
+use Filament\Forms\Components\Grid;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Filters\Filter;
+use Filament\Forms\Components\Select;
 use Filament\Tables\Actions\ViewAction;
-use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
-use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Enums\FiltersLayout;
-use Filament\Tables\Filters\Filter;
-use Filament\Tables\Table;
-use Illuminate\Contracts\Support\Htmlable;
+use Filament\Forms\Components\DatePicker;
 use Illuminate\Database\Eloquent\Builder;
+use App\Models\CapitalSubscriptionPayment;
+use Illuminate\Contracts\Support\Htmlable;
+use Filament\Tables\Columns\Summarizers\Sum;
+use App\Filament\App\Resources\MemberResource;
+use Filament\Tables\Concerns\InteractsWithTable;
+use App\Filament\App\Pages\Cashier\Reports\HasSignatories;
 
 
 class CbuSubsidiaryLedger extends Page implements HasTable
@@ -38,6 +39,23 @@ class CbuSubsidiaryLedger extends Page implements HasTable
         return 'CBU Subsidiary Ledger for ' . $this->member->full_name;
     }
 
+    protected function getSignatories()
+    {
+        $manager = User::whereRelation('roles', 'name', 'manager')->first();
+        $this->signatories = [
+            [
+                'action' => 'Prepared by:',
+                'name' => auth()->user()->name,
+                'position' => 'Teller/Cashier'
+            ],
+            [
+                'action' => 'Noted:',
+                'name' => $manager?->name ?? 'FLORA C. DAMANDAMAN',
+                'position' => 'Manager'
+            ],
+        ];
+    }
+
     public function table(Table $table): Table
     {
         return $table
@@ -52,14 +70,12 @@ class CbuSubsidiaryLedger extends Page implements HasTable
                 TextColumn::make('dr')
                     ->label('DR'),
                 TextColumn::make('amount')
-                    ->label('CR')
-                    ->money('PHP'),
+                    ->label('CR'),
                 TextColumn::make('ob')
                     ->label('Outstanding Balance')
                     ->state(function (Table $table, $record) {
                         return $table->getRecords()->takeUntil(fn (CapitalSubscriptionPayment $payment) => $payment->is($record))->sum('amount') + $record->amount;
-                    })
-                    ->money('PHP'),
+                    }),
                 TextColumn::make('remarks'),
             ])
             ->filters([

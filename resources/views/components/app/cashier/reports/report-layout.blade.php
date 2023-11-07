@@ -11,7 +11,7 @@
                 </div>
             </div>
         </div>
-        <h4 class="text-xl mt-4 font-bold text-center">{{ $title }}</h4>
+        <h4 contenteditable wire:ignore class="text-xl mt-4 font-bold text-center">{{ $title }}</h4>
         <p class="text-center">{{ today()->format('l, F d, Y') }}</p>
 
         <div class="my-4">
