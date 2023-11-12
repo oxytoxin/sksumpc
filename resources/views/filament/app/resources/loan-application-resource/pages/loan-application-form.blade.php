@@ -128,7 +128,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="8" class="border border-black px-2 text-center">{{ $loan->transaction_date->format('m/d/Y') }}</td>
+                                    <td colspan="8" class="border border-black px-2 text-center">No loans found.</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -150,7 +150,7 @@
             </div>
         </div>
         <div class="p-4 flex justify-end">
-            <x-filament::button icon="heroicon-o-printer" @click="printOut($refs.print.outerHTML, 'CBU Subsidiary Ledger')">Print</x-filament::button>
+            <x-filament::button icon="heroicon-o-printer" @click="printOut($refs.print.outerHTML, 'Loan Application Form')">Print</x-filament::button>
         </div>
     </div>
 </x-filament-panels::page>
