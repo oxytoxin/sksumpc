@@ -20,7 +20,7 @@ return new class extends Migration
             FOR EACH ROW
             BEGIN
                 UPDATE loans
-                SET outstanding_balance = (SELECT outstanding_balance FROM loans WHERE id = NEW.loan_id) - NEW.amount
+                SET outstanding_balance = (SELECT outstanding_balance FROM loans WHERE id = NEW.loan_id) - NEW.principal_payment
                 WHERE id = NEW.loan_id;
             END
         ');

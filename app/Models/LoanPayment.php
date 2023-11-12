@@ -40,6 +40,7 @@ class LoanPayment extends Model
             $amount_paid = $loanPayment->amount;
             while ($amount_paid > 0) {
                 $active_loan_amortization = $loan->active_loan_amortization;
+                if (!$active_loan_amortization) break;
                 if ($active_loan_amortization->arrears > 0) {
                     $amount = $amount_paid > $active_loan_amortization->arrears ? $active_loan_amortization->arrears : $amount_paid;
                     $active_loan_amortization->update([
@@ -51,16 +52,10 @@ class LoanPayment extends Model
                         'amount_paid' => $amount,
                     ]);
                 }
-
                 $amount_paid -= $amount;
                 $loan->load('active_loan_amortization');
             }
-
-            $days = $loanPayment->transaction_date->diffInDays($loan->last_payment?->transaction_date ?? $loan->transaction_date);
-            $interest = $loan->interest_rate * $loan->outstanding_balance * ($days / LoansProvider::DAYS_IN_MONTH);
-            $loanPayment->interest = $interest;
-            $loanPayment->principal = $loanPayment->amount - $interest;
-            $loanPayment->running_balance = $loanPayment->loan->outstanding_balance - $loanPayment->principal;
+            $loanPayment->principal_payment = $loan->refresh()->loan_amortizations()->sum('principal_payment');
             $loanPayment->cashier_id = auth()->id();
             DB::commit();
         });
