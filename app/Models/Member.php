@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Oxytoxin\DTO\MemberDependent;
 use App\Oxytoxin\ShareCapitalProvider;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -9,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Spatie\LaravelData\DataCollection;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -21,7 +23,7 @@ class Member extends Model implements HasMedia
 
     protected $casts = [
         'dob' => 'immutable_date',
-        'dependents' => 'array',
+        'dependents' => DataCollection::class . ':' . MemberDependent::class,
         'other_income_sources' => 'array',
         'annual_income' => 'decimal:2',
     ];
@@ -118,5 +120,10 @@ class Member extends Model implements HasMedia
     public function loans(): HasMany
     {
         return $this->hasMany(Loan::class);
+    }
+
+    public function loan_applications(): HasMany
+    {
+        return $this->hasMany(LoanApplication::class);
     }
 }

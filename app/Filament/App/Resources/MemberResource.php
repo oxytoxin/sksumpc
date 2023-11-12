@@ -9,22 +9,18 @@ use App\Filament\App\Resources\MemberResource\Pages\LoanAmortizationSchedule;
 use App\Filament\App\Resources\MemberResource\Pages\LoanDisclosureSheet;
 use App\Filament\App\Resources\MemberResource\Pages\LoanSubsidiaryLedger;
 use App\Filament\App\Resources\MemberResource\Pages\SavingsSubsidiaryLedger;
-use App\Filament\App\Resources\MemberResource\RelationManagers;
 use App\Infolists\Components\DependentsEntry;
-use App\Models\CapitalSubscription;
 use App\Models\Member;
 use App\Models\MembershipStatus;
 use App\Models\MemberType;
 use App\Models\Occupation;
 use App\Models\Religion;
-use App\Models\User;
 use App\Oxytoxin\OverrideProvider;
 use App\Oxytoxin\ShareCapitalProvider;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 use DB;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Placeholder;
@@ -33,10 +29,8 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Infolists\Components\Actions;
 use Filament\Infolists\Components\Actions\Action;
-use Filament\Infolists\Components\Grid as InfolistGrid;
 use Filament\Infolists\Components\Section as InfolistSection;
 use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
 use Filament\Infolists\Components\Tabs;
@@ -46,14 +40,10 @@ use Filament\Infolists\Components\ViewEntry;
 use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
-use Filament\Support\Enums\IconPosition;
-use Filament\Support\RawJs;
 use Filament\Tables;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Hash;
 
-use function Filament\Support\format_money;
 
 class MemberResource extends Resource
 {
@@ -67,98 +57,111 @@ class MemberResource extends Resource
 
     public static function infolist(Infolist $infolist): Infolist
     {
+        $tabs = self::getInfoTabs();
         return $infolist
             ->schema([
                 Tabs::make()
-                    ->tabs([
-                        Tab::make('Profile')
-                            ->schema([
-                                Actions::make([
-                                    Action::make('membership')
-                                        ->label('Back to Membership Module')
-                                        ->color('success')
-                                        ->url(route('filament.app.resources.members.index'))
-                                ]),
-                                InfolistSection::make([
-                                    SpatieMediaLibraryImageEntry::make('profile_photo')
-                                        ->label('')
-                                        ->collection('profile_photo')->circular()
-                                        ->visible(fn ($record) => $record->getFirstMedia('profile_photo')),
-                                    TextEntry::make('full_name')->extraAttributes(['class' => 'font-semibold'])->inlineLabel()->alignStart(),
-                                    TextEntry::make('dob')->label('Date of Birth')->date('F d, Y')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
-                                    TextEntry::make('place_of_birth')->label('Place of Birth')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
-                                    TextEntry::make('gender')->formatStateUsing(fn ($state) => match ($state) {
-                                        'M' => 'Male',
-                                        'F' => 'Female',
-                                    })->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
-                                    TextEntry::make('civil_status.name')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
-                                    TextEntry::make('contact_number')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
-                                    TextEntry::make('religion.name')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
-                                    TextEntry::make('highest_educational_attainment')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
-                                    TextEntry::make('tin')->extraAttributes(['class' => 'font-semibold'])->inlineLabel()->label('TIN'),
-                                    TextEntry::make('member_type.name')->extraAttributes(['class' => 'font-semibold'])->inlineLabel()->label('Member Type'),
-                                    TextEntry::make('division.name')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
-                                ]),
-                                InfolistSection::make()
-                                    ->schema([
-                                        TextEntry::make('occupation.name')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
-                                        TextEntry::make('present_employer')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
-                                        TextEntry::make('annual_income')->money('PHP')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
-                                        TextEntry::make('other_income_sources')->money('PHP')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
-                                    ]),
-                                InfolistSection::make()
-                                    ->schema([
-                                        DependentsEntry::make('dependents')->label('Number of Dependents')
-                                            ->inlineLabel(),
-                                    ]),
-                                InfolistSection::make('Initial Capital Subscription')
-                                    ->schema([
-                                        TextEntry::make('membership_acceptance.effectivity_date')->label('Date Accepted')->date('F d, Y')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
-                                        TextEntry::make('membership_acceptance.bod_resolution')->label('BOD Resolution')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
-                                        TextEntry::make('member_type.name')->label('Type of Member')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
-                                        TextEntry::make('initial_capital_subscription.number_of_shares')->label('# of Shares Subscribed')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
-                                        TextEntry::make('initial_capital_subscription.amount_subscribed')->label('Amount Subscribed')->money('PHP')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
-                                    ]),
-                            ]),
-                        Tab::make('CBU')
-                            ->schema([
-                                Actions::make([
-                                    Action::make('membership')
-                                        ->label('Back to Membership Module')
-                                        ->color('success')
-                                        ->url(route('filament.app.resources.members.index'))
-                                ]),
-                                ViewEntry::make('cbu')
-                                    ->view('filament.app.views.cbu-table')
-                            ])
-                            ->visible(auth()->user()->canany(['manage payments', 'manage cbu'])),
-                        Tab::make('MSO')
-                            ->schema([
-                                Actions::make([
-                                    Action::make('membership')
-                                        ->label('Back to Membership Module')
-                                        ->color('success')
-                                        ->url(route('filament.app.resources.members.index'))
-                                ]),
-                                ViewEntry::make('mso')
-                                    ->view('filament.app.views.mso-table')
-                            ])
-                            ->visible(auth()->user()->canany(['manage payments', 'manage mso'])),
-                        Tab::make('Loan')
-                            ->schema([
-                                Actions::make([
-                                    Action::make('membership')
-                                        ->label('Back to Membership Module')
-                                        ->color('success')
-                                        ->url(route('filament.app.resources.members.index'))
-                                ]),
-                                ViewEntry::make('loan')
-                                    ->view('filament.app.views.loans-table')
-                            ])
-                            ->visible(auth()->user()->canany(['manage payments', 'manage loans'])),
-                    ])->persistTabInQueryString()
+                    ->tabs($tabs)->persistTabInQueryString()
             ])
             ->columns(1);
+    }
+
+    private static function getInfoTabs(): array
+    {
+        $tabs = [
+            Tab::make('Profile')
+                ->schema([
+                    Actions::make([
+                        Action::make('membership')
+                            ->label('Back to Membership Module')
+                            ->color('success')
+                            ->url(route('filament.app.resources.members.index'))
+                    ]),
+                    InfolistSection::make([
+                        SpatieMediaLibraryImageEntry::make('profile_photo')
+                            ->label('')
+                            ->collection('profile_photo')->circular()
+                            ->visible(fn ($record) => $record->getFirstMedia('profile_photo')),
+                        TextEntry::make('full_name')->extraAttributes(['class' => 'font-semibold'])->inlineLabel()->alignStart(),
+                        TextEntry::make('dob')->label('Date of Birth')->date('F d, Y')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
+                        TextEntry::make('place_of_birth')->label('Place of Birth')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
+                        TextEntry::make('gender')->formatStateUsing(fn ($state) => match ($state) {
+                            'M' => 'Male',
+                            'F' => 'Female',
+                        })->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
+                        TextEntry::make('civil_status.name')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
+                        TextEntry::make('contact_number')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
+                        TextEntry::make('religion.name')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
+                        TextEntry::make('highest_educational_attainment')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
+                        TextEntry::make('tin')->extraAttributes(['class' => 'font-semibold'])->inlineLabel()->label('TIN'),
+                        TextEntry::make('member_type.name')->extraAttributes(['class' => 'font-semibold'])->inlineLabel()->label('Member Type'),
+                        TextEntry::make('division.name')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
+                    ]),
+                    InfolistSection::make()
+                        ->schema([
+                            TextEntry::make('occupation.name')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
+                            TextEntry::make('present_employer')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
+                            TextEntry::make('annual_income')->money('PHP')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
+                            TextEntry::make('other_income_sources')->money('PHP')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
+                        ]),
+                    InfolistSection::make()
+                        ->schema([
+                            DependentsEntry::make('dependents')->label('Number of Dependents')
+                                ->inlineLabel(),
+                        ]),
+                    InfolistSection::make('Initial Capital Subscription')
+                        ->schema([
+                            TextEntry::make('membership_acceptance.effectivity_date')->label('Date Accepted')->date('F d, Y')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
+                            TextEntry::make('membership_acceptance.bod_resolution')->label('BOD Resolution')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
+                            TextEntry::make('member_type.name')->label('Type of Member')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
+                            TextEntry::make('initial_capital_subscription.number_of_shares')->label('# of Shares Subscribed')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
+                            TextEntry::make('initial_capital_subscription.amount_subscribed')->label('Amount Subscribed')->money('PHP')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
+                        ]),
+                ])
+        ];
+        if (auth()->user()->canany(['manage payments', 'manage cbu'])) {
+            $tabs[] = Tab::make('CBU')
+                ->schema([
+                    Actions::make([
+                        Action::make('membership')
+                            ->label('Back to Membership Module')
+                            ->color('success')
+                            ->url(route('filament.app.resources.members.index'))
+                    ]),
+                    ViewEntry::make('cbu')
+                        ->view('filament.app.views.cbu-table')
+                ]);
+        }
+
+        if (auth()->user()->canany(['manage payments', 'manage mso'])) {
+            $tabs[] = Tab::make('MSO')
+                ->schema([
+                    Actions::make([
+                        Action::make('membership')
+                            ->label('Back to Membership Module')
+                            ->color('success')
+                            ->url(route('filament.app.resources.members.index'))
+                    ]),
+                    ViewEntry::make('mso')
+                        ->view('filament.app.views.mso-table')
+                ]);
+        }
+
+        if (auth()->user()->canany(['manage payments', 'manage loans'])) {
+            $tabs[] = Tab::make('Loan')
+                ->schema([
+                    Actions::make([
+                        Action::make('membership')
+                            ->label('Back to Membership Module')
+                            ->color('success')
+                            ->url(route('filament.app.resources.members.index'))
+                    ]),
+                    ViewEntry::make('loan')
+                        ->view('filament.app.views.loans-table')
+                ]);
+        }
+
+        return $tabs;
     }
 
     public static function form(Form $form): Form
@@ -249,8 +252,8 @@ class MemberResource extends Resource
                 TableRepeater::make('dependents')
                     ->default([])
                     ->schema([
-                        TextInput::make('name'),
-                        DatePicker::make('dob')->label('Date of Birth'),
+                        TextInput::make('name')->required(),
+                        DatePicker::make('dob')->label('Date of Birth')->format('Y-m-d')->required(),
                         Select::make('relationship')
                             ->options([
                                 'FATHER' => 'FATHER',
@@ -259,7 +262,7 @@ class MemberResource extends Resource
                                 'DAUGHTER' => 'DAUGHTER',
                                 'COUSIN' => 'COUSIN',
                                 'OTHERS' => 'OTHERS',
-                            ])
+                            ])->required()
                     ])
                     ->hideLabels()
                     ->columnSpanFull(),

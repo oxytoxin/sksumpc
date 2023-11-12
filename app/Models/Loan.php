@@ -32,7 +32,7 @@ class Loan extends Model
         'number_of_terms' => 'integer',
         'interest' => 'decimal:2',
         'interest_rate' => 'decimal:4',
-        'monthly_payment' => 'decimal:2',
+        'monthly_payment' => 'decimal:4',
         'release_date' => 'immutable_date',
         'transaction_date' => 'immutable_date',
         'posted' => 'boolean',

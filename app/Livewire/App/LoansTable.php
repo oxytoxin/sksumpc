@@ -3,6 +3,7 @@
 namespace App\Livewire\App;
 
 use App\Models\Loan;
+use App\Models\LoanApplication;
 use App\Models\LoanType;
 use App\Models\Member;
 use App\Models\SystemConfiguration;
@@ -195,7 +196,7 @@ class LoansTable extends Component implements HasForms, HasTable
                         $record->payments()->create($data);
                         Notification::make()->title('Payment made for loan!')->success()->send();
                     })
-                    ->visible(fn ($record) => $record->outstanding_balance > 0 && $record->posted),
+                    ->visible(fn ($record) => $record->outstanding_balance > 0 && $record->posted && auth()->user()->can('manage payments')),
                 ActionGroup::make([
                     Action::make('payments')
                         ->icon('heroicon-o-currency-dollar')
@@ -226,54 +227,48 @@ class LoansTable extends Component implements HasForms, HasTable
                 CreateAction::make()
                     ->visible(auth()->user()->can('manage loans'))
                     ->fillForm(function () {
-                        $gross_amount = match ($this->member->member_type_id) {
-                            1 => ($this->member->capital_subscriptions()->sum('amount_subscribed') ?? 0) * 3,
-                            default => ($this->member->capital_subscriptions()->sum('amount_subscribed') ?? 0) * 0.8
-                        };
+                        // $gross_amount = match ($this->member->member_type_id) {
+                        //     1 => ($this->member->capital_subscriptions()->sum('amount_subscribed') ?? 0) * 3,
+                        //     default => ($this->member->capital_subscriptions()->sum('amount_subscribed') ?? 0) * 0.8
+                        // };
                         return [
-                            'number_of_terms' => LoansProvider::LOAN_TERMS[12],
                             'transaction_date' => today(),
                             'release_date' => today(),
-                            'gross_amount' => $gross_amount,
                         ];
                     })
                     ->form([
-                        Select::make('loan_type_id')
-                            ->relationship('loan_type', 'name')
+                        Select::make('loan_application_id')
+                            ->label('Loan Application')
+                            ->options(LoanApplication::whereMemberId($this->member->id)->whereStatus(LoanApplication::STATUS_APPROVED)->pluck('reference_number', 'id'))
+                            ->required()
                             ->live()
                             ->afterStateUpdated(function ($state, $set, $get) {
-                                if ($loanType = LoanType::find($state)) {
-                                    $deductions = LoansProvider::computeDeductions($loanType, str_replace(',', '', $get('gross_amount') ?? 0), $this->member);
-                                    $set('deductions', $deductions);
+                                $la = LoanApplication::find($state);
+                                if ($la) {
+                                    $set('gross_amount', $la->desired_amount);
+                                    $set('number_of_terms', $la->number_of_terms);
+                                    if ($loanType = $la->loan_type) {
+                                        $deductions = LoansProvider::computeDeductions($loanType, $la->desired_amount, $this->member);
+                                        $set('deductions', $deductions);
+                                    }
                                 }
-                            })
-                            ->required(),
+                            }),
                         TextInput::make('reference_number')->required()
                             ->unique('loans'),
                         DatePicker::make('transaction_date')->required()->native(false),
                         TextInput::make('gross_amount')->required()
-                            ->afterStateUpdated(function ($state, $set, $get) {
-                                if ($loanType = LoanType::find($get('loan_type_id'))) {
-                                    $deductions = LoansProvider::computeDeductions($loanType, $state, $this->member);
-                                    $deductions = collect($deductions)->map(function ($d) {
-                                        $d['amount'] = number_format($d['amount'], 2);
-                                        return $d;
-                                    })->toArray();
-                                    $set('deductions', $deductions);
-                                }
-                            })
+                            ->readOnly()
                             ->moneymask(),
-                        Select::make('number_of_terms')
-                            ->options(LoansProvider::LOAN_TERMS)
-                            ->live(),
+                        TextInput::make('number_of_terms')
+                            ->readOnly(),
                         Grid::make(3)
                             ->schema([
                                 Placeholder::make('interest_rate')
-                                    ->content(fn ($get) => str(LoanType::find($get('loan_type_id'))?->interest_rate * 100 ?? 0)->append('%')->toString()),
+                                    ->content(fn ($get) => str(LoanApplication::find($get('loan_application_id'))?->loan_type?->interest_rate * 100 ?? 0)->append('%')->toString()),
                                 Placeholder::make('interest')
-                                    ->content(fn ($get) => format_money(LoansProvider::computeInterest(str_replace(',', '', $get('gross_amount') ?? 0), LoanType::find($get('loan_type_id')), $get('number_of_terms'), $get('transaction_date')), 'PHP')),
+                                    ->content(fn ($get) => format_money(LoansProvider::computeInterest($get('gross_amount') ?? 0, LoanApplication::find($get('loan_application_id'))?->loan_type, $get('number_of_terms'), $get('transaction_date')), 'PHP')),
                                 Placeholder::make('monthly_payment')
-                                    ->content(fn ($get) => format_money(LoansProvider::computeMonthlyPayment(str_replace(',', '', $get('gross_amount') ?? 0), LoanType::find($get('loan_type_id')), $get('number_of_terms'), $get('transaction_date')), 'PHP')),
+                                    ->content(fn ($get) => format_money(LoansProvider::computeMonthlyPayment($get('gross_amount') ?? 0, LoanApplication::find($get('loan_application_id'))?->loan_type, $get('number_of_terms'), $get('transaction_date')), 'PHP')),
                             ]),
                         TableRepeater::make('deductions')
                             ->schema([
@@ -289,22 +284,18 @@ class LoansTable extends Component implements HasForms, HasTable
                         Grid::make(2)
                             ->schema([
                                 Placeholder::make('deductions_amount')
-                                    ->content(fn ($get) => format_money(collect($get('deductions'))->map(function ($d) {
-                                        $d['amount'] = str_replace(',', '', filled($d['amount']) ? $d['amount'] : 0);
-                                        return $d;
-                                    })->sum('amount'), 'PHP')),
+                                    ->content(fn ($get) => format_money(collect($get('deductions'))->sum('amount'), 'PHP')),
                                 Placeholder::make('net_amount')
-                                    ->content(fn ($get) => format_money(floatval(str_replace(',', '', $get('gross_amount') ?? 0)) - collect($get('deductions'))->map(function ($d) {
-                                        $d['amount'] = str_replace(',', '', filled($d['amount']) ? $d['amount'] : 0);
-                                        return $d;
-                                    })->sum('amount'), 'PHP')),
+                                    ->content(fn ($get) => format_money(floatval(str_replace(',', '', $get('gross_amount') ?? 0)) - collect($get('deductions'))->sum('amount'), 'PHP')),
                             ]),
                         DatePicker::make('release_date')->required()->native(false),
                     ])
                     ->action(function ($data) {
-                        $loanType = LoanType::find($data['loan_type_id']);
+                        $loanApplication = LoanApplication::find($data['loan_application_id']);
+                        $loanType = $loanApplication->loan_type;
                         Loan::create([
                             ...$data,
+                            'loan_type_id' => $loanType->id,
                             'interest_rate' => $loanType->interest_rate,
                             'interest' => LoansProvider::computeInterest($data['gross_amount'], $loanType, $data['number_of_terms'], $data['transaction_date']),
                             'member_id' => $this->member->id,

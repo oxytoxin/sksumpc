@@ -1,5 +1,5 @@
 @php
-    use function Filament\Support\format_money;
+use function Filament\Support\format_money;
 @endphp
 <div x-data>
     <div class="p-4" x-ref="print">
@@ -38,20 +38,20 @@
             </thead>
             <tbody>
                 @php
-                    $total = 0;
+                $total = 0;
                 @endphp
                 @foreach ($this->table->getRecords() as $record)
-                    <tr>
-                        <th class="text-left px-4 border-2 border-black">{{ $record->transaction_date->format('m/d/Y') }}</th>
-                        <td class="text-left px-4 border-2 border-black">{{ $record->reference_number }}</td>
-                        <td class="text-center border-2 border-black"></td>
-                        <td class="text-right px-4 border-2 border-black">{{ number_format($record->amount, 2) }}</td>
-                        @php
-                            $total += $record->amount;
-                        @endphp
-                        <td class="text-right px-4 border-2 border-black">{{ number_format($total, 2) }}</td>
-                        <td class="text-center border-2 border-black">{{ $record->remarks }}</td>
-                    </tr>
+                <tr>
+                    <th class="text-left px-4 border-2 border-black">{{ $record->transaction_date->format('m/d/Y') }}</th>
+                    <td class="text-left px-4 border-2 border-black">{{ $record->reference_number }}</td>
+                    <td class="text-center border-2 border-black"></td>
+                    <td class="text-right px-4 border-2 border-black">{{ number_format($record->amount, 2) }}</td>
+                    @php
+                    $total += $record->amount;
+                    @endphp
+                    <td class="text-right px-4 border-2 border-black">{{ number_format($total, 2) }}</td>
+                    <td class="text-center border-2 border-black">{{ $record->remarks }}</td>
+                </tr>
                 @endforeach
             </tbody>
         </table>

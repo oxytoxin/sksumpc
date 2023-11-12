@@ -4,7 +4,7 @@
 
 /**
  * A helper file for Laravel, to provide autocomplete information to your IDE
- * Generated for Laravel 10.30.1.
+ * Generated for Laravel 10.31.0.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -20251,6 +20251,18 @@
                     /**
          * 
          *
+         * @see \Filament\Notifications\Testing\TestsNotifications::assertNotNotified()
+         * @param \Filament\Notifications\Notification|string|null $notification
+         * @return static 
+         * @static 
+         */ 
+        public static function assertNotNotified($notification = null)
+        {
+                        return \Livewire\Features\SupportTesting\Testable::assertNotNotified($notification);
+        }
+                    /**
+         * 
+         *
          * @see \Filament\Tables\Testing\TestsActions::mountTableAction()
          * @param array|string $name
          * @param mixed $record
@@ -20978,12 +20990,14 @@
          *
          * @see \Filament\Tables\Testing\TestsColumns::assertTableColumnExists()
          * @param string $name
+         * @param \Closure|null $checkColumnUsing
+         * @param mixed $record
          * @return static 
          * @static 
          */ 
-        public static function assertTableColumnExists($name)
+        public static function assertTableColumnExists($name, $checkColumnUsing = null, $record = null)
         {
-                        return \Livewire\Features\SupportTesting\Testable::assertTableColumnExists($name);
+                        return \Livewire\Features\SupportTesting\Testable::assertTableColumnExists($name, $checkColumnUsing, $record);
         }
                     /**
          * 
@@ -26033,7 +26047,7 @@ if (! function_exists('class_uses_recursive')) {
 
         $results = [];
 
-        foreach (array_reverse(class_parents($class)) + [$class => $class] as $class) {
+        foreach (array_reverse(class_parents($class) ?: []) + [$class => $class] as $class) {
             $results += trait_uses_recursive($class);
         }
 
