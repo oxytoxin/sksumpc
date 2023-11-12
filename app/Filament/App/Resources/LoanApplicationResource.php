@@ -78,7 +78,7 @@ class LoanApplicationResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make()->visible(auth()->user()->can('manage loans'))->visible(fn ($record) => $record->status == LoanApplication::STATUS_PROCESSING),
+                Tables\Actions\EditAction::make()->visible(fn ($record) => auth()->user()->can('manage loans') && $record->status == LoanApplication::STATUS_PROCESSING),
                 Action::make('Approve')
                     ->action(function ($record) {
                         $approvals = $record->approvals;
