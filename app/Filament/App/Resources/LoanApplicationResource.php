@@ -59,12 +59,26 @@ class LoanApplicationResource extends Resource
                 TextColumn::make('loan_type.name'),
                 TextColumn::make('desired_amount')->money('PHP'),
                 TextColumn::make('transaction_date')->date('m/d/Y'),
+                TextColumn::make('status')
+                    ->formatStateUsing(fn ($state) => match ($state) {
+                        LoanApplication::STATUS_PROCESSING => 'For Approval',
+                        LoanApplication::STATUS_APPROVED => 'Approved',
+                        LoanApplication::STATUS_DISAPPROVED => 'Disapproved',
+                    })
+                    ->colors([
+                        'warning' => LoanApplication::STATUS_PROCESSING,
+                        'success' => LoanApplication::STATUS_APPROVED,
+                        'danger' => LoanApplication::STATUS_DISAPPROVED,
+                    ])
+                    ->badge(),
+                TextColumn::make('approval_list')
+                    ->listWithLineBreaks()
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make()->visible(auth()->user()->can('manage loans')),
+                Tables\Actions\EditAction::make()->visible(auth()->user()->can('manage loans'))->visible(fn ($record) => $record->status == LoanApplication::STATUS_PROCESSING),
                 Action::make('Approve')
                     ->action(function ($record) {
                         $approvals = $record->approvals;

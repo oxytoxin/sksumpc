@@ -25,6 +25,15 @@ class LoanApplication extends Model
         'approvals' => DataCollection::class . ':' . LoanApproval::class,
     ];
 
+    public function getApprovalListAttribute()
+    {
+        return  collect($this->approvals->items())->map(fn ($a) => $a->position . ': ' . match ($a->approved) {
+            true => 'Approved',
+            false => 'Disapproved',
+            null => 'Pending',
+        })->toArray();
+    }
+
     public function member()
     {
         return $this->belongsTo(Member::class);
