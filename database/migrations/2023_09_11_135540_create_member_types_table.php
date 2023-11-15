@@ -22,7 +22,13 @@ return new class extends Migration
         });
 
         MemberType::create([
-            'name' => 'REGULAR',
+            'name' => 'REGULAR-PERMANENT',
+            'minimum_initial_payment' => 6500,
+            'default_amount_subscribed' => 25000,
+            'default_number_of_shares' => 50,
+        ]);
+        MemberType::create([
+            'name' => 'REGULAR-JO',
             'minimum_initial_payment' => 6500,
             'default_amount_subscribed' => 25000,
             'default_number_of_shares' => 50,

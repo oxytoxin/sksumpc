@@ -11,6 +11,8 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -29,6 +31,19 @@ class LoanApplicationResource extends Resource
 
     protected static ?int $navigationSort = 4;
 
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist->schema([
+            TextEntry::make('member.full_name'),
+            TextEntry::make('loan_type.name'),
+            TextEntry::make('number_of_terms'),
+            TextEntry::make('priority_number'),
+            TextEntry::make('desired_amount')->money('PHP'),
+            TextEntry::make('transaction_date')->date('m/d/Y'),
+            TextEntry::make('purpose')
+        ]);
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -45,9 +60,10 @@ class LoanApplicationResource extends Resource
                     ->options(LoansProvider::LOAN_TERMS)
                     ->default(12)
                     ->live(),
-                TextInput::make('priority_number'),
+                TextInput::make('priority_number')->required(),
                 TextInput::make('desired_amount')->moneymask()->required(),
                 DatePicker::make('transaction_date')->required()->native(false)->default(today()),
+                TextInput::make('purpose')
             ]);
     }
 
@@ -71,8 +87,6 @@ class LoanApplicationResource extends Resource
                         'danger' => LoanApplication::STATUS_DISAPPROVED,
                     ])
                     ->badge(),
-                TextColumn::make('approval_list')
-                    ->listWithLineBreaks()
             ])
             ->filters([
                 //
@@ -80,39 +94,35 @@ class LoanApplicationResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make()->visible(fn ($record) => auth()->user()->can('manage loans') && $record->status == LoanApplication::STATUS_PROCESSING),
                 Action::make('Approve')
-                    ->action(function ($record) {
-                        $approvals = $record->approvals;
-                        $approvals->map(function ($a) {
-                            if ($a->approver_id == auth()->id()) {
-                                $a->approved = true;
-                            }
-                            return $a;
-                        });
-                        $record->approvals = $approvals;
-                        $record->save();
+                    ->form([
+                        TextInput::make('remarks')
+                    ])
+                    ->action(function ($record, $data) {
+                        $record->update([
+                            'status' => LoanApplication::STATUS_APPROVED,
+                            'remarks' => $data['remarks']
+                        ]);
                         Notification::make()->title('Loan application approved!')->success()->send();
                     })
                     ->requiresConfirmation()
                     ->button()
                     ->color('success')
-                    ->visible(fn ($record) => count($record->approvals->where('approver_id', '=', auth()->id())->where('approved', null))),
+                    ->visible(fn ($record) => $record->status == LoanApplication::STATUS_PROCESSING),
                 Action::make('Reject')
-                    ->action(function ($record) {
-                        $approvals = $record->approvals;
-                        $approvals->map(function ($a) {
-                            if ($a->approver_id == auth()->id()) {
-                                $a->approved = false;
-                            }
-                            return $a;
-                        });
-                        $record->approvals = $approvals;
-                        $record->save();
+                    ->form([
+                        TextInput::make('remarks')
+                    ])
+                    ->action(function ($record, $data) {
+                        $record->update([
+                            'status' => LoanApplication::STATUS_DISAPPROVED,
+                            'remarks' => $data['remarks']
+                        ]);
                         Notification::make()->title('Loan application rejected!')->success()->send();
                     })
                     ->requiresConfirmation()
                     ->button()
                     ->color('danger')
-                    ->visible(fn ($record) => count($record->approvals->where('approver_id', '=', auth()->id())->where('approved', null))),
+                    ->visible(fn ($record) => $record->status == LoanApplication::STATUS_PROCESSING),
                 Action::make('print')
                     ->icon('heroicon-o-printer')
                     ->url(fn ($record) => route('filament.app.resources.loan-applications.application-form', ['loan_application' => $record]), true)
@@ -137,6 +147,7 @@ class LoanApplicationResource extends Resource
             'index' => Pages\ListLoanApplications::route('/'),
             'create' => Pages\CreateLoanApplication::route('/create'),
             'edit' => Pages\EditLoanApplication::route('/{record}/edit'),
+            'view' => Pages\ViewLoanApplication::route('/{record}'),
             'application-form' => Pages\LoanApplicationForm::route('/{loan_application}/application-form'),
         ];
     }

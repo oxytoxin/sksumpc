@@ -101,6 +101,32 @@ class LoansProvider
         ];
         $existing = $member?->loans()->wherePosted(true)->where('loan_type_id', $loanType->id)->where('outstanding_balance', '>', 0)->whereNot('id', $existing_loan_id)->first();
         if ($existing) {
+            $amortizations = $existing->loan_amortizations;
+            $interest_paid = $amortizations->sum('amount_paid') - $amortizations->sum('principal_payment');
+            $interest_remaining = $amortizations->sum('interest') - $interest_paid;
+            $deductions[] = [
+                'name' => 'Loan Buy-out Interest',
+                'amount' => $interest_remaining,
+                'readonly' => true,
+                'code' => 'buy_out',
+                'loan_id' => $existing->id,
+            ];
+
+            $deductions[] = [
+                'name' => 'Loan Buy-out Principal',
+                'amount' => $amortizations->sum('principal') - $amortizations->sum('principal_payment'),
+                'readonly' => true,
+                'code' => 'buy_out',
+                'loan_id' => $existing->id,
+            ];
+
+            $deductions[] = [
+                'name' => 'Loan Buy-out Arrears',
+                'amount' => $amortizations->sum('arrears'),
+                'readonly' => true,
+                'code' => 'buy_out',
+                'loan_id' => $existing->id,
+            ];
             $deductions[] = [
                 'name' => 'Loan Buy-out',
                 'amount' => $existing->loan_amortizations()->sum('interest') + $existing->loan_amortizations->sum('principal') - $existing->loan_amortizations()->sum('amount_paid'),

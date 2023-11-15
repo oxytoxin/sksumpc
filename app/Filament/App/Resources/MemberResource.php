@@ -373,9 +373,7 @@ class MemberResource extends Resource
                     })->visible(auth()->user()->can('manage members'))
             ])
             ->bulkActions([])
-            ->emptyStateActions([
-                Tables\Actions\CreateAction::make()->visible(auth()->user()->can('manage members')),
-            ])
+            ->emptyStateActions([])
             ->recordUrl(fn (Member $record) => MemberResource::getUrl('view', ['record' => $record]))
             ->defaultSort('last_name')
             ->paginated([10, 25, 50]);

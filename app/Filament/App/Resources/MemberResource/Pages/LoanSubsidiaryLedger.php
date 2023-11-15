@@ -25,6 +25,6 @@ class LoanSubsidiaryLedger extends Page
 
     public function getHeading(): string|Htmlable
     {
-        return 'Loan Subsidiary Ledger for ' . $this->loan->member->full_name;
+        return 'Loan Subsidiary Ledger';
     }
 }

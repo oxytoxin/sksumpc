@@ -93,13 +93,17 @@ class Loan extends Model
         return $this->hasOne(LoanAmortization::class)->whereNull('amount_paid')->orWhere('arrears', '>', 0);
     }
 
+    public function loan_application()
+    {
+        return $this->belongsTo(LoanApplication::class);
+    }
+
     protected static function booted(): void
     {
 
         static::saving(function (Loan $loan) {
             $loan->outstanding_balance = $loan->gross_amount;
             $loan->deductions_amount = collect($loan->deductions)->sum('amount');
-
             if ($loan->posted) {
                 DB::beginTransaction();
                 $amortization_schedule = LoansProvider::generateAmortizationSchedule($loan);
@@ -126,18 +130,16 @@ class Loan extends Model
                     reference_number: $loan->reference_number,
                     amount: collect($loan->deductions)->firstWhere('code', 'imprest')['amount'],
                 )));
-                $buyOut = collect($loan->deductions)->firstWhere('code', 'buy_out');
-                if ($buyOut) {
-                    $existing = $loan->member->loans()->find($buyOut['loan_id']);
+                $buyOut = collect($loan->deductions)->where('code', 'buy_out');
+                if (count($buyOut)) {
+                    $existing = $loan->member->loans()->find($buyOut->first()['loan_id']);
                     $existing?->payments()->create([
                         'payment_type_id' => 2,
                         'reference_number' => $loan->reference_number,
-                        'amount' => $buyOut['amount'],
+                        'amount' => $buyOut->sum('amount'),
                         'transaction_date' => $loan->transaction_date,
                     ]);
                 }
-
-
                 DB::commit();
             }
         });

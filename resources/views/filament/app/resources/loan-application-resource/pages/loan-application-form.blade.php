@@ -4,13 +4,13 @@
 
 <x-filament-panels::page>
     <div x-data class="max-w-6xl mx-auto">
-        <div class="p-4" x-ref="print">
+        <div class="p-4 print:text-[10pt] print:leading-tight print:w-full" x-ref="print">
             <div class="flex justify-center mb-16">
                 <div class="flex space-x-24 items-center">
-                    <img src="{{ asset('images/logo.jpg') }}" alt="logo" class="h-32">
-                    <div class="flex flex-col items-center">
-                        <strong>SULTAN KUDARAT STATE UNIVERSITY - MULTI-PURPOSE COOPERATIVE</strong>
-                        <strong>(SKSU-MPC)</strong>
+                    <img src="{{ asset('images/logo.jpg') }}" alt="logo" class="h-32 print:h-16">
+                    <div class="flex flex-col items-center print:text-[9pt] print:leading-none">
+                        <strong class="print:text-[11pt]">SULTAN KUDARAT STATE UNIVERSITY - MULTI-PURPOSE COOPERATIVE</strong>
+                        <strong class="print:text-[11pt]">(SKSU-MPC)</strong>
                         <p>Bo. 2, EJC Montilla, Tacurong City</p>
                         <p>CDA Reg. No.: 9520-12000926 / CIN: 0103120093 / TIN: 005-811-330</p>
                         <p>Contact No: 0906-826-1905 or 0966-702-9200</p>
@@ -18,8 +18,8 @@
                     </div>
                 </div>
             </div>
-            <h4 class="text-3xl text-center mt-8 font-bold">APPLICATION FORM</h4>
-            <div class="my-4 grid grid-cols-2">
+            <h4 class="text-3xl print:text-[14pt] text-center mt-4 font-bold">APPLICATION FORM</h4>
+            <div class="my-2 grid grid-cols-2">
                 <div class="space-x-4 flex">
                     <h4 class="font-bold">NAME:</h4>
                     <h4>{{ $loan_application->member->full_name }}</h4>
@@ -61,13 +61,13 @@
                     <h4>{{ $loan_application->number_of_terms }}</h4>
                 </div>
             </div>
-            <div class="flex flex-col items-center mt-16">
-                <h4 class="uppercase font-bold text-xl">{{ $loan_application->member->full_name }}</h4>
-                <h4>(Signature over printed name of applicant)</h4>
+            <div class="flex flex-col items-center mt-8 print:leading-[0]">
+                <h4 class="uppercase font-bold text-xl print:text-[10pt]">{{ $loan_application->member->full_name }}</h4>
+                <h4 class="print:text-[8pt]">(Signature over printed name of applicant)</h4>
             </div>
-            <div class="mt-8">
+            <div class="mt-4">
                 <h3 class="font-bold">CREDIT COMMITTEE ACTION</h3>
-                <div class="my-4 grid grid-cols-2">
+                <div class="my-2 grid grid-cols-2">
                     <div class="space-x-4 flex">
                         <h4 class="font-bold">RETURNED DUE TO:</h4>
                         <h4></h4>
@@ -81,10 +81,10 @@
                         <h4></h4>
                     </div>
                 </div>
-                <div class="mt-12">
-                    <div class="grid grid-cols-2 gap-y-8">
-                        @foreach ($approvers as $approver)
-                            <div class="flex flex-col items-center mt-8">
+                <div class="mt-4">
+                    <div class="flex flex-wrap justify-around gap-y-8">
+                        @foreach ($signatories as $approver)
+                            <div class="flex w-1/3 flex-col items-center mt-8">
                                 <p class="font-bold uppercase">{{ $approver['name'] }}</p>
                                 <p>{{ $approver['position'] }}</p>
                             </div>
@@ -92,16 +92,16 @@
                     </div>
                 </div>
             </div>
-            <hr class="border-2 print:hidden border-black my-8">
+            <hr class="border-2 print:hidden border-black my-4">
             <div class="print:break-before-page">
                 <div class="grid grid-cols-2">
                     <h4>Name: {{ $loan_application->member->full_name }}</h4>
                     <h4>Date: <span class="uppercase">{{ today()->format('F d, Y') }}</span></h4>
                     <h4>Station: {{ $loan_application->member->division?->name }}</h4>
                 </div>
-                <h3 class="font-bold text-center my-8">STATEMENT OF ACCOUNT</h3>
+                <h3 class="font-bold text-center my-4">STATEMENT OF ACCOUNT</h3>
                 <div>
-                    <table class="w-full">
+                    <table class="w-full print:text-[9pt]">
                         <thead>
                             <tr>
                                 <th class="border border-black px-2">Date</th>

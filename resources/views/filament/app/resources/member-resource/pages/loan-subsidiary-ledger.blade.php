@@ -3,6 +3,7 @@
 @endphp
 <x-filament-panels::page>
     <div>
+        <h3>Member's Name: {{ $loan->member->full_name }}</h3>
         <h3>Loan Type: {{ $loan->loan_type->name }}</h3>
         <h3>Amount Granted: {{ format_money($loan->gross_amount, 'PHP') }}</h3>
         <h3>Date Granted: {{ $loan->transaction_date->format('M d, Y') }}</h3>

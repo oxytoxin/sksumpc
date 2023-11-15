@@ -25,15 +25,6 @@ class LoanApplication extends Model
         'approvals' => DataCollection::class . ':' . LoanApproval::class,
     ];
 
-    public function getApprovalListAttribute()
-    {
-        return  collect($this->approvals->items())->map(fn ($a) => $a->position . ': ' . match ($a->approved) {
-            true => 'Approved',
-            false => 'Disapproved',
-            null => 'Pending',
-        })->toArray();
-    }
-
     public function member()
     {
         return $this->belongsTo(Member::class);
@@ -42,6 +33,11 @@ class LoanApplication extends Model
     public function processor()
     {
         return $this->belongsTo(User::class, 'processor_id');
+    }
+
+    public function loan()
+    {
+        return $this->hasOne(Loan::class);
     }
 
     public function loan_type()
@@ -57,37 +53,29 @@ class LoanApplication extends Model
             $crecom_chairperson = User::whereRelation('roles', 'name', 'crecom-chairperson')->first();
             $approvals = [];
             if ($crecom_secretary) {
-                $approvals[] = (new LoanApproval($crecom_secretary->id, 'Crecom-Secretary'));
-            }
-            if ($crecom_vicechairperson) {
-                $approvals[] = (new LoanApproval($crecom_vicechairperson->id, 'Crecom-Vice Chairperson'));
+                $approvals[] = (new LoanApproval($crecom_secretary->name, 'Crecom-Secretary'));
             }
             if ($crecom_chairperson) {
-                $approvals[] = (new LoanApproval($crecom_chairperson->id, 'Crecom-Chairperson'));
+                $approvals[] = (new LoanApproval($crecom_chairperson->name, 'Crecom-Chairperson'));
             }
+            if ($crecom_vicechairperson) {
+                $approvals[] = (new LoanApproval($crecom_vicechairperson->name, 'Crecom-Vice Chairperson'));
+            }
+
             if ($loanApplication->desired_amount > 50000) {
                 $bod_chairperson = User::whereRelation('roles', 'name', 'bod-chairperson')->first();
-                $approvals[] = (new LoanApproval($bod_chairperson->id, 'BOD-Chairperson'));
+                $approvals[] = (new LoanApproval($bod_chairperson->name, 'BOD-Chairperson'));
             } else {
                 $manager = User::whereRelation('roles', 'name', 'manager')->first();
-                $approvals[] = (new LoanApproval($manager->id, 'Manager'));
+                $approvals[] = (new LoanApproval($manager->name, 'Manager'));
             }
             $loanApplication->processor_id  = auth()->id();
             $loanApplication->approvals = $approvals;
         });
 
         static::created(function (LoanApplication $loanApplication) {
-            $loanApplication->reference_number  = $loanApplication->loan_type->code . '-' . today()->format('Y-') . str_pad($loanApplication->id, 6, '0', STR_PAD_RIGHT);
+            $loanApplication->reference_number  = $loanApplication->loan_type->code . '-' . today()->format('Y-') . str_pad($loanApplication->id, 6, '0', STR_PAD_LEFT);
             $loanApplication->save();
-        });
-
-        static::updating(function (LoanApplication $loanApplication) {
-            if (
-                !count($loanApplication->approvals->where('approved', null)) &&
-                !count($loanApplication->approvals->where('approved', false))
-            ) {
-                $loanApplication->status = LoanApplication::STATUS_APPROVED;
-            }
         });
     }
 }

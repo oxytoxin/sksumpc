@@ -10,6 +10,7 @@ export default {
         './resources/views/infolists/**/*.blade.php',
         './resources/views/components/app/**/*.blade.php',
         './resources/views/livewire/app/**/*.blade.php',
+        './resources/views/filament/app/resources/loan-application-resource/pages/loan-application-form.blade.php',
         './vendor/filament/**/*.blade.php',
         '../../../../awcodes/filament-table-repeater/resources/**/*.blade.php',
     ],

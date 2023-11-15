@@ -71,6 +71,8 @@ class TransactionsPage extends Page implements HasForms
                                         ->live()
                                         ->required()
                                         ->preload(),
+                                    Placeholder::make('member_type')
+                                        ->content(fn ($get) => Member::find($get('member_id'))?->member_type->name),
                                     Select::make('capital_subscription_id')
                                         ->label('Capital Subscription')
                                         ->options(fn ($get) => CapitalSubscription::whereMemberId($get('member_id'))->where('outstanding_balance', '>', 0)->pluck('code', 'id'))
@@ -100,6 +102,8 @@ class TransactionsPage extends Page implements HasForms
                                         ->live()
                                         ->required()
                                         ->preload(),
+                                    Placeholder::make('member_type')
+                                        ->content(fn ($get) => Member::find($get('member_id'))?->member_type->name),
                                     Select::make('action')
                                         ->options([
                                             '-1' => 'Withdraw',
@@ -138,6 +142,8 @@ class TransactionsPage extends Page implements HasForms
                                         ->live()
                                         ->required()
                                         ->preload(),
+                                    Placeholder::make('member_type')
+                                        ->content(fn ($get) => Member::find($get('member_id'))?->member_type->name),
                                     Select::make('action')
                                         ->options([
                                             '-1' => 'Withdraw',
@@ -176,6 +182,8 @@ class TransactionsPage extends Page implements HasForms
                                         ->live()
                                         ->required()
                                         ->preload(),
+                                    Placeholder::make('member_type')
+                                        ->content(fn ($get) => Member::find($get('member_id'))?->member_type->name),
                                     DatePicker::make('transaction_date')->required()->default(today())->native(false)->live()->afterStateUpdated(fn (Set $set, $state) => $set('maturity_date', TimeDepositsProvider::getMaturityDate($state))),
                                     DatePicker::make('maturity_date')->required()->readOnly()->default(TimeDepositsProvider::getMaturityDate(today()))->native(false),
                                     Select::make('payment_type_id')
@@ -209,6 +217,8 @@ class TransactionsPage extends Page implements HasForms
                                         ->live()
                                         ->required()
                                         ->preload(),
+                                    Placeholder::make('member_type')
+                                        ->content(fn ($get) => Member::find($get('member_id'))?->member_type->name),
                                     Select::make('loan_id')
                                         ->label('Loan')
                                         ->options(fn ($get) => Loan::whereMemberId($get('member_id'))->where('posted', true)->where('outstanding_balance', '>', 0)->pluck('reference_number', 'id'))
@@ -244,9 +254,10 @@ class TransactionsPage extends Page implements HasForms
                                         ->options(Member::pluck('full_name', 'id'))
                                         ->searchable()
                                         ->live()
-                                        ->afterStateUpdated(fn ($state, $set) => $set('payee', Member::find($state)->full_name))
-                                        ->required()
+                                        ->afterStateUpdated(fn ($state, $set) => $set('payee', Member::find($state)?->full_name))
                                         ->preload(),
+                                    Placeholder::make('member_type')
+                                        ->content(fn ($get) => Member::find($get('member_id'))?->member_type->name),
                                     TextInput::make('payee')
                                         ->required(),
                                     Select::make('payment_type_id')

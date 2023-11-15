@@ -1,4 +1,4 @@
-<div class="mt-16 grid grid-cols-2 gap-4">
+<div class="mt-8 grid grid-cols-2 gap-4">
     @foreach ($signatories as $signatory)
         <div>
             <p>{{ $signatory['action'] }}</p>

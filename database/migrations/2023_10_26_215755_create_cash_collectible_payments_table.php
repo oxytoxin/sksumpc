@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('cash_collectible_payments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('cash_collectible_id')->constrained();
-            $table->foreignId('member_id')->constrained()->nullable();
+            $table->foreignId('member_id')->nullable()->constrained();
             $table->string('payee');
             $table->foreignId('payment_type_id');
             $table->string('reference_number');

@@ -36,7 +36,7 @@ class CbuSubsidiaryLedger extends Page implements HasTable
 
     public function getHeading(): string|Htmlable
     {
-        return 'CBU Subsidiary Ledger for ' . $this->member->full_name;
+        return 'CBU Subsidiary Ledger';
     }
 
     protected function getSignatories()

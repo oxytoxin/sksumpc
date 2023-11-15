@@ -22,7 +22,7 @@ trait HasSignatories
                     return [
                         TableRepeater::make('signatories')
                             ->schema([
-                                TextInput::make('action')->required(),
+                                TextInput::make('action'),
                                 TextInput::make('name')->required(),
                                 TextInput::make('position')->required(),
                             ])

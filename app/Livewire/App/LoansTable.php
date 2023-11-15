@@ -90,7 +90,7 @@ class LoansTable extends Component implements HasForms, HasTable
                             'transaction_date' => $record->transaction_date,
                             'release_date' => $record->release_date,
                             'gross_amount' => $record->gross_amount,
-                            'reference_number' => $record->reference_number,
+                            'priority_number' => $record->priority_number,
                         ]);
                         $livewire->mountedTableActionsData[0]['deductions'] = $record->deductions;
                     })
@@ -109,8 +109,7 @@ class LoansTable extends Component implements HasForms, HasTable
                                 }
                             })
                             ->required(),
-                        TextInput::make('reference_number')->required()
-                            ->unique('loans', 'reference_number', ignoreRecord: true),
+                        TextInput::make('priority_number')->required(),
                         DatePicker::make('transaction_date')->required()->native(false),
                         TextInput::make('gross_amount')->required()
                             ->afterStateUpdated(function ($state, $set, $get, $record) {
@@ -239,7 +238,7 @@ class LoansTable extends Component implements HasForms, HasTable
                     ->form([
                         Select::make('loan_application_id')
                             ->label('Loan Application')
-                            ->options(LoanApplication::whereMemberId($this->member->id)->whereStatus(LoanApplication::STATUS_APPROVED)->pluck('reference_number', 'id'))
+                            ->options(LoanApplication::whereMemberId($this->member->id)->whereStatus(LoanApplication::STATUS_APPROVED)->doesntHave('loan')->pluck('reference_number', 'id'))
                             ->required()
                             ->live()
                             ->afterStateUpdated(function ($state, $set, $get) {
@@ -247,14 +246,14 @@ class LoansTable extends Component implements HasForms, HasTable
                                 if ($la) {
                                     $set('gross_amount', $la->desired_amount);
                                     $set('number_of_terms', $la->number_of_terms);
+                                    $set('priority_number', $la->priority_number);
                                     if ($loanType = $la->loan_type) {
                                         $deductions = LoansProvider::computeDeductions($loanType, $la->desired_amount, $this->member);
                                         $set('deductions', $deductions);
                                     }
                                 }
                             }),
-                        TextInput::make('reference_number')->required()
-                            ->unique('loans'),
+                        TextInput::make('priority_number')->required(),
                         DatePicker::make('transaction_date')->required()->native(false),
                         TextInput::make('gross_amount')->required()
                             ->readOnly()
@@ -295,6 +294,7 @@ class LoansTable extends Component implements HasForms, HasTable
                         $loanType = $loanApplication->loan_type;
                         Loan::create([
                             ...$data,
+                            'reference_number' => $loanApplication->reference_number,
                             'loan_type_id' => $loanType->id,
                             'interest_rate' => $loanType->interest_rate,
                             'interest' => LoansProvider::computeInterest($data['gross_amount'], $loanType, $data['number_of_terms'], $data['transaction_date']),

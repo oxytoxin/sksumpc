@@ -54,8 +54,8 @@ class ImprestsTable extends Component implements HasForms, HasTable
                 TextColumn::make('reference_number'),
                 TextColumn::make('withdrawal')->label('Withdrawal')->money('PHP'),
                 TextColumn::make('deposit')->label('Deposit/Interest')->money('PHP'),
-                TextColumn::make('number_of_days'),
                 TextColumn::make('balance')->money('PHP'),
+                TextColumn::make('number_of_days'),
                 TextColumn::make('interest')->money('PHP'),
             ])
             ->filters([

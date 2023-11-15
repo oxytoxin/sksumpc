@@ -30,7 +30,7 @@ class ImprestSubsidiaryLedger extends Page implements HasTable
 
     public function getHeading(): string|Htmlable
     {
-        return 'Imprests Subsidiary Ledger for ' . $this->member->full_name;
+        return 'Imprests Subsidiary Ledger';
     }
 
     public function table(Table $table): Table

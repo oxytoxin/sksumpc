@@ -76,7 +76,14 @@ class LoanResource extends Resource
                         'posted' => true
                     ]))
                     ->hidden(fn ($record) => $record->posted)
-                    ->requiresConfirmation()
+                    ->requiresConfirmation(),
+                Action::make('loan_application')
+                    ->label('View Application')
+                    ->button()
+                    ->url(fn ($record) => route('filament.app.resources.loan-applications.view', ['record' => $record])),
+                Action::make('print')
+                    ->icon('heroicon-o-printer')
+                    ->url(fn ($record) => route('filament.app.resources.loan-applications.application-form', ['loan_application' => $record->loan_application]), true)
             ])
             ->bulkActions([])
             ->emptyStateActions([]);

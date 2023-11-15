@@ -30,7 +30,7 @@ class SavingsSubsidiaryLedger extends Page implements HasTable
 
     public function getHeading(): string|Htmlable
     {
-        return 'Savings Subsidiary Ledger for ' . $this->member->full_name;
+        return 'Savings Subsidiary Ledger';
     }
 
     public function table(Table $table): Table

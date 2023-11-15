@@ -26,6 +26,7 @@ return new class extends Migration
             $table->smallInteger('status')->default(LoanApplication::STATUS_PROCESSING);
             $table->date('transaction_date');
             $table->json('approvals')->default('(JSON_ARRAY())');
+            $table->string('remarks')->nullable();
             $table->timestamps();
         });
     }
