@@ -31,6 +31,11 @@ class LoanApplicationResource extends Resource
 
     protected static ?int $navigationSort = 4;
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()->can('manage loans');
+    }
+
     public static function infolist(Infolist $infolist): Infolist
     {
         return $infolist->schema([

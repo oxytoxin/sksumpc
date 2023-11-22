@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('time_deposits', function (Blueprint $table) {
             $table->id();
             $table->foreignId('member_id')->constrained();
-            $table->foreignId('payment_type_id');
+            $table->foreignId('payment_type_id')->constrained();
             $table->string('reference_number');
             $table->string('identifier')->virtualAs("concat('TD-', reference_number)");
             $table->date('maturity_date');

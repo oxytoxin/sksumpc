@@ -5,11 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @mixin IdeHelperLoanAmortization
+ */
 class LoanAmortization extends Model
 {
     use HasFactory;
 
     protected $casts = [
+        'date' => 'immutable_date',
         'amortization' => 'decimal:2',
         'interest' => 'decimal:2',
         'principal' => 'decimal:2',

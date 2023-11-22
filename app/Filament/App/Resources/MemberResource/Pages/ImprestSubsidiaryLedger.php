@@ -2,9 +2,11 @@
 
 namespace App\Filament\App\Resources\MemberResource\Pages;
 
+use App\Filament\App\Pages\Cashier\Reports\HasSignatories;
 use App\Filament\App\Resources\MemberResource;
 use App\Models\Imprest;
 use App\Models\Member;
+use App\Models\User;
 use Filament\Forms\Components\DatePicker;
 use Filament\Resources\Pages\Page;
 use Filament\Tables\Actions\Action;
@@ -20,7 +22,7 @@ use Illuminate\Contracts\Support\Htmlable;
 
 class ImprestSubsidiaryLedger extends Page implements HasTable
 {
-    use InteractsWithTable;
+    use InteractsWithTable, HasSignatories;
 
     protected static string $resource = MemberResource::class;
 
@@ -33,24 +35,28 @@ class ImprestSubsidiaryLedger extends Page implements HasTable
         return 'Imprests Subsidiary Ledger';
     }
 
+    protected function getSignatories()
+    {
+        $manager = User::whereRelation('roles', 'name', 'manager')->first();
+        $this->signatories = [
+            [
+                'action' => 'Prepared by:',
+                'name' => auth()->user()->name,
+                'position' => 'Teller/Cashier'
+            ],
+            [
+                'action' => 'Noted:',
+                'name' => $manager?->name ?? 'FLORA C. DAMANDAMAN',
+                'position' => 'Manager'
+            ],
+        ];
+    }
+
     public function table(Table $table): Table
     {
         return $table
             ->query(Imprest::query()->where('member_id', $this->member->id))
-            ->columns([
-                TextColumn::make('transaction_date')
-                    ->date('m/d/Y')
-                    ->label('DATE'),
-                TextColumn::make('reference_number')
-                    ->label('REF.#'),
-                TextColumn::make('dr')
-                    ->label('DR'),
-                TextColumn::make('amount')
-                    ->label('CR')
-                    ->money('PHP')
-                    ->summarize(Sum::make()->label('')->money('PHP')),
-                TextColumn::make('remarks'),
-            ])
+            ->content(fn () => view('filament.app.views.imprests-sl', ['member' => $this->member, 'signatories' => $this->signatories]))
             ->filters([
                 Filter::make('transaction_date')
                     ->form([

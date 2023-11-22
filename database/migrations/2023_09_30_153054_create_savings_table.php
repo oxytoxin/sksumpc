@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('savings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('member_id')->constrained();
-            $table->foreignId('payment_type_id');
+            $table->foreignId('payment_type_id')->constrained();
             $table->string('reference_number');
             $table->decimal('amount', 14, 2);
             $table->decimal('deposit', 14, 2)->nullable()->virtualAs('IF(amount >= 0, amount, null)');

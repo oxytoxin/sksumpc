@@ -61,23 +61,6 @@ class CbuSubsidiaryLedger extends Page implements HasTable
         return $table
             ->query(CapitalSubscriptionPayment::query()->whereRelation('capital_subscription', 'member_id', $this->member->id))
             ->content(fn () => view('filament.app.views.cbu-sl', ['member' => $this->member, 'signatories' => $this->signatories]))
-            ->columns([
-                TextColumn::make('transaction_date')
-                    ->date('m/d/Y')
-                    ->label('DATE'),
-                TextColumn::make('reference_number')
-                    ->label('REF.#'),
-                TextColumn::make('dr')
-                    ->label('DR'),
-                TextColumn::make('amount')
-                    ->label('CR'),
-                TextColumn::make('ob')
-                    ->label('Outstanding Balance')
-                    ->state(function (Table $table, $record) {
-                        return $table->getRecords()->takeUntil(fn (CapitalSubscriptionPayment $payment) => $payment->is($record))->sum('amount') + $record->amount;
-                    }),
-                TextColumn::make('remarks'),
-            ])
             ->filters([
                 Filter::make('transaction_date')
                     ->form([

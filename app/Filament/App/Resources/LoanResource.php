@@ -55,8 +55,8 @@ class LoanResource extends Resource
             ->filters([
                 Filter::make('transaction_date')
                     ->form([
-                        DatePicker::make('from')->default(today())->native(false),
-                        DatePicker::make('until')->default(today())->native(false),
+                        DatePicker::make('from')->native(false),
+                        DatePicker::make('until')->native(false),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
@@ -80,7 +80,7 @@ class LoanResource extends Resource
                 Action::make('loan_application')
                     ->label('View Application')
                     ->button()
-                    ->url(fn ($record) => route('filament.app.resources.loan-applications.view', ['record' => $record])),
+                    ->url(fn ($record) => route('filament.app.resources.loan-applications.view', ['record' => $record->loan_application])),
                 Action::make('print')
                     ->icon('heroicon-o-printer')
                     ->url(fn ($record) => route('filament.app.resources.loan-applications.application-form', ['loan_application' => $record->loan_application]), true)

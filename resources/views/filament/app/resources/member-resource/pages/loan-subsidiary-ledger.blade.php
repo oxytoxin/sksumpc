@@ -35,7 +35,7 @@
             </tr>
             @foreach ($loan->paid_loan_amortizations as $key => $loan_amortization)
                 <tr>
-                    <td class="border border-black px-2">{{ $loan_amortization->date }}</td>
+                    <td class="border border-black px-2">{{ $loan_amortization->date->format('F Y') }}</td>
                     <td class="border border-black px-2 text-right">{{ format_money($loan_amortization->amount_paid, 'PHP') }}</td>
                     <td class="border border-black px-2 text-right">{{ format_money($loan_amortization->amount_paid > $loan_amortization->interest ? $loan_amortization->interest : $loan_amortization->amount_paid, 'PHP') }}</td>
                     <td class="border border-black px-2 text-right">{{ format_money($loan_amortization->principal_payment, 'PHP') }}</td>

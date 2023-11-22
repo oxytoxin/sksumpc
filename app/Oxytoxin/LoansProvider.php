@@ -127,13 +127,6 @@ class LoansProvider
                 'code' => 'buy_out',
                 'loan_id' => $existing->id,
             ];
-            $deductions[] = [
-                'name' => 'Loan Buy-out',
-                'amount' => $existing->loan_amortizations()->sum('interest') + $existing->loan_amortizations->sum('principal') - $existing->loan_amortizations()->sum('amount_paid'),
-                'readonly' => true,
-                'code' => 'buy_out',
-                'loan_id' => $existing->id,
-            ];
         }
         return $deductions;
     }
@@ -145,6 +138,7 @@ class LoansProvider
         $start = $loan->transaction_date;
         $term = 1;
         $amortization = LoansProvider::computeRegularAmortization($loan);
+        bcscale(10);
         do {
             if ($term == 1) {
                 $days = $start->diffInDays($start->addMonthNoOverflow()->endOfMonth()) + 1;
@@ -154,13 +148,15 @@ class LoansProvider
                 $days = 30;
             }
 
-            $interest = $loan->interest_rate * $outstanding_balance * ($days / LoansProvider::DAYS_IN_MONTH);
+            $interest = bcmul($loan->interest_rate, bcmul($outstanding_balance, bcdiv($days, LoansProvider::DAYS_IN_MONTH)));
             if ($term == $loan->number_of_terms) {
-                $interest = $loan->interest_rate * $outstanding_balance * (LoansProvider::DAYS_IN_MONTH / LoansProvider::DAYS_IN_MONTH);
-                $amortization = $outstanding_balance + $interest;
+                $interest = bcmul($loan->interest_rate, $outstanding_balance);
+                $amortization = bcadd($outstanding_balance, $interest);
+                $principal = $outstanding_balance;
+            } else {
+                $principal = bcsub($amortization, $interest);
             }
 
-            $principal = $amortization - $interest;
 
             $schedule[] = [
                 'term' => $term,
@@ -169,11 +165,10 @@ class LoansProvider
                 'amortization' => $amortization,
                 'interest' => $interest,
                 'principal' => $principal,
-                'previous_balance' => $outstanding_balance,
-                'outstanding_balance' => $outstanding_balance - $principal,
+                'previous_balance' => round($outstanding_balance, 2),
             ];
 
-            $outstanding_balance -= $principal;
+            $outstanding_balance = round(bcsub($outstanding_balance, $principal), 2);
             $start = $start->addMonthNoOverflow()->endOfMonth();
             $term++;
         } while ($term <= $loan->number_of_terms);

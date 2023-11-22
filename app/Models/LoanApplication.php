@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\LaravelData\DataCollection;
 use Str;
 
+/**
+ * @mixin IdeHelperLoanApplication
+ */
 class LoanApplication extends Model
 {
     use HasFactory;

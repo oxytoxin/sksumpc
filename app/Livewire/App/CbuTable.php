@@ -16,6 +16,7 @@ use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Support\RawJs;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
@@ -79,8 +80,6 @@ class CbuTable extends Component implements HasForms, HasTable
                     })
             ], layout: FiltersLayout::AboveContent)
             ->actions([
-                ViewAction::make()
-                    ->modalContent(fn ($record) => view('filament.app.views.cbu-payments', ['cbu' => $record])),
                 Action::make('Pay')
                     ->icon('heroicon-o-banknotes')
                     ->form([
@@ -91,6 +90,7 @@ class CbuTable extends Component implements HasForms, HasTable
                             ->unique('capital_subscription_payments'),
                         TextInput::make('amount')
                             ->required()
+                            ->default(fn ($record) => $record->monthly_payment)
                             ->moneymask(),
                         TextInput::make('remarks'),
                         DatePicker::make('transaction_date')->default(today())->native(false)->label('Date'),
@@ -131,6 +131,15 @@ class CbuTable extends Component implements HasForms, HasTable
                         Notification::make()->title('Payment made for capital subscription!')->success()->send();
                     })
                     ->hidden(fn ($record) => $record->payments()->exists()),
+                ActionGroup::make([
+                    ViewAction::make()
+                        ->label('Payments')
+                        ->modalContent(fn ($record) => view('filament.app.views.cbu-payments', ['cbu' => $record])),
+                    ViewAction::make()
+                        ->label('Amortization Schedule')
+                        ->url(fn ($record) => route('filament.app.resources.members.cbu-amortization-schedule', ['cbu' => $record]))
+                        ->modalContent(fn ($record) => view('filament.app.views.cbu-payments', ['cbu' => $record])),
+                ]),
 
             ])
             ->headerActions([
@@ -159,6 +168,7 @@ class CbuTable extends Component implements HasForms, HasTable
                         TextInput::make('monthly_payment')
                             ->required()
                             ->moneymask()
+                            ->default((72000 - $this->member->member_type->minimum_initial_payment) / ShareCapitalProvider::ADDITIONAL_NUMBER_OF_TERMS)
                             ->afterStateUpdated(function ($set, $get, $record, $state) {
                                 $amount_subscribed = ($state ?? 0) * ShareCapitalProvider::ADDITIONAL_NUMBER_OF_TERMS + ($get('initial_amount_paid') ?? 0);
                                 $number_of_shares = $amount_subscribed / ShareCapitalProvider::PAR_VALUE;

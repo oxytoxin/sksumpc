@@ -35,6 +35,21 @@ class CapitalSubscription extends Model
         return $this->hasMany(CapitalSubscriptionPayment::class);
     }
 
+    public function capital_subscription_amortizations()
+    {
+        return $this->hasMany(CapitalSubscriptionAmortization::class);
+    }
+
+    public function paid_capital_subscription_amortizations()
+    {
+        return $this->hasMany(CapitalSubscriptionAmortization::class)->whereNotNull('amount_paid');
+    }
+
+    public function active_capital_subscription_amortization()
+    {
+        return $this->hasOne(CapitalSubscriptionAmortization::class)->whereNull('amount_paid')->orWhere('arrears', '>', 0);
+    }
+
     protected static function booted(): void
     {
         static::creating(function (CapitalSubscription $cbu) {
@@ -50,6 +65,9 @@ class CapitalSubscription extends Model
             }
             $cbu->code = $code;
             $cbu->save();
+            if ($cbu->monthly_payment) {
+                $cbu->capital_subscription_amortizations()->createMany(ShareCapitalProvider::generateAmortizationSchedule($cbu));
+            }
         });
     }
 

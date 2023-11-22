@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('capital_subscription_payments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('capital_subscription_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('payment_type_id');
+            $table->foreignId('payment_type_id')->constrained();
             $table->decimal('amount', 14, 2);
             $table->decimal('deposit', 14, 2)->nullable()->virtualAs('IF(amount >= 0, amount, null)');
             $table->decimal('withdrawal', 14, 2)->nullable()->virtualAs('IF(amount < 0, amount * -1, null)');

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('cash_collectible_id')->constrained();
             $table->foreignId('member_id')->nullable()->constrained();
             $table->string('payee');
-            $table->foreignId('payment_type_id');
+            $table->foreignId('payment_type_id')->constrained();
             $table->string('reference_number');
             $table->decimal('amount', 14, 2);
             $table->date('transaction_date');

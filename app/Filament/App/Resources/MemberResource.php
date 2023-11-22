@@ -3,6 +3,7 @@
 namespace App\Filament\App\Resources;
 
 use App\Filament\App\Resources\MemberResource\Pages;
+use App\Filament\App\Resources\MemberResource\Pages\CbuAmortizationSchedule;
 use App\Filament\App\Resources\MemberResource\Pages\CbuSubsidiaryLedger;
 use App\Filament\App\Resources\MemberResource\Pages\ImprestSubsidiaryLedger;
 use App\Filament\App\Resources\MemberResource\Pages\LoanAmortizationSchedule;
@@ -41,6 +42,7 @@ use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
@@ -345,6 +347,7 @@ class MemberResource extends Resource
                 SelectFilter::make('member_type')
                     ->relationship('member_type', 'name')
             ])
+            ->filtersLayout(FiltersLayout::AboveContent)
             ->persistFiltersInSession()
             ->actions([
                 Tables\Actions\EditAction::make()->visible(auth()->user()->can('manage members')),
@@ -395,6 +398,7 @@ class MemberResource extends Resource
             'edit' => Pages\EditMember::route('/{record}/edit'),
             'loan.edit' => Pages\EditMemberLoan::route('/{record}/{loan}/edit'),
             'cbu-subsidiary-ledger' => CbuSubsidiaryLedger::route('cbu-subsidiary-ledger/{member}'),
+            'cbu-amortization-schedule' => CbuAmortizationSchedule::route('cbu-amortization-schedule/{cbu}'),
             'savings-subsidiary-ledger' => SavingsSubsidiaryLedger::route('savings-subsidiary-ledger/{member}'),
             'imprest-subsidiary-ledger' => ImprestSubsidiaryLedger::route('imprest-subsidiary-ledger/{member}'),
             'loan-subsidiary-ledger' => LoanSubsidiaryLedger::route('loan-subsidiary-ledger/{loan}'),

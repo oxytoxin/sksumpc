@@ -6,19 +6,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @mixin IdeHelperCashBeginning
+ * @mixin IdeHelperCapitalSubscriptionAmortization
  */
-class CashBeginning extends Model
+class CapitalSubscriptionAmortization extends Model
 {
     use HasFactory;
 
     protected $casts = [
         'amount' => 'decimal:2',
-        'transaction_date' => 'immutable_date'
+        'term' => 'integer',
+        'due_date' => 'immutable_date'
     ];
-
-    public function cashier()
-    {
-        return $this->belongsTo(User::class, 'cashier_id');
-    }
 }

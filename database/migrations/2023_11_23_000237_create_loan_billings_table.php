@@ -11,16 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('loan_payments', function (Blueprint $table) {
+        Schema::create('loan_billings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('loan_id')->constrained();
-            $table->decimal('amount', 14, 2);
-            $table->decimal('principal_payment', 14, 2);
-            $table->foreignId('payment_type_id')->constrained()->constrained();
-            $table->string('reference_number');
-            $table->string('remarks')->nullable();
-            $table->date('transaction_date');
+            $table->date('date');
+            $table->string('billable_date')->virtualAs("DATE_FORMAT(date, '%M %Y')");
+            $table->foreignId('payment_type_id')->nullable()->constrained();
+            $table->string('reference_number')->nullable();
             $table->foreignId('cashier_id')->nullable()->constrained('users', 'id')->nullOnDelete();
+            $table->boolean('posted')->default(false);
             $table->timestamps();
         });
     }
@@ -30,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('loan_payments');
+        Schema::dropIfExists('loan_billings');
     }
 };

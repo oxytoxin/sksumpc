@@ -2,25 +2,27 @@
 
 namespace App\Filament\App\Resources\MemberResource\Pages;
 
-use App\Filament\App\Resources\MemberResource;
+use App\Models\User;
 use App\Models\Member;
 use App\Models\Saving;
-use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Table;
 use Filament\Resources\Pages\Page;
 use Filament\Tables\Actions\Action;
-use Filament\Tables\Columns\Summarizers\Sum;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Enums\FiltersLayout;
-use Filament\Tables\Filters\Filter;
-use Filament\Tables\Table;
-use Illuminate\Contracts\Database\Eloquent\Builder;
+use Filament\Forms\Components\DatePicker;
 use Illuminate\Contracts\Support\Htmlable;
+use Filament\Tables\Columns\Summarizers\Sum;
+use App\Filament\App\Resources\MemberResource;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Illuminate\Contracts\Database\Eloquent\Builder;
+use App\Filament\App\Pages\Cashier\Reports\HasSignatories;
 
 class SavingsSubsidiaryLedger extends Page implements HasTable
 {
-    use InteractsWithTable;
+    use InteractsWithTable, HasSignatories;
 
     protected static string $resource = MemberResource::class;
 
@@ -33,23 +35,28 @@ class SavingsSubsidiaryLedger extends Page implements HasTable
         return 'Savings Subsidiary Ledger';
     }
 
+    protected function getSignatories()
+    {
+        $manager = User::whereRelation('roles', 'name', 'manager')->first();
+        $this->signatories = [
+            [
+                'action' => 'Prepared by:',
+                'name' => auth()->user()->name,
+                'position' => 'Teller/Cashier'
+            ],
+            [
+                'action' => 'Noted:',
+                'name' => $manager?->name ?? 'FLORA C. DAMANDAMAN',
+                'position' => 'Manager'
+            ],
+        ];
+    }
+
     public function table(Table $table): Table
     {
         return $table
             ->query(Saving::query()->where('member_id', $this->member->id))
-            ->recordClasses(fn ($record) => $record->amount > 0 ? 'bg-green-200' : 'bg-red-200')
-            ->columns([
-                TextColumn::make('transaction_date')
-                    ->date('m/d/Y')
-                    ->label('DATE'),
-                TextColumn::make('reference_number')
-                    ->label('REF.#'),
-                TextColumn::make('withdrawal')->label('DR')->money('PHP')
-                    ->summarize(Sum::make()->label('')->money('PHP')),
-                TextColumn::make('deposit')->label('CR')->money('PHP')
-                    ->summarize(Sum::make()->label('')->money('PHP')),
-                TextColumn::make('remarks'),
-            ])
+            ->content(fn () => view('filament.app.views.savings-sl', ['member' => $this->member, 'signatories' => $this->signatories]))
             ->filters([
                 Filter::make('transaction_date')
                     ->form([

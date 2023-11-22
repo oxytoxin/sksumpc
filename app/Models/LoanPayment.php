@@ -38,6 +38,7 @@ class LoanPayment extends Model
             DB::beginTransaction();
             $loan = $loanPayment->loan;
             $amount_paid = $loanPayment->amount;
+            $principal_payment = 0;
             while ($amount_paid > 0) {
                 $active_loan_amortization = $loan->active_loan_amortization;
                 if (!$active_loan_amortization) break;
@@ -53,9 +54,10 @@ class LoanPayment extends Model
                     ]);
                 }
                 $amount_paid -= $amount;
+                $principal_payment += $active_loan_amortization->amount_paid - $active_loan_amortization->interest;
                 $loan->load('active_loan_amortization');
             }
-            $loanPayment->principal_payment = $loan->refresh()->loan_amortizations()->sum('principal_payment');
+            $loanPayment->principal_payment = $principal_payment;
             $loanPayment->cashier_id = auth()->id();
             DB::commit();
         });
