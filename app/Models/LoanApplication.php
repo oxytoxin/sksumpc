@@ -24,6 +24,7 @@ class LoanApplication extends Model
         'desired_amount' => 'decimal:2',
         'monthly_payment' => 'decimal:4',
         'transaction_date' => 'immutable_date',
+        'disapproval_date' => 'immutable_date',
         'status' => 'integer',
         'approvals' => DataCollection::class . ':' . LoanApproval::class,
     ];

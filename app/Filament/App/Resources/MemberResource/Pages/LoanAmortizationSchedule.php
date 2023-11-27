@@ -42,7 +42,7 @@ class LoanAmortizationSchedule extends Page
             [
                 'action' => 'Conforme:',
                 'name' => $this->loan->member->full_name,
-                'position' => 'Manager'
+                'position' => "Member's Name"
             ],
         ];
     }

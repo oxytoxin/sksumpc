@@ -23,7 +23,14 @@
                     </tr>
                 </thead>
                 <tbody>
-
+                    <tr>
+                        <td class="border border-black px-2"></td>
+                        <td class="border whitespace-nowrap border-black px-2">Initial Payment</td>
+                        <td class="border border-black px-2 text-right">{{ format_money($cbu->initial_amount_paid, 'PHP') }}</td>
+                        <td class="border border-black px-2 text-right"></td>
+                        <td class="border border-black px-2 text-right"></td>
+                        <td class="border border-black px-2"></td>
+                    </tr>
                     @foreach ($cbu->capital_subscription_amortizations as $amortization)
                         <tr>
                             <td class="border border-black px-2">{{ $amortization->term }}</td>

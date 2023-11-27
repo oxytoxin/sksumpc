@@ -17,7 +17,7 @@ class CashCollectibleResource extends Resource
 {
     protected static ?string $model = CashCollectible::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-currency-dollar';
+    protected static ?string $navigationGroup = 'Management';
 
     protected static ?int $navigationSort = 5;
 

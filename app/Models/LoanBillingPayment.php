@@ -24,4 +24,9 @@ class LoanBillingPayment extends Model
     {
         return $this->belongsTo(LoanAmortization::class);
     }
+
+    public function member()
+    {
+        return $this->belongsTo(Member::class);
+    }
 }

@@ -38,8 +38,11 @@ class AppPanelProvider extends PanelProvider
             ])
             ->navigationGroups([
                 NavigationGroup::make()
+                    ->label('Loan')
+                    ->icon('icon-loan'),
+                NavigationGroup::make()
                     ->label('Management')
-                    ->icon('heroicon-o-cog-6-tooth')
+                    ->icon('heroicon-o-cog-6-tooth'),
             ])
             ->discoverResources(in: app_path('Filament/App/Resources'), for: 'App\\Filament\\App\\Resources')
             ->discoverPages(in: app_path('Filament/App/Pages'), for: 'App\\Filament\\App\\Pages')

@@ -5,19 +5,26 @@ namespace App\Filament\App\Resources;
 use App\Filament\App\Resources\LoanApplicationResource\Pages;
 use App\Filament\App\Resources\LoanApplicationResource\RelationManagers;
 use App\Models\LoanApplication;
+use App\Models\LoanType;
 use App\Oxytoxin\LoansProvider;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\ViewEntry;
 use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -27,9 +34,9 @@ class LoanApplicationResource extends Resource
 {
     protected static ?string $model = LoanApplication::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationGroup = 'Loan';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 1;
 
     public static function shouldRegisterNavigation(): bool
     {
@@ -38,15 +45,29 @@ class LoanApplicationResource extends Resource
 
     public static function infolist(Infolist $infolist): Infolist
     {
-        return $infolist->schema([
+        return $infolist->schema(fn ($record) => [
+            TextEntry::make('reference_number'),
             TextEntry::make('member.full_name'),
             TextEntry::make('loan_type.name'),
             TextEntry::make('number_of_terms'),
             TextEntry::make('priority_number'),
             TextEntry::make('desired_amount')->money('PHP'),
             TextEntry::make('transaction_date')->date('m/d/Y'),
-            TextEntry::make('purpose')
-        ]);
+            TextEntry::make('purpose'),
+            Section::make('Loan Details')
+                ->schema([
+                    TextEntry::make('loan.gross_amount')->money('PHP')->label('Gross Amount'),
+                    ViewEntry::make('loan.deductions')
+                        ->view('infolists.components.loan-deductions-entry', ['deductions' => $record->loan->deductions]),
+                    TextEntry::make('loan.deductions_amount')->money('PHP')->label('Deductions Amount'),
+                    TextEntry::make('loan.net_amount')->money('PHP')->label('Net Amount'),
+                    TextEntry::make('loan.interest_rate')->formatStateUsing(fn ($state) => str($state * 100)->append('%'))->label('Interest Rate'),
+                    TextEntry::make('loan.interest')->money('PHP')->label('Interest Amount'),
+                    TextEntry::make('loan.monthly_payment')->money('PHP')->label('Monthly Payment'),
+                    TextEntry::make('loan.release_date')->date('m/d/Y')->label('Release Date'),
+
+                ])
+        ])->columns(1);
     }
 
     public static function form(Form $form): Form
@@ -65,7 +86,7 @@ class LoanApplicationResource extends Resource
                     ->options(LoansProvider::LOAN_TERMS)
                     ->default(12)
                     ->live(),
-                TextInput::make('priority_number')->required(),
+                TextInput::make('priority_number'),
                 TextInput::make('desired_amount')->moneymask()->required(),
                 DatePicker::make('transaction_date')->required()->native(false)->default(today()),
                 TextInput::make('purpose')
@@ -76,10 +97,10 @@ class LoanApplicationResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('member.full_name'),
+                TextColumn::make('member.full_name')->searchable(),
+                TextColumn::make('transaction_date')->date('m/d/Y')->label('Date Applied'),
                 TextColumn::make('loan_type.name'),
                 TextColumn::make('desired_amount')->money('PHP'),
-                TextColumn::make('transaction_date')->date('m/d/Y'),
                 TextColumn::make('status')
                     ->formatStateUsing(fn ($state) => match ($state) {
                         LoanApplication::STATUS_PROCESSING => 'For Approval',
@@ -94,8 +115,49 @@ class LoanApplicationResource extends Resource
                     ->badge(),
             ])
             ->filters([
-                //
+                SelectFilter::make('loan_type_id')
+                    ->label('Loan Type')
+                    ->options(LoanType::orderBy('name')->pluck('name', 'id')),
+                SelectFilter::make('status')
+                    ->options([
+                        LoanApplication::STATUS_PROCESSING => 'For Approval',
+                        LoanApplication::STATUS_APPROVED => 'Approved',
+                        LoanApplication::STATUS_DISAPPROVED => 'Disapproved',
+                    ]),
+                Filter::make('date_applied')
+                    ->form([
+                        DatePicker::make('applied_from')->native(false),
+                        DatePicker::make('applied_until')->native(false),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['applied_from'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('transaction_date', '>=', $date),
+                            )
+                            ->when(
+                                $data['applied_until'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('transaction_date', '<=', $date),
+                            );
+                    }),
+                Filter::make('date_disapproved')
+                    ->form([
+                        DatePicker::make('disapproved_from')->native(false),
+                        DatePicker::make('disapproved_until')->native(false),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['disapproved_from'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('disapproval_date', '>=', $date),
+                            )
+                            ->when(
+                                $data['disapproved_until'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('disapproval_date', '<=', $date),
+                            );
+                    }),
             ])
+            ->filtersLayout(FiltersLayout::AboveContent)
             ->actions([
                 Tables\Actions\EditAction::make()->visible(fn ($record) => auth()->user()->can('manage loans') && $record->status == LoanApplication::STATUS_PROCESSING),
                 Action::make('Approve')
@@ -120,6 +182,7 @@ class LoanApplicationResource extends Resource
                     ->action(function ($record, $data) {
                         $record->update([
                             'status' => LoanApplication::STATUS_DISAPPROVED,
+                            'disapproval_date' => today(),
                             'remarks' => $data['remarks']
                         ]);
                         Notification::make()->title('Loan application rejected!')->success()->send();
@@ -130,13 +193,9 @@ class LoanApplicationResource extends Resource
                     ->visible(fn ($record) => $record->status == LoanApplication::STATUS_PROCESSING),
                 Action::make('print')
                     ->icon('heroicon-o-printer')
-                    ->url(fn ($record) => route('filament.app.resources.loan-applications.application-form', ['loan_application' => $record]), true)
+                    ->url(fn ($record) => route('filament.app.resources.loan-applications.application-form', ['loan_application' => $record]), true),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+            ->bulkActions([]);
     }
 
     public static function getRelations(): array

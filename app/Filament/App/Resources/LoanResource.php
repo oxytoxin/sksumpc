@@ -23,11 +23,9 @@ class LoanResource extends Resource
 {
     protected static ?string $model = Loan::class;
 
-    protected static ?string $navigationIcon = 'icon-loan';
-
     protected static ?int $navigationSort = 6;
 
-    protected static ?string $navigationGroup = 'Transactions History';
+    protected static ?string $navigationGroup = 'Loan';
 
     public static function shouldRegisterNavigation(): bool
     {
@@ -47,6 +45,7 @@ class LoanResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('member.full_name'),
+                TextColumn::make('loan_type.name'),
                 TextColumn::make('gross_amount')->money('PHP'),
                 TextColumn::make('deductions_amount')->money('PHP'),
                 TextColumn::make('net_amount')->money('PHP'),

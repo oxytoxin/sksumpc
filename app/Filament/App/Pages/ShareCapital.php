@@ -20,7 +20,7 @@ class ShareCapital extends Page
 
     public static function shouldRegisterNavigation(): bool
     {
-        return auth()->user()->canAny(['manage cbu', 'manage bookkeeping']);
+        return false;
     }
 
     public function infolist(Infolist $infolist)

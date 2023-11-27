@@ -31,9 +31,9 @@ class LoanBillingResource extends Resource
 {
     protected static ?string $model = LoanBilling::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationGroup = 'Loan';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 5;
 
     public static function shouldRegisterNavigation(): bool
     {
@@ -44,6 +44,9 @@ class LoanBillingResource extends Resource
     {
         return $form
             ->schema([
+                Select::make('loan_type_id')
+                    ->relationship('loan_type', 'name')
+                    ->required(),
                 Select::make('payment_type_id')
                     ->paymenttype()
                     ->default(null)
@@ -61,6 +64,7 @@ class LoanBillingResource extends Resource
     {
         return $table
             ->columns([
+                TextColumn::make('loan_type.name'),
                 TextColumn::make('billable_date'),
                 TextColumn::make('created_at')->date('m/d/Y')->label('Date Generated'),
                 TextColumn::make('reference_number'),
@@ -122,11 +126,14 @@ class LoanBillingResource extends Resource
                 Action::make('billing_receivables')
                     ->url(fn ($record) => route('filament.app.resources.loan-billings.billing-payments', ['loan_billing' => $record]))
                     ->button()
-                    ->outlined()
+                    ->outlined(),
+                Action::make('print')
+                    ->url(fn ($record) => route('filament.app.resources.loan-billings.statement-of-remittance', ['loan_billing' => $record]))
+                    ->icon('heroicon-o-printer')
+                    ->button()
+                    ->outlined(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([]),
-            ]);
+            ->bulkActions([]);
     }
 
     public static function getPages(): array
@@ -134,6 +141,7 @@ class LoanBillingResource extends Resource
         return [
             'index' => Pages\ManageLoanBillings::route('/'),
             'billing-payments' => Pages\LoanBillingPayments::route('/{loan_billing}/receivables'),
+            'statement-of-remittance' => Pages\PrintLoanBilling::route('/{loan_billing}/statement-of-remittance'),
         ];
     }
 }

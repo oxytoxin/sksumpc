@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('billable_date')->virtualAs("DATE_FORMAT(date, '%M %Y')");
             $table->foreignId('payment_type_id')->nullable()->constrained();
             $table->string('reference_number')->nullable();
+            $table->foreignId('loan_type_id')->constrained();
             $table->foreignId('cashier_id')->nullable()->constrained('users', 'id')->nullOnDelete();
             $table->boolean('posted')->default(false);
             $table->timestamps();

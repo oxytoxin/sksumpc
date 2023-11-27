@@ -25,6 +25,7 @@ return new class extends Migration
             $table->decimal('monthly_payment', 16, 4);
             $table->smallInteger('status')->default(LoanApplication::STATUS_PROCESSING);
             $table->date('transaction_date');
+            $table->date('disapproval_date')->nullable();
             $table->json('approvals')->default('(JSON_ARRAY())');
             $table->string('remarks')->nullable();
             $table->timestamps();

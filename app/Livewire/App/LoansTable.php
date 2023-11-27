@@ -226,10 +226,6 @@ class LoansTable extends Component implements HasForms, HasTable
                 CreateAction::make()
                     ->visible(auth()->user()->can('manage loans'))
                     ->fillForm(function () {
-                        // $gross_amount = match ($this->member->member_type_id) {
-                        //     1 => ($this->member->capital_subscriptions()->sum('amount_subscribed') ?? 0) * 3,
-                        //     default => ($this->member->capital_subscriptions()->sum('amount_subscribed') ?? 0) * 0.8
-                        // };
                         return [
                             'transaction_date' => today(),
                             'release_date' => today(),
@@ -291,6 +287,9 @@ class LoansTable extends Component implements HasForms, HasTable
                     ])
                     ->action(function ($data) {
                         $loanApplication = LoanApplication::find($data['loan_application_id']);
+                        $loanApplication->update([
+                            'priority_number' => $data['priority_number']
+                        ]);
                         $loanType = $loanApplication->loan_type;
                         Loan::create([
                             ...$data,

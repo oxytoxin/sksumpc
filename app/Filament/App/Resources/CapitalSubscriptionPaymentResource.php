@@ -30,7 +30,7 @@ class CapitalSubscriptionPaymentResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return auth()->user()->canAny(['manage bookkeeping']);
+        return false;
     }
 
     public static function form(Form $form): Form

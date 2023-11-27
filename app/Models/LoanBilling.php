@@ -20,6 +20,11 @@ class LoanBilling extends Model
         return $this->hasMany(LoanBillingPayment::class);
     }
 
+    public function loan_type()
+    {
+        return $this->belongsTo(LoanType::class);
+    }
+
     public function cashier()
     {
         return $this->belongsTo(User::class, 'cashier_id');
@@ -29,8 +34,9 @@ class LoanBilling extends Model
     {
         static::created(function (LoanBilling $loanBilling) {
             DB::beginTransaction();
-            LoanAmortization::where('billable_date', $loanBilling->date->format('F Y'))->whereNull('amount_paid')->each(function ($la) use ($loanBilling) {
+            LoanAmortization::whereRelation('loan', 'loan_type_id', $loanBilling->loan_type_id)->where('billable_date', $loanBilling->date->format('F Y'))->whereNull('amount_paid')->each(function ($la) use ($loanBilling) {
                 LoanBillingPayment::firstOrCreate([
+                    'member_id' => $la->loan->member_id,
                     'loan_billing_id' => $loanBilling->id,
                     'loan_amortization_id' => $la->id,
                 ], [
@@ -39,6 +45,7 @@ class LoanBilling extends Model
                 ]);
             });
             $loanBilling->cashier_id = auth()->id();
+            $loanBilling->save();
             DB::commit();
         });
     }

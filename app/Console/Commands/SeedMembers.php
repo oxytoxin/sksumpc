@@ -81,31 +81,6 @@ class SeedMembers extends Command
                             'effectivity_date' => $membershipStatus['terminated_at'],
                         ]);
                     }
-
-                    if (
-                        $membershipStatus['number_of_shares'] &&
-                        $membershipStatus['amount_subscribed'] &&
-                        $membershipStatus['initial_amount_paid']
-                    ) {
-                        $cbu = $member->initial_capital_subscription()->create([
-                            'code' => ShareCapitalProvider::INITIAL_CAPITAL_CODE,
-                            'number_of_shares' => $membershipStatus['number_of_shares'],
-                            'number_of_terms' => ShareCapitalProvider::INITIAL_NUMBER_OF_TERMS,
-                            'amount_subscribed' => $membershipStatus['amount_subscribed'],
-                            'par_value' => $membershipStatus['amount_subscribed'] / $membershipStatus['number_of_shares'],
-                            'is_common' => true,
-                            'transaction_date' => today()->subYear()->endOfYear(),
-                        ]);
-                        $payment = $cbu->payments()->create([
-                            'amount' => $membershipStatus['initial_amount_paid'],
-                            'reference_number' => '#INITIALAMOUNTPAID',
-                            'payment_type_id' => 1,
-                            'transaction_date' => today()->subYear()->endOfYear(),
-                        ]);
-                        $payment->update([
-                            'cashier_id' => 1
-                        ]);
-                    }
                 } catch (\Throwable $e) {
                     dd($membershipStatus, $e->getMessage());
                 }
@@ -133,12 +108,11 @@ class SeedMembers extends Command
         $member = Member::where('mpc_code', $data['mpc_code'])->first();
         if ($member) {
             try {
-                $existing = $member->capital_subscriptions()->first();
-                $cbu = $member->capital_subscriptions()->create([
+                $cbu = $member->initial_capital_subscription()->create([
                     'code' => ShareCapitalProvider::EXISTING_CAPITAL_CODE,
                     'number_of_shares' => $data['shares_subscribed'],
                     'number_of_terms' => ShareCapitalProvider::ADDITIONAL_NUMBER_OF_TERMS,
-                    'is_common' => $existing ? true : false,
+                    'is_common' => true,
                     'par_value' => $data['amount_shares_subscribed'] / $data['shares_subscribed'],
                     'amount_subscribed' => $data['amount_shares_subscribed'],
                     'transaction_date' => today()->subYear()->endOfYear(),
@@ -151,10 +125,6 @@ class SeedMembers extends Command
                 ]);
                 $payment->update([
                     'cashier_id' => 1
-                ]);
-
-                $existing?->update([
-                    'is_common' => false,
                 ]);
             } catch (\Throwable $e) {
                 dd($data, $e->getMessage());

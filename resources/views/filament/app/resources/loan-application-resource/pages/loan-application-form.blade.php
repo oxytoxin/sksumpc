@@ -34,7 +34,7 @@
                 </div>
                 <div class="space-x-4 flex">
                     <h4 class="font-bold">BIRTHDATE:</h4>
-                    <h4>{{ $loan_application->member->dob->format('F d, Y') }}</h4>
+                    <h4>{{ $loan_application->member->dob?->format('F d, Y') }}</h4>
                 </div>
                 <div class="space-x-4 flex">
                     <h4 class="font-bold">CONTACT NUMBER:</h4>
@@ -120,7 +120,7 @@
                                     <td class="border border-black px-2">{{ $loan->transaction_date->format('m/d/Y') }}</td>
                                     <td class="border border-black px-2">{{ format_money(collect($loan->deductions)->firstWhere('code', 'cbu_common')['amount'], 'PHP') }}</td>
                                     <td class="border border-black px-2">{{ $loan->loan_type->name }}</td>
-                                    <td class="border border-black px-2">{{ $loan->release_date->format('m/d/Y') }}</td>
+                                    <td class="border border-black px-2">{{ $loan->release_date?->format('m/d/Y') }}</td>
                                     <td class="border border-black px-2">{{ format_money($loan->gross_amount, 'PHP') }}</td>
                                     <td class="border border-black px-2">{{ format_money($loan->monthly_payment, 'PHP') }}</td>
                                     <td class="border border-black px-2">{{ format_money($loan->outstanding_balance, 'PHP') }}</td>

@@ -18,7 +18,7 @@ class UserAccountManagement extends Page implements HasTable
 {
     use InteractsWithTable;
 
-    protected static ?string $navigationIcon = 'icon-user-account-management';
+    protected static ?string $navigationGroup = 'Management';
 
     protected static string $view = 'filament.app.pages.user-account-management';
 
