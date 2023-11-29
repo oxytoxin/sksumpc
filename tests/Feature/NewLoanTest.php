@@ -14,11 +14,11 @@ use function Pest\Laravel\assertModelExists;
 use function Pest\Livewire\livewire;
 
 it('can create a new loan', function () {
-    $member =  Member::find(664);
+    $member =  Member::find(667);
     actingAs(User::find(1));
     $la = LoanApplication::create([
         'member_id' => $member->id,
-        'loan_type_id' => 1,
+        'loan_type_id' => 5,
         'number_of_terms' => 12,
         'priority_number' => '0000001',
         'desired_amount' => LoanApplication::count() * 10000 + 15000,

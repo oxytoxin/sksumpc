@@ -44,7 +44,8 @@
         <x-app.cashier.reports.signatories :signatories="$signatories" />
 
     </div>
-    <div class="p-4 flex justify-end">
+    <div class="p-4 flex justify-end space-x-2">
+        <x-filament::button wire:ignore href="{{ back()->getTargetUrl() }}" outlined tag="a">Back</x-filament::button>
         <x-filament::button icon="heroicon-o-printer" @click="printOut($refs.print.outerHTML, 'CBU Subsidiary Ledger')">Print</x-filament::button>
     </div>
 </div>

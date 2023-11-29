@@ -52,22 +52,7 @@ class CapitalSubscriptionPaymentResource extends Resource
                 TextColumn::make('cashier.name')->label('Cashier'),
             ])
             ->filters([
-                Filter::make('transaction_date')
-                    ->form([
-                        DatePicker::make('from')->default(today())->native(false),
-                        DatePicker::make('until')->default(today())->native(false),
-                    ])
-                    ->query(function (Builder $query, array $data): Builder {
-                        return $query
-                            ->when(
-                                $data['from'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('transaction_date', '>=', $date),
-                            )
-                            ->when(
-                                $data['until'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('transaction_date', '<=', $date),
-                            );
-                    })
+                Filter::dateRange('transaction_date'),
             ])
             ->defaultSort('transaction_date', 'desc')
             ->actions([])

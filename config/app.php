@@ -1,5 +1,7 @@
 <?php
 
+use App\Providers\FilamentTableProvider;
+use App\Providers\LoanApplicationTableProvider;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\ServiceProvider;
 
@@ -170,6 +172,8 @@ return [
         App\Providers\Filament\AdminPanelProvider::class,
         App\Providers\Filament\AppPanelProvider::class,
         App\Providers\RouteServiceProvider::class,
+        LoanApplicationTableProvider::class,
+        FilamentTableProvider::class
     ])->toArray(),
 
     /*

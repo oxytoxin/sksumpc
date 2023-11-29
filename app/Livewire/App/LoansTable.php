@@ -2,6 +2,7 @@
 
 namespace App\Livewire\App;
 
+use App\Livewire\App\Loans\Traits\HasViewLoanDetailsActionGroup;
 use App\Models\Loan;
 use App\Models\LoanApplication;
 use App\Models\LoanType;
@@ -44,8 +45,7 @@ use function Filament\Support\format_money;
 
 class LoansTable extends Component implements HasForms, HasTable
 {
-    use InteractsWithForms;
-    use InteractsWithTable;
+    use InteractsWithForms, InteractsWithTable, HasViewLoanDetailsActionGroup;
 
     public Member $member;
 
@@ -196,31 +196,7 @@ class LoansTable extends Component implements HasForms, HasTable
                         Notification::make()->title('Payment made for loan!')->success()->send();
                     })
                     ->visible(fn ($record) => $record->outstanding_balance > 0 && $record->posted && auth()->user()->can('manage payments')),
-                ActionGroup::make([
-                    Action::make('payments')
-                        ->icon('heroicon-o-currency-dollar')
-                        ->visible(fn ($record) => $record->posted)
-                        ->modalContent(fn ($record) => view('filament.app.views.loan-payments', ['loan' => $record])),
-                    Action::make('amortization')
-                        ->label('Amortization Schedule')
-                        ->icon('heroicon-o-calendar-days')
-                        ->visible(fn ($record) => $record->posted)
-                        ->url(fn ($record) => route('filament.app.resources.members.loan-amortization-schedule', ['loan' => $record])),
-                    Action::make('sl')
-                        ->label('Subsidiary Ledger')
-                        ->icon('heroicon-o-queue-list')
-                        ->visible(fn ($record) => $record->posted)
-                        ->url(fn ($record) => route('filament.app.resources.members.loan-subsidiary-ledger', ['loan' => $record])),
-                    Action::make('ds')
-                        ->label('Disclosure Sheet')
-                        ->icon('heroicon-o-document')
-                        ->visible(fn ($record) => $record->posted)
-                        ->url(fn ($record) => route('filament.app.resources.members.loan-disclosure-sheet', ['loan' => $record])),
-                ])
-                    ->button()
-                    ->outlined()
-                    ->icon(false)
-                    ->label('View')
+                $this->getViewLoanDetailsActionGroup()
             ])
             ->headerActions([
                 CreateAction::make()

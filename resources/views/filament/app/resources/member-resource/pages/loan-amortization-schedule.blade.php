@@ -66,7 +66,7 @@
 
         </div>
         <div class="flex justify-end space-x-2">
-            <x-filament::button href="{{ route('filament.app.resources.members.view', ['record' => $loan->member, 'tab' => '-loan-tab']) }}" tag="a">Back to Loans</x-filament::button>
+            <x-filament::button wire:ignore href="{{ back()->getTargetUrl() }}" outlined tag="a">Back</x-filament::button>
             <x-filament::button icon="heroicon-o-printer" @click="printOut($refs.print.outerHTML, 'Loan Amortization Schedule')">Print</x-filament::button>
         </div>
     </div>

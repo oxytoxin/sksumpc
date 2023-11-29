@@ -62,16 +62,7 @@ class CbuSubsidiaryLedger extends Page implements HasTable
             ->query(CapitalSubscriptionPayment::query()->whereRelation('capital_subscription', 'member_id', $this->member->id))
             ->content(fn () => view('filament.app.views.cbu-sl', ['member' => $this->member, 'signatories' => $this->signatories]))
             ->filters([
-                Filter::make('transaction_date')
-                    ->form([
-                        DatePicker::make('from')
-                            ->default(today()->subYear()),
-                        DatePicker::make('to')
-                            ->default(today()),
-                    ])
-                    ->columns(8)
-                    ->columnSpanFull()
-                    ->query(fn (Builder $query, array $data) => $query->whereDate('transaction_date', '>=', $data['from'])->whereDate('transaction_date', '<=', $data['to']))
+                Filter::dateRange('transaction_date'),
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
             ->headerActions([

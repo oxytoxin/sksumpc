@@ -55,10 +55,11 @@ class LoanApplicationResource extends Resource
             TextEntry::make('transaction_date')->date('m/d/Y'),
             TextEntry::make('purpose'),
             Section::make('Loan Details')
+                ->visible(fn ($record) => $record->loan)
                 ->schema([
                     TextEntry::make('loan.gross_amount')->money('PHP')->label('Gross Amount'),
                     ViewEntry::make('loan.deductions')
-                        ->view('infolists.components.loan-deductions-entry', ['deductions' => $record->loan->deductions]),
+                        ->view('infolists.components.loan-deductions-entry', ['deductions' => $record->loan?->deductions]),
                     TextEntry::make('loan.deductions_amount')->money('PHP')->label('Deductions Amount'),
                     TextEntry::make('loan.net_amount')->money('PHP')->label('Net Amount'),
                     TextEntry::make('loan.interest_rate')->formatStateUsing(fn ($state) => str($state * 100)->append('%'))->label('Interest Rate'),
@@ -114,50 +115,7 @@ class LoanApplicationResource extends Resource
                     ])
                     ->badge(),
             ])
-            ->filters([
-                SelectFilter::make('loan_type_id')
-                    ->label('Loan Type')
-                    ->options(LoanType::orderBy('name')->pluck('name', 'id')),
-                SelectFilter::make('status')
-                    ->options([
-                        LoanApplication::STATUS_PROCESSING => 'For Approval',
-                        LoanApplication::STATUS_APPROVED => 'Approved',
-                        LoanApplication::STATUS_DISAPPROVED => 'Disapproved',
-                    ]),
-                Filter::make('date_applied')
-                    ->form([
-                        DatePicker::make('applied_from')->native(false),
-                        DatePicker::make('applied_until')->native(false),
-                    ])
-                    ->query(function (Builder $query, array $data): Builder {
-                        return $query
-                            ->when(
-                                $data['applied_from'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('transaction_date', '>=', $date),
-                            )
-                            ->when(
-                                $data['applied_until'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('transaction_date', '<=', $date),
-                            );
-                    }),
-                Filter::make('date_disapproved')
-                    ->form([
-                        DatePicker::make('disapproved_from')->native(false),
-                        DatePicker::make('disapproved_until')->native(false),
-                    ])
-                    ->query(function (Builder $query, array $data): Builder {
-                        return $query
-                            ->when(
-                                $data['disapproved_from'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('disapproval_date', '>=', $date),
-                            )
-                            ->when(
-                                $data['disapproved_until'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('disapproval_date', '<=', $date),
-                            );
-                    }),
-            ])
-            ->filtersLayout(FiltersLayout::AboveContent)
+            ->defaultLoanApplicationFilters()
             ->actions([
                 Tables\Actions\EditAction::make()->visible(fn ($record) => auth()->user()->can('manage loans') && $record->status == LoanApplication::STATUS_PROCESSING),
                 Action::make('Approve')
@@ -175,8 +133,11 @@ class LoanApplicationResource extends Resource
                     ->button()
                     ->color('success')
                     ->visible(fn ($record) => $record->status == LoanApplication::STATUS_PROCESSING),
-                Action::make('Reject')
+                Action::make('Disapprove')
                     ->form([
+                        Select::make('disapproval_reason_id')
+                            ->relationship('disapproval_reason', 'name')
+                            ->required(),
                         TextInput::make('remarks')
                     ])
                     ->action(function ($record, $data) {
@@ -185,7 +146,7 @@ class LoanApplicationResource extends Resource
                             'disapproval_date' => today(),
                             'remarks' => $data['remarks']
                         ]);
-                        Notification::make()->title('Loan application rejected!')->success()->send();
+                        Notification::make()->title('Loan application disapproved!')->success()->send();
                     })
                     ->requiresConfirmation()
                     ->button()

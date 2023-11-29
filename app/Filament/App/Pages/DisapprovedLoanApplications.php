@@ -52,43 +52,6 @@ class DisapprovedLoanApplications extends Page implements HasTable
                     ->badge(),
                 TextColumn::make('remarks'),
             ])
-            ->filters([
-                SelectFilter::make('loan_type_id')
-                    ->label('Loan Type')
-                    ->options(LoanType::orderBy('name')->pluck('name', 'id')),
-                Filter::make('date_applied')
-                    ->form([
-                        DatePicker::make('applied_from')->native(false),
-                        DatePicker::make('applied_until')->native(false),
-                    ])
-                    ->query(function (Builder $query, array $data): Builder {
-                        return $query
-                            ->when(
-                                $data['applied_from'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('transaction_date', '>=', $date),
-                            )
-                            ->when(
-                                $data['applied_until'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('transaction_date', '<=', $date),
-                            );
-                    }),
-                Filter::make('date_disapproved')
-                    ->form([
-                        DatePicker::make('disapproved_from')->native(false),
-                        DatePicker::make('disapproved_until')->native(false),
-                    ])
-                    ->query(function (Builder $query, array $data): Builder {
-                        return $query
-                            ->when(
-                                $data['disapproved_from'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('disapproval_date', '>=', $date),
-                            )
-                            ->when(
-                                $data['disapproved_until'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('disapproval_date', '<=', $date),
-                            );
-                    }),
-            ])
-            ->filtersLayout(FiltersLayout::AboveContent);
+            ->defaultLoanApplicationFilters(true);
     }
 }

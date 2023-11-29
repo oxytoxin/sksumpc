@@ -29,6 +29,11 @@ class LoanApplication extends Model
         'approvals' => DataCollection::class . ':' . LoanApproval::class,
     ];
 
+    public function disapproval_reason()
+    {
+        return $this->belongsTo(DisapprovalReason::class);
+    }
+
     public function member()
     {
         return $this->belongsTo(Member::class);

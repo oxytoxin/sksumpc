@@ -18,14 +18,23 @@ use App\Filament\App\Resources\LoanResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\App\Resources\LoanResource\Pages\ListLoans;
 use App\Filament\App\Resources\LoanResource\RelationManagers;
+use App\Livewire\App\Loans\Traits\HasViewLoanDetailsActionGroup;
+use App\Models\LoanApplication;
+use App\Models\LoanType;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\SelectFilter;
 
 class LoanResource extends Resource
 {
+    use HasViewLoanDetailsActionGroup;
+
     protected static ?string $model = Loan::class;
 
-    protected static ?int $navigationSort = 6;
+    protected static ?int $navigationSort = 5;
 
     protected static ?string $navigationGroup = 'Loan';
+
+    protected static ?string $navigationLabel = 'Loans Posting';
 
     public static function shouldRegisterNavigation(): bool
     {
@@ -44,7 +53,7 @@ class LoanResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('member.full_name'),
+                TextColumn::make('member.full_name')->searchable(),
                 TextColumn::make('loan_type.name'),
                 TextColumn::make('gross_amount')->money('PHP'),
                 TextColumn::make('deductions_amount')->money('PHP'),
@@ -52,23 +61,32 @@ class LoanResource extends Resource
                 IconColumn::make('posted')->boolean()->alignCenter()
             ])
             ->filters([
-                Filter::make('transaction_date')
+                SelectFilter::make('loan_type_id')
+                    ->label('Loan Type')
+                    ->options(LoanType::orderBy('name')->pluck('name', 'id')),
+                SelectFilter::make('posted')
+                    ->options([
+                        true => 'Posted',
+                        false => 'Pending',
+                    ]),
+                Filter::make('date_applied')
                     ->form([
-                        DatePicker::make('from')->native(false),
-                        DatePicker::make('until')->native(false),
+                        DatePicker::make('applied_from')->native(false),
+                        DatePicker::make('applied_until')->native(false),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
                             ->when(
-                                $data['from'],
+                                $data['applied_from'],
                                 fn (Builder $query, $date): Builder => $query->whereDate('transaction_date', '>=', $date),
                             )
                             ->when(
-                                $data['until'],
+                                $data['applied_until'],
                                 fn (Builder $query, $date): Builder => $query->whereDate('transaction_date', '<=', $date),
                             );
-                    })
+                    }),
             ])
+            ->filtersLayout(FiltersLayout::AboveContent)
             ->actions([
                 Action::make('approve')
                     ->action(fn ($record) => $record->update([
@@ -76,10 +94,7 @@ class LoanResource extends Resource
                     ]))
                     ->hidden(fn ($record) => $record->posted)
                     ->requiresConfirmation(),
-                Action::make('loan_application')
-                    ->label('View Application')
-                    ->button()
-                    ->url(fn ($record) => route('filament.app.resources.loan-applications.view', ['record' => $record->loan_application])),
+                static::getStaticViewLoanDetailsActionGroup(),
                 Action::make('print')
                     ->icon('heroicon-o-printer')
                     ->url(fn ($record) => route('filament.app.resources.loan-applications.application-form', ['loan_application' => $record->loan_application]), true)

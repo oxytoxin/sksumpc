@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\DisapprovalReason;
 use App\Models\LoanApplication;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -25,6 +26,7 @@ return new class extends Migration
             $table->decimal('monthly_payment', 16, 4);
             $table->smallInteger('status')->default(LoanApplication::STATUS_PROCESSING);
             $table->date('transaction_date');
+            $table->foreignIdFor(DisapprovalReason::class)->nullable()->constrained();
             $table->date('disapproval_date')->nullable();
             $table->json('approvals')->default('(JSON_ARRAY())');
             $table->string('remarks')->nullable();

@@ -3,23 +3,11 @@
 @endphp
 
 <x-filament-panels::page>
-    <div x-data class="max-w-6xl mx-auto">
+    <div x-data class="mx-auto">
         <div class="p-4 print:text-[10pt] print:leading-tight print:w-full" x-ref="print">
-            <div class="flex justify-center mb-16">
-                <div class="flex space-x-24 items-center">
-                    <img src="{{ asset('images/logo.jpg') }}" alt="logo" class="h-32 print:h-16">
-                    <div class="flex flex-col items-center print:text-[9pt] print:leading-none">
-                        <strong class="print:text-[11pt]">SULTAN KUDARAT STATE UNIVERSITY - MULTI-PURPOSE COOPERATIVE</strong>
-                        <strong class="print:text-[11pt]">(SKSU-MPC)</strong>
-                        <p>Bo. 2, EJC Montilla, Tacurong City</p>
-                        <p>CDA Reg. No.: 9520-12000926 / CIN: 0103120093 / TIN: 005-811-330</p>
-                        <p>Contact No: 0906-826-1905 or 0966-702-9200</p>
-                        <p>Email Address: sksu.mpc@gmail.com</p>
-                    </div>
-                </div>
-            </div>
-            <h4 class="text-3xl print:text-[14pt] text-center mt-4 font-bold">APPLICATION FORM</h4>
-            <div class="my-2 grid grid-cols-2">
+            <x-app.cashier.reports.report-heading />
+            <h4 class="text-3xl print:text-[12pt] text-center mt-4 font-bold">APPLICATION FORM</h4>
+            <div class="my-2 grid grid-cols-2 print:text-[10pt]">
                 <div class="space-x-4 flex">
                     <h4 class="font-bold">NAME:</h4>
                     <h4>{{ $loan_application->member->full_name }}</h4>
@@ -65,19 +53,25 @@
                 <h4 class="uppercase font-bold text-xl print:text-[10pt]">{{ $loan_application->member->full_name }}</h4>
                 <h4 class="print:text-[8pt]">(Signature over printed name of applicant)</h4>
             </div>
-            <div class="mt-4">
+            <div class="mt-4 print:text-[10pt]">
                 <h3 class="font-bold">CREDIT COMMITTEE ACTION</h3>
-                <div class="my-2 grid grid-cols-2">
-                    <div class="space-x-4 flex">
-                        <h4 class="font-bold">RETURNED DUE TO:</h4>
-                        <h4></h4>
+                <div class="my-2 flex">
+                    <div class="w-2/5">
+                        <div class="space-x-4 flex">
+                            <h4>Returned due to:</h4>
+                            <h4></h4>
+                        </div>
+                        <div class="space-x-4 flex">
+                            <h4>Disapproved due to:</h4>
+                            @if ($loan_application->disapproval_reason->id == 1)
+                                <h4>{{ $loan_application->remarks }}</h4>
+                            @else
+                                <h4>{{ $loan_application->disapproval_reason?->name }}</h4>
+                            @endif
+                        </div>
                     </div>
                     <div class="space-x-4 flex">
-                        <h4 class="font-bold">RECOMMENDING APPROVAL PRIORITY NUMBER:</h4>
-                        <h4></h4>
-                    </div>
-                    <div class="space-x-4 flex">
-                        <h4 class="font-bold">DISAPPROVED DUE TO:</h4>
+                        <h4>Recommending approval priority number:</h4>
                         <h4></h4>
                     </div>
                 </div>
@@ -149,7 +143,8 @@
                 </div>
             </div>
         </div>
-        <div class="p-4 flex justify-end">
+        <div class="p-4 flex justify-end space-x-2">
+            <x-filament::button outlined tag="a" href="{{ route('filament.app.resources.loan-applications.index') }}">Back to Loan Applications</x-filament::button>
             <x-filament::button icon="heroicon-o-printer" @click="printOut($refs.print.outerHTML, 'Loan Application Form')">Print</x-filament::button>
         </div>
     </div>

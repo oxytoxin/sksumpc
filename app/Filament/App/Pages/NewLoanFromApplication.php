@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Pages;
 
+use App\Livewire\App\Loans\Traits\HasViewLoanDetailsActionGroup;
 use App\Models\Loan;
 use Filament\Pages\Page;
 use Filament\Tables\Table;
@@ -24,11 +25,11 @@ use function Filament\Support\format_money;
 
 class NewLoanFromApplication extends Page implements HasTable
 {
-    use InteractsWithTable;
+    use InteractsWithTable, HasViewLoanDetailsActionGroup;
 
     protected static string $view = 'filament.app.pages.new-loan-from-application';
 
-    protected static ?string $navigationLabel = 'New Loan';
+    protected static ?string $navigationLabel = 'Approved Loan Applications';
 
     protected static ?string $navigationGroup = 'Loan';
 
@@ -42,24 +43,21 @@ class NewLoanFromApplication extends Page implements HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->query(LoanApplication::whereStatus(LoanApplication::STATUS_APPROVED)->doesntHave('loan'))
+            ->query(LoanApplication::with('loan')->whereStatus(LoanApplication::STATUS_APPROVED))
             ->columns([
                 TextColumn::make('member.full_name')->searchable(),
                 TextColumn::make('transaction_date')->date('m/d/Y')->label('Date Applied'),
                 TextColumn::make('loan_type.name'),
                 TextColumn::make('desired_amount')->money('PHP'),
                 TextColumn::make('status')
-                    ->formatStateUsing(fn ($state) => match ($state) {
-                        LoanApplication::STATUS_APPROVED => 'Approved',
-                    })
-                    ->colors([
-                        'success' => LoanApplication::STATUS_APPROVED,
-                    ])
+                    ->formatStateUsing(fn ($record) => $record->loan ? ($record->loan->posted ? 'POSTED' : 'PENDING') : 'APPROVED')
+                    ->color(fn ($record) => $record->loan ? ($record->loan->posted ? 'success' : 'warning') : 'success')
                     ->badge(),
             ])
+            ->defaultLoanApplicationFilters()
             ->actions([
                 Action::make('new_loan')
-                    ->visible(auth()->user()->can('manage loans'))
+                    ->visible(fn ($record) => auth()->user()->can('manage loans') && !$record->loan)
                     ->fillForm(function ($record) {
                         $deductions = LoansProvider::computeDeductions($record->loan_type, $record->desired_amount, $record->member);
                         return [
@@ -126,6 +124,7 @@ class NewLoanFromApplication extends Page implements HasTable
                         $this->dispatch('refresh');
                         Notification::make()->title('New loan created.')->success()->send();
                     }),
+                $this->getViewLoanApplicationLoanDetailsActionGroup()
             ]);
     }
 }
