@@ -63,7 +63,7 @@
                         </div>
                         <div class="space-x-4 flex">
                             <h4>Disapproved due to:</h4>
-                            @if ($loan_application->disapproval_reason->id == 1)
+                            @if ($loan_application->disapproval_reason?->id == 1)
                                 <h4>{{ $loan_application->remarks }}</h4>
                             @else
                                 <h4>{{ $loan_application->disapproval_reason?->name }}</h4>
