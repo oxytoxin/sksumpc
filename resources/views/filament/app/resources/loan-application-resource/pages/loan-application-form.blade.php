@@ -6,8 +6,8 @@
     <div x-data class="mx-auto">
         <div class="p-4 print:text-[10pt] print:leading-tight print:w-full" x-ref="print">
             <x-app.cashier.reports.report-heading />
-            <h4 class="text-3xl print:text-[12pt] text-center mt-4 font-bold">APPLICATION FORM</h4>
-            <div class="my-2 grid grid-cols-2 print:text-[10pt]">
+            <h4 class="text-xl print:text-[10pt] text-center font-bold">APPLICATION FORM</h4>
+            <div class="my-2 grid grid-cols-2 print:text-[8pt]">
                 <div class="space-x-4 flex">
                     <h4 class="font-bold">NAME:</h4>
                     <h4>{{ $loan_application->member->full_name }}</h4>
@@ -50,10 +50,10 @@
                 </div>
             </div>
             <div class="flex flex-col items-center mt-8 print:leading-[0]">
-                <h4 class="uppercase font-bold text-xl print:text-[10pt]">{{ $loan_application->member->full_name }}</h4>
-                <h4 class="print:text-[8pt]">(Signature over printed name of applicant)</h4>
+                <h4 class="uppercase font-bold text-xl print:text-[8pt]">{{ $loan_application->member->full_name }}</h4>
+                <h4 class="print:text-[7pt]">(Signature over printed name of applicant)</h4>
             </div>
-            <div class="mt-4 print:text-[10pt]">
+            <div class="mt-2 print:text-[8pt]">
                 <h3 class="font-bold">CREDIT COMMITTEE ACTION</h3>
                 <div class="my-2 flex">
                     <div class="w-2/5">
@@ -75,19 +75,19 @@
                         <h4></h4>
                     </div>
                 </div>
-                <div class="mt-4">
-                    <div class="flex flex-wrap justify-around gap-y-8">
+                <div class="mt-2">
+                    <div class="flex flex-wrap justify-around gap-y-4">
                         @foreach ($signatories as $approver)
-                            <div class="flex w-1/3 flex-col items-center mt-8">
+                            <div class="flex w-1/3 flex-col items-center mt-4">
                                 <p class="font-bold uppercase">{{ $approver['name'] }}</p>
-                                <p>{{ $approver['position'] }}</p>
+                                <p class="print:text-[7pt]">{{ $approver['position'] }}</p>
                             </div>
                         @endforeach
                     </div>
                 </div>
             </div>
             <hr class="border-2 print:hidden border-black my-4">
-            <div class="print:break-before-page">
+            <div class="print:break-before-page print:text-[8pt]">
                 <div class="grid grid-cols-2">
                     <h4>Name: {{ $loan_application->member->full_name }}</h4>
                     <h4>Date: <span class="uppercase">{{ today()->format('F d, Y') }}</span></h4>

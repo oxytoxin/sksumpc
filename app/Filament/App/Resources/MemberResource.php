@@ -75,6 +75,7 @@ class MemberResource extends Resource
                 ->schema([
                     Actions::make([
                         Action::make('membership')
+                            ->extraAttributes(['wire:ignore' => true])
                             ->label('Back to Membership Module')
                             ->color('success')
                             ->url(route('filament.app.resources.members.index'))
@@ -126,6 +127,7 @@ class MemberResource extends Resource
                 ->schema([
                     Actions::make([
                         Action::make('membership')
+                            ->extraAttributes(['wire:ignore' => true])
                             ->label('Back to Membership Module')
                             ->color('success')
                             ->url(route('filament.app.resources.members.index'))
@@ -140,6 +142,7 @@ class MemberResource extends Resource
                 ->schema([
                     Actions::make([
                         Action::make('membership')
+                            ->extraAttributes(['wire:ignore' => true])
                             ->label('Back to Membership Module')
                             ->color('success')
                             ->url(route('filament.app.resources.members.index'))
@@ -154,6 +157,7 @@ class MemberResource extends Resource
                 ->schema([
                     Actions::make([
                         Action::make('membership')
+                            ->extraAttributes(['wire:ignore' => true])
                             ->label('Back to Membership Module')
                             ->color('success')
                             ->url(route('filament.app.resources.members.index'))

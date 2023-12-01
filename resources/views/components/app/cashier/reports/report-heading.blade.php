@@ -1,4 +1,4 @@
-<div class="flex justify-center mb-8">
+<div class="flex justify-center mb-4">
     <div class="flex space-x-8">
         <img src="{{ asset('images/logo.jpg') }}" alt="logo" class="h-32 print:h-16">
         <div class="flex flex-col items-center print:text-[9pt] print:leading-6">

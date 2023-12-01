@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\DisapprovalReason;
 use App\Models\LoanType;
 use Filament\Tables\Table;
 use App\Models\LoanApplication;
@@ -27,36 +28,52 @@ class LoanApplicationTableProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Table::macro('defaultLoanApplicationFilters', function ($withDisapproved = false) {
+        Table::macro('defaultLoanApplicationFilters', function ($type = 0) {
             $filters = [
                 SelectFilter::make('loan_type_id')
                     ->label('Loan Type')
                     ->options(LoanType::orderBy('name')->pluck('name', 'id')),
-                SelectFilter::make('status')
+            ];
+            if ($type) {
+                if ($type == LoanApplication::STATUS_DISAPPROVED) {
+                    $filters[] = SelectFilter::make('disapproval_reason_id')
+                        ->label('Disapproval Reason')
+                        ->relationship('disapproval_reason', 'name');
+                }
+                if ($type == LoanApplication::STATUS_APPROVED) {
+                    $filters[] = SelectFilter::make('status')
+                        ->options([
+                            LoanApplication::STATUS_APPROVED => 'Approved',
+                            LoanApplication::STATUS_POSTED => 'Posted',
+                        ]);
+                }
+            } else {
+                $filters[] = SelectFilter::make('status')
                     ->options([
                         LoanApplication::STATUS_PROCESSING => 'For Approval',
                         LoanApplication::STATUS_APPROVED => 'Approved',
                         LoanApplication::STATUS_DISAPPROVED => 'Disapproved',
-                    ]),
-                Filter::make('date_applied')
-                    ->form([
-                        DatePicker::make('applied_from')->native(false),
-                        DatePicker::make('applied_until')->native(false),
-                    ])
-                    ->query(function (Builder $query, array $data): Builder {
-                        return $query
-                            ->when(
-                                $data['applied_from'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('transaction_date', '>=', $date),
-                            )
-                            ->when(
-                                $data['applied_until'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('transaction_date', '<=', $date),
-                            );
-                    }),
-            ];
+                        LoanApplication::STATUS_POSTED => 'Posted',
+                    ]);
+            }
+            $filters[] = Filter::make('date_applied')
+                ->form([
+                    DatePicker::make('applied_from')->native(false),
+                    DatePicker::make('applied_until')->native(false),
+                ])
+                ->query(function (Builder $query, array $data): Builder {
+                    return $query
+                        ->when(
+                            $data['applied_from'],
+                            fn (Builder $query, $date): Builder => $query->whereDate('transaction_date', '>=', $date),
+                        )
+                        ->when(
+                            $data['applied_until'],
+                            fn (Builder $query, $date): Builder => $query->whereDate('transaction_date', '<=', $date),
+                        );
+                });
 
-            if ($withDisapproved) {
+            if ($type) {
                 $filters[] = Filter::make('date_disapproved')
                     ->form([
                         DatePicker::make('disapproved_from')->native(false),

@@ -106,6 +106,9 @@ class Loan extends Model
             $loan->deductions_amount = collect($loan->deductions)->sum('amount');
             if ($loan->posted) {
                 DB::beginTransaction();
+                $loan->loan_application->update([
+                    'status' => LoanApplication::STATUS_POSTED
+                ]);
                 $amortization_schedule = LoansProvider::generateAmortizationSchedule($loan);
                 $loan->loan_amortizations()->createMany($amortization_schedule);
                 $cbu_amount = collect($loan->deductions)->firstWhere('code', 'cbu_common')['amount'];

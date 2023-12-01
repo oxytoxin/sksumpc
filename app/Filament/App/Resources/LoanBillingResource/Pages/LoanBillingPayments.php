@@ -6,6 +6,7 @@ use App\Filament\App\Resources\LoanBillingResource;
 use App\Models\LoanBilling;
 use App\Models\LoanBillingPayment;
 use Filament\Actions;
+use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\DeleteAction;
@@ -26,14 +27,25 @@ class LoanBillingPayments extends ListRecords
         return 'Loan Billing Receivables';
     }
 
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('Back to previous page')
+                ->extraAttributes(['wire:ignore' => true])
+                ->url(back()->getTargetUrl()),
+        ];
+    }
+
     public function table(Table $table): Table
     {
         return $table
-            ->query(LoanBillingPayment::where('loan_billing_id', $this->loan_billing->id)->join('members', 'loan_billing_payments.member_id', 'members.id')
-                ->selectRaw('loan_billing_payments.*, members.alt_full_name as member_name')
-                ->orderBy('member_name'))
+            ->query(
+                LoanBillingPayment::where('loan_billing_id', $this->loan_billing->id)->join('members', 'loan_billing_payments.member_id', 'members.id')
+                    ->selectRaw('loan_billing_payments.*, members.alt_full_name as member_name')
+                    ->orderBy('member_name')
+            )
             ->columns([
-                TextColumn::make('loan_amortization.loan.member.full_name'),
+                TextColumn::make('member_name')->label('Member'),
                 TextColumn::make('amount_due')->money('PHP')->summarize(Sum::make()->money('PHP')->label('')),
                 TextColumn::make('amount_paid')->money('PHP')->summarize(Sum::make()->money('PHP')->label('')),
             ])

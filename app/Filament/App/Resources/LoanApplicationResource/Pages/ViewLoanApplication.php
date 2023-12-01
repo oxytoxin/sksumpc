@@ -15,6 +15,7 @@ class ViewLoanApplication extends ViewRecord
     {
         return [
             Action::make('Back to previous page')
+                ->extraAttributes(['wire:ignore' => true])
                 ->url(back()->getTargetUrl()),
         ];
     }

@@ -18,6 +18,7 @@ class LoanApplication extends Model
     const STATUS_PROCESSING = 1;
     const STATUS_APPROVED = 2;
     const STATUS_DISAPPROVED = 3;
+    const STATUS_POSTED = 4;
 
     protected $casts = [
         'number_of_terms' => 'integer',

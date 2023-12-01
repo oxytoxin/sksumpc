@@ -50,8 +50,9 @@ class DisapprovedLoanApplications extends Page implements HasTable
                         'danger' => LoanApplication::STATUS_DISAPPROVED,
                     ])
                     ->badge(),
+                TextColumn::make('disapproval_reason.name'),
                 TextColumn::make('remarks'),
             ])
-            ->defaultLoanApplicationFilters(true);
+            ->defaultLoanApplicationFilters(type: LoanApplication::STATUS_DISAPPROVED);
     }
 }

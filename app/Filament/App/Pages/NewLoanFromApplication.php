@@ -43,7 +43,7 @@ class NewLoanFromApplication extends Page implements HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->query(LoanApplication::with('loan')->whereStatus(LoanApplication::STATUS_APPROVED))
+            ->query(LoanApplication::with('loan')->whereIn('status', [LoanApplication::STATUS_APPROVED, LoanApplication::STATUS_POSTED]))
             ->columns([
                 TextColumn::make('member.full_name')->searchable(),
                 TextColumn::make('transaction_date')->date('m/d/Y')->label('Date Applied'),
@@ -54,7 +54,7 @@ class NewLoanFromApplication extends Page implements HasTable
                     ->color(fn ($record) => $record->loan ? ($record->loan->posted ? 'success' : 'warning') : 'success')
                     ->badge(),
             ])
-            ->defaultLoanApplicationFilters()
+            ->defaultLoanApplicationFilters(type: LoanApplication::STATUS_APPROVED)
             ->actions([
                 Action::make('new_loan')
                     ->visible(fn ($record) => auth()->user()->can('manage loans') && !$record->loan)

@@ -67,6 +67,7 @@ class CbuSubsidiaryLedger extends Page implements HasTable
             ->filtersLayout(FiltersLayout::AboveContent)
             ->headerActions([
                 Action::make('back')
+                    ->extraAttributes(['wire:ignore' => true])
                     ->label('Back to CBU')
                     ->url(route('filament.app.resources.members.view', ['record' => $this->member, 'tab' => '-cbu-tab']))
             ])

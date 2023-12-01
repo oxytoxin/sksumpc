@@ -1,9 +1,8 @@
 <x-filament-panels::page>
     <div class="p-4 print:text-[10pt] print:leading-tight print:w-full" x-ref="print">
         <x-app.cashier.reports.report-heading />
-        <h1 class="text-center font-bold text-xl">Statement of Remittance for SKSU-MPC {{ $loan_billing->loan_type->name }} <br> for {{ $loan_billing->billable_date }}</h1>
-
-        <table class="w-full mt-4">
+        <h1 class="text-center font-bold">SKSU-MPC {{ $loan_billing->loan_type->name }} Billing Statement <br> as of {{ $loan_billing->billable_date }}</h1>
+        <table class="w-full mt-4 print:text-[8pt]">
             <thead>
                 <tr class="border-y border-black">
                     <th>NO.</th>

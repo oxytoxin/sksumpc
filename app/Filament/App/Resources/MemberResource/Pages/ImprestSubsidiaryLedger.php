@@ -63,6 +63,7 @@ class ImprestSubsidiaryLedger extends Page implements HasTable
             ->filtersLayout(FiltersLayout::AboveContent)
             ->headerActions([
                 Action::make('back')
+                    ->extraAttributes(['wire:ignore' => true])
                     ->label('Back to Imprests')
                     ->url(route('filament.app.resources.members.view', ['record' => $this->member, 'tab' => '-mso-tab', 'mso_type' => 2]))
             ])

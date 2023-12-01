@@ -107,11 +107,13 @@ class LoanApplicationResource extends Resource
                         LoanApplication::STATUS_PROCESSING => 'For Approval',
                         LoanApplication::STATUS_APPROVED => 'Approved',
                         LoanApplication::STATUS_DISAPPROVED => 'Disapproved',
+                        LoanApplication::STATUS_POSTED => 'Posted',
                     })
                     ->colors([
                         'warning' => LoanApplication::STATUS_PROCESSING,
                         'success' => LoanApplication::STATUS_APPROVED,
                         'danger' => LoanApplication::STATUS_DISAPPROVED,
+                        'success' => LoanApplication::STATUS_POSTED,
                     ])
                     ->badge(),
             ])
