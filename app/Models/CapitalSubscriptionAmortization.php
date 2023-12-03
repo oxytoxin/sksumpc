@@ -17,4 +17,9 @@ class CapitalSubscriptionAmortization extends Model
         'term' => 'integer',
         'due_date' => 'immutable_date'
     ];
+
+    public function capital_subscription()
+    {
+        return $this->belongsTo(CapitalSubscription::class);
+    }
 }

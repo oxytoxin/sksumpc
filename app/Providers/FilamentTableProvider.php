@@ -29,8 +29,8 @@ class FilamentTableProvider extends ServiceProvider
                     DatePicker::make('from')->native(false),
                     DatePicker::make('to')->native(false),
                 ])
-                ->columns(8)
-                ->columnSpanFull()
+                ->columns(2)
+                ->columnSpan(2)
                 ->query(
                     fn (Builder $query, array $data) => $query
                         ->when($data['from'], fn ($query, $date) => $query->whereDate($column, '>=', $date))

@@ -1,26 +1,32 @@
 <?php
 
-namespace App\Livewire\App;
+namespace App\Filament\App\Pages;
 
-use App\Models\CapitalSubscription;
 use App\Models\Member;
-use App\Oxytoxin\ShareCapitalProvider;
-use Faker\Provider\ar_EG\Text;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Tables;
+use Filament\Pages\Page;
+use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
-use Filament\Tables\Table;
-use Livewire\Component;
-use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\SelectFilter;
 
-class CbuSummary extends Component implements HasForms, HasTable
+class CbuSchedule extends Page implements HasTable
 {
-    use InteractsWithForms;
     use InteractsWithTable;
+
+    protected static string $view = 'filament.app.pages.share-capital';
+
+    protected static ?int $navigationSort = 3;
+
+    protected static ?string $navigationGroup = 'Share Capital';
+
+    protected static ?string $navigationLabel = 'CBU Schedule';
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()->can('manage cbu');
+    }
 
     private function number_of_shares_paid($record)
     {
@@ -37,6 +43,7 @@ class CbuSummary extends Component implements HasForms, HasTable
         return $table
             ->query(
                 Member::query()
+                    ->has('capital_subscriptions')
                     ->withSum('capital_subscriptions', 'number_of_shares')
                     ->withSum('capital_subscriptions', 'amount_subscribed')
                     ->withSum('capital_subscription_payments', 'amount')
@@ -84,20 +91,13 @@ class CbuSummary extends Component implements HasForms, HasTable
                     ->alignCenter(),
             ])
             ->filters([
-                //
+                SelectFilter::make('member_type_id')
+                    ->relationship('member_type', 'name')
+                    ->label('Member Type')
             ])
+            ->filtersLayout(FiltersLayout::AboveContent)
             ->actions([
                 //
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    //
-                ]),
             ]);
-    }
-
-    public function render(): View
-    {
-        return view('livewire.app.cbu-summary');
     }
 }

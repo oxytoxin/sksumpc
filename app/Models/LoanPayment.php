@@ -17,8 +17,7 @@ class LoanPayment extends Model
     protected $casts = [
         'amount' => 'decimal:2',
         'interest' => 'decimal:2',
-        'principal' => 'decimal:2',
-        'running_balance' => 'decimal:2',
+        'principal_payment' => 'decimal:2',
         'transaction_date' => 'immutable_date'
     ];
 

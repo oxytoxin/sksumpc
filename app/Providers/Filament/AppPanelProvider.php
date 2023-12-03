@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\App\Resources\CapitalSubscriptionResource;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\Widgets;
@@ -19,6 +20,7 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationItem;
 use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -40,6 +42,9 @@ class AppPanelProvider extends PanelProvider
                 NavigationGroup::make()
                     ->label('Loan')
                     ->icon('icon-loan'),
+                NavigationGroup::make()
+                    ->label('Share Capital')
+                    ->icon('icon-share-capital'),
                 NavigationGroup::make()
                     ->label('Management')
                     ->icon('heroicon-o-cog-6-tooth'),
@@ -65,12 +70,6 @@ class AppPanelProvider extends PanelProvider
             ])
             ->breadcrumbs(false)
             ->darkMode(false)
-            // ->renderHook(
-            //     'panels::head.end',
-            //     fn () => Blade::render("
-            //         @vite('resources/js/app.js')
-            //     ")
-            // )
             ->renderHook(
                 'panels::body.end',
                 fn (): string => Blade::render("

@@ -87,20 +87,20 @@ class SeedMembers extends Command
             });
             DB::commit();
         }
-        DB::beginTransaction();
-        $rows = SimpleExcelReader::create(storage_path('csv/CBU.xlsx'))->fromSheetName('REGULAR')->getRows();
-        $rows->each(function ($data) {
-            $this->seedCBU($data);
-        });
-        $rows = SimpleExcelReader::create(storage_path('csv/CBU.xlsx'))->fromSheetName('ASSOCIATE')->getRows();
-        $rows->each(function ($data) {
-            $this->seedCBU($data);
-        });
-        $rows = SimpleExcelReader::create(storage_path('csv/CBU.xlsx'))->fromSheetName('LABORATORY')->getRows();
-        $rows->each(function ($data) {
-            $this->seedCBU($data);
-        });
-        DB::commit();
+        // DB::beginTransaction();
+        // $rows = SimpleExcelReader::create(storage_path('csv/CBU.xlsx'))->fromSheetName('REGULAR')->getRows();
+        // $rows->each(function ($data) {
+        //     $this->seedCBU($data);
+        // });
+        // $rows = SimpleExcelReader::create(storage_path('csv/CBU.xlsx'))->fromSheetName('ASSOCIATE')->getRows();
+        // $rows->each(function ($data) {
+        //     $this->seedCBU($data);
+        // });
+        // $rows = SimpleExcelReader::create(storage_path('csv/CBU.xlsx'))->fromSheetName('LABORATORY')->getRows();
+        // $rows->each(function ($data) {
+        //     $this->seedCBU($data);
+        // });
+        // DB::commit();
     }
 
     private function seedCBU($data)

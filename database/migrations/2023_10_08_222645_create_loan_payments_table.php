@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('loan_id')->constrained();
             $table->decimal('amount', 14, 2);
+            $table->decimal('interest', 14, 2)->virtualAs('amount - principal_payment');
             $table->decimal('principal_payment', 14, 2);
             $table->foreignId('payment_type_id')->constrained()->constrained();
             $table->string('reference_number');

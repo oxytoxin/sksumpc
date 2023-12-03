@@ -10,7 +10,7 @@
         @else
             <h5 class="text-center uppercase">{{ date_create($this->tableFilters['release_date']['to'] ?? today())->format('F d, Y') }}</h5>
         @endif
-        <table class="overflow-auto print:text-[10pt]">
+        <table class="overflow-auto print:text-[10pt] w-full">
             <thead>
                 <tr>
                     <th rowspan="2" class="text-center border-2 border-black">No.</th>
