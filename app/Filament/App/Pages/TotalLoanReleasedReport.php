@@ -24,6 +24,11 @@ class TotalLoanReleasedReport extends Page implements HasTable
 
     protected static ?int $navigationSort = 6;
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()->can('manage loans');
+    }
+
     public function table(Table $table): Table
     {
         return $table

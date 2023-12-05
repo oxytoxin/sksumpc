@@ -48,7 +48,7 @@
             <x-app.cashier.reports.signatories :signatories="$signatories" />
         </x-slot:signatories>
         <x-slot:buttons>
-            <x-filament::button color="success" tag="a" href="{{ route('filament.app.resources.members.index') }}">Back to Membership Module</x-filament::button>
+            <x-filament::button color="success" tag="a" href="{{ back()->getTargetUrl() }}">Previous Page</x-filament::button>
             <x-filament::button icon="heroicon-o-printer" @click="printOut($refs.print.outerHTML, 'Daily Summary Savings')">Print</x-filament::button>
         </x-slot:buttons>
     </x-app.cashier.reports.report-layout>

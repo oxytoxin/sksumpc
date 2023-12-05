@@ -3,12 +3,14 @@
 namespace App\Filament\App\Pages;
 
 use App\Models\Member;
+use Filament\Forms\Components\DatePicker;
 use Filament\Pages\Page;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 
 class CbuSchedule extends Page implements HasTable
@@ -22,6 +24,9 @@ class CbuSchedule extends Page implements HasTable
     protected static ?string $navigationGroup = 'Share Capital';
 
     protected static ?string $navigationLabel = 'CBU Schedule';
+
+    protected ?string $heading = "CBU Schedule";
+
 
     public static function shouldRegisterNavigation(): bool
     {
@@ -47,53 +52,13 @@ class CbuSchedule extends Page implements HasTable
                     ->withSum('capital_subscriptions', 'number_of_shares')
                     ->withSum('capital_subscriptions', 'amount_subscribed')
                     ->withSum('capital_subscription_payments', 'amount')
+                    ->orderBy('alt_full_name')
             )
-            ->columns([
-                TextColumn::make('full_name')
-                    ->searchable()
-                    ->label('Name'),
-                TextColumn::make('capital_subscriptions_sum_number_of_shares')
-                    ->label("No. of Shares Subscribed")
-                    ->wrapHeader()
-                    ->alignCenter(),
-                TextColumn::make('capital_subscriptions_sum_amount_subscribed')
-                    ->label('Amount of Shares Subscribed')
-                    ->wrapHeader()
-                    ->money('PHP')
-                    ->alignCenter(),
-                TextColumn::make('number_of_shares_paid')
-                    ->label('No. of Shares Paid')
-                    ->state(fn ($record) => $this->number_of_shares_paid($record))
-                    ->wrapHeader()
-                    ->alignCenter(),
-                TextColumn::make('capital_subscription_payments_sum_amount')
-                    ->money('PHP')
-                    ->label('Total Amount Paid-Up Capital Share Common')
-                    ->wrapHeader()
-                    ->alignCenter(),
-                TextColumn::make('amount_receivable')
-                    ->label('Subscription Receivable Common')
-                    ->state(fn ($record) => $record->capital_subscriptions_sum_amount_subscribed - $record->capital_subscription_payments_sum_amount)
-                    ->money('PHP')
-                    ->wrapHeader()
-                    ->alignCenter(),
-                TextColumn::make('amount_shares_paid')
-                    ->label('Paid-Up Share Capital Common')
-                    ->state(fn ($record) => $this->amount_shares_paid($record))
-                    ->money('PHP')
-                    ->wrapHeader()
-                    ->alignCenter(),
-                TextColumn::make('amount_shares_deposit')
-                    ->label('Deposit for Share Capital Subscription')
-                    ->state(fn ($record) => $record->capital_subscription_payments_sum_amount - $this->amount_shares_paid($record))
-                    ->money('PHP')
-                    ->wrapHeader()
-                    ->alignCenter(),
-            ])
+            ->content(fn () => view('filament.app.views.cbu-schedule'))
             ->filters([
                 SelectFilter::make('member_type_id')
                     ->relationship('member_type', 'name')
-                    ->label('Member Type')
+                    ->label('Member Type'),
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
             ->actions([

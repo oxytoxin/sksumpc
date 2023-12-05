@@ -17,6 +17,11 @@ class ShareCapitalScheduleSummaryReport extends Page
 
     protected static string $view = 'filament.app.pages.share-capital-schedule-summary-report';
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()->can('manage cbu');
+    }
+
     private function getAmounts($amount_paid)
     {
         return [

@@ -28,7 +28,6 @@ class CapitalSubscriptionBillingPayments extends ListRecords
         return 'CBU Receivables';
     }
 
-
     protected function getHeaderActions(): array
     {
         return [

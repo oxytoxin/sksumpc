@@ -11,6 +11,7 @@ class Accounting extends Page
     protected static string $view = 'filament.app.pages.accounting';
 
     protected static ?int $navigationSort = 11;
+
     public static function shouldRegisterNavigation(): bool
     {
         return false;

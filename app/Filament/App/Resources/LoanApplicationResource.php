@@ -121,13 +121,9 @@ class LoanApplicationResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make()->visible(fn ($record) => auth()->user()->can('manage loans') && $record->status == LoanApplication::STATUS_PROCESSING),
                 Action::make('Approve')
-                    ->form([
-                        TextInput::make('remarks')
-                    ])
                     ->action(function ($record, $data) {
                         $record->update([
                             'status' => LoanApplication::STATUS_APPROVED,
-                            'remarks' => $data['remarks']
                         ]);
                         Notification::make()->title('Loan application approved!')->success()->send();
                     })

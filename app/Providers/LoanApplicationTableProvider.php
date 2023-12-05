@@ -73,7 +73,7 @@ class LoanApplicationTableProvider extends ServiceProvider
                         );
                 });
 
-            if ($type) {
+            if (!$type || $type == LoanApplication::STATUS_DISAPPROVED) {
                 $filters[] = Filter::make('date_disapproved')
                     ->form([
                         DatePicker::make('disapproved_from')->native(false),
