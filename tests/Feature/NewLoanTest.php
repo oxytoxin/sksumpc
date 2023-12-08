@@ -1,7 +1,5 @@
 <?php
 
-use App\Filament\App\Resources\LoanResource;
-use App\Filament\App\Resources\LoanResource\Pages\ListLoans;
 use App\Livewire\App\LoansTable;
 use App\Models\Loan;
 use App\Models\LoanApplication;

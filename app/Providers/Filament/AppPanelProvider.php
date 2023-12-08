@@ -30,7 +30,10 @@ class AppPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        $customcss = Vite::asset('resources/css/filament/app/theme.css');
+        try {
+            $customcss = Vite::asset('resources/css/filament/app/theme.css');
+        } catch (\Throwable $th) {
+        }
         return $panel
             ->id('app')
             ->path('')

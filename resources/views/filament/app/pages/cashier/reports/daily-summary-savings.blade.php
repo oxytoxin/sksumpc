@@ -3,20 +3,13 @@
 @endphp
 
 <x-filament-panels::page>
-    @php
-        $savings = auth()
-            ->user()
-            ->cashier_savings()
-            ->with('member')
-            ->whereDate('transaction_date', today())
-            ->get();
-    @endphp
-    <x-app.cashier.reports.report-layout title="DAILY SUMMARY OF MEMBER'S SAVINGS DEPOSIT AND WITHDRAWAL">
+    <x-app.cashier.reports.report-layout :signatories="$signatories" title="DAILY SUMMARY OF MEMBER'S SAVINGS DEPOSIT AND WITHDRAWAL">
         <table class="w-full">
             <thead>
                 <tr>
                     <th class="text-center border-2 border-black">NO.</th>
                     <th class="text-center border-2 border-black">ACCOUNT NAME</th>
+                    <th class="text-center border-2 border-black">ACCOUNT NUMBER</th>
                     <th class="text-center border-2 border-black">DEPOSIT</th>
                     <th class="text-center border-2 border-black">WITHDRAWAL</th>
                     <th class="text-center border-2 border-black">BALANCE</th>
@@ -26,30 +19,24 @@
                 @php
                     $total = 0;
                 @endphp
-                @forelse ($savings as $saving)
+                @forelse ($this->savings as $saving)
                     @php
                         $total += $saving->amount;
                     @endphp
                     <tr>
                         <th class="text-center border-2 border-black">{{ $loop->iteration }}</th>
                         <td class="text-center border-2 border-black whitespace-nowrap px-2">{{ $saving->member->full_name }}</td>
+                        <td class="text-center border-2 border-black whitespace-nowrap px-2">{{ $saving->savings_account->number }}</td>
                         <td class="text-center border-2 border-black">{{ $saving->deposit ? format_money($saving->deposit, 'PHP') : '' }}</td>
                         <td class="text-center border-2 border-black">{{ $saving->withdrawal ? format_money($saving->withdrawal, 'PHP') : '' }}</td>
                         <td class="text-center border-2 border-black">{{ format_money($total, 'PHP') }}</td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="text-center border-2 border-black">No transactions today.</td>
+                        <td colspan="6" class="text-center border-2 border-black">No transactions today.</td>
                     </tr>
                 @endforelse
             </tbody>
         </table>
-        <x-slot:signatories>
-            <x-app.cashier.reports.signatories :signatories="$signatories" />
-        </x-slot:signatories>
-        <x-slot:buttons>
-            <x-filament::button color="success" tag="a" href="{{ back()->getTargetUrl() }}">Previous Page</x-filament::button>
-            <x-filament::button icon="heroicon-o-printer" @click="printOut($refs.print.outerHTML, 'Daily Summary Savings')">Print</x-filament::button>
-        </x-slot:buttons>
     </x-app.cashier.reports.report-layout>
 </x-filament-panels::page>

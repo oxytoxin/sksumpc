@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('cash_collectibles', function (Blueprint $table) {
             $table->id();
+            $table->foreignIdFor(\App\Models\CashCollectibleCategory::class)->constrained();
             $table->string('name');
             $table->timestamps();
         });

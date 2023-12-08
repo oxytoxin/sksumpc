@@ -60,6 +60,7 @@ class CapitalSubscriptionResource extends Resource
     {
         return [
             'index' => Pages\ListCapitalSubscriptions::route('/'),
+            'reports.top-ten-highest-cbu' => Pages\Reports\TopTenHighestCbuReport::route('/reports/top-ten-highest-cbu')
         ];
     }
 }

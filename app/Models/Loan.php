@@ -50,7 +50,7 @@ class Loan extends Model
 
     public function getMaturityDateAttribute()
     {
-        return $this->transaction_date->addMonthsNoOverflow($this->number_of_terms);
+        return $this->release_date->addMonthsNoOverflow($this->number_of_terms);
     }
 
     public function loan_type(): BelongsTo

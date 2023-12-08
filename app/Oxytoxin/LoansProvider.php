@@ -141,7 +141,11 @@ class LoansProvider
         bcscale(10);
         do {
             if ($term == 1) {
-                $days = $start->diffInDays($start->addMonthNoOverflow()->endOfMonth()) + 1;
+                if ($start->day <= 10) {
+                    $days = $start->diffInDays($start->endOfMonth()) + 1;
+                } else {
+                    $days = $start->diffInDays($start->addMonthNoOverflow()->endOfMonth()) + 1;
+                }
             } else if ($term == $loan->number_of_terms) {
                 $days = $start->diffInDays($loan->transaction_date->addMonthsNoOverflow($loan->number_of_terms));
             } else {
@@ -157,10 +161,15 @@ class LoansProvider
                 $principal = bcsub($amortization, $interest);
             }
 
+            if ($start->day <= 10) {
+                $date = $start;
+            } else {
+                $date = $loan->transaction_date->addMonthsNoOverflow($term);
+            }
 
             $schedule[] = [
                 'term' => $term,
-                'date' => $start->addMonthNoOverflow()->format('F Y'),
+                'date' => $date,
                 'days' => $days,
                 'amortization' => $amortization,
                 'interest' => $interest,

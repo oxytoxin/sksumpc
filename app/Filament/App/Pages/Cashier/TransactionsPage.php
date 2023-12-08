@@ -2,35 +2,33 @@
 
 namespace App\Filament\App\Pages\Cashier;
 
-use DB;
+use App\Models\CapitalSubscription;
+use App\Models\CashCollectible;
 use App\Models\Loan;
 use App\Models\Member;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
-use Filament\Forms\Form;
-use Filament\Pages\Page;
 use App\Models\TimeDeposit;
-use Filament\Support\RawJs;
 use App\Oxytoxin\ImprestData;
-use App\Oxytoxin\SavingsData;
-use App\Models\CashCollectible;
-use App\Oxytoxin\SavingsProvider;
 use App\Oxytoxin\ImprestsProvider;
-use App\Models\CapitalSubscription;
-use Filament\Forms\Components\Select;
+use App\Oxytoxin\SavingsData;
+use App\Oxytoxin\SavingsProvider;
 use App\Oxytoxin\TimeDepositsProvider;
+use DB;
 use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Filament\Notifications\Notification;
+use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
 use function Filament\Support\format_money;
-
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Concerns\InteractsWithForms;
 
 class TransactionsPage extends Page implements HasForms
 {
@@ -63,6 +61,9 @@ class TransactionsPage extends Page implements HasForms
                         Actions::make([
                             Action::make('pay_cbu')
                                 ->label('Pay CBU')
+                                ->closeModalByClickingAway(false)
+                                ->modalCloseButton(false)
+                                ->slideOver(true)
                                 ->form([
                                     Select::make('member_id')
                                         ->label('Member')

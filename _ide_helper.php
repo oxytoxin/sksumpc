@@ -18475,6 +18475,27 @@
             /**
      * 
      *
+     * @template TKey of array-key
+     * @template-covariant TValue
+     * @implements \ArrayAccess<TKey, TValue>
+     * @implements \Illuminate\Support\Enumerable<TKey, TValue>
+     */ 
+        class Collection {
+                    /**
+         * 
+         *
+         * @see \App\Providers\FilamentTableProvider::boot()
+         * @static 
+         */ 
+        public static function ksort()
+        {
+                        return \Illuminate\Support\Collection::ksort();
+        }
+         
+    }
+            /**
+     * 
+     *
      */ 
         class Stringable {
                     /**

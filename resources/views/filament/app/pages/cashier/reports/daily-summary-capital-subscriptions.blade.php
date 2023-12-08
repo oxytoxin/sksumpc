@@ -3,15 +3,7 @@
 @endphp
 
 <x-filament-panels::page>
-    @php
-        $cbu_payments = auth()
-            ->user()
-            ->cashier_cbu_payments()
-            ->with('capital_subscription.member')
-            ->whereDate('transaction_date', today())
-            ->get();
-    @endphp
-    <x-app.cashier.reports.report-layout title="DAILY SUMMARY OF MEMBER'S CBU DEPOSIT AND WITHDRAWAL">
+    <x-app.cashier.reports.report-layout :signatories="$signatories" title="DAILY SUMMARY OF MEMBER'S CBU DEPOSIT AND WITHDRAWAL">
         <table class="w-full">
             <thead>
                 <tr>
@@ -26,7 +18,7 @@
                 @php
                     $total = 0;
                 @endphp
-                @forelse ($cbu_payments as $cbu_payment)
+                @forelse ($this->cbu_payments as $cbu_payment)
                     @php
                         $total += $cbu_payment->amount;
                     @endphp
@@ -44,12 +36,5 @@
                 @endforelse
             </tbody>
         </table>
-        <x-slot:signatories>
-            <x-app.cashier.reports.signatories :signatories="$signatories" />
-        </x-slot:signatories>
-        <x-slot:buttons>
-            <x-filament::button color="success" tag="a" href="{{ back()->getTargetUrl() }}">Previous Page</x-filament::button>
-            <x-filament::button icon="heroicon-o-printer" @click="printOut($refs.print.outerHTML, 'Daily Summary CBU Payments')">Print</x-filament::button>
-        </x-slot:buttons>
     </x-app.cashier.reports.report-layout>
 </x-filament-panels::page>

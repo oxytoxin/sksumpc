@@ -9,7 +9,7 @@ use Filament\Tables\Actions\CreateAction;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
-test('can create new cbu', function () {
+it('can create new cbu', function () {
     actingAs(User::find(1));
     $member = Member::find(664);
     $member->capital_subscriptions()->where('outstanding_balance', '>', 0)->each(function (CapitalSubscription $cbu) {
