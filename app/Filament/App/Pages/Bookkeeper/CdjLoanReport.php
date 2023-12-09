@@ -16,7 +16,7 @@ class CdjLoanReport extends Page implements HasForms
 {
     use InteractsWithForms;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationGroup = 'Bookkeeping';
 
     protected static string $view = 'filament.app.pages.bookkeeper.cdj-loan-report';
 

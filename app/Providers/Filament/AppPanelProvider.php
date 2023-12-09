@@ -49,6 +49,9 @@ class AppPanelProvider extends PanelProvider
                     ->label('Share Capital')
                     ->icon('icon-share-capital'),
                 NavigationGroup::make()
+                    ->label('Bookkeeping')
+                    ->icon('icon-registry'),
+                NavigationGroup::make()
                     ->label('Management')
                     ->icon('heroicon-o-cog-6-tooth'),
             ])
