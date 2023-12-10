@@ -27,6 +27,11 @@ class CashCollectiblePayment extends Model
         return $this->belongsTo(User::class, 'cashier_id');
     }
 
+    public function member()
+    {
+        return $this->belongsTo(Member::class);
+    }
+
 
     protected static function booted()
     {

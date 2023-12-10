@@ -15,6 +15,7 @@ class Saving extends Model
     use HasFactory;
 
     protected $casts = [
+        'balance' => 'decimal:2',
         'amount' => 'decimal:2',
         'deposit' => 'decimal:2',
         'withdrawal' => 'decimal:2',
@@ -36,6 +37,10 @@ class Saving extends Model
         return $this->belongsTo(User::class, 'cashier_id');
     }
 
+    public function savings_account()
+    {
+        return $this->belongsTo(SavingsAccount::class);
+    }
 
     protected static function booted()
     {
@@ -51,7 +56,6 @@ class Saving extends Model
                     $saving->reference_number = str('SW-')->append(today()->format('Y') . '-')->append(str_pad($saving->id, 6, '0', STR_PAD_LEFT));
                 }
             }
-
             $saving->save();
         });
     }

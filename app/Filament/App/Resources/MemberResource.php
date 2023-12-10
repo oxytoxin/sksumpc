@@ -73,13 +73,6 @@ class MemberResource extends Resource
         $tabs = [
             Tab::make('Profile')
                 ->schema([
-                    Actions::make([
-                        Action::make('membership')
-                            ->extraAttributes(['wire:ignore' => true])
-                            ->label('Back to Membership Module')
-                            ->color('success')
-                            ->url(route('filament.app.resources.members.index'))
-                    ]),
                     InfolistSection::make([
                         SpatieMediaLibraryImageEntry::make('profile_photo')
                             ->label('')
@@ -125,13 +118,6 @@ class MemberResource extends Resource
         if (auth()->user()->canany(['manage payments', 'manage cbu'])) {
             $tabs[] = Tab::make('CBU')
                 ->schema([
-                    Actions::make([
-                        Action::make('membership')
-                            ->extraAttributes(['wire:ignore' => true])
-                            ->label('Back to Membership Module')
-                            ->color('success')
-                            ->url(route('filament.app.resources.members.index'))
-                    ]),
                     ViewEntry::make('cbu')
                         ->view('filament.app.views.cbu-table')
                 ]);
@@ -140,13 +126,6 @@ class MemberResource extends Resource
         if (auth()->user()->canany(['manage payments', 'manage mso'])) {
             $tabs[] = Tab::make('MSO')
                 ->schema([
-                    Actions::make([
-                        Action::make('membership')
-                            ->extraAttributes(['wire:ignore' => true])
-                            ->label('Back to Membership Module')
-                            ->color('success')
-                            ->url(route('filament.app.resources.members.index'))
-                    ]),
                     ViewEntry::make('mso')
                         ->view('filament.app.views.mso-table')
                 ]);
@@ -155,13 +134,6 @@ class MemberResource extends Resource
         if (auth()->user()->canany(['manage payments', 'manage loans'])) {
             $tabs[] = Tab::make('Loan')
                 ->schema([
-                    Actions::make([
-                        Action::make('membership')
-                            ->extraAttributes(['wire:ignore' => true])
-                            ->label('Back to Membership Module')
-                            ->color('success')
-                            ->url(route('filament.app.resources.members.index'))
-                    ]),
                     ViewEntry::make('loan')
                         ->view('filament.app.views.loans-table')
                 ]);

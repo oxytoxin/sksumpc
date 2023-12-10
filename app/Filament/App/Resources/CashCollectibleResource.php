@@ -6,6 +6,7 @@ use App\Filament\App\Resources\CashCollectibleResource\Pages;
 use App\Filament\App\Resources\CashCollectibleResource\RelationManagers;
 use App\Models\CashCollectible;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -33,6 +34,9 @@ class CashCollectibleResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(125),
+                Select::make('cash_collectible_category_id')
+                    ->relationship('cash_collectible_category', 'name')
+                    ->required()
             ]);
     }
 
@@ -41,6 +45,9 @@ class CashCollectibleResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('cash_collectible_category.name')
+                    ->label('Category')
                     ->searchable(),
             ])
             ->filters([

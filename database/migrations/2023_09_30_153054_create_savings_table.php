@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\SavingsAccount;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,6 +14,7 @@ return new class extends Migration
     {
         Schema::create('savings', function (Blueprint $table) {
             $table->id();
+            $table->foreignIdFor(SavingsAccount::class)->constrained();
             $table->foreignId('member_id')->constrained();
             $table->foreignId('payment_type_id')->constrained();
             $table->string('reference_number');
@@ -22,12 +24,11 @@ return new class extends Migration
             $table->decimal('interest_rate', 7, 2);
             $table->decimal('interest', 14, 2)->default(0);
             $table->date('transaction_date');
+            $table->decimal('balance', 14, 2)->default(0);
             $table->date('interest_date')->nullable();
             $table->integer('number_of_days')->virtualAs('COALESCE(DATEDIFF(COALESCE(interest_date, CURDATE()), transaction_date), 0)');
-            $table->decimal('balance', 14, 2);
             $table->boolean('accrued')->default(false);
             $table->foreignId('cashier_id')->nullable()->constrained('users', 'id')->nullOnDelete();
-
             $table->timestamps();
         });
     }

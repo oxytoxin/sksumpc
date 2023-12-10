@@ -45,7 +45,6 @@ class ImprestsProvider
             'amount' => $data->amount,
             'interest_rate' => ImprestsProvider::INTEREST_RATE,
             'member_id' => $member->id,
-            'balance' => $member->imprests()->sum('amount') + $data->amount,
         ]);
     }
 }

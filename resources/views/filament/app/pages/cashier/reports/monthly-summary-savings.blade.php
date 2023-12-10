@@ -1,6 +1,13 @@
 <x-filament-panels::page>
-    <x-app.cashier.reports.report-layout :signatories="$signatories" title="DAILY SUMMARY OF MEMBER'S SAVINGS DEPOSIT AND WITHDRAWAL">
-        <table class="w-full">
+    <div>
+        {{ $this->form }}
+    </div>
+    <x-app.cashier.reports.report-layout :signatories="$signatories">
+        <div>
+            <h3 class="text-center font-bold text-lg">MONTHLY SUMMARY OF MEMBER'S SAVINGS DEPOSIT AND WITHDRAWAL</h3>
+            <h3 class="text-center font-bold uppercase">FOR THE MONTH OF {{ oxy_get_month_range()[$data['month']] }} {{ $data['year'] }}</h3>
+        </div>
+        <table class="w-full mt-4">
             <thead>
                 <tr>
                     <th class="text-center border border-black">NO.</th>

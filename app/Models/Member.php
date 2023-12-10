@@ -97,6 +97,11 @@ class Member extends Model implements HasMedia
         return $this->hasOne(CapitalSubscription::class)->where('code', ShareCapitalProvider::INITIAL_CAPITAL_CODE);
     }
 
+    public function savings_accounts()
+    {
+        return $this->hasMany(SavingsAccount::class);
+    }
+
     public function savings(): HasMany
     {
         return $this->hasMany(Saving::class);

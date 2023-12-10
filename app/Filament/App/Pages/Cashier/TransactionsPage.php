@@ -6,6 +6,7 @@ use App\Models\CapitalSubscription;
 use App\Models\CashCollectible;
 use App\Models\Loan;
 use App\Models\Member;
+use App\Models\SavingsAccount;
 use App\Models\TimeDeposit;
 use App\Oxytoxin\ImprestData;
 use App\Oxytoxin\ImprestsProvider;
@@ -27,6 +28,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Support\Enums\Alignment;
 use Illuminate\Contracts\Support\Htmlable;
 use function Filament\Support\format_money;
 
@@ -63,6 +65,7 @@ class TransactionsPage extends Page implements HasForms
                                 ->label('Pay CBU')
                                 ->closeModalByClickingAway(false)
                                 ->modalCloseButton(false)
+                                ->modalAlignment(Alignment::Left)
                                 ->slideOver(true)
                                 ->form([
                                     Select::make('member_id')
@@ -100,9 +103,14 @@ class TransactionsPage extends Page implements HasForms
                                         ->label('Member')
                                         ->options(Member::pluck('full_name', 'id'))
                                         ->searchable()
+                                        ->selectablePlaceholder(false)
                                         ->live()
                                         ->required()
                                         ->preload(),
+                                    Select::make('savings_account_id')
+                                        ->options(fn ($get) => SavingsAccount::whereMemberId($get('member_id'))->pluck('name', 'id'))
+                                        ->label('Account')
+                                        ->required(),
                                     Placeholder::make('member_type')
                                         ->content(fn ($get) => Member::find($get('member_id'))?->member_type->name),
                                     Select::make('action')

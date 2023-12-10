@@ -24,7 +24,7 @@ class DailySummarySavings extends Page
         return auth()
             ->user()
             ->cashier_savings()
-            ->with('member')
+            ->with('savings_account')
             ->whereDate('transaction_date', today())
             ->get();
     }
