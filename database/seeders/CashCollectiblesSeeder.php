@@ -44,7 +44,6 @@ class CashCollectiblesSeeder extends Seeder
             'name' => 'ELECTRICITY'
         ]);
 
-
         $ccg = CashCollectibleCategory::create([
             'name' => 'OTHERS'
         ]);

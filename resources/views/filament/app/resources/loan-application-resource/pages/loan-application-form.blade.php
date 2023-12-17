@@ -87,7 +87,7 @@
                 </div>
             </div>
             <hr class="border-2 print:hidden border-black my-4">
-            <div class="print:break-before-page print:text-[8pt]">
+            <div class="mt-4 print:text-[8pt]">
                 <div class="grid grid-cols-2">
                     <h4>Name: {{ $loan_application->member->full_name }}</h4>
                     <h4>Date: <span class="uppercase">{{ today()->format('F d, Y') }}</span></h4>

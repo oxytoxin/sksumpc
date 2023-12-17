@@ -278,7 +278,6 @@ class MemberResource extends Resource
                                 $data = ShareCapitalProvider::fromAmountSubscribed($state, ShareCapitalProvider::INITIAL_NUMBER_OF_TERMS);
                                 $set('number_of_shares', $data['number_of_shares']);
                             }),
-                        Hidden::make('code')->default(ShareCapitalProvider::INITIAL_CAPITAL_CODE),
                     ])
             ]);
     }

@@ -59,7 +59,7 @@ class CapitalSubscription extends Model
 
         static::created(function (CapitalSubscription $cbu) {
             if ($cbu->member->capital_subscriptions()->count() == 1) {
-                $code = 'Initial Capital Subscription';
+                $code = str('ICS-')->append(today()->format('Y'))->append('-')->append(str_pad($cbu->id, 6, '0', STR_PAD_LEFT));
             } else {
                 $code = str('ACS-')->append(today()->format('Y'))->append('-')->append(str_pad($cbu->id, 6, '0', STR_PAD_LEFT));
             }
