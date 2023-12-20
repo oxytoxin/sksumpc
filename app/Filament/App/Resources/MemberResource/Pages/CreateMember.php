@@ -19,7 +19,6 @@ class CreateMember extends CreateRecord
             'number_of_terms' => $number_of_terms,
             'number_of_shares' => $number_of_shares,
             'amount_subscribed' => $amount_subscribed,
-            'code' => $code,
         ] = $data;
         unset($data['number_of_terms'], $data['number_of_shares'], $data['initial_amount_paid'], $data['amount_subscribed'], $data['code']);
         DB::beginTransaction();
@@ -32,7 +31,6 @@ class CreateMember extends CreateRecord
             'number_of_terms' => $number_of_terms,
             'number_of_shares' => $number_of_shares,
             'amount_subscribed' => $amount_subscribed,
-            'code' => $code,
             'outstanding_balance' => $amount_subscribed,
             'is_common' => true,
             'transaction_date' => today(),

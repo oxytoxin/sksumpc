@@ -36,11 +36,12 @@ class AppPanelProvider extends PanelProvider
         }
         return $panel
             ->id('app')
-            ->path('')
-            ->domain(config('app.env') == "local" ? "localhost" : config('app.url'))
+            ->path('/')
+            ->domain('localhost')
             ->colors([
                 'primary' => "#3F9FEB",
             ])
+            ->login()
             ->navigationGroups([
                 NavigationGroup::make()
                     ->label('Loan')

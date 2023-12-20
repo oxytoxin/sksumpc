@@ -1,11 +1,15 @@
 <?php
 
+use App\Models\Region;
+use App\Models\Barangay;
+use App\Models\Province;
+use App\Models\Religion;
 use App\Models\MemberType;
 use App\Models\Occupation;
-use App\Models\Religion;
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use App\Models\Municipality;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
@@ -40,6 +44,10 @@ return new class extends Migration
             $table->foreignId('religion_id')->nullable()->constrained();
             $table->decimal('annual_income', 14, 2, true)->nullable();
             $table->decimal('other_income_sources', 14, 2, true)->nullable();
+            $table->foreignIdFor(Region::class)->nullable()->constrained();
+            $table->foreignIdFor(Province::class)->nullable()->constrained();
+            $table->foreignIdFor(Municipality::class)->nullable()->constrained();
+            $table->foreignIdFor(Barangay::class)->nullable()->constrained();
             $table->timestamps();
         });
     }

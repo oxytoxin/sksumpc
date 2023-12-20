@@ -209,9 +209,23 @@ class MemberResource extends Resource
                         Forms\Components\TextInput::make('place_of_birth')
                             ->label('Place of Birth')
                             ->columnSpan(2),
-                        Forms\Components\Textarea::make('address')
-                            ->maxLength(125)
-                            ->columnSpanFull(),
+                        Section::make('Address')
+                            ->schema([
+                                Select::make('region_id')
+                                    ->live()
+                                    ->relationship('region', 'description'),
+                                Select::make('province_id')
+                                    ->live()
+                                    ->disabled(fn ($get) => !$get('region_id'))
+                                    ->relationship('province', 'name', fn ($query, $get) => $query->whereRegionId($get('region_id'))),
+                                Select::make('municipality_id')
+                                    ->live()
+                                    ->disabled(fn ($get) => !$get('province_id'))
+                                    ->relationship('municipality', 'name', fn ($query, $get) => $query->whereProvinceId($get('province_id'))),
+                                Select::make('barangay_id')
+                                    ->disabled(fn ($get) => !$get('municipality_id'))
+                                    ->relationship('barangay', 'name', fn ($query, $get) => $query->whereMunicipalityId($get('municipality_id'))),
+                            ])->columns(2),
                     ]),
                 Grid::make(3)
                     ->schema([
@@ -236,6 +250,8 @@ class MemberResource extends Resource
                             ->options([
                                 'FATHER' => 'FATHER',
                                 'MOTHER' => 'MOTHER',
+                                'HUSBAND' => 'HUSBAND',
+                                'WIFE' => 'WIFE',
                                 'SON' => 'SON',
                                 'DAUGHTER' => 'DAUGHTER',
                                 'COUSIN' => 'COUSIN',
@@ -247,7 +263,6 @@ class MemberResource extends Resource
                 Forms\Components\Select::make('occupation_id')
                     ->relationship('occupation', 'name')
                     ->options(Occupation::pluck('name', 'id')),
-
                 Forms\Components\TextInput::make('highest_educational_attainment')
                     ->maxLength(125),
                 Forms\Components\TextInput::make('present_employer'),

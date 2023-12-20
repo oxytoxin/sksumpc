@@ -50,6 +50,8 @@ class Reports extends Page implements HasForms
                                 Action::make('daily_summary_cash_collectibles')
                                     ->label('Daily Summary for Cash Collectibles')
                                     ->url(route('filament.app.pages.daily-summary-cash-collectibles')),
+                            ]),
+                            Actions::make([
                                 Action::make('daily_collection_report_mso_and_time_deposits')
                                     ->label('Daily Collection Report of MSO and Time Deposits')
                                     ->url(route('filament.app.pages.daily-collection-report-m-s-o-and-time-deposits')),
@@ -59,7 +61,10 @@ class Reports extends Page implements HasForms
                                 Action::make('daily_collection_report_rice_and_groceries')
                                     ->label('Daily Collection Report of Rice and Groceries')
                                     ->url(route('filament.app.pages.daily-collection-report-rice-and-groceries')),
-                            ])
+                                Action::make('daily_collection_report_loan')
+                                    ->label('Daily Collection Report of Loan')
+                                    ->url(route('filament.app.pages.daily-collection-report-loan')),
+                            ]),
                         ]),
                     Tab::make('Monthly Summaries')
                         ->schema([
