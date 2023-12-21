@@ -42,8 +42,8 @@ return new class extends Migration
             $table->json('dependents')->default('(JSON_ARRAY())');
             $table->integer('dependents_count')->virtualAs('JSON_LENGTH(dependents)');
             $table->foreignId('religion_id')->nullable()->constrained();
-            $table->decimal('annual_income', 14, 2, true)->nullable();
-            $table->decimal('other_income_sources', 14, 2, true)->nullable();
+            $table->decimal('annual_income', 18, 4, true)->nullable();
+            $table->decimal('other_income_sources', 18, 4, true)->nullable();
             $table->foreignIdFor(Region::class)->nullable()->constrained();
             $table->foreignIdFor(Province::class)->nullable()->constrained();
             $table->foreignIdFor(Municipality::class)->nullable()->constrained();

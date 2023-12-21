@@ -15,10 +15,10 @@ class TimeDeposit extends Model
     use HasFactory;
 
     protected $casts = [
-        'amount' => 'decimal:2',
+        'amount' => 'decimal:4',
         'number_of_days' => 'integer',
-        'maturity_amount' => 'decimal:2',
-        'interest_rate' => 'decimal:2',
+        'maturity_amount' => 'decimal:4',
+        'interest_rate' => 'decimal:4',
         'transaction_date' => 'immutable_date',
         'maturity_date' => 'immutable_date',
     ];

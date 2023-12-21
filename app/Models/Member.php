@@ -25,7 +25,7 @@ class Member extends Model implements HasMedia
         'dob' => 'immutable_date',
         'dependents' => DataCollection::class . ':' . MemberDependent::class,
         'other_income_sources' => 'array',
-        'annual_income' => 'decimal:2',
+        'annual_income' => 'decimal:4',
     ];
 
     protected static function booted(): void

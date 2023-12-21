@@ -19,8 +19,8 @@ return new class extends Migration
             $table->foreignIdFor(LoanBilling::class)->constrained();
             $table->foreignIdFor(Member::class)->constrained();
             $table->foreignIdFor(LoanAmortization::class)->constrained();
-            $table->decimal('amount_due', 14, 2);
-            $table->decimal('amount_paid', 14, 2);
+            $table->decimal('amount_due', 18, 4);
+            $table->decimal('amount_paid', 18, 4);
             $table->boolean('posted')->default(false);
             $table->timestamps();
         });

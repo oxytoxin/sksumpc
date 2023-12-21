@@ -18,13 +18,13 @@ return new class extends Migration
             $table->foreignId('loan_type_id')->constrained();
             $table->string('reference_number');
             $table->string('priority_number');
-            $table->decimal('gross_amount', 14, 2);
-            $table->decimal('deductions_amount', 14, 2);
-            $table->decimal('net_amount', 14, 2)->virtualAs('gross_amount - deductions_amount');
+            $table->decimal('gross_amount', 18, 4);
+            $table->decimal('deductions_amount', 18, 4);
+            $table->decimal('net_amount', 18, 4)->virtualAs('gross_amount - deductions_amount');
             $table->json('deductions')->default(DB::raw('(JSON_ARRAY())'));
             $table->integer('number_of_terms');
             $table->decimal('interest_rate', 7, 4);
-            $table->decimal('interest', 14, 2);
+            $table->decimal('interest', 18, 4);
             $table->decimal('monthly_payment', 16, 4);
             $table->date('release_date');
             $table->date('transaction_date');

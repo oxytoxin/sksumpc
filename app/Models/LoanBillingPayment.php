@@ -14,8 +14,8 @@ class LoanBillingPayment extends Model
 
     protected $casts = [
         'posted' => 'boolean',
-        'amount_due' => 'decimal:2',
-        'amount_paid' => 'decimal:2',
+        'amount_due' => 'decimal:4',
+        'amount_paid' => 'decimal:4',
     ];
 
     public function loan_billing()

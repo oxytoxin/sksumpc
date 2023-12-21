@@ -13,7 +13,7 @@ class MemberType extends Model
     use HasFactory;
 
     protected $casts = [
-        'minimum_initial_payment' => 'decimal:2',
+        'minimum_initial_payment' => 'decimal:4',
     ];
 
     public function members()

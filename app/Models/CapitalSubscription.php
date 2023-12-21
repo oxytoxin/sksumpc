@@ -17,10 +17,10 @@ class CapitalSubscription extends Model
 
     protected $casts = [
         'is_common' => 'boolean',
-        'number_of_shares' => 'decimal:2',
-        'par_value' => 'decimal:2',
-        'amount_subscribed' => 'decimal:2',
-        'initial_amount_paid' => 'decimal:2',
+        'number_of_shares' => 'decimal:4',
+        'par_value' => 'decimal:4',
+        'amount_subscribed' => 'decimal:4',
+        'initial_amount_paid' => 'decimal:4',
         'number_of_terms' => 'integer',
         'transaction_date' => 'immutable_date'
     ];

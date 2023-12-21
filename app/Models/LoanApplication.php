@@ -22,7 +22,7 @@ class LoanApplication extends Model
 
     protected $casts = [
         'number_of_terms' => 'integer',
-        'desired_amount' => 'decimal:2',
+        'desired_amount' => 'decimal:4',
         'monthly_payment' => 'decimal:4',
         'transaction_date' => 'immutable_date',
         'disapproval_date' => 'immutable_date',

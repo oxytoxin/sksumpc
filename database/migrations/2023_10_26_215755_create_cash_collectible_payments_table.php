@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('payee');
             $table->foreignId('payment_type_id')->constrained();
             $table->string('reference_number');
-            $table->decimal('amount', 14, 2);
+            $table->decimal('amount', 18, 4);
             $table->date('transaction_date');
             $table->foreignId('cashier_id')->nullable()->constrained('users', 'id')->nullOnDelete();
 

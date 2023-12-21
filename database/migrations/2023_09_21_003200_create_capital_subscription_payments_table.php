@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('capital_subscription_id')->constrained()->cascadeOnDelete();
             $table->foreignId('payment_type_id')->constrained();
-            $table->decimal('amount', 14, 2);
-            $table->decimal('deposit', 14, 2)->nullable()->virtualAs('IF(amount >= 0, amount, null)');
-            $table->decimal('withdrawal', 14, 2)->nullable()->virtualAs('IF(amount < 0, amount * -1, null)');
-            $table->decimal('running_balance', 14, 2);
+            $table->decimal('amount', 18, 4);
+            $table->decimal('deposit', 18, 4)->nullable()->virtualAs('IF(amount >= 0, amount, null)');
+            $table->decimal('withdrawal', 18, 4)->nullable()->virtualAs('IF(amount < 0, amount * -1, null)');
+            $table->decimal('running_balance', 18, 4);
             $table->string('reference_number');
             $table->string('remarks')->nullable();
             $table->date('transaction_date');

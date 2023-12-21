@@ -10,7 +10,7 @@ class SavingsAccount extends Model
     use HasFactory;
 
     protected $casts = [
-        'balance' => 'decimal:2',
+        'balance' => 'decimal:4',
     ];
 
     public function savings()

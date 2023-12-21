@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('loan_payments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('loan_id')->constrained();
-            $table->decimal('amount', 14, 2);
-            $table->decimal('interest', 14, 2)->virtualAs('amount - principal_payment');
-            $table->decimal('principal_payment', 14, 2);
+            $table->decimal('amount', 18, 4);
+            $table->decimal('interest', 18, 4)->virtualAs('amount - principal_payment');
+            $table->decimal('principal_payment', 18, 4);
             $table->foreignId('payment_type_id')->constrained()->constrained();
             $table->string('reference_number');
             $table->string('remarks')->nullable();

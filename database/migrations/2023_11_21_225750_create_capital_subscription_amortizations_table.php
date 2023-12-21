@@ -18,9 +18,9 @@ return new class extends Migration
             $table->string('billable_date')->virtualAs("DATE_FORMAT(due_date, '%M %Y')");
             $table->date('due_date');
             $table->integer('term');
-            $table->decimal('amount', 14, 2)->nullable();
-            $table->decimal('amount_paid', 14, 2)->nullable();
-            $table->decimal('arrears', 14, 2, true)->virtualAs('amount - amount_paid');
+            $table->decimal('amount', 18, 4)->nullable();
+            $table->decimal('amount_paid', 18, 4)->nullable();
+            $table->decimal('arrears', 18, 4, true)->virtualAs('amount - amount_paid');
             $table->string('remarks')->nullable();
             $table->timestamps();
         });

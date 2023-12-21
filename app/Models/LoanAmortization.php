@@ -14,14 +14,14 @@ class LoanAmortization extends Model
 
     protected $casts = [
         'date' => 'immutable_date',
-        'amortization' => 'decimal:2',
-        'interest' => 'decimal:2',
-        'principal' => 'decimal:2',
-        'previous_balance' => 'decimal:2',
-        'outstanding_balance' => 'decimal:2',
-        'amount_paid' => 'decimal:2',
-        'principal_payment' => 'decimal:2',
-        'arrears' => 'decimal:2',
+        'amortization' => 'decimal:4',
+        'interest' => 'decimal:4',
+        'principal' => 'decimal:4',
+        'previous_balance' => 'decimal:4',
+        'outstanding_balance' => 'decimal:4',
+        'amount_paid' => 'decimal:4',
+        'principal_payment' => 'decimal:4',
+        'arrears' => 'decimal:4',
     ];
 
     public function loan()

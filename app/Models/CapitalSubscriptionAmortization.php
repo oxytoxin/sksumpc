@@ -13,7 +13,7 @@ class CapitalSubscriptionAmortization extends Model
     use HasFactory;
 
     protected $casts = [
-        'amount' => 'decimal:2',
+        'amount' => 'decimal:4',
         'term' => 'integer',
         'due_date' => 'immutable_date'
     ];

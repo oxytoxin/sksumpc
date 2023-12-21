@@ -14,10 +14,10 @@ class CapitalSubscriptionPayment extends Model
     use HasFactory;
 
     protected $casts = [
-        'amount' => 'decimal:2',
-        'deposit' => 'decimal:2',
-        'withdrawal' => 'decimal:2',
-        'running_balance' => 'decimal:2',
+        'amount' => 'decimal:4',
+        'deposit' => 'decimal:4',
+        'withdrawal' => 'decimal:4',
+        'running_balance' => 'decimal:4',
         'transaction_date' => 'immutable_date'
     ];
 

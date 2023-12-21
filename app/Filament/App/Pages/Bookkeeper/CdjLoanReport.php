@@ -53,10 +53,10 @@ class CdjLoanReport extends Page implements HasForms
     public function receivables()
     {
         return Loan::posted()->whereMonth('transaction_date', $this->data['month'])->whereYear('transaction_date', $this->data['year'])->get();
-        // return LoanAmortization::whereBillableDate(str(oxy_get_month_range()[$this->data['month']])->append(' ')->append($this->data['year']))->with('loan.member')->get();
     }
+
     #[Computed]
-    public function loan_types()
+    public function loanTypes()
     {
         return LoanType::get();
     }

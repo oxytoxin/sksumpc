@@ -1,5 +1,5 @@
 @php
-    use function Filament\Support\format_money;
+use function Filament\Support\format_money;
 @endphp
 <x-filament-panels::page>
     <div>
@@ -35,28 +35,35 @@
                         <td class="border border-black px-2 text-right"></td>
                         <td class="border border-black px-2 text-right"></td>
                         <td class="border border-black px-2 text-right"></td>
-                        <td class="border border-black px-2 text-right">{{ format_money($loan->gross_amount, 'PHP') }}</td>
+                        <td class="border border-black px-2 text-right">{{ number_format($loan->gross_amount, 4) }}</td>
                         <td class="border border-black px-2"></td>
                     </tr>
-                    @foreach ($loan->loan_amortizations as $loan_amortization)
-                        <tr>
-                            <td class="border border-black px-2">{{ $loan_amortization->term }}</td>
-                            <td class="border whitespace-nowrap border-black px-2">{{ $loan_amortization->date->format('F Y') }}</td>
-                            <td class="border border-black px-2 text-center">{{ $loan_amortization->days }}</td>
-                            <td class="border border-black px-2 text-right">{{ format_money($loan_amortization->amortization, 'PHP') }}</td>
-                            <td class="border border-black px-2 text-right">{{ format_money($loan_amortization->interest, 'PHP') }}</td>
-                            <td class="border border-black px-2 text-right">{{ format_money($loan_amortization->principal, 'PHP') }}</td>
-                            <td class="border border-black px-2 text-right">{{ format_money($loan_amortization->outstanding_balance, 'PHP') }}</td>
-                            <td class="border border-black px-2"></td>
-                        </tr>
+                    @php
+                    $ob = $loan->gross_amount;
+                    $amortizations = filled($loan->loan_amortizations) ? $loan->loan_amortizations : App\Oxytoxin\LoansProvider::generateAmortizationSchedule($loan);
+                    @endphp
+                    @foreach ($amortizations as $loan_amortization)
+                    @php
+                    $ob -= $loan_amortization['principal'];
+                    @endphp
+                    <tr>
+                        <td class="border border-black px-2">{{ $loan_amortization['term'] }}</td>
+                        <td class="border whitespace-nowrap border-black px-2">{{ $loan_amortization['date']->format('F Y') }}</td>
+                        <td class="border border-black px-2 text-center">{{ $loan_amortization['days'] }}</td>
+                        <td class="border border-black px-2 text-right">{{ number_format($loan_amortization['amortization'], 4) }}</td>
+                        <td class="border border-black px-2 text-right">{{ number_format($loan_amortization['interest'], 4) }}</td>
+                        <td class="border border-black px-2 text-right">{{ number_format($loan_amortization['principal'], 4) }}</td>
+                        <td class="border border-black px-2 text-right">{{ number_format($loan_amortization['outstanding_balance'] ?? $ob, 4) }}</td>
+                        <td class="border border-black px-2"></td>
+                    </tr>
                     @endforeach
                     <tr>
                         <td class="border border-black px-2"></td>
                         <td class="border border-black px-2">TOTAL</td>
                         <td class="border border-black px-2 text-center"></td>
-                        <td class="border border-black px-2 text-right">{{ format_money($loan->loan_amortizations->sum('amortization'), 'PHP') }}</td>
-                        <td class="border border-black px-2 text-right">{{ format_money($loan->loan_amortizations->sum('interest'), 'PHP') }}</td>
-                        <td class="border border-black px-2 text-right">{{ format_money($loan->loan_amortizations->sum('principal'), 'PHP') }}</td>
+                        <td class="border border-black px-2 text-right">{{ number_format(collect($amortizations)->sum('amortization'), 4) }}</td>
+                        <td class="border border-black px-2 text-right">{{ number_format(collect($amortizations)->sum('interest'), 4) }}</td>
+                        <td class="border border-black px-2 text-right">{{ number_format(collect($amortizations)->sum('principal'), 4) }}</td>
                         <td class="border border-black px-2 text-right"></td>
                         <td class="border border-black px-2"></td>
                     </tr>

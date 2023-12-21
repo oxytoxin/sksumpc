@@ -15,9 +15,9 @@ class LoanPayment extends Model
     use HasFactory;
 
     protected $casts = [
-        'amount' => 'decimal:2',
-        'interest' => 'decimal:2',
-        'principal_payment' => 'decimal:2',
+        'amount' => 'decimal:4',
+        'interest' => 'decimal:4',
+        'principal_payment' => 'decimal:4',
         'transaction_date' => 'immutable_date'
     ];
 

@@ -19,8 +19,8 @@ return new class extends Migration
             $table->foreignIdFor(CapitalSubscriptionBilling::class)->constrained(indexName: 'capital_subscription_billing_foreign');
             $table->foreignIdFor(Member::class)->constrained();
             $table->foreignIdFor(CapitalSubscriptionAmortization::class)->constrained(indexName: 'capital_subscription_amortization_foreign');
-            $table->decimal('amount_due', 14, 2);
-            $table->decimal('amount_paid', 14, 2);
+            $table->decimal('amount_due', 18, 4);
+            $table->decimal('amount_paid', 18, 4);
             $table->boolean('posted')->default(false);
             $table->timestamps();
         });

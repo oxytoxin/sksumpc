@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('cash_beginnings', function (Blueprint $table) {
             $table->id();
-            $table->decimal('amount', 14, 2);
+            $table->decimal('amount', 18, 4);
             $table->date('transaction_date');
             $table->foreignId('cashier_id')->nullable()->constrained('users', 'id')->nullOnDelete();
             $table->timestamps();

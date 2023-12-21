@@ -16,15 +16,15 @@ return new class extends Migration
             $table->foreignId('member_id')->constrained();
             $table->foreignId('payment_type_id')->constrained();
             $table->string('reference_number');
-            $table->decimal('amount', 14, 2);
-            $table->decimal('deposit', 14, 2)->nullable()->virtualAs('IF(amount >= 0, amount, null)');
-            $table->decimal('withdrawal', 14, 2)->nullable()->virtualAs('IF(amount < 0, amount * -1, null)');
+            $table->decimal('amount', 18, 4);
+            $table->decimal('deposit', 18, 4)->nullable()->virtualAs('IF(amount >= 0, amount, null)');
+            $table->decimal('withdrawal', 18, 4)->nullable()->virtualAs('IF(amount < 0, amount * -1, null)');
             $table->decimal('interest_rate', 7, 4);
-            $table->decimal('interest', 14, 2)->default(0);
+            $table->decimal('interest', 18, 4)->default(0);
             $table->date('transaction_date');
             $table->date('interest_date')->nullable();
             $table->integer('number_of_days')->virtualAs('COALESCE(DATEDIFF(COALESCE(interest_date, CURDATE()), transaction_date), 0)');
-            $table->decimal('balance', 14, 2)->default(0);
+            $table->decimal('balance', 18, 4)->default(0);
             $table->boolean('accrued')->default(false);
             $table->foreignId('cashier_id')->nullable()->constrained('users', 'id')->nullOnDelete();
 

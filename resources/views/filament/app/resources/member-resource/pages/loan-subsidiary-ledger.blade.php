@@ -1,5 +1,5 @@
 @php
-    use function Filament\Support\format_money;
+use function Filament\Support\format_money;
 @endphp
 <x-filament-panels::page>
     <div class="print:text-[10pt]" x-ref="print">
@@ -39,26 +39,26 @@
                 </thead>
                 <tbody>
                     @php
-                        $running_balance = $loan->gross_amount;
+                    $running_balance = $loan->gross_amount;
                     @endphp
                     @forelse ($loan->payments as $payment)
-                        @php
-                            $running_balance -= $payment->principal_payment;
-                        @endphp
-                        <tr>
-                            <td class="border border-black px-4 whitespace-nowrap">{{ $payment->transaction_date->format('F d, Y') }}</td>
-                            <td class="border border-black px-4 text-center">{{ $payment->reference_number }}</td>
-                            <td class="border border-black px-4 text-right whitespace-nowrap">{{ number_format($payment->amount, 2) }}</td>
-                            <td class="border border-black px-4 text-right whitespace-nowrap"></td>
-                            <td class="border border-black px-4 text-right whitespace-nowrap">{{ number_format($payment->interest, 2) }}</td>
-                            <td class="border border-black px-4 text-right whitespace-nowrap">{{ number_format($payment->principal_payment, 2) }}</td>
-                            <td class="border border-black px-4 text-right whitespace-nowrap">{{ number_format($running_balance, 2) }}</td>
-                            <td class="border border-black px-4">{{ $payment->remarks }}</td>
-                        </tr>
+                    @php
+                    $running_balance -= $payment->principal_payment;
+                    @endphp
+                    <tr>
+                        <td class="border border-black px-4 whitespace-nowrap">{{ $payment->transaction_date->format('F d, Y') }}</td>
+                        <td class="border border-black px-4 text-center">{{ $payment->reference_number }}</td>
+                        <td class="border border-black px-4 text-right whitespace-nowrap">{{ number_format($payment->amount, 2) }}</td>
+                        <td class="border border-black px-4 text-right whitespace-nowrap"></td>
+                        <td class="border border-black px-4 text-right whitespace-nowrap">{{ number_format($payment->interest, 2) }}</td>
+                        <td class="border border-black px-4 text-right whitespace-nowrap">{{ number_format($payment->principal_payment, 2) }}</td>
+                        <td class="border border-black px-4 text-right whitespace-nowrap">{{ number_format($running_balance, 2) }}</td>
+                        <td class="border border-black px-4">{{ $payment->remarks }}</td>
+                    </tr>
                     @empty
-                        <tr>
-                            <td colspan="8" class="text-center">No payments made.</td>
-                        </tr>
+                    <tr class="border border-black">
+                        <td colspan="8" class="text-center">No payments made.</td>
+                    </tr>
                     @endforelse
                     <tr>
                         <td class="border border-black px-4">Total</td>

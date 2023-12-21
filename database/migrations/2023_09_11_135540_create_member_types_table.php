@@ -16,8 +16,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->decimal('default_number_of_shares', 8, 2)->default(0);
-            $table->decimal('default_amount_subscribed', 14, 2)->default(0);
-            $table->decimal('minimum_initial_payment', 14, 2)->default(0);
+            $table->decimal('default_amount_subscribed', 18, 4)->default(0);
+            $table->decimal('minimum_initial_payment', 18, 4)->default(0);
             $table->timestamps();
         });
 

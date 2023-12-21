@@ -25,12 +25,12 @@ class Loan extends Model
 
     protected $casts = [
         'original_amount' => 'boolean',
-        'gross_amount' => 'decimal:2',
-        'deductions_amount' => 'decimal:2',
-        'net_amount' => 'decimal:2',
+        'gross_amount' => 'decimal:4',
+        'deductions_amount' => 'decimal:4',
+        'net_amount' => 'decimal:4',
         'deductions' => 'array',
         'number_of_terms' => 'integer',
-        'interest' => 'decimal:2',
+        'interest' => 'decimal:4',
         'interest_rate' => 'decimal:4',
         'monthly_payment' => 'decimal:4',
         'release_date' => 'immutable_date',

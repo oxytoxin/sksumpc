@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('loans', function (Blueprint $table) {
-            $table->decimal('outstanding_balance', 14, 2)->after('monthly_payment');
+            $table->decimal('outstanding_balance', 18, 4)->after('monthly_payment');
         });
         DB::unprepared('
             CREATE TRIGGER update_loan_outstanding_balance

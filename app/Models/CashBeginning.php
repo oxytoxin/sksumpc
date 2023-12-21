@@ -13,7 +13,7 @@ class CashBeginning extends Model
     use HasFactory;
 
     protected $casts = [
-        'amount' => 'decimal:2',
+        'amount' => 'decimal:4',
         'transaction_date' => 'immutable_date'
     ];
 

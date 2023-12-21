@@ -38,6 +38,7 @@ class DisapprovedLoanApplications extends Page implements HasTable
             ->query(LoanApplication::whereStatus(LoanApplication::STATUS_DISAPPROVED))
             ->columns([
                 TextColumn::make('member.full_name')->searchable(),
+                TextColumn::make('priority_number')->searchable(),
                 TextColumn::make('transaction_date')->date('m/d/Y')->label('Date Applied'),
                 TextColumn::make('loan_type.name'),
                 TextColumn::make('desired_amount')->money('PHP'),

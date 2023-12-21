@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('capital_subscriptions', function (Blueprint $table) {
-            $table->decimal('outstanding_balance', 14, 2)->after('par_value');
+            $table->decimal('outstanding_balance', 18, 4)->after('par_value');
         });
         DB::unprepared('
             CREATE TRIGGER update_cbu_outstanding_balance
