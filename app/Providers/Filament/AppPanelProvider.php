@@ -37,7 +37,7 @@ class AppPanelProvider extends PanelProvider
         return $panel
             ->id('app')
             ->path('/')
-            ->domain('localhost')
+            ->domain(config('app.env') == 'local' ? 'localhost' : config('app.url'))
             ->colors([
                 'primary' => "#3F9FEB",
             ])
