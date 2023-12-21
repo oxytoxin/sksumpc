@@ -24,7 +24,16 @@ return new class extends Migration
             $table->decimal('previous_balance', 18, 4, true);
             $table->decimal('outstanding_balance', 18, 4, true)->virtualAs('previous_balance - principal');
             $table->decimal('amount_paid', 18, 4, true)->nullable();
-            $table->decimal('principal_payment', 18, 4, true)->virtualAs('amount_paid - interest');
+            $table->decimal('principal_payment', 18, 4, true)->virtualAs(' 
+            CASE 
+            WHEN (amount_paid-interest > 0) THEN amount_paid-interest 
+            ELSE 0 
+            END');
+            $table->decimal('interest_payment', 18, 4, true)->virtualAs(' 
+            CASE 
+            WHEN (amount_paid > interest) THEN amount_paid-interest 
+            ELSE amount_paid 
+            END');
             $table->decimal('arrears', 18, 4, true)->virtualAs('interest + principal - amount_paid');
             $table->string('remarks')->nullable();
             $table->timestamps();

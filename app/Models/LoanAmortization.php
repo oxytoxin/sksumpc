@@ -21,6 +21,7 @@ class LoanAmortization extends Model
         'outstanding_balance' => 'decimal:4',
         'amount_paid' => 'decimal:4',
         'principal_payment' => 'decimal:4',
+        'interest_payment' => 'decimal:4',
         'arrears' => 'decimal:4',
     ];
 

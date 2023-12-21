@@ -1,5 +1,5 @@
 @php
-    use function Filament\Support\format_money;
+use function Filament\Support\format_money;
 @endphp
 
 <x-filament-panels::page>
@@ -64,9 +64,9 @@
                         <div class="space-x-4 flex">
                             <h4>Disapproved due to:</h4>
                             @if ($loan_application->disapproval_reason?->id == 1)
-                                <h4>{{ $loan_application->remarks }}</h4>
+                            <h4>{{ $loan_application->remarks }}</h4>
                             @else
-                                <h4>{{ $loan_application->disapproval_reason?->name }}</h4>
+                            <h4>{{ $loan_application->disapproval_reason?->name }}</h4>
                             @endif
                         </div>
                     </div>
@@ -78,10 +78,10 @@
                 <div class="mt-2">
                     <div class="flex flex-wrap justify-around gap-y-4">
                         @foreach ($signatories as $approver)
-                            <div class="flex w-1/3 flex-col items-center mt-4">
-                                <p class="font-bold uppercase">{{ $approver['name'] }}</p>
-                                <p class="print:text-[7pt]">{{ $approver['position'] }}</p>
-                            </div>
+                        <div class="flex w-1/3 flex-col items-center mt-4">
+                            <p class="font-bold uppercase">{{ $approver['name'] }}</p>
+                            <p class="print:text-[7pt]">{{ $approver['position'] }}</p>
+                        </div>
                         @endforeach
                     </div>
                 </div>
@@ -110,20 +110,20 @@
                         </thead>
                         <tbody>
                             @forelse ($loan_application->member->loans()->with('loan_type')->get() as $loan)
-                                <tr>
-                                    <td class="border border-black px-2">{{ $loan->transaction_date->format('m/d/Y') }}</td>
-                                    <td class="border border-black px-2">{{ format_money(collect($loan->deductions)->firstWhere('code', 'cbu_common')['amount'], 'PHP') }}</td>
-                                    <td class="border border-black px-2">{{ $loan->loan_type->name }}</td>
-                                    <td class="border border-black px-2">{{ $loan->release_date?->format('m/d/Y') }}</td>
-                                    <td class="border border-black px-2">{{ format_money($loan->gross_amount, 'PHP') }}</td>
-                                    <td class="border border-black px-2">{{ format_money($loan->monthly_payment, 'PHP') }}</td>
-                                    <td class="border border-black px-2">{{ format_money($loan->outstanding_balance, 'PHP') }}</td>
-                                    <td class="border border-black px-2">{{ $loan->posted ? 'Approved' : 'On Process' }}</td>
-                                </tr>
+                            <tr>
+                                <td class="border border-black px-2">{{ $loan->transaction_date->format('m/d/Y') }}</td>
+                                <td class="border border-black px-2">{{ format_money(collect($loan->deductions)->firstWhere('code', 'cbu_common')['amount'], 'PHP') }}</td>
+                                <td class="border border-black px-2">{{ $loan->loan_type->name }}</td>
+                                <td class="border border-black px-2">{{ $loan->release_date?->format('m/d/Y') }}</td>
+                                <td class="border border-black px-2">{{ format_money($loan->gross_amount, 'PHP') }}</td>
+                                <td class="border border-black px-2">{{ format_money($loan->monthly_payment, 'PHP') }}</td>
+                                <td class="border border-black px-2">{{ format_money($loan->outstanding_balance, 'PHP') }}</td>
+                                <td class="border border-black px-2">{{ $loan->posted ? 'Approved' : 'On Process' }}</td>
+                            </tr>
                             @empty
-                                <tr>
-                                    <td colspan="8" class="border border-black px-2 text-center">No loans found.</td>
-                                </tr>
+                            <tr>
+                                <td colspan="8" class="border border-black px-2 text-center">No loans found.</td>
+                            </tr>
                             @endforelse
                         </tbody>
                     </table>

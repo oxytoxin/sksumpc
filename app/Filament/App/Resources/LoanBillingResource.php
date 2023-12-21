@@ -110,9 +110,10 @@ class LoanBillingResource extends Resource
                             $amortization->update([
                                 'amount_paid' => $lp->amount_paid,
                             ]);
+                            $amortization->refresh();
                             $loan->payments()->createQuietly([
                                 'cashier_id' => auth()->id(),
-                                'principal_payment' => $amortization->amount_paid - $amortization->interest,
+                                'principal_payment' => $amortization->principal_payment,
                                 'payment_type_id' => $record->payment_type_id,
                                 'reference_number' => $record->reference_number,
                                 'amount' => $lp->amount_paid,

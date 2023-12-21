@@ -52,8 +52,9 @@ class LoanPayment extends Model
                         'amount_paid' => $amount,
                     ]);
                 }
+                $active_loan_amortization->refresh();
                 $amount_paid -= $amount;
-                $principal_payment += $active_loan_amortization->amount_paid - $active_loan_amortization->interest;
+                $principal_payment += $active_loan_amortization->principal_payment;
                 $loan->load('active_loan_amortization');
             }
             $loanPayment->principal_payment = $principal_payment;
