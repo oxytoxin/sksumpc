@@ -83,10 +83,7 @@ class MemberResource extends Resource
                         TextEntry::make('full_name')->extraAttributes(['class' => 'font-semibold'])->inlineLabel()->alignStart(),
                         TextEntry::make('dob')->label('Date of Birth')->date('F d, Y')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                         TextEntry::make('place_of_birth')->label('Place of Birth')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
-                        TextEntry::make('gender')->formatStateUsing(fn ($state) => match ($state) {
-                            'M' => 'Male',
-                            'F' => 'Female',
-                        })->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
+                        TextEntry::make('gender.name')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                         TextEntry::make('civil_status.name')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                         TextEntry::make('contact_number')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                         TextEntry::make('religion.name')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
