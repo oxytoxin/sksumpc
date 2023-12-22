@@ -30,8 +30,9 @@ return new class extends Migration
             $table->string('full_name')->virtualAs("CONCAT(first_name, ' ', IFNULL(CONCAT(middle_initial, '.'), ''), ' ', last_name)");
             $table->string('alt_full_name')->virtualAs("CONCAT(last_name, ', ', first_name, ' ', IFNULL(CONCAT(middle_initial, '.'), ''))");
             $table->string('tin')->nullable();
-            $table->string('gender')->nullable();
+            $table->foreignId('gender_id')->nullable()->constrained();
             $table->foreignId('civil_status_id')->nullable()->constrained();
+            $table->foreignId('patronage_status_id')->default(1)->constrained();
             $table->date('dob')->nullable();
             $table->string('place_of_birth')->nullable();
             $table->integer('age')->virtualAs('TIMESTAMPDIFF(YEAR,dob,CURDATE())')->nullable();
@@ -48,6 +49,7 @@ return new class extends Migration
             $table->foreignIdFor(Province::class)->nullable()->constrained();
             $table->foreignIdFor(Municipality::class)->nullable()->constrained();
             $table->foreignIdFor(Barangay::class)->nullable()->constrained();
+            $table->timestamp('terminated_at')->nullable();
             $table->timestamps();
         });
     }

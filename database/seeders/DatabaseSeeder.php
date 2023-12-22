@@ -19,6 +19,8 @@ class DatabaseSeeder extends Seeder
         $this->call(LoanApproversSeeder::class);
         $this->call(PaymentTypesSeeder::class);
         $this->call(CashCollectiblesSeeder::class);
+        $this->call(PatronageStatusSeeder::class);
+        $this->call(GenderSeeder::class);
         Artisan::call('app:seed-members');
     }
 }

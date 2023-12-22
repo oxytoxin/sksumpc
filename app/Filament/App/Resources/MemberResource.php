@@ -2,49 +2,51 @@
 
 namespace App\Filament\App\Resources;
 
-use App\Filament\App\Resources\MemberResource\Pages;
-use App\Filament\App\Resources\MemberResource\Pages\CbuAmortizationSchedule;
-use App\Filament\App\Resources\MemberResource\Pages\CbuSubsidiaryLedger;
-use App\Filament\App\Resources\MemberResource\Pages\ImprestSubsidiaryLedger;
-use App\Filament\App\Resources\MemberResource\Pages\LoanAmortizationSchedule;
-use App\Filament\App\Resources\MemberResource\Pages\LoanDisclosureSheet;
-use App\Filament\App\Resources\MemberResource\Pages\LoanSubsidiaryLedger;
-use App\Filament\App\Resources\MemberResource\Pages\SavingsSubsidiaryLedger;
-use App\Infolists\Components\DependentsEntry;
-use App\Models\Member;
-use App\Models\MembershipStatus;
-use App\Models\MemberType;
-use App\Models\Occupation;
-use App\Models\Religion;
-use App\Oxytoxin\OverrideProvider;
-use App\Oxytoxin\ShareCapitalProvider;
-use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 use DB;
 use Filament\Forms;
-use Filament\Forms\Components\DatePicker;
+use Filament\Tables;
+use App\Models\Member;
+use App\Models\Religion;
+use Filament\Forms\Form;
+use App\Models\MemberType;
+use App\Models\Occupation;
+use Filament\Tables\Table;
+use App\Models\MembershipStatus;
+use Filament\Infolists\Infolist;
+use Filament\Resources\Resource;
+use App\Oxytoxin\OverrideProvider;
+use Filament\Support\Colors\Color;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Infolists\Components\Actions;
-use Filament\Infolists\Components\Actions\Action;
-use Filament\Infolists\Components\Section as InfolistSection;
-use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
+use App\Oxytoxin\ShareCapitalProvider;
+use Filament\Forms\Components\Section;
 use Filament\Infolists\Components\Tabs;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Forms\Components\Placeholder;
+use Filament\Infolists\Components\Actions;
 use Filament\Infolists\Components\Tabs\Tab;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
-use Filament\Infolists\Infolist;
-use Filament\Notifications\Notification;
-use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Enums\FiltersLayout;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Table;
+use App\Infolists\Components\DependentsEntry;
+use Filament\Infolists\Components\Actions\Action;
+use App\Filament\App\Resources\MemberResource\Pages;
+use Awcodes\FilamentTableRepeater\Components\TableRepeater;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Infolists\Components\Section as InfolistSection;
+use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
+use App\Filament\App\Resources\MemberResource\Pages\CbuSubsidiaryLedger;
+use App\Filament\App\Resources\MemberResource\Pages\LoanDisclosureSheet;
+use App\Filament\App\Resources\MemberResource\Pages\LoanSubsidiaryLedger;
+use App\Filament\App\Resources\MemberResource\Pages\CbuAmortizationSchedule;
+use App\Filament\App\Resources\MemberResource\Pages\ImprestSubsidiaryLedger;
+use App\Filament\App\Resources\MemberResource\Pages\SavingsSubsidiaryLedger;
+use App\Filament\App\Resources\MemberResource\Pages\LoanAmortizationSchedule;
 
 
 class MemberResource extends Resource
@@ -158,7 +160,7 @@ class MemberResource extends Resource
                             ->columnSpan(1),
                         Section::make()
                             ->schema([
-                                Forms\Components\Select::make('member_type_id')
+                                Select::make('member_type_id')
                                     ->relationship('member_type', 'name')
                                     ->live()
                                     ->afterStateUpdated(function ($state, $set) {
@@ -177,9 +179,12 @@ class MemberResource extends Resource
                                         $set('present_employer', '');
                                     })
                                     ->required(),
-                                Forms\Components\Select::make('division_id')
+                                Select::make('division_id')
                                     ->relationship('division', 'name'),
-                                Forms\Components\TextInput::make('tin')
+                                Select::make('patronage_status_id')
+                                    ->label('Patronage Status')
+                                    ->relationship('patronage_status', 'name')->required(),
+                                TextInput::make('tin')
                                     ->label('TIN')
                                     ->maxLength(30),
                             ])
@@ -187,26 +192,26 @@ class MemberResource extends Resource
                     ]),
                 Grid::make(3)
                     ->schema([
-                        Forms\Components\TextInput::make('first_name')
+                        TextInput::make('first_name')
                             ->label('First Name')
                             ->dehydrateStateUsing(fn ($state) => strtoupper($state))
                             ->required()
                             ->maxLength(125),
-                        Forms\Components\TextInput::make('last_name')
+                        TextInput::make('last_name')
                             ->label('Last Name')
                             ->dehydrateStateUsing(fn ($state) => strtoupper($state))
                             ->required()
                             ->maxLength(125),
-                        Forms\Components\TextInput::make('middle_initial')
+                        TextInput::make('middle_initial')
                             ->label('MI')
                             ->dehydrateStateUsing(fn ($state) => $state ? strtoupper($state) : null)
                             ->maxLength(1),
-                        Forms\Components\DatePicker::make('dob')
+                        DatePicker::make('dob')
                             ->before(today()->subYearsNoOverflow(10))
                             ->validationAttribute('Date of Birth')
                             ->required()
                             ->label('Date of Birth'),
-                        Forms\Components\TextInput::make('place_of_birth')
+                        TextInput::make('place_of_birth')
                             ->label('Place of Birth')
                             ->columnSpan(2),
                         Section::make('Address')
@@ -229,15 +234,12 @@ class MemberResource extends Resource
                     ]),
                 Grid::make(3)
                     ->schema([
-                        Forms\Components\Select::make('gender')
-                            ->options([
-                                'M' => 'Male',
-                                'F' => 'Female',
-                            ]),
-                        Forms\Components\Select::make('civil_status_id')
+                        Select::make('gender_id')
+                            ->relationship('gender', 'name'),
+                        Select::make('civil_status_id')
                             ->relationship('civil_status', 'name')
                             ->default(1),
-                        Forms\Components\Select::make('religion_id')
+                        Select::make('religion_id')
                             ->relationship('religion', 'name')
                             ->options(Religion::pluck('name', 'id')),
                     ]),
@@ -260,16 +262,16 @@ class MemberResource extends Resource
                     ])
                     ->hideLabels()
                     ->columnSpanFull(),
-                Forms\Components\Select::make('occupation_id')
+                Select::make('occupation_id')
                     ->relationship('occupation', 'name')
                     ->options(Occupation::pluck('name', 'id')),
-                Forms\Components\TextInput::make('highest_educational_attainment')
+                TextInput::make('highest_educational_attainment')
                     ->maxLength(125),
-                Forms\Components\TextInput::make('present_employer'),
-                Forms\Components\TextInput::make('annual_income')
+                TextInput::make('present_employer'),
+                TextInput::make('annual_income')
                     ->moneymask()
                     ->minValue(0),
-                Forms\Components\TextInput::make('other_income_sources')
+                TextInput::make('other_income_sources')
                     ->moneymask(),
                 Section::make('Membership Acceptance')
                     ->schema([
@@ -301,47 +303,76 @@ class MemberResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('mpc_code')
+                TextColumn::make('mpc_code')
                     ->label('Code')
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('first_name')
+                TextColumn::make('first_name')
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('last_name')
+                TextColumn::make('last_name')
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('middle_initial')
+                TextColumn::make('middle_initial')
                     ->label('MI')
                     ->alignCenter(),
-                Tables\Columns\TextColumn::make('dob')
+                TextColumn::make('dob')
                     ->label('Date of Birth')
                     ->date('F d, Y')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('age')
+                TextColumn::make('age')
                     ->numeric()
                     ->alignCenter()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('civil_status.name')
+                TextColumn::make('civil_status.name')
                     ->alignCenter(),
-                Tables\Columns\TextColumn::make('gender')
+                TextColumn::make('gender.name')
                     ->alignCenter(),
-                Tables\Columns\TextColumn::make('tin')
+                TextColumn::make('tin')
                     ->label('TIN')
                     ->alignCenter()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('member_type.name')
+                TextColumn::make('member_type.name')
                     ->sortable(),
+                TextColumn::make('terminated_at')
+                    ->date('m/d/Y')
+                    ->sortable(),
+                TextColumn::make('patronage_status.name')
             ])
             ->filters([
                 SelectFilter::make('member_type')
-                    ->relationship('member_type', 'name')
+                    ->relationship('member_type', 'name'),
+                SelectFilter::make('gender')
+                    ->relationship('gender', 'name'),
+                SelectFilter::make('patronage_status')
+                    ->relationship('patronage_status', 'name'),
+                SelectFilter::make('status')
+                    ->options([
+                        1 => 'Active',
+                        2 => 'Terminated'
+                    ])
+                    ->default(1)
+                    ->query(
+                        fn ($query, $state) => $query
+                            ->when($state['value'] == 1, fn ($q) => $q->whereNull('terminated_at'))
+                            ->when($state['value'] == 2, fn ($q) => $q->whereNotNull('terminated_at'))
+                    )
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
             ->persistFiltersInSession()
             ->actions([
-                Tables\Actions\EditAction::make()->visible(auth()->user()->can('manage members')),
+                Tables\Actions\Action::make('terminate')
+                    ->requiresConfirmation()
+                    ->button()
+                    ->color(Color::Amber)
+                    ->visible(auth()->user()->can('manage members'))
+                    ->hidden(fn ($record) => $record->terminated_at)
+                    ->action(fn ($record) => $record->update(['terminated_at' => now()])),
+                Tables\Actions\EditAction::make()
+                    ->hidden(fn ($record) => $record->terminated_at)
+                    ->visible(auth()->user()->can('manage members')),
                 Tables\Actions\DeleteAction::make()
+                    ->hidden(fn ($record) => $record->terminated_at)
                     ->form([
                         TextInput::make('passkey')
                             ->hint("Manager's Password")

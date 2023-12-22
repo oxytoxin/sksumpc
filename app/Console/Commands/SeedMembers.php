@@ -44,12 +44,18 @@ class SeedMembers extends Command
                         'W' => 3,
                         default => null
                     };
+                    $memberData['gender_id'] = match ($memberData['gender']) {
+                        'M' => 1,
+                        'F' => 2,
+                        default => null
+                    };
                     unset(
                         $memberData['member_type'],
                         $memberData['membership_number'],
                         $memberData['occupation'],
                         $memberData['religion'],
                         $memberData['civil_status'],
+                        $memberData['gender'],
                         $memberData['acceptance_bod_resolution'],
                         $memberData['accepted_at'],
                         $memberData['termination_bod_resolution'],

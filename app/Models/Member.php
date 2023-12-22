@@ -42,9 +42,19 @@ class Member extends Model implements HasMedia
             ->singleFile();
     }
 
+    public function patronage_status()
+    {
+        return $this->belongsTo(PatronageStatus::class);
+    }
+
     public function member_type(): BelongsTo
     {
         return $this->belongsTo(MemberType::class);
+    }
+
+    public function gender(): BelongsTo
+    {
+        return $this->belongsTo(Gender::class);
     }
 
     public function division(): BelongsTo
