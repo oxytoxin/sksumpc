@@ -14,7 +14,7 @@ class DailySummaryCashCollectibles extends Page
     protected static string $view = 'filament.app.pages.cashier.reports.daily-summary-cash-collectibles';
 
     #[Computed]
-    public function cash_collectibles()
+    public function cashCollectibles()
     {
         return auth()
             ->user()

@@ -14,7 +14,7 @@ class DailySummaryCapitalSubscriptions extends Page
     protected static string $view = 'filament.app.pages.cashier.reports.daily-summary-capital-subscriptions';
 
     #[Computed]
-    public function cbu_payments()
+    public function cbuPayments()
     {
         return auth()
             ->user()

@@ -14,7 +14,7 @@ class DailySummaryTimeDeposits extends Page
     protected static string $view = 'filament.app.pages.cashier.reports.daily-summary-time-deposits';
 
     #[Computed]
-    public function time_deposits()
+    public function timeDeposits()
     {
         return  auth()
             ->user()
