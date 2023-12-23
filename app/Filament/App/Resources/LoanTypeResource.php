@@ -10,6 +10,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -19,12 +20,15 @@ class LoanTypeResource extends Resource
 
     protected static ?string $navigationGroup = 'Management';
 
+    protected static ?string $navigationLabel = 'Loan Schedule';
+
     protected static ?int $navigationSort = 6;
 
     public static function shouldRegisterNavigation(): bool
     {
         return auth()->user()->can('manage loans');
     }
+
 
     public static function form(Form $form): Form
     {
