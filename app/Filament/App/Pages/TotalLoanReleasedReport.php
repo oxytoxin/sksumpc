@@ -16,7 +16,7 @@ use Filament\Tables\Table;
 
 class TotalLoanReleasedReport extends Page implements HasTable
 {
-    use InteractsWithTable, HasSignatories;
+    use HasSignatories, InteractsWithTable;
 
     protected static string $view = 'filament.app.pages.total-loan-released-report';
 
@@ -35,7 +35,7 @@ class TotalLoanReleasedReport extends Page implements HasTable
             ->query(Loan::query()->wherePosted(true))
             ->content(fn () => view('filament.app.views.total-loan-released-report-table', [
                 'signatories' => $this->signatories,
-                'loan_types' => LoanType::findMany($this->tableFilters['loan_type_ids']['values'])
+                'loan_types' => LoanType::findMany($this->tableFilters['loan_type_ids']['values']),
             ]))
             ->filters([
                 Filter::dateRange('release_date'),
@@ -45,7 +45,7 @@ class TotalLoanReleasedReport extends Page implements HasTable
                     ->default(LoanType::pluck('id')->toArray())
                     ->label('Loan Types')
                     ->columnSpanFull()
-                    ->query(fn ($query) => $query)
+                    ->query(fn ($query) => $query),
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
             ->paginated(false);
@@ -58,12 +58,12 @@ class TotalLoanReleasedReport extends Page implements HasTable
             [
                 'action' => 'Prepared by:',
                 'name' => auth()->user()->name,
-                'position' => 'Loan Officer'
+                'position' => 'Loan Officer',
             ],
             [
                 'action' => 'Noted:',
                 'name' => $manager?->name ?? 'FLORA C. DAMANDAMAN',
-                'position' => 'Manager'
+                'position' => 'Manager',
             ],
         ];
     }

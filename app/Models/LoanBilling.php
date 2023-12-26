@@ -15,7 +15,7 @@ class LoanBilling extends Model
 
     protected $casts = [
         'date' => 'immutable_date',
-        'posted' => 'boolean'
+        'posted' => 'boolean',
     ];
 
     public function loan_billing_payments()

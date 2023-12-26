@@ -3,16 +3,12 @@
 namespace App\Filament\App\Resources;
 
 use App\Filament\App\Resources\LoanTypeResource\Pages;
-use App\Filament\App\Resources\LoanTypeResource\RelationManagers;
 use App\Models\LoanType;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class LoanTypeResource extends Resource
 {
@@ -28,7 +24,6 @@ class LoanTypeResource extends Resource
     {
         return auth()->user()->can('manage loans');
     }
-
 
     public static function form(Form $form): Form
     {

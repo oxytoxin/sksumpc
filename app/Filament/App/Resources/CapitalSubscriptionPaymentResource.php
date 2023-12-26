@@ -3,18 +3,12 @@
 namespace App\Filament\App\Resources;
 
 use App\Filament\App\Resources\CapitalSubscriptionPaymentResource\Pages;
-use App\Filament\App\Resources\CapitalSubscriptionPaymentResource\RelationManagers;
 use App\Models\CapitalSubscriptionPayment;
-use Filament\Forms;
-use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class CapitalSubscriptionPaymentResource extends Resource
 {

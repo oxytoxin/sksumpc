@@ -36,7 +36,6 @@ class Imprest extends Model
         return $this->belongsTo(User::class, 'cashier_id');
     }
 
-
     protected static function booted()
     {
         static::creating(function (Imprest $imprest) {
@@ -45,10 +44,10 @@ class Imprest extends Model
 
         Imprest::created(function (Imprest $imprest) {
             if ($imprest->reference_number == ImprestsProvider::FROM_TRANSFER_CODE) {
-                $imprest->reference_number = str('IT-')->append(today()->format('Y') . '-')->append(str_pad($imprest->id, 6, '0', STR_PAD_LEFT));
+                $imprest->reference_number = str('IT-')->append(today()->format('Y').'-')->append(str_pad($imprest->id, 6, '0', STR_PAD_LEFT));
             } else {
                 if ($imprest->amount < 0) {
-                    $imprest->reference_number = str('IW-')->append(today()->format('Y') . '-')->append(str_pad($imprest->id, 6, '0', STR_PAD_LEFT));
+                    $imprest->reference_number = str('IW-')->append(today()->format('Y').'-')->append(str_pad($imprest->id, 6, '0', STR_PAD_LEFT));
                 }
             }
 

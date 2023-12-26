@@ -3,17 +3,13 @@
 namespace App\Filament\App\Resources;
 
 use App\Filament\App\Resources\DisapprovalReasonResource\Pages;
-use App\Filament\App\Resources\DisapprovalReasonResource\RelationManagers;
 use App\Models\DisapprovalReason;
-use Filament\Forms;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class DisapprovalReasonResource extends Resource
 {
@@ -27,7 +23,7 @@ class DisapprovalReasonResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('name')->required()
+                TextInput::make('name')->required(),
             ]);
     }
 
@@ -35,7 +31,7 @@ class DisapprovalReasonResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')
+                TextColumn::make('name'),
             ])
             ->filters([
                 //

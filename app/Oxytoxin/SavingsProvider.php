@@ -12,7 +12,9 @@ use Illuminate\Validation\ValidationException;
 class SavingsProvider
 {
     const INTEREST_RATE = 0.01;
+
     const MINIMUM_AMOUNT_FOR_INTEREST = 1000;
+
     const FROM_TRANSFER_CODE = '#TRANSFERFROMSAVINGS';
 
     public static function calculateInterest($amount, $interest, $days)
@@ -38,9 +40,10 @@ class SavingsProvider
         if ($isWithdrawal && ($savings_account->balance + $data->amount < 500)) {
             Notification::make()->title('Invalid Amount')->body('A P500 balance should remain.')->danger()->send();
             throw ValidationException::withMessages([
-                'mountedTableActionsData.0.amount' => 'Invalid Amount. A P500 balance should remain.'
+                'mountedTableActionsData.0.amount' => 'Invalid Amount. A P500 balance should remain.',
             ]);
         }
+
         return Saving::create([
             'savings_account_id' => $data->savings_account_id,
             'transaction_date' => $data->transaction_date,

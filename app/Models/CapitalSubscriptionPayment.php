@@ -18,7 +18,7 @@ class CapitalSubscriptionPayment extends Model
         'deposit' => 'decimal:4',
         'withdrawal' => 'decimal:4',
         'running_balance' => 'decimal:4',
-        'transaction_date' => 'immutable_date'
+        'transaction_date' => 'immutable_date',
     ];
 
     public function capital_subscription()
@@ -37,7 +37,9 @@ class CapitalSubscriptionPayment extends Model
                 $amount_paid = $cbu_payment->amount;
                 while ($amount_paid > 0) {
                     $active_capital_subscription_amortization = $cbu->active_capital_subscription_amortization;
-                    if (!$active_capital_subscription_amortization) break;
+                    if (! $active_capital_subscription_amortization) {
+                        break;
+                    }
                     if ($active_capital_subscription_amortization->arrears > 0) {
                         $amount = $amount_paid > $active_capital_subscription_amortization->arrears ? $active_capital_subscription_amortization->arrears : $amount_paid;
                         $active_capital_subscription_amortization->update([

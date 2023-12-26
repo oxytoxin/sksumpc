@@ -11,7 +11,9 @@ class DailyCollectionReportLadiesDormitory extends Page
     use HasSignatories;
 
     protected static bool $shouldRegisterNavigation = false;
+
     protected static string $view = 'filament.app.pages.cashier.reports.daily-collection-report-ladies-dormitory';
+
     protected ?string $heading = 'Daily Collection Report of Ladies Dormitory';
 
     #[Computed]

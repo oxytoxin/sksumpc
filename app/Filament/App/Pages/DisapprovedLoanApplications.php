@@ -2,18 +2,12 @@
 
 namespace App\Filament\App\Pages;
 
-use App\Models\LoanType;
-use Filament\Pages\Page;
-use Filament\Tables\Table;
 use App\Models\LoanApplication;
-use Filament\Tables\Filters\Filter;
+use Filament\Pages\Page;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Contracts\HasTable;
-use Filament\Tables\Enums\FiltersLayout;
-use Filament\Forms\Components\DatePicker;
-use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Concerns\InteractsWithTable;
-use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Table;
 
 class DisapprovedLoanApplications extends Page implements HasTable
 {

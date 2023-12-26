@@ -14,7 +14,7 @@ class CashBeginning extends Model
 
     protected $casts = [
         'amount' => 'decimal:4',
-        'transaction_date' => 'immutable_date'
+        'transaction_date' => 'immutable_date',
     ];
 
     public function cashier()

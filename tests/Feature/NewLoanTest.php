@@ -12,7 +12,7 @@ use function Pest\Laravel\assertModelExists;
 use function Pest\Livewire\livewire;
 
 it('can create a new loan', function () {
-    $member =  Member::find(664);
+    $member = Member::find(664);
     actingAs(User::find(1));
     $la = LoanApplication::create([
         'member_id' => $member->id,
@@ -26,11 +26,11 @@ it('can create a new loan', function () {
         'transaction_date' => today(),
         'status' => LoanApplication::STATUS_APPROVED,
         'approvals' => [
-            ["name" => "CATHERINE A. LEGASPI", "position" => "Crecom-Secretary",],
-            ["name" => "JACQUILINE B. CANDIDO", "position" => "Crecom-Chairperson",],
-            ["name" => "JUVEN LACONSE", "position" => "Crecom-Vice Chairperson",],
-            ["name" => "FLORA C. DAMANDAMAN", "position" => "Manager"],
-        ]
+            ['name' => 'CATHERINE A. LEGASPI', 'position' => 'Crecom-Secretary'],
+            ['name' => 'JACQUILINE B. CANDIDO', 'position' => 'Crecom-Chairperson'],
+            ['name' => 'JUVEN LACONSE', 'position' => 'Crecom-Vice Chairperson'],
+            ['name' => 'FLORA C. DAMANDAMAN', 'position' => 'Manager'],
+        ],
     ]);
     assertModelExists($la);
     livewire(LoansTable::class, ['member' => $member])

@@ -6,7 +6,6 @@ use App\Filament\App\Pages\Cashier\Reports\HasSignatories;
 use App\Filament\App\Resources\MemberResource;
 use App\Models\Loan;
 use App\Models\User;
-use App\Oxytoxin\LoansProvider;
 use Filament\Resources\Pages\Page;
 
 class LoanAmortizationSchedule extends Page
@@ -32,17 +31,17 @@ class LoanAmortizationSchedule extends Page
             [
                 'action' => 'Prepared by:',
                 'name' => auth()->user()->name,
-                'position' => 'Teller/Cashier'
+                'position' => 'Teller/Cashier',
             ],
             [
                 'action' => 'Noted:',
                 'name' => $manager?->name ?? 'FLORA C. DAMANDAMAN',
-                'position' => 'Manager'
+                'position' => 'Manager',
             ],
             [
                 'action' => 'Conforme:',
                 'name' => $this->loan->member->full_name,
-                'position' => "Member's Name"
+                'position' => "Member's Name",
             ],
         ];
     }

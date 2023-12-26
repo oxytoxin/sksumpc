@@ -21,52 +21,52 @@ return new class extends Migration
         Religion::insert(
             [
                 [
-                    'name' => "A/G",
+                    'name' => 'A/G',
                     'created_at' => $now,
                     'updated_at' => $now,
                 ],
                 [
-                    'name' => "ALLIANCE",
+                    'name' => 'ALLIANCE',
                     'created_at' => $now,
                     'updated_at' => $now,
                 ],
                 [
-                    'name' => "BAPTIST",
+                    'name' => 'BAPTIST',
                     'created_at' => $now,
                     'updated_at' => $now,
                 ],
                 [
-                    'name' => "ISLAM",
+                    'name' => 'ISLAM',
                     'created_at' => $now,
                     'updated_at' => $now,
                 ],
                 [
-                    'name' => "PENTECOSTAL",
+                    'name' => 'PENTECOSTAL',
                     'created_at' => $now,
                     'updated_at' => $now,
                 ],
                 [
-                    'name' => "PROTESTANT",
+                    'name' => 'PROTESTANT',
                     'created_at' => $now,
                     'updated_at' => $now,
                 ],
                 [
-                    'name' => "ROMAN CATHOLIC",
+                    'name' => 'ROMAN CATHOLIC',
                     'created_at' => $now,
                     'updated_at' => $now,
                 ],
                 [
-                    'name' => "SDA",
+                    'name' => 'SDA',
                     'created_at' => $now,
                     'updated_at' => $now,
                 ],
                 [
-                    'name' => "WESLEYAN",
+                    'name' => 'WESLEYAN',
                     'created_at' => $now,
                     'updated_at' => $now,
                 ],
                 [
-                    'name' => "OTHERS",
+                    'name' => 'OTHERS',
                     'created_at' => $now,
                     'updated_at' => $now,
                 ],

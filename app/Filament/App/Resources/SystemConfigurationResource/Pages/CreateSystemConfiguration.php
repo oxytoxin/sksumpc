@@ -3,7 +3,6 @@
 namespace App\Filament\App\Resources\SystemConfigurationResource\Pages;
 
 use App\Filament\App\Resources\SystemConfigurationResource;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateSystemConfiguration extends CreateRecord

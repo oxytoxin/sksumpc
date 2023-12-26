@@ -1,15 +1,12 @@
 <?php
 
-use App\Models\Region;
 use App\Models\Barangay;
-use App\Models\Province;
-use App\Models\Religion;
-use App\Models\MemberType;
-use App\Models\Occupation;
 use App\Models\Municipality;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
+use App\Models\Province;
+use App\Models\Region;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {

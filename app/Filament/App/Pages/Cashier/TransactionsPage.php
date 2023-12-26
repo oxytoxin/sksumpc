@@ -15,23 +15,16 @@ use App\Oxytoxin\SavingsProvider;
 use App\Oxytoxin\TimeDepositsProvider;
 use DB;
 use Filament\Actions\Action;
-use Filament\Actions\Concerns\InteractsWithActions;
-use Filament\Actions\Contracts\HasActions;
-use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use Filament\Support\Enums\Alignment;
 use Illuminate\Contracts\Support\Htmlable;
+
 use function Filament\Support\format_money;
 
 class TransactionsPage extends Page
@@ -117,7 +110,7 @@ class TransactionsPage extends Page
                 Select::make('action')
                     ->options([
                         '-1' => 'Withdraw',
-                        '1' => 'Deposit'
+                        '1' => 'Deposit',
                     ])
                     ->live()
                     ->default('1')
@@ -136,7 +129,7 @@ class TransactionsPage extends Page
             ->action(function ($data) {
                 $data['amount'] = $data['amount'] * $data['action'];
                 DB::beginTransaction();
-                $member =  Member::find($data['member_id']);
+                $member = Member::find($data['member_id']);
                 unset($data['member_id'], $data['action']);
                 $data['reference_number'] ??= '';
                 SavingsProvider::createSavings($member, (new SavingsData(...$data)));
@@ -164,7 +157,7 @@ class TransactionsPage extends Page
                 Select::make('action')
                     ->options([
                         '-1' => 'Withdraw',
-                        '1' => 'Deposit'
+                        '1' => 'Deposit',
                     ])
                     ->live()
                     ->default('1')
@@ -183,7 +176,7 @@ class TransactionsPage extends Page
             ->action(function ($data) {
                 $data['amount'] = $data['amount'] * $data['action'];
                 DB::beginTransaction();
-                $member =  Member::find($data['member_id']);
+                $member = Member::find($data['member_id']);
                 unset($data['member_id'], $data['action']);
                 $data['reference_number'] ??= '';
                 ImprestsProvider::createImprest($member, (new ImprestData(...$data)));
@@ -311,7 +304,7 @@ class TransactionsPage extends Page
                 $record = CashCollectible::find($data['cash_collectible_id']);
                 unset($data['cash_collectible_id']);
                 $record->payments()->create($data);
-                Notification::make()->title('Payment made for ' . $record->name . '!')->success()->send();
+                Notification::make()->title('Payment made for '.$record->name.'!')->success()->send();
             });
     }
 }

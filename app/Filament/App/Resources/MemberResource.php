@@ -2,52 +2,47 @@
 
 namespace App\Filament\App\Resources;
 
-use DB;
-use Filament\Forms;
-use Filament\Tables;
+use App\Filament\App\Resources\MemberResource\Pages;
+use App\Filament\App\Resources\MemberResource\Pages\CbuAmortizationSchedule;
+use App\Filament\App\Resources\MemberResource\Pages\CbuSubsidiaryLedger;
+use App\Filament\App\Resources\MemberResource\Pages\ImprestSubsidiaryLedger;
+use App\Filament\App\Resources\MemberResource\Pages\LoanAmortizationSchedule;
+use App\Filament\App\Resources\MemberResource\Pages\LoanDisclosureSheet;
+use App\Filament\App\Resources\MemberResource\Pages\LoanSubsidiaryLedger;
+use App\Filament\App\Resources\MemberResource\Pages\SavingsSubsidiaryLedger;
+use App\Infolists\Components\DependentsEntry;
 use App\Models\Member;
-use App\Models\Religion;
-use Filament\Forms\Form;
+use App\Models\MembershipStatus;
 use App\Models\MemberType;
 use App\Models\Occupation;
-use Filament\Tables\Table;
-use App\Models\MembershipStatus;
-use Filament\Infolists\Infolist;
-use Filament\Resources\Resource;
+use App\Models\Religion;
 use App\Oxytoxin\OverrideProvider;
-use Filament\Support\Colors\Color;
+use App\Oxytoxin\ShareCapitalProvider;
+use Awcodes\FilamentTableRepeater\Components\TableRepeater;
+use DB;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Select;
-use App\Oxytoxin\ShareCapitalProvider;
 use Filament\Forms\Components\Section;
-use Filament\Infolists\Components\Tabs;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
-use Filament\Tables\Enums\FiltersLayout;
-use Filament\Forms\Components\DatePicker;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Forms\Components\Placeholder;
-use Filament\Infolists\Components\Actions;
+use Filament\Forms\Form;
+use Filament\Infolists\Components\Section as InfolistSection;
+use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
+use Filament\Infolists\Components\Tabs;
 use Filament\Infolists\Components\Tabs\Tab;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
-use App\Infolists\Components\DependentsEntry;
-use Filament\Infolists\Components\Actions\Action;
-use App\Filament\App\Resources\MemberResource\Pages;
-use Awcodes\FilamentTableRepeater\Components\TableRepeater;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Filament\Infolists\Components\Section as InfolistSection;
-use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
-use App\Filament\App\Resources\MemberResource\Pages\CbuSubsidiaryLedger;
-use App\Filament\App\Resources\MemberResource\Pages\LoanDisclosureSheet;
-use App\Filament\App\Resources\MemberResource\Pages\LoanSubsidiaryLedger;
-use App\Filament\App\Resources\MemberResource\Pages\CbuAmortizationSchedule;
-use App\Filament\App\Resources\MemberResource\Pages\ImprestSubsidiaryLedger;
-use App\Filament\App\Resources\MemberResource\Pages\SavingsSubsidiaryLedger;
-use App\Filament\App\Resources\MemberResource\Pages\LoanAmortizationSchedule;
-
+use Filament\Infolists\Infolist;
+use Filament\Notifications\Notification;
+use Filament\Resources\Resource;
+use Filament\Support\Colors\Color;
+use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
 
 class MemberResource extends Resource
 {
@@ -62,10 +57,11 @@ class MemberResource extends Resource
     public static function infolist(Infolist $infolist): Infolist
     {
         $tabs = self::getInfoTabs();
+
         return $infolist
             ->schema([
                 Tabs::make()
-                    ->tabs($tabs)->persistTabInQueryString()
+                    ->tabs($tabs)->persistTabInQueryString(),
             ])
             ->columns(1);
     }
@@ -112,13 +108,13 @@ class MemberResource extends Resource
                             TextEntry::make('initial_capital_subscription.number_of_shares')->label('# of Shares Subscribed')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                             TextEntry::make('initial_capital_subscription.amount_subscribed')->label('Amount Subscribed')->money('PHP')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                         ]),
-                ])
+                ]),
         ];
         if (auth()->user()->canany(['manage payments', 'manage cbu'])) {
             $tabs[] = Tab::make('CBU')
                 ->schema([
                     ViewEntry::make('cbu')
-                        ->view('filament.app.views.cbu-table')
+                        ->view('filament.app.views.cbu-table'),
                 ]);
         }
 
@@ -126,7 +122,7 @@ class MemberResource extends Resource
             $tabs[] = Tab::make('MSO')
                 ->schema([
                     ViewEntry::make('mso')
-                        ->view('filament.app.views.mso-table')
+                        ->view('filament.app.views.mso-table'),
                 ]);
         }
 
@@ -134,7 +130,7 @@ class MemberResource extends Resource
             $tabs[] = Tab::make('Loan')
                 ->schema([
                     ViewEntry::make('loan')
-                        ->view('filament.app.views.loans-table')
+                        ->view('filament.app.views.loans-table'),
                 ]);
         }
 
@@ -165,12 +161,14 @@ class MemberResource extends Resource
                                         if ($member_type?->id == 2) {
                                             $set('number_of_shares', $member_type->default_number_of_shares);
                                             $set('amount_subscribed', $member_type->default_amount_subscribed);
+
                                             return;
                                         }
                                         if ($member_type?->id == 1) {
                                             $set('present_employer', 'SKSU-Sultan Kudarat State University');
                                             $set('number_of_shares', $member_type->default_number_of_shares);
                                             $set('amount_subscribed', $member_type->default_amount_subscribed);
+
                                             return;
                                         }
                                         $set('present_employer', '');
@@ -218,14 +216,14 @@ class MemberResource extends Resource
                                     ->relationship('region', 'description'),
                                 Select::make('province_id')
                                     ->live()
-                                    ->disabled(fn ($get) => !$get('region_id'))
+                                    ->disabled(fn ($get) => ! $get('region_id'))
                                     ->relationship('province', 'name', fn ($query, $get) => $query->whereRegionId($get('region_id'))),
                                 Select::make('municipality_id')
                                     ->live()
-                                    ->disabled(fn ($get) => !$get('province_id'))
+                                    ->disabled(fn ($get) => ! $get('province_id'))
                                     ->relationship('municipality', 'name', fn ($query, $get) => $query->whereProvinceId($get('province_id'))),
                                 Select::make('barangay_id')
-                                    ->disabled(fn ($get) => !$get('municipality_id'))
+                                    ->disabled(fn ($get) => ! $get('municipality_id'))
                                     ->relationship('barangay', 'name', fn ($query, $get) => $query->whereMunicipalityId($get('municipality_id'))),
                             ])->columns(2),
                     ]),
@@ -255,7 +253,7 @@ class MemberResource extends Resource
                                 'DAUGHTER' => 'DAUGHTER',
                                 'COUSIN' => 'COUSIN',
                                 'OTHERS' => 'OTHERS',
-                            ])->required()
+                            ])->required(),
                     ])
                     ->hideLabels()
                     ->columnSpanFull(),
@@ -274,7 +272,7 @@ class MemberResource extends Resource
                     ->schema([
                         TextInput::make('bod_resolution')->numeric(),
                         DatePicker::make('effectivity_date')->required()->default(today()),
-                        Hidden::make('type')->default(MembershipStatus::ACCEPTANCE)
+                        Hidden::make('type')->default(MembershipStatus::ACCEPTANCE),
                     ])->relationship('membership_acceptance'),
                 Section::make('Initial Capital Subscription')
                     ->hiddenOn('edit')
@@ -292,7 +290,7 @@ class MemberResource extends Resource
                                 $data = ShareCapitalProvider::fromAmountSubscribed($state, ShareCapitalProvider::INITIAL_NUMBER_OF_TERMS);
                                 $set('number_of_shares', $data['number_of_shares']);
                             }),
-                    ])
+                    ]),
             ]);
     }
 
@@ -334,7 +332,7 @@ class MemberResource extends Resource
                 TextColumn::make('terminated_at')
                     ->date('m/d/Y')
                     ->sortable(),
-                TextColumn::make('patronage_status.name')
+                TextColumn::make('patronage_status.name'),
             ])
             ->filters([
                 SelectFilter::make('member_type')
@@ -346,14 +344,14 @@ class MemberResource extends Resource
                 SelectFilter::make('status')
                     ->options([
                         1 => 'Active',
-                        2 => 'Terminated'
+                        2 => 'Terminated',
                     ])
                     ->default(1)
                     ->query(
                         fn ($query, $state) => $query
                             ->when($state['value'] == 1, fn ($q) => $q->whereNull('terminated_at'))
                             ->when($state['value'] == 2, fn ($q) => $q->whereNotNull('terminated_at'))
-                    )
+                    ),
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
             ->persistFiltersInSession()
@@ -377,21 +375,25 @@ class MemberResource extends Resource
                             ->password(),
                     ])
                     ->action(function (Member $record, $data) {
-                        if (!OverrideProvider::promptManagerPasskey($data['passkey'])) return;
+                        if (! OverrideProvider::promptManagerPasskey($data['passkey'])) {
+                            return;
+                        }
                         DB::beginTransaction();
                         try {
                             if ($record->capital_subscription_payments()->count() <= 1) {
                                 $record->capital_subscriptions()->delete();
                                 $record->delete();
-                            } else
+                            } else {
                                 return Notification::make()->title('Member has existing payments.')->danger()->send();
+                            }
                         } catch (\Throwable $th) {
                             DB::rollBack();
+
                             return Notification::make()->title('Member has existing payments.')->danger()->send();
                         }
                         Notification::make()->title('Member deleted.')->success()->send();
                         DB::commit();
-                    })->visible(auth()->user()->can('manage members'))
+                    })->visible(auth()->user()->can('manage members')),
             ])
             ->bulkActions([])
             ->emptyStateActions([])

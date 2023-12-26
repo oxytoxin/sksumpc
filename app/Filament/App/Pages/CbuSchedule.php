@@ -3,15 +3,12 @@
 namespace App\Filament\App\Pages;
 
 use App\Models\Member;
-use Filament\Forms\Components\DatePicker;
 use Filament\Pages\Page;
-use Filament\Tables\Table;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Enums\FiltersLayout;
-use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
 
 class CbuSchedule extends Page implements HasTable
 {
@@ -25,8 +22,7 @@ class CbuSchedule extends Page implements HasTable
 
     protected static ?string $navigationLabel = 'CBU Schedule';
 
-    protected ?string $heading = "CBU Schedule";
-
+    protected ?string $heading = 'CBU Schedule';
 
     public static function shouldRegisterNavigation(): bool
     {

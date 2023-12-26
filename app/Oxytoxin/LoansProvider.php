@@ -6,7 +6,6 @@ use App\Models\Loan;
 use App\Models\LoanType;
 use App\Models\Member;
 
-
 class LoansProvider
 {
     const LOAN_TERMS = [
@@ -23,25 +22,28 @@ class LoansProvider
 
     public static function computeInterest($amount, ?LoanType $loanType, $number_of_terms, $transaction_date)
     {
-        if (!$loanType || !$amount || !$number_of_terms)
+        if (! $loanType || ! $amount || ! $number_of_terms) {
             return 0;
+        }
         // original
         //return round($amount * $loanType->interest_rate * $number_of_terms, 2);
         $loan = Loan::make([
             'interest_rate' => $loanType->interest_rate,
             'gross_amount' => $amount,
             'number_of_terms' => $number_of_terms,
-            'transaction_date' => $transaction_date ?? today()
+            'transaction_date' => $transaction_date ?? today(),
         ]);
 
         $schedule = static::generateAmortizationSchedule($loan);
+
         return collect($schedule)->sum('interest');
     }
 
     public static function computeMonthlyPayment($amount, ?LoanType $loanType, $number_of_terms, $transaction_date)
     {
-        if (!$loanType || !$amount || !$number_of_terms)
+        if (! $loanType || ! $amount || ! $number_of_terms) {
             return 0;
+        }
         // original
         // return round($amount * (1 + $loanType->interest_rate * $number_of_terms) / $number_of_terms, 2);
 
@@ -52,6 +54,7 @@ class LoansProvider
             'number_of_terms' => $number_of_terms,
             'transaction_date' => $transaction_date ?? today(),
         ]);
+
         return static::computeRegularAmortization($loan);
     }
 
@@ -66,13 +69,15 @@ class LoansProvider
         $r = $p - 1;
         $s = $q / $r;
         $t = $la * $s;
+
         return round($t, 2);
     }
 
     public static function computeDeductions(?LoanType $loanType, $gross_amount, ?Member $member, $existing_loan_id = null): array
     {
-        if (!$loanType)
+        if (! $loanType) {
             return [];
+        }
         $deductions = [
             [
                 'name' => 'Service Fee',
@@ -128,6 +133,7 @@ class LoansProvider
                 'loan_id' => $existing->id,
             ];
         }
+
         return $deductions;
     }
 
@@ -146,7 +152,7 @@ class LoansProvider
                 } else {
                     $days = $start->diffInDays($start->addMonthNoOverflow()->endOfMonth()) + 1;
                 }
-            } else if ($term == $loan->number_of_terms) {
+            } elseif ($term == $loan->number_of_terms) {
                 $days = $start->diffInDays($loan->transaction_date->addMonthsNoOverflow($loan->number_of_terms));
             } else {
                 $days = 30;
@@ -185,6 +191,7 @@ class LoansProvider
             }
             $term++;
         } while ($term <= $loan->number_of_terms);
+
         return $schedule;
     }
 }

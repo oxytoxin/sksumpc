@@ -2,44 +2,31 @@
 
 namespace App\Filament\App\Resources;
 
-use Filament\Forms;
-use App\Models\Loan;
-use Filament\Tables;
-use App\Models\LoanType;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use App\Models\LoanApplication;
-use App\Oxytoxin\LoansProvider;
-use Filament\Infolists\Infolist;
-use Filament\Resources\Resource;
-use Filament\Forms\Components\Grid;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Filters\Filter;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Select;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
-use Filament\Tables\Enums\FiltersLayout;
-use Filament\Forms\Components\DatePicker;
-use Filament\Tables\Filters\SelectFilter;
-use Illuminate\Database\Eloquent\Builder;
-use Filament\Forms\Components\Placeholder;
-use Filament\Infolists\Components\Section;
-use function Filament\Support\format_money;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Components\ViewEntry;
-use Filament\Infolists\Components\RepeatableEntry;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 use App\Filament\App\Resources\LoanApplicationResource\Pages;
 use App\Livewire\App\Loans\Traits\HasViewLoanDetailsActionGroup;
-use App\Filament\App\Resources\LoanApplicationResource\RelationManagers;
-use App\Filament\App\Resources\LoanApplicationResource\Pages\LoanApplicationForm;
+use App\Models\Loan;
+use App\Models\LoanApplication;
+use App\Oxytoxin\LoansProvider;
+use Awcodes\FilamentTableRepeater\Components\TableRepeater;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\ViewEntry;
+use Filament\Infolists\Infolist;
+use Filament\Notifications\Notification;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
-use App\Filament\App\Resources\LoanApplicationResource\Pages\ViewLoanApplication;
-use App\Filament\App\Resources\LoanApplicationResource\Pages\ManageLoanApplications;
+use function Filament\Support\format_money;
 
 class LoanApplicationResource extends Resource
 {
@@ -80,7 +67,7 @@ class LoanApplicationResource extends Resource
                     TextEntry::make('loan.monthly_payment')->money('PHP')->label('Monthly Payment'),
                     TextEntry::make('loan.release_date')->date('m/d/Y')->label('Release Date'),
 
-                ])
+                ]),
         ])->columns(1);
     }
 
@@ -103,7 +90,7 @@ class LoanApplicationResource extends Resource
                 TextInput::make('priority_number'),
                 TextInput::make('desired_amount')->moneymask()->required(),
                 DatePicker::make('transaction_date')->required()->native(false)->default(today()),
-                TextInput::make('purpose')
+                TextInput::make('purpose'),
             ]);
     }
 
@@ -151,14 +138,14 @@ class LoanApplicationResource extends Resource
                         Select::make('disapproval_reason_id')
                             ->relationship('disapproval_reason', 'name')
                             ->required(),
-                        TextInput::make('remarks')
+                        TextInput::make('remarks'),
                     ])
                     ->action(function ($record, $data) {
                         $record->update([
                             'priority_number' => $data['priority_number'],
                             'status' => LoanApplication::STATUS_DISAPPROVED,
                             'disapproval_date' => today(),
-                            'remarks' => $data['remarks']
+                            'remarks' => $data['remarks'],
                         ]);
                         Notification::make()->title('Loan application disapproved!')->success()->send();
                     })
@@ -167,16 +154,17 @@ class LoanApplicationResource extends Resource
                     ->color('danger')
                     ->visible(fn ($record) => $record->status == LoanApplication::STATUS_PROCESSING),
                 Action::make('new_loan')
-                    ->visible(fn ($record) => auth()->user()->can('manage loans') && !$record->loan && $record->status == LoanApplication::STATUS_APPROVED)
+                    ->visible(fn ($record) => auth()->user()->can('manage loans') && ! $record->loan && $record->status == LoanApplication::STATUS_APPROVED)
                     ->fillForm(function ($record) {
                         $deductions = LoansProvider::computeDeductions($record->loan_type, $record->desired_amount, $record->member);
+
                         return [
                             'gross_amount' => $record->desired_amount,
                             'number_of_terms' => $record->number_of_terms,
                             'priority_number' => $record->priority_number,
                             'transaction_date' => today(),
                             'release_date' => today(),
-                            'deductions' => $deductions
+                            'deductions' => $deductions,
                         ];
                     })
                     ->form(fn ($record) => [
@@ -218,7 +206,7 @@ class LoanApplicationResource extends Resource
                     ])
                     ->action(function ($record, $data) {
                         $record->update([
-                            'priority_number' => $data['priority_number']
+                            'priority_number' => $data['priority_number'],
                         ]);
                         $loanType = $record->loan_type;
                         Loan::create([
@@ -236,7 +224,7 @@ class LoanApplicationResource extends Resource
                 Action::make('print')
                     ->icon('heroicon-o-printer')
                     ->url(fn ($record) => route('filament.app.resources.loan-applications.application-form', ['loan_application' => $record]), true),
-                self::getViewLoanApplicationLoanDetailsActionGroup()
+                self::getViewLoanApplicationLoanDetailsActionGroup(),
 
             ])
             ->bulkActions([]);

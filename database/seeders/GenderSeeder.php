@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Gender;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class GenderSeeder extends Seeder
@@ -14,10 +13,10 @@ class GenderSeeder extends Seeder
     public function run(): void
     {
         Gender::create([
-            'name' => 'Male'
+            'name' => 'Male',
         ]);
         Gender::create([
-            'name' => 'Female'
+            'name' => 'Female',
         ]);
     }
 }

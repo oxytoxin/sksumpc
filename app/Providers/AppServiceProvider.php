@@ -5,7 +5,6 @@ namespace App\Providers;
 use App\Models\PaymentType;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Support\RawJs;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
@@ -22,6 +21,7 @@ class AppServiceProvider extends ServiceProvider
                 ->live(true)
                 ->numeric()
                 ->minValue(0);
+
             return $this;
         });
 
@@ -31,6 +31,7 @@ class AppServiceProvider extends ServiceProvider
                 ->label('Payment Type')
                 ->selectablePlaceholder(false)
                 ->live();
+
             return $this;
         });
     }

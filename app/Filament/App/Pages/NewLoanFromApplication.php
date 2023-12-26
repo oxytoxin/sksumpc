@@ -3,29 +3,16 @@
 namespace App\Filament\App\Pages;
 
 use App\Livewire\App\Loans\Traits\HasViewLoanDetailsActionGroup;
-use App\Models\Loan;
-use Filament\Pages\Page;
-use Filament\Tables\Table;
 use App\Models\LoanApplication;
-use App\Oxytoxin\LoansProvider;
-use Awcodes\FilamentTableRepeater\Components\TableRepeater;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
-use Filament\Tables\Actions\Action;
+use Filament\Pages\Page;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
-
-use function Filament\Support\format_money;
+use Filament\Tables\Table;
 
 class NewLoanFromApplication extends Page implements HasTable
 {
-    use InteractsWithTable, HasViewLoanDetailsActionGroup;
+    use HasViewLoanDetailsActionGroup, InteractsWithTable;
 
     protected static string $view = 'filament.app.pages.new-loan-from-application';
 
@@ -57,7 +44,7 @@ class NewLoanFromApplication extends Page implements HasTable
             ])
             ->defaultLoanApplicationFilters(type: LoanApplication::STATUS_APPROVED)
             ->actions([
-                self::getViewLoanApplicationLoanDetailsActionGroup()
+                self::getViewLoanApplicationLoanDetailsActionGroup(),
             ]);
     }
 }

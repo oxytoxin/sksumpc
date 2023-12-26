@@ -3,14 +3,13 @@
 namespace App\Filament\App\Pages\Bookkeeper;
 
 use App\Models\Loan;
+use App\Models\LoanType;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Pages\Page;
-use App\Models\LoanAmortization;
-use App\Models\LoanType;
 use Livewire\Attributes\Computed;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Concerns\InteractsWithForms;
 
 class CdjLoanReport extends Page implements HasForms
 {

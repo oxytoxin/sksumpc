@@ -40,10 +40,10 @@ return new class extends Migration
             'default_number_of_shares' => 20,
         ]);
         MemberType::create([
-            'name' => 'LABORATORY'
+            'name' => 'LABORATORY',
         ]);
         MemberType::create([
-            'name' => 'RETIREE'
+            'name' => 'RETIREE',
         ]);
     }
 

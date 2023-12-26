@@ -2,35 +2,29 @@
 
 namespace App\Livewire\App;
 
-use DB;
-use Carbon\Carbon;
-use Filament\Tables;
-use App\Models\Member;
-use App\Models\Saving;
 use App\Models\Imprest;
-use Livewire\Component;
-use Filament\Tables\Table;
-use Filament\Support\RawJs;
-use Livewire\Attributes\On;
+use App\Models\Member;
 use App\Oxytoxin\ImprestData;
+use App\Oxytoxin\ImprestsProvider;
 use App\Oxytoxin\SavingsData;
 use App\Oxytoxin\SavingsProvider;
-use App\Oxytoxin\ImprestsProvider;
-use Filament\Support\Colors\Color;
-use Illuminate\Contracts\View\View;
+use DB;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Support\Colors\Color;
+use Filament\Tables;
+use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Contracts\HasTable;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\DatePicker;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\DeleteAction;
-use Illuminate\Database\Eloquent\Builder;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Table;
+use Illuminate\Contracts\View\View;
+use Livewire\Attributes\On;
+use Livewire\Component;
 
 class ImprestsTable extends Component implements HasForms, HasTable
 {
@@ -79,7 +73,7 @@ class ImprestsTable extends Component implements HasForms, HasTable
                     ])
                     ->action(function ($data) {
                         DB::beginTransaction();
-                        $member =  Member::find($this->member_id);
+                        $member = Member::find($this->member_id);
                         ImprestsProvider::createImprest($member, (new ImprestData(...$data)));
                         DB::commit();
                     })
@@ -101,7 +95,7 @@ class ImprestsTable extends Component implements HasForms, HasTable
                         $data['amount'] = $data['amount'] * -1;
                         $data['reference_number'] = '';
                         DB::beginTransaction();
-                        $member =  Member::find($this->member_id);
+                        $member = Member::find($this->member_id);
                         ImprestsProvider::createImprest($member, (new ImprestData(...$data)));
                         DB::commit();
                     })
@@ -118,7 +112,7 @@ class ImprestsTable extends Component implements HasForms, HasTable
                     ])
                     ->action(function ($data) {
                         DB::beginTransaction();
-                        $member =  Member::find($this->member_id);
+                        $member = Member::find($this->member_id);
                         $data['type'] = 'OR';
                         $data['reference_number'] = '#TRANSFERFROMIMPRESTS';
                         $data['amount'] = $data['amount'] * -1;
@@ -132,7 +126,7 @@ class ImprestsTable extends Component implements HasForms, HasTable
                 ViewAction::make('subsidiary_ledger')
                     ->icon('heroicon-o-clipboard-document-list')
                     ->label('Subsidiary Ledger')
-                    ->url(route('filament.app.resources.members.imprest-subsidiary-ledger', ['member' => $this->member_id]))
+                    ->url(route('filament.app.resources.members.imprest-subsidiary-ledger', ['member' => $this->member_id])),
             ])
             ->actions([])
             ->bulkActions([

@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\PaymentType;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class PaymentTypesSeeder extends Seeder
@@ -14,22 +13,22 @@ class PaymentTypesSeeder extends Seeder
     public function run(): void
     {
         PaymentType::create([
-            'name' => 'OR'
+            'name' => 'OR',
         ]);
         PaymentType::create([
-            'name' => 'JEV'
+            'name' => 'JEV',
         ]);
         PaymentType::create([
-            'name' => 'CV'
+            'name' => 'CV',
         ]);
         PaymentType::create([
-            'name' => 'CASH'
+            'name' => 'CASH',
         ]);
         PaymentType::create([
-            'name' => 'CHECK'
+            'name' => 'CHECK',
         ]);
         PaymentType::create([
-            'name' => 'ADA/ADV'
+            'name' => 'ADA/ADV',
         ]);
     }
 }

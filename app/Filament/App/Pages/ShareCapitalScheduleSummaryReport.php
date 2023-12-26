@@ -30,29 +30,34 @@ class ShareCapitalScheduleSummaryReport extends Page
             'amount_paid' => $amount_paid,
         ];
     }
+
     #[Computed]
     public function laboratoryAmounts()
     {
         $amount_paid = CapitalSubscriptionPayment::whereHas('capital_subscription', function ($q) {
             return $q->whereRelation('member', 'member_type_id', 4);
         })->sum('amount');
+
         return $this->getAmounts($amount_paid);
     }
+
     #[Computed]
     public function regularAmounts()
     {
-        $amount_paid =  CapitalSubscriptionPayment::whereHas('capital_subscription', function ($q) {
+        $amount_paid = CapitalSubscriptionPayment::whereHas('capital_subscription', function ($q) {
             return $q->whereHas('member', fn ($qu) => $qu->whereIn('member_type_id', [1, 2]));
         })->sum('amount');
 
         return $this->getAmounts($amount_paid);
     }
+
     #[Computed]
     public function associateAmounts()
     {
         $amount_paid = CapitalSubscriptionPayment::whereHas('capital_subscription', function ($q) {
             return $q->whereRelation('member', 'member_type_id', 3);
         })->sum('amount');
+
         return $this->getAmounts($amount_paid);
     }
 }

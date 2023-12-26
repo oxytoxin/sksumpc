@@ -3,7 +3,6 @@
 namespace App\Filament\App\Resources\CapitalSubscriptionPaymentResource\Pages;
 
 use App\Filament\App\Resources\CapitalSubscriptionPaymentResource;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateCapitalSubscriptionPayment extends CreateRecord

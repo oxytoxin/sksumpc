@@ -2,10 +2,9 @@
 
 namespace App\Filament\App\Resources\LoanApplicationResource\Pages;
 
-use Filament\Actions;
+use App\Filament\App\Resources\LoanApplicationResource;
 use Filament\Actions\Action;
 use Filament\Resources\Pages\ViewRecord;
-use App\Filament\App\Resources\LoanApplicationResource;
 
 class ViewLoanApplication extends ViewRecord
 {

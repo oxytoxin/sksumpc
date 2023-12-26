@@ -7,45 +7,38 @@ use App\Models\Loan;
 use App\Models\LoanApplication;
 use App\Models\LoanType;
 use App\Models\Member;
-use App\Models\SystemConfiguration;
 use App\Oxytoxin\LoansProvider;
 use App\Oxytoxin\OverrideProvider;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
-use Filament\Support\RawJs;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Livewire\Component;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
-use PDO;
-use Str;
+use Livewire\Component;
+
 use function Filament\Support\format_money;
 
 class LoansTable extends Component implements HasForms, HasTable
 {
-    use InteractsWithForms, InteractsWithTable, HasViewLoanDetailsActionGroup;
+    use HasViewLoanDetailsActionGroup, InteractsWithForms, InteractsWithTable;
 
     public Member $member;
 
@@ -65,7 +58,7 @@ class LoansTable extends Component implements HasForms, HasTable
                 TextColumn::make('net_amount')->money('PHP'),
                 TextColumn::make('monthly_payment')->money('PHP'),
                 TextColumn::make('outstanding_balance')->money('PHP'),
-                TextColumn::make('transaction_date')->date('F d, Y')
+                TextColumn::make('transaction_date')->date('F d, Y'),
             ])
             ->filters([
                 SelectFilter::make('status')
@@ -79,7 +72,7 @@ class LoansTable extends Component implements HasForms, HasTable
                             ->when($data['value'] == 'paid', fn ($query) => $query->where('outstanding_balance', '<=', 0)->posted())
                             ->when($data['value'] == 'ongoing', fn ($query) => $query->where('outstanding_balance', '>', 0)->posted())
                             ->when($data['value'] == 'pending', fn ($query) => $query->pending());
-                    })
+                    }),
             ], layout: FiltersLayout::AboveContent)
             ->actions([
                 EditAction::make('edit')
@@ -117,6 +110,7 @@ class LoansTable extends Component implements HasForms, HasTable
                                     $deductions = LoansProvider::computeDeductions($loanType, $state, $this->member, $record->id);
                                     $deductions = collect($deductions)->map(function ($d) {
                                         $d['amount'] = number_format($d['amount'], 2);
+
                                         return $d;
                                     })->toArray();
                                     $set('deductions', $deductions);
@@ -151,22 +145,27 @@ class LoansTable extends Component implements HasForms, HasTable
                                 Placeholder::make('deductions_amount')
                                     ->content(fn ($get) => format_money(collect($get('deductions'))->map(function ($d) {
                                         $d['amount'] = str_replace(',', '', filled($d['amount']) ? $d['amount'] : 0);
+
                                         return $d;
                                     })->sum('amount'), 'PHP')),
                                 Placeholder::make('net_amount')
                                     ->content(fn ($get) => format_money(floatval(str_replace(',', '', $get('gross_amount') ?? 0)) - collect($get('deductions'))->map(function ($d) {
                                         $d['amount'] = str_replace(',', '', filled($d['amount']) ? $d['amount'] : 0);
+
                                         return $d;
                                     })->sum('amount'), 'PHP')),
                             ]),
                         DatePicker::make('release_date')->required()->native(false),
                     ])
                     ->action(function ($data, $record) {
-                        if (!OverrideProvider::promptManagerPasskey($data['passkey'])) return;
+                        if (! OverrideProvider::promptManagerPasskey($data['passkey'])) {
+                            return;
+                        }
                         unset($data['passkey']);
                         $loanType = LoanType::find($data['loan_type_id']);
-                        if ($record->posted)
+                        if ($record->posted) {
                             return Notification::make()->title('Update failed')->body('Loan was already posted by bookkeeper.')->danger()->success()->send();
+                        }
                         $record->update([
                             ...$data,
                             'interest_rate' => $loanType->interest_rate,
@@ -196,7 +195,7 @@ class LoansTable extends Component implements HasForms, HasTable
                         Notification::make()->title('Payment made for loan!')->success()->send();
                     })
                     ->visible(fn ($record) => $record->outstanding_balance > 0 && $record->posted && auth()->user()->can('manage payments')),
-                $this->getViewLoanDetailsActionGroup()
+                $this->getViewLoanDetailsActionGroup(),
             ])
             ->headerActions([
                 CreateAction::make()
@@ -264,7 +263,7 @@ class LoansTable extends Component implements HasForms, HasTable
                     ->action(function ($data) {
                         $loanApplication = LoanApplication::find($data['loan_application_id']);
                         $loanApplication->update([
-                            'priority_number' => $data['priority_number']
+                            'priority_number' => $data['priority_number'],
                         ]);
                         $loanType = $loanApplication->loan_type;
                         Loan::create([

@@ -18,9 +18,10 @@ class Billing extends Page implements HasForms
     {
         return [
             DateTimePicker::make('date')
-                ->seconds(false)
+                ->seconds(false),
         ];
     }
+
     public static function shouldRegisterNavigation(): bool
     {
         return false;

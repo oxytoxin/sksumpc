@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\DisapprovalReason;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DisapprovalReasonSeeder extends Seeder
@@ -14,7 +13,7 @@ class DisapprovalReasonSeeder extends Seeder
     public function run(): void
     {
         DisapprovalReason::create([
-            'name' => 'Others'
+            'name' => 'Others',
         ]);
     }
 }

@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\PatronageStatus;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class PatronageStatusSeeder extends Seeder
@@ -14,16 +13,16 @@ class PatronageStatusSeeder extends Seeder
     public function run(): void
     {
         PatronageStatus::create([
-            'name' => 'Good Standing'
+            'name' => 'Good Standing',
         ]);
         PatronageStatus::create([
-            'name' => 'Bad Standing'
+            'name' => 'Bad Standing',
         ]);
         PatronageStatus::create([
-            'name' => 'Court Order'
+            'name' => 'Court Order',
         ]);
         PatronageStatus::create([
-            'name' => 'Board Hearing'
+            'name' => 'Board Hearing',
         ]);
     }
 }

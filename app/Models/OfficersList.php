@@ -10,6 +10,6 @@ class OfficersList extends Model
     use HasFactory;
 
     protected $casts = [
-        'officers' => 'array'
+        'officers' => 'array',
     ];
 }

@@ -16,9 +16,8 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
-use Livewire\Component;
 use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\Builder;
+use Livewire\Component;
 
 class CashBeginningsTable extends Component implements HasForms, HasTable
 {
@@ -34,7 +33,7 @@ class CashBeginningsTable extends Component implements HasForms, HasTable
                     ->label('Date')
                     ->date('m/d/Y'),
                 TextColumn::make('amount')
-                    ->money('PHP')
+                    ->money('PHP'),
             ])
             ->filters([
                 //
@@ -49,7 +48,7 @@ class CashBeginningsTable extends Component implements HasForms, HasTable
                         TextInput::make('amount')
                             ->moneymask(),
                     ]),
-                DeleteAction::make()
+                DeleteAction::make(),
             ])
             ->headerActions([
                 CreateAction::make()
@@ -60,7 +59,7 @@ class CashBeginningsTable extends Component implements HasForms, HasTable
                             ->required(),
                         TextInput::make('amount')
                             ->moneymask(),
-                        Hidden::make('cashier_id')->default(auth()->id())
+                        Hidden::make('cashier_id')->default(auth()->id()),
                     ])
                     ->createAnother(false),
             ])

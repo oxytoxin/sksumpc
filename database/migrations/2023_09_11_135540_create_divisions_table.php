@@ -19,25 +19,25 @@ return new class extends Migration
         });
 
         Division::create([
-            'name' => 'ACCESS Campus'
+            'name' => 'ACCESS Campus',
         ]);
         Division::create([
-            'name' => 'Isulan Campus'
+            'name' => 'Isulan Campus',
         ]);
         Division::create([
-            'name' => 'Lutayan Campus'
+            'name' => 'Lutayan Campus',
         ]);
         Division::create([
-            'name' => 'Kalamansig Campus'
+            'name' => 'Kalamansig Campus',
         ]);
         Division::create([
-            'name' => 'Palimbang Campus'
+            'name' => 'Palimbang Campus',
         ]);
         Division::create([
-            'name' => 'Tacurong Campus'
+            'name' => 'Tacurong Campus',
         ]);
         Division::create([
-            'name' => 'ACCESS-ADMIN'
+            'name' => 'ACCESS-ADMIN',
         ]);
     }
 

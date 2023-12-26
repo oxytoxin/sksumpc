@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Oxytoxin\LoansProvider;
 use DB;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -18,7 +17,7 @@ class LoanPayment extends Model
         'amount' => 'decimal:4',
         'interest' => 'decimal:4',
         'principal_payment' => 'decimal:4',
-        'transaction_date' => 'immutable_date'
+        'transaction_date' => 'immutable_date',
     ];
 
     public function loan()
@@ -40,7 +39,9 @@ class LoanPayment extends Model
             $principal_payment = 0;
             while ($amount_paid > 0) {
                 $active_loan_amortization = $loan->active_loan_amortization;
-                if (!$active_loan_amortization) break;
+                if (! $active_loan_amortization) {
+                    break;
+                }
                 if ($active_loan_amortization->arrears > 0) {
                     $amount = $amount_paid > $active_loan_amortization->arrears ? $active_loan_amortization->arrears : $amount_paid;
                     $active_loan_amortization->update([

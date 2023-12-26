@@ -3,7 +3,6 @@
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Laravel\get;
 
 beforeEach(function () {
     actingAs(User::find(1));

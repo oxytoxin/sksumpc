@@ -15,7 +15,7 @@ class CapitalSubscriptionBilling extends Model
 
     protected $casts = [
         'date' => 'immutable_date',
-        'posted' => 'boolean'
+        'posted' => 'boolean',
     ];
 
     public function capital_subscription_billing_payments()

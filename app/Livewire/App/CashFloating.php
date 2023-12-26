@@ -26,7 +26,7 @@ class CashFloating extends Component implements HasForms
                             ->default(today())
                             ->live()
                             ->native(false),
-                    ])
+                    ]),
             ])
             ->statePath('data');
     }
@@ -54,9 +54,10 @@ class CashFloating extends Component implements HasForms
                     ->select(['identifier', 'maturity_amount', 'withdrawal_date'])
             )
             ->get();
+
         return view('livewire.app.cash-floating', [
             'withdrawals' => $withdrawals,
-            'cash_beginning' => auth()->user()->cashier_cash_beginnings()->whereDate('transaction_date', $this->data['transaction_date'])->first()
+            'cash_beginning' => auth()->user()->cashier_cash_beginnings()->whereDate('transaction_date', $this->data['transaction_date'])->first(),
         ]);
     }
 }

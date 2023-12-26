@@ -14,10 +14,11 @@ class MembershipStatus extends Model
     use HasFactory;
 
     protected $casts = [
-        'effectivity_date' => 'immutable_date'
+        'effectivity_date' => 'immutable_date',
     ];
 
     const ACCEPTANCE = 1;
+
     const TERMINATION = 2;
 
     public function member(): BelongsTo

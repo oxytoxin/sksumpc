@@ -14,6 +14,7 @@ class StatsOverview extends BaseWidget
         $for_cbu_renewal = Member::withSum('capital_subscriptions', 'outstanding_balance')
             ->having('capital_subscriptions_sum_outstanding_balance', '<=', 0)
             ->count();
+
         return [
             Stat::make('Members for CBU Renewal', $for_cbu_renewal)
                 ->description('...')

@@ -2,41 +2,32 @@
 
 namespace App\Livewire\App;
 
-use DB;
-use Carbon\Carbon;
-use Filament\Tables;
 use App\Models\Member;
 use App\Models\Saving;
 use App\Models\SavingsAccount;
-use Livewire\Component;
-use Filament\Tables\Table;
-use Filament\Support\RawJs;
 use App\Oxytoxin\ImprestData;
+use App\Oxytoxin\ImprestsProvider;
 use App\Oxytoxin\SavingsData;
 use App\Oxytoxin\SavingsProvider;
-use App\Oxytoxin\ImprestsProvider;
-use Filament\Support\Colors\Color;
-use Illuminate\Contracts\View\View;
+use DB;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Support\Colors\Color;
+use Filament\Tables;
+use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Contracts\HasTable;
-use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Placeholder;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\DeleteAction;
-use function Filament\Support\format_money;
-use Filament\Tables\Actions\BulkActionGroup;
-
-use Illuminate\Validation\ValidationException;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
+use Illuminate\Contracts\View\View;
+use Livewire\Component;
 
 class SavingsTable extends Component implements HasForms, HasTable
 {
@@ -63,7 +54,7 @@ class SavingsTable extends Component implements HasForms, HasTable
             ->filters([
                 SelectFilter::make('savings_account_id')
                     ->options(SavingsAccount::whereMemberId($this->member_id)->pluck('name', 'id'))
-                    ->label('Account')
+                    ->label('Account'),
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
             ->actions([])
@@ -80,7 +71,7 @@ class SavingsTable extends Component implements HasForms, HasTable
                     ->action(function ($data) {
                         SavingsAccount::create([
                             'member_id' => $this->member_id,
-                            ...$data
+                            ...$data,
                         ]);
                     })
                     ->color(Color::Emerald)
@@ -102,7 +93,7 @@ class SavingsTable extends Component implements HasForms, HasTable
                         ])
                         ->action(function ($data) {
                             DB::beginTransaction();
-                            $member =  Member::find($this->member_id);
+                            $member = Member::find($this->member_id);
                             SavingsProvider::createSavings($member, (new SavingsData(...$data, savings_account_id: $this->tableFilters['savings_account_id']['value'])));
                             DB::commit();
                         })
@@ -123,7 +114,7 @@ class SavingsTable extends Component implements HasForms, HasTable
                         ->action(function ($data) {
                             $data['amount'] = $data['amount'] * -1;
                             DB::beginTransaction();
-                            $member =  Member::find($this->member_id);
+                            $member = Member::find($this->member_id);
                             $data['reference_number'] = '';
                             SavingsProvider::createSavings($member, (new SavingsData(...$data, savings_account_id: $this->tableFilters['savings_account_id']['value'])));
                             DB::commit();
@@ -141,7 +132,7 @@ class SavingsTable extends Component implements HasForms, HasTable
                         ])
                         ->action(function ($data) {
                             DB::beginTransaction();
-                            $member =  Member::find($this->member_id);
+                            $member = Member::find($this->member_id);
                             $data['type'] = 'OR';
                             $data['amount'] = $data['amount'] * -1;
                             $data['reference_number'] = SavingsProvider::FROM_TRANSFER_CODE;
@@ -160,7 +151,7 @@ class SavingsTable extends Component implements HasForms, HasTable
                 ViewAction::make('subsidiary_ledger')
                     ->icon('heroicon-o-clipboard-document-list')
                     ->label('Subsidiary Ledger')
-                    ->url(route('filament.app.resources.members.savings-subsidiary-ledger', ['member' => $this->member_id]))
+                    ->url(route('filament.app.resources.members.savings-subsidiary-ledger', ['member' => $this->member_id])),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

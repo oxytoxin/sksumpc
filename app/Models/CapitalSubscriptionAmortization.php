@@ -15,7 +15,7 @@ class CapitalSubscriptionAmortization extends Model
     protected $casts = [
         'amount' => 'decimal:4',
         'term' => 'integer',
-        'due_date' => 'immutable_date'
+        'due_date' => 'immutable_date',
     ];
 
     public function capital_subscription()

@@ -3,8 +3,8 @@
 namespace App\Filament\App\Widgets;
 
 use Filament\Support\Colors\Color;
-use Filament\Widgets\StatsOverviewWidget\Stat;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class TotalStatsOverview extends BaseWidget
 {

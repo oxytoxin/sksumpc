@@ -5,7 +5,6 @@ namespace App\Filament\App\Resources\LoanBillingResource\Pages;
 use App\Filament\App\Resources\LoanBillingResource;
 use App\Models\LoanBilling;
 use App\Models\LoanBillingPayment;
-use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ListRecords;
@@ -54,11 +53,11 @@ class LoanBillingPayments extends ListRecords
                     ->form([
                         TextInput::make('amount_paid')
                             ->default(fn ($record) => $record->amount_paid)
-                            ->moneymask()
+                            ->moneymask(),
                     ])
-                    ->visible(fn ($record) => !$record->posted),
+                    ->visible(fn ($record) => ! $record->posted),
                 DeleteAction::make()
-                    ->visible(fn ($record) => !$record->posted),
+                    ->visible(fn ($record) => ! $record->posted),
             ]);
     }
 }

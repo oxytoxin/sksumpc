@@ -5,7 +5,6 @@ namespace App\Filament\App\Resources\LoanApplicationResource\Pages;
 use App\Filament\App\Pages\Cashier\Reports\HasSignatories;
 use App\Filament\App\Resources\LoanApplicationResource;
 use App\Models\LoanApplication;
-use App\Models\User;
 use Filament\Resources\Pages\Page;
 
 class LoanApplicationForm extends Page
@@ -20,10 +19,10 @@ class LoanApplicationForm extends Page
 
     protected function getSignatories()
     {
-        $this->signatories = collect($this->loan_application->approvals->items())->map(fn ($a) =>  [
+        $this->signatories = collect($this->loan_application->approvals->items())->map(fn ($a) => [
             'action' => '',
             'name' => $a->name,
-            'position' => $a->position
+            'position' => $a->position,
         ])->toArray();
     }
 }

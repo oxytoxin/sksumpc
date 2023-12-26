@@ -2,15 +2,15 @@
 
 namespace App\Filament\App\Pages;
 
-use Filament\Forms\Form;
-use Filament\Pages\Page;
 use Filament\Forms\Components\Actions;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\View;
 use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Form;
+use Filament\Pages\Page;
 
 class Reports extends Page implements HasForms
 {
@@ -72,15 +72,15 @@ class Reports extends Page implements HasForms
                                 Action::make('monthly_summary_savings')
                                     ->label('Monthly Summary for Savings')
                                     ->url(route('filament.app.pages.monthly-summary-savings')),
-                            ])
+                            ]),
                         ]),
                     Tab::make('Cash Beginnings')
                         ->schema([
-                            View::make('filament.app.views.cash-beginnings-table')
+                            View::make('filament.app.views.cash-beginnings-table'),
                         ]),
                     Tab::make('Cash Floating')
                         ->schema([
-                            View::make('filament.app.views.cash-floating')
+                            View::make('filament.app.views.cash-floating'),
                         ]),
                 ]),
         ]);

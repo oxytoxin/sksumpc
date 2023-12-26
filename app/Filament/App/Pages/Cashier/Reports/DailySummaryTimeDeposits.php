@@ -16,7 +16,7 @@ class DailySummaryTimeDeposits extends Page
     #[Computed]
     public function timeDeposits()
     {
-        return  auth()
+        return auth()
             ->user()
             ->cashier_time_deposits()
             ->with('member')

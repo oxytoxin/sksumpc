@@ -3,16 +3,11 @@
 namespace App\Filament\App\Resources;
 
 use App\Filament\App\Resources\CapitalSubscriptionResource\Pages;
-use App\Filament\App\Resources\CapitalSubscriptionResource\RelationManagers;
 use App\Models\CapitalSubscription;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class CapitalSubscriptionResource extends Resource
 {
@@ -24,7 +19,6 @@ class CapitalSubscriptionResource extends Resource
     {
         return auth()->user()->can('manage cbu');
     }
-
 
     public static function form(Form $form): Form
     {
@@ -60,7 +54,7 @@ class CapitalSubscriptionResource extends Resource
     {
         return [
             'index' => Pages\ListCapitalSubscriptions::route('/'),
-            'reports.top-ten-highest-cbu' => Pages\Reports\TopTenHighestCbuReport::route('/reports/top-ten-highest-cbu')
+            'reports.top-ten-highest-cbu' => Pages\Reports\TopTenHighestCbuReport::route('/reports/top-ten-highest-cbu'),
         ];
     }
 }

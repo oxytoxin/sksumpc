@@ -14,7 +14,7 @@ class ViewMember extends ViewRecord
 
     public function getHeading(): string|Htmlable
     {
-        return "Viewing Member";
+        return 'Viewing Member';
     }
 
     public function getSubheading(): string|Htmlable|null
@@ -29,7 +29,7 @@ class ViewMember extends ViewRecord
                 ->extraAttributes(['wire:ignore' => true])
                 ->label('Back to Membership Module')
                 ->color('success')
-                ->url(route('filament.app.resources.members.index'))
+                ->url(route('filament.app.resources.members.index')),
         ];
     }
 }

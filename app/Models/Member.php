@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Oxytoxin\DTO\MemberDependent;
-use App\Oxytoxin\ShareCapitalProvider;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -23,7 +22,7 @@ class Member extends Model implements HasMedia
 
     protected $casts = [
         'dob' => 'immutable_date',
-        'dependents' => DataCollection::class . ':' . MemberDependent::class,
+        'dependents' => DataCollection::class.':'.MemberDependent::class,
         'other_income_sources' => 'array',
         'annual_income' => 'decimal:4',
     ];
@@ -31,7 +30,7 @@ class Member extends Model implements HasMedia
     protected static function booted(): void
     {
         static::created(function (Member $member) {
-            $member->mpc_code = 'MPCSKSU' . $member->id;
+            $member->mpc_code = 'MPCSKSU'.$member->id;
             $member->save();
         });
     }
@@ -104,7 +103,7 @@ class Member extends Model implements HasMedia
 
     public function initial_capital_subscription(): HasOne
     {
-        return $this->hasOne(CapitalSubscription::class)->where('code', "ICS-%");
+        return $this->hasOne(CapitalSubscription::class)->where('code', 'ICS-%');
     }
 
     public function savings_accounts()

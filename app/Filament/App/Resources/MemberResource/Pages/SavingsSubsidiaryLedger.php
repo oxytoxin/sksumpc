@@ -2,27 +2,23 @@
 
 namespace App\Filament\App\Resources\MemberResource\Pages;
 
-use App\Models\User;
+use App\Filament\App\Pages\Cashier\Reports\HasSignatories;
+use App\Filament\App\Resources\MemberResource;
 use App\Models\Member;
 use App\Models\Saving;
-use Filament\Tables\Table;
+use App\Models\User;
 use Filament\Resources\Pages\Page;
 use Filament\Tables\Actions\Action;
-use Filament\Tables\Filters\Filter;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Enums\FiltersLayout;
-use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
-use Filament\Tables\Columns\Summarizers\Sum;
-use App\Filament\App\Resources\MemberResource;
-use Filament\Tables\Concerns\InteractsWithTable;
-use Illuminate\Contracts\Database\Eloquent\Builder;
-use App\Filament\App\Pages\Cashier\Reports\HasSignatories;
 
 class SavingsSubsidiaryLedger extends Page implements HasTable
 {
-    use InteractsWithTable, HasSignatories;
+    use HasSignatories, InteractsWithTable;
 
     protected static string $resource = MemberResource::class;
 
@@ -42,12 +38,12 @@ class SavingsSubsidiaryLedger extends Page implements HasTable
             [
                 'action' => 'Prepared by:',
                 'name' => auth()->user()->name,
-                'position' => 'Teller/Cashier'
+                'position' => 'Teller/Cashier',
             ],
             [
                 'action' => 'Noted:',
                 'name' => $manager?->name ?? 'FLORA C. DAMANDAMAN',
-                'position' => 'Manager'
+                'position' => 'Manager',
             ],
         ];
     }
@@ -65,7 +61,7 @@ class SavingsSubsidiaryLedger extends Page implements HasTable
                 Action::make('back')
                     ->extraAttributes(['wire:ignore' => true])
                     ->label('Back to Savings')
-                    ->url(route('filament.app.resources.members.view', ['record' => $this->member, 'tab' => '-mso-tab', 'mso_type' => 1]))
+                    ->url(route('filament.app.resources.members.view', ['record' => $this->member, 'tab' => '-mso-tab', 'mso_type' => 1])),
             ])
             ->paginated(['all']);
     }

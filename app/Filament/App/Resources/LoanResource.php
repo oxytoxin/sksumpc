@@ -2,27 +2,21 @@
 
 namespace App\Filament\App\Resources;
 
-use Filament\Forms;
+use App\Filament\App\Resources\LoanResource\Pages;
+use App\Livewire\App\Loans\Traits\HasViewLoanDetailsActionGroup;
 use App\Models\Loan;
-use Filament\Tables;
+use App\Models\LoanType;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Form;
-use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\Action;
-use Filament\Tables\Filters\Filter;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\DatePicker;
-use Illuminate\Database\Eloquent\Builder;
-use App\Filament\App\Resources\LoanResource\Pages;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\App\Resources\LoanResource\Pages\ListLoans;
-use App\Filament\App\Resources\LoanResource\RelationManagers;
-use App\Livewire\App\Loans\Traits\HasViewLoanDetailsActionGroup;
-use App\Models\LoanApplication;
-use App\Models\LoanType;
 use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class LoanResource extends Resource
 {
@@ -58,7 +52,7 @@ class LoanResource extends Resource
                 TextColumn::make('gross_amount')->money('PHP'),
                 TextColumn::make('deductions_amount')->money('PHP'),
                 TextColumn::make('net_amount')->money('PHP'),
-                IconColumn::make('posted')->boolean()->alignCenter()
+                IconColumn::make('posted')->boolean()->alignCenter(),
             ])
             ->filters([
                 SelectFilter::make('loan_type_id')
@@ -90,14 +84,14 @@ class LoanResource extends Resource
             ->actions([
                 Action::make('approve')
                     ->action(fn ($record) => $record->update([
-                        'posted' => true
+                        'posted' => true,
                     ]))
                     ->hidden(fn ($record) => $record->posted)
                     ->requiresConfirmation(),
                 static::getStaticViewLoanDetailsActionGroup(),
                 Action::make('print')
                     ->icon('heroicon-o-printer')
-                    ->url(fn ($record) => route('filament.app.resources.loan-applications.application-form', ['loan_application' => $record->loan_application]), true)
+                    ->url(fn ($record) => route('filament.app.resources.loan-applications.application-form', ['loan_application' => $record->loan_application]), true),
             ])
             ->bulkActions([])
             ->emptyStateActions([]);

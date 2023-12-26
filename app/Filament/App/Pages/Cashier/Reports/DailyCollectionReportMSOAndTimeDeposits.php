@@ -2,13 +2,12 @@
 
 namespace App\Filament\App\Pages\Cashier\Reports;
 
-use App\Models\User;
-use App\Models\Saving;
-use App\Models\Imprest;
-use Filament\Pages\Page;
-use App\Models\TimeDeposit;
-use Livewire\Attributes\Computed;
 use App\Models\CashCollectiblePayment;
+use App\Models\Imprest;
+use App\Models\Saving;
+use App\Models\TimeDeposit;
+use Filament\Pages\Page;
+use Livewire\Attributes\Computed;
 
 class DailyCollectionReportMSOAndTimeDeposits extends Page
 {
@@ -29,6 +28,7 @@ class DailyCollectionReportMSOAndTimeDeposits extends Page
         $ap = CashCollectiblePayment::with('member')->whereCashCollectibleId(7)->whereDate('transaction_date', today())->get();
         $time_deposits = TimeDeposit::with('member')->whereDate('transaction_date', today())->get();
         $time_deposits_withdrawal = TimeDeposit::with('member')->WhereDate('withdrawal_date', today())->get();
+
         return [
             'mso' => $mso,
             'imprests' => $imprests,

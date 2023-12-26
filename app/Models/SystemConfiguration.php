@@ -13,6 +13,6 @@ class SystemConfiguration extends Model
     use HasFactory;
 
     protected $casts = [
-        'content' => 'array'
+        'content' => 'array',
     ];
 }

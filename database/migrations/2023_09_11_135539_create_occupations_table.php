@@ -21,57 +21,57 @@ return new class extends Migration
         Occupation::insert(
             [
                 [
-                    'name' => "TEACHING",
+                    'name' => 'TEACHING',
                     'created_at' => $now,
                     'updated_at' => $now,
                 ],
                 [
-                    'name' => "NON TEACHING",
+                    'name' => 'NON TEACHING',
                     'created_at' => $now,
                     'updated_at' => $now,
                 ],
                 [
-                    'name' => "BUSINESSMAN",
+                    'name' => 'BUSINESSMAN',
                     'created_at' => $now,
                     'updated_at' => $now,
                 ],
                 [
-                    'name' => "COOP STAFF/TELLER",
+                    'name' => 'COOP STAFF/TELLER',
                     'created_at' => $now,
                     'updated_at' => $now,
                 ],
                 [
-                    'name' => "FARMER",
+                    'name' => 'FARMER',
                     'created_at' => $now,
                     'updated_at' => $now,
                 ],
                 [
-                    'name' => "GOVERNMENT EMPLOYEE",
+                    'name' => 'GOVERNMENT EMPLOYEE',
                     'created_at' => $now,
                     'updated_at' => $now,
                 ],
                 [
-                    'name' => "HOUSEWIFE",
+                    'name' => 'HOUSEWIFE',
                     'created_at' => $now,
                     'updated_at' => $now,
                 ],
                 [
-                    'name' => "NURSE",
+                    'name' => 'NURSE',
                     'created_at' => $now,
                     'updated_at' => $now,
                 ],
                 [
-                    'name' => "PRIVATE EMPLOYEE",
+                    'name' => 'PRIVATE EMPLOYEE',
                     'created_at' => $now,
                     'updated_at' => $now,
                 ],
                 [
-                    'name' => "SECURITY",
+                    'name' => 'SECURITY',
                     'created_at' => $now,
                     'updated_at' => $now,
                 ],
                 [
-                    'name' => "STUDENT",
+                    'name' => 'STUDENT',
                     'created_at' => $now,
                     'updated_at' => $now,
                 ],

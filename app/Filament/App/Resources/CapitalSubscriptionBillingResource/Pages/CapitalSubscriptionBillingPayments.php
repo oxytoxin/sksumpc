@@ -57,11 +57,11 @@ class CapitalSubscriptionBillingPayments extends ListRecords
                     ->form([
                         TextInput::make('amount_paid')
                             ->default(fn ($record) => $record->amount_paid)
-                            ->moneymask()
+                            ->moneymask(),
                     ])
-                    ->visible(fn ($record) => !$record->posted),
+                    ->visible(fn ($record) => ! $record->posted),
                 DeleteAction::make()
-                    ->visible(fn ($record) => !$record->posted),
+                    ->visible(fn ($record) => ! $record->posted),
             ]);
     }
 }

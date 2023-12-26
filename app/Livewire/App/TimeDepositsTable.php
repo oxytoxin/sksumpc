@@ -2,40 +2,39 @@
 
 namespace App\Livewire\App;
 
-use DB;
-use Filament\Tables;
 use App\Models\Member;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
-use Livewire\Component;
-use Filament\Tables\Table;
 use App\Models\TimeDeposit;
 use App\Oxytoxin\ImprestData;
+use App\Oxytoxin\ImprestsProvider;
 use App\Oxytoxin\SavingsData;
 use App\Oxytoxin\SavingsProvider;
-use App\Oxytoxin\ImprestsProvider;
-use Filament\Support\Colors\Color;
-use Filament\Tables\Actions\Action;
-use Illuminate\Contracts\View\View;
-use Filament\Forms\Components\Select;
 use App\Oxytoxin\TimeDepositsProvider;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Contracts\HasTable;
-use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
-use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Enums\FiltersLayout;
+use DB;
 use Filament\Forms\Components\DatePicker;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Filters\SelectFilter;
-use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\Placeholder;
-use function Filament\Support\format_money;
-
-use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Filament\Notifications\Notification;
+use Filament\Support\Colors\Color;
+use Filament\Tables;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
+use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
+use Livewire\Component;
+
+use function Filament\Support\format_money;
 
 class TimeDepositsTable extends Component implements HasForms, HasTable
 {
@@ -69,12 +68,12 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                             ->when($data['value'] == 'matured', fn ($query) => $query->whereNotNull('withdrawal_date'))
                             ->when($data['value'] == 'ongoing', fn ($query) => $query->whereNull('withdrawal_date'))
                             ->when($data['value'] == 'terminated', fn ($query) => $query->whereRaw('withdrawal_date <= maturity_date'));
-                    })
+                    }),
             ], layout: FiltersLayout::AboveContent)
             ->actions([
                 Action::make('Terminate')
                     ->form([
-                        Placeholder::make('note')->content(fn ($record) => "Pretermination will deduct 1% interest (" . format_money($record->amount * 0.01, 'PHP') . ") from original capital."),
+                        Placeholder::make('note')->content(fn ($record) => 'Pretermination will deduct 1% interest ('.format_money($record->amount * 0.01, 'PHP').') from original capital.'),
                         DatePicker::make('withdrawal_date')
                             ->required()
                             ->default(today()),
@@ -82,7 +81,7 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                     ->action(function ($record, $data) {
                         $record->update([
                             'maturity_amount' => $record->amount - $record->amount * 0.01,
-                            'withdrawal_date' => $data['withdrawal_date']
+                            'withdrawal_date' => $data['withdrawal_date'],
                         ]);
                         Notification::make()->title('Time deposite claimed.')->success()->send();
                     })
@@ -98,7 +97,7 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                     ])
                     ->action(function ($record, $data) {
                         $record->update([
-                            'withdrawal_date' => $data['withdrawal_date']
+                            'withdrawal_date' => $data['withdrawal_date'],
                         ]);
                         Notification::make()->title('Time deposite claimed.')->success()->send();
                     })
@@ -126,7 +125,7 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                     ->action(function ($record, $data) {
                         DB::beginTransaction();
                         $record->update([
-                            'withdrawal_date' => $data['withdrawal_date']
+                            'withdrawal_date' => $data['withdrawal_date'],
                         ]);
                         unset($data['withdrawal_date']);
                         TimeDeposit::create([
@@ -150,7 +149,7 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                         ])
                         ->action(function ($record, $data) {
                             $record->update([
-                                'withdrawal_date' => $data['withdrawal_date']
+                                'withdrawal_date' => $data['withdrawal_date'],
                             ]);
                             SavingsProvider::createSavings(Member::find($this->member_id), (new SavingsData($data['withdrawal_date'], 'OR', '#FROMTIMEDEPOSITS', $record->maturity_amount)));
                             Notification::make()->title('Time deposite claimed.')->success()->send();
@@ -165,7 +164,7 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                         ])
                         ->action(function ($record, $data) {
                             $record->update([
-                                'withdrawal_date' => $data['withdrawal_date']
+                                'withdrawal_date' => $data['withdrawal_date'],
                             ]);
                             ImprestsProvider::createImprest(Member::find($this->member_id), (new ImprestData($data['withdrawal_date'], 'OR', '#FROMTIMEDEPOSITS', $record->maturity_amount)));
                             Notification::make()->title('Time deposite claimed.')->success()->send();
@@ -202,7 +201,7 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                             'member_id' => $this->member_id,
                         ]);
                     })
-                    ->createAnother(false)
+                    ->createAnother(false),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

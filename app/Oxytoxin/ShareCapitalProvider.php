@@ -7,9 +7,13 @@ use App\Models\CapitalSubscription;
 class ShareCapitalProvider
 {
     const PAR_VALUE = 500;
+
     const INITIAL_NUMBER_OF_TERMS = 12;
+
     const ADDITIONAL_NUMBER_OF_TERMS = 36;
+
     const INITIAL_CAPITAL_CODE = 'Initial Capital Subscription';
+
     const EXISTING_CAPITAL_CODE = 'Existing Capital Subscription';
 
     public static function fromAmountSubscribed($amount, $terms): array
@@ -45,6 +49,7 @@ class ShareCapitalProvider
             $outstanding_balance = round(bcsub($outstanding_balance, $cbu->monthly_payment), 2);
             $term++;
         } while ($term <= $cbu->number_of_terms);
+
         return $schedule;
     }
 }

@@ -173,7 +173,7 @@ return [
         App\Providers\Filament\AppPanelProvider::class,
         App\Providers\RouteServiceProvider::class,
         LoanApplicationTableProvider::class,
-        FilamentTableProvider::class
+        FilamentTableProvider::class,
     ])->toArray(),
 
     /*

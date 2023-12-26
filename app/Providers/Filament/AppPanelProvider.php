@@ -2,29 +2,21 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\App\Resources\CapitalSubscriptionResource;
-use Filament\Pages;
-use Filament\Panel;
-use Filament\Widgets;
-use Filament\PanelProvider;
-use Filament\Support\Colors\Color;
-use Illuminate\Support\Facades\Vite;
-use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\Route;
-use Filament\Navigation\NavigationGroup;
 use Filament\Http\Middleware\Authenticate;
-use Illuminate\Session\Middleware\StartSession;
-use Illuminate\Cookie\Middleware\EncryptCookies;
-use Illuminate\Routing\Middleware\SubstituteBindings;
-use Illuminate\Session\Middleware\AuthenticateSession;
-use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Navigation\NavigationItem;
-use Filament\Support\Assets\Js;
-use Filament\Support\Facades\FilamentAsset;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Filament\Navigation\NavigationGroup;
+use Filament\Panel;
+use Filament\PanelProvider;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Session\Middleware\AuthenticateSession;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Vite;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AppPanelProvider extends PanelProvider
 {
@@ -34,12 +26,13 @@ class AppPanelProvider extends PanelProvider
             $customcss = Vite::asset('resources/css/filament/app/theme.css');
         } catch (\Throwable $th) {
         }
+
         return $panel
             ->id('app')
             ->path('/')
             ->domain(config('app.env') == 'local' ? 'localhost' : config('app.url'))
             ->colors([
-                'primary' => "#3F9FEB",
+                'primary' => '#3F9FEB',
             ])
             ->login()
             ->navigationGroups([

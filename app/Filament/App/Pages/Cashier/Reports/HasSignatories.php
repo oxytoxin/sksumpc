@@ -3,9 +3,9 @@
 namespace App\Filament\App\Pages\Cashier\Reports;
 
 use App\Models\User;
+use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
-use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 
 trait HasSignatories
 {
@@ -16,7 +16,7 @@ trait HasSignatories
         return [
             Action::make('signatories')
                 ->fillForm([
-                    'signatories' => $this->signatories
+                    'signatories' => $this->signatories,
                 ])
                 ->form(function () {
                     return [
@@ -28,9 +28,9 @@ trait HasSignatories
                             ])
                             ->hideLabels()
                             ->label('')
-                            ->addActionLabel('Add Signatory')
+                            ->addActionLabel('Add Signatory'),
                     ];
-                })->action(fn ($data) => $this->signatories = $data['signatories'])
+                })->action(fn ($data) => $this->signatories = $data['signatories']),
         ];
     }
 
@@ -43,22 +43,22 @@ trait HasSignatories
             [
                 'action' => 'Prepared by:',
                 'name' => auth()->user()->name,
-                'position' => 'Teller/Cashier'
+                'position' => 'Teller/Cashier',
             ],
             [
                 'action' => 'Checked by:',
                 'name' => $bookkeeper?->name ?? 'ADRIAN VOLTAIRE POLO',
-                'position' => 'Posting Clerk'
+                'position' => 'Posting Clerk',
             ],
             [
                 'action' => 'Received by:',
                 'name' => $treasurer?->name ?? 'DESIREE G. LEGASPI',
-                'position' => 'Treasurer'
+                'position' => 'Treasurer',
             ],
             [
                 'action' => 'Noted:',
                 'name' => $manager?->name ?? 'FLORA C. DAMANDAMAN',
-                'position' => 'Manager'
+                'position' => 'Manager',
             ],
         ];
     }

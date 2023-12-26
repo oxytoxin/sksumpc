@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\CashCollectible;
 use App\Models\CashCollectibleCategory;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class CashCollectiblesSeeder extends Seeder
@@ -15,73 +14,72 @@ class CashCollectiblesSeeder extends Seeder
     public function run(): void
     {
         $ccg = CashCollectibleCategory::create([
-            'name' => 'RICE AND GROCERIES'
+            'name' => 'RICE AND GROCERIES',
         ]);
         CashCollectible::create([
             'cash_collectible_category_id' => $ccg->id,
-            'name' => 'RICE'
+            'name' => 'RICE',
         ]);
         CashCollectible::create([
             'cash_collectible_category_id' => $ccg->id,
-            'name' => 'GROCERIES'
-        ]);
-
-
-        $ccg = CashCollectibleCategory::create([
-            'name' => 'LADIES DORMITORY'
-        ]);
-
-        CashCollectible::create([
-            'cash_collectible_category_id' => $ccg->id,
-            'name' => 'RESERVATION'
-        ]);
-        CashCollectible::create([
-            'cash_collectible_category_id' => $ccg->id,
-            'name' => 'RENTALS'
-        ]);
-        CashCollectible::create([
-            'cash_collectible_category_id' => $ccg->id,
-            'name' => 'ELECTRICITY'
+            'name' => 'GROCERIES',
         ]);
 
         $ccg = CashCollectibleCategory::create([
-            'name' => 'OTHERS'
+            'name' => 'LADIES DORMITORY',
+        ]);
+
+        CashCollectible::create([
+            'cash_collectible_category_id' => $ccg->id,
+            'name' => 'RESERVATION',
         ]);
         CashCollectible::create([
             'cash_collectible_category_id' => $ccg->id,
-            'name' => 'LOVE GIFT'
+            'name' => 'RENTALS',
         ]);
         CashCollectible::create([
             'cash_collectible_category_id' => $ccg->id,
-            'name' => 'A/P'
+            'name' => 'ELECTRICITY',
+        ]);
+
+        $ccg = CashCollectibleCategory::create([
+            'name' => 'OTHERS',
         ]);
         CashCollectible::create([
             'cash_collectible_category_id' => $ccg->id,
-            'name' => 'PLANE TICKET'
+            'name' => 'LOVE GIFT',
         ]);
         CashCollectible::create([
             'cash_collectible_category_id' => $ccg->id,
-            'name' => 'CLOTH'
+            'name' => 'A/P',
         ]);
         CashCollectible::create([
             'cash_collectible_category_id' => $ccg->id,
-            'name' => 'INSURANCE'
+            'name' => 'PLANE TICKET',
         ]);
         CashCollectible::create([
             'cash_collectible_category_id' => $ccg->id,
-            'name' => 'MISCELLANEOUS'
+            'name' => 'CLOTH',
         ]);
         CashCollectible::create([
             'cash_collectible_category_id' => $ccg->id,
-            'name' => 'CONSIGNMENT'
+            'name' => 'INSURANCE',
         ]);
         CashCollectible::create([
             'cash_collectible_category_id' => $ccg->id,
-            'name' => 'BOOKS'
+            'name' => 'MISCELLANEOUS',
         ]);
         CashCollectible::create([
             'cash_collectible_category_id' => $ccg->id,
-            'name' => 'LAND RENTAL'
+            'name' => 'CONSIGNMENT',
+        ]);
+        CashCollectible::create([
+            'cash_collectible_category_id' => $ccg->id,
+            'name' => 'BOOKS',
+        ]);
+        CashCollectible::create([
+            'cash_collectible_category_id' => $ccg->id,
+            'name' => 'LAND RENTAL',
         ]);
     }
 }

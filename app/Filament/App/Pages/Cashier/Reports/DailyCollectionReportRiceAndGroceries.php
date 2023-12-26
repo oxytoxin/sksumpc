@@ -11,7 +11,9 @@ class DailyCollectionReportRiceAndGroceries extends Page
     use HasSignatories;
 
     protected static bool $shouldRegisterNavigation = false;
+
     protected static string $view = 'filament.app.pages.cashier.reports.daily-collection-report-rice-and-groceries';
+
     protected ?string $heading = 'Daily Collection Report of Rice and Groceries';
 
     #[Computed]

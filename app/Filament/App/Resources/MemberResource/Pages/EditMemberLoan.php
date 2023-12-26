@@ -2,27 +2,25 @@
 
 namespace App\Filament\App\Resources\MemberResource\Pages;
 
-use App\Models\LoanType;
-use Filament\Forms\Form;
-use Filament\Support\RawJs;
-use App\Oxytoxin\LoansProvider;
-use Filament\Resources\Pages\Page;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Placeholder;
 use App\Filament\App\Resources\MemberResource;
 use App\Models\Loan;
+use App\Models\LoanType;
 use App\Models\Member;
-use Filament\Forms\Concerns\InteractsWithForms;
+use App\Oxytoxin\LoansProvider;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Section;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Form;
 use Filament\Notifications\Notification;
+use Filament\Resources\Pages\Page;
 
 use function Filament\Support\format_money;
 
@@ -31,7 +29,9 @@ class EditMemberLoan extends Page implements HasForms
     use InteractsWithForms;
 
     public Member $member;
+
     public Loan $loan;
+
     public ?array $data;
 
     protected static string $resource = MemberResource::class;
@@ -75,6 +75,7 @@ class EditMemberLoan extends Page implements HasForms
                             $deductions = LoansProvider::computeDeductions($loanType, $state, $this->member, $this->loan->id);
                             $deductions = collect($deductions)->map(function ($d) {
                                 $d['amount'] = number_format($d['amount'], 2);
+
                                 return $d;
                             })->toArray();
                             $set('deductions', $deductions);
@@ -126,8 +127,9 @@ class EditMemberLoan extends Page implements HasForms
                         ->form([])
                         ->action(function ($data) {
                             $loanType = LoanType::find($data['loan_type_id']);
-                            if ($this->loan->posted)
+                            if ($this->loan->posted) {
                                 return Notification::make()->title('Update failed')->body('Loan was already posted by bookkeeper.')->danger()->success()->send();
+                            }
                             $this->loan->update([
                                 ...$data,
                                 'interest_rate' => $loanType->interest_rate,
@@ -137,8 +139,8 @@ class EditMemberLoan extends Page implements HasForms
                             ]);
                             $this->dispatch('refresh');
                             Notification::make()->title('Loan updated.')->success()->send();
-                        })
-                ])
+                        }),
+                ]),
             ])->columns(2);
     }
 }

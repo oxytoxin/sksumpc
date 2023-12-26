@@ -2,30 +2,21 @@
 
 namespace App\Filament\App\Resources;
 
-use Filament\Forms;
-use Filament\Tables;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use App\Models\LoanBilling;
-use Filament\Resources\Resource;
-use Filament\Forms\Components\Select;
-use Filament\Tables\Actions\EditAction;
-use Filament\Forms\Components\TextInput;
-use Filament\Tables\Actions\DeleteAction;
-use Illuminate\Database\Eloquent\Builder;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\App\Resources\LoanBillingResource\Pages;
-use App\Filament\App\Resources\LoanBillingResource\RelationManagers;
-use App\Filament\App\Resources\LoanBillingResource\Pages\ManageLoanBillings;
+use App\Models\LoanBilling;
 use App\Models\LoanBillingPayment;
 use DB;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
 use Filament\Notifications\Notification;
+use Filament\Resources\Resource;
+use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
 class LoanBillingResource extends Resource
 {
@@ -57,10 +48,10 @@ class LoanBillingResource extends Resource
                     ->date()
                     ->afterOrEqual(today())
                     ->validationMessages([
-                        'after_or_equal' => 'The date must be after or equal to today.'
+                        'after_or_equal' => 'The date must be after or equal to today.',
                     ])
                     ->required()
-                    ->native(false)
+                    ->native(false),
             ]);
     }
 
@@ -73,23 +64,23 @@ class LoanBillingResource extends Resource
                 TextColumn::make('created_at')->date('m/d/Y')->label('Date Generated'),
                 TextColumn::make('reference_number'),
                 IconColumn::make('posted')
-                    ->boolean()
+                    ->boolean(),
             ])
             ->filters([
                 //
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->visible(fn ($record) => !$record->posted)
+                    ->visible(fn ($record) => ! $record->posted)
                     ->form([
                         Select::make('payment_type_id')
                             ->paymenttype()
                             ->default(null)
                             ->selectablePlaceholder(true),
-                        TextInput::make('reference_number')
+                        TextInput::make('reference_number'),
                     ]),
                 Tables\Actions\DeleteAction::make()
-                    ->visible(fn ($record) => !$record->posted)
+                    ->visible(fn ($record) => ! $record->posted)
                     ->action(function (LoanBilling $record) {
                         $record->loan_billing_payments()->delete();
                         $record->delete();
@@ -97,10 +88,10 @@ class LoanBillingResource extends Resource
                 Action::make('post_payments')
                     ->button()
                     ->color('success')
-                    ->visible(fn ($record) => !$record->posted)
+                    ->visible(fn ($record) => ! $record->posted)
                     ->requiresConfirmation()
                     ->action(function (LoanBilling $record) {
-                        if (!$record->reference_number || !$record->payment_type_id) {
+                        if (! $record->reference_number || ! $record->payment_type_id) {
                             return Notification::make()->title('Billing reference number and payment type is missing!')->danger()->send();
                         }
                         DB::beginTransaction();
@@ -120,11 +111,11 @@ class LoanBillingResource extends Resource
                                 'transaction_date' => today(),
                             ]);
                             $lp->update([
-                                'posted' => true
+                                'posted' => true,
                             ]);
                         });
                         $record->update([
-                            'posted' => true
+                            'posted' => true,
                         ]);
                         DB::commit();
                         Notification::make()->title('Payments posted!')->success()->send();

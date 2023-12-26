@@ -35,7 +35,7 @@ return new class extends Migration
             'service_fee' => 0.005,
             'cbu_common' => 0.02,
             'imprest' => 0.01,
-            'insurance' => 0.0192
+            'insurance' => 0.0192,
         ]);
         LoanType::create([
             'code' => 'PL',
@@ -46,7 +46,7 @@ return new class extends Migration
             'service_fee' => 0.005,
             'cbu_common' => 0.02,
             'imprest' => 0.01,
-            'insurance' => 0.0192
+            'insurance' => 0.0192,
         ]);
         LoanType::create([
             'code' => 'EL',
@@ -56,7 +56,7 @@ return new class extends Migration
             'service_fee' => 0.003,
             'cbu_common' => 0.02,
             'imprest' => 0.01,
-            'insurance' => 0.0192
+            'insurance' => 0.0192,
         ]);
         LoanType::create([
             'code' => 'RL',
@@ -67,7 +67,7 @@ return new class extends Migration
             'service_fee' => 0.005,
             'cbu_common' => 0.02,
             'imprest' => 0.01,
-            'insurance' => 0.0192
+            'insurance' => 0.0192,
         ]);
         LoanType::create([
             'code' => 'ACL',
@@ -76,7 +76,7 @@ return new class extends Migration
             'service_fee' => 0.005,
             'cbu_common' => 0.02,
             'imprest' => 0.01,
-            'insurance' => 0.0192
+            'insurance' => 0.0192,
         ]);
         LoanType::create([
             'code' => 'SL',
@@ -85,7 +85,7 @@ return new class extends Migration
             'service_fee' => 0.003,
             'cbu_common' => 0.02,
             'imprest' => 0.01,
-            'insurance' => 0.0192
+            'insurance' => 0.0192,
         ]);
         LoanType::create([
             'code' => 'KL',
@@ -96,7 +96,7 @@ return new class extends Migration
             'service_fee' => 0.005,
             'cbu_common' => 0.02,
             'imprest' => 0.01,
-            'insurance' => 0.0192
+            'insurance' => 0.0192,
         ]);
         LoanType::create([
             'code' => 'FNPL',
@@ -107,7 +107,7 @@ return new class extends Migration
             'service_fee' => 0.005,
             'cbu_common' => 0.02,
             'imprest' => 0.01,
-            'insurance' => 0.0192
+            'insurance' => 0.0192,
         ]);
         LoanType::create([
             'code' => 'LBP-ATM',
@@ -118,7 +118,7 @@ return new class extends Migration
             'service_fee' => 0.005,
             'cbu_common' => 0.02,
             'imprest' => 0.01,
-            'insurance' => 0.0192
+            'insurance' => 0.0192,
         ]);
         LoanType::create([
             'code' => 'LBP-RL',
@@ -127,7 +127,7 @@ return new class extends Migration
             'service_fee' => 0.005,
             'cbu_common' => 0.02,
             'imprest' => 0.01,
-            'insurance' => 0.0192
+            'insurance' => 0.0192,
         ]);
         LoanType::create([
             'code' => 'RES-LBP ATM',
@@ -138,7 +138,7 @@ return new class extends Migration
             'service_fee' => 0.005,
             'cbu_common' => 0.02,
             'imprest' => 0.01,
-            'insurance' => 0.0192
+            'insurance' => 0.0192,
         ]);
         LoanType::create([
             'code' => 'RES-KL',
@@ -147,7 +147,7 @@ return new class extends Migration
             'service_fee' => 0.005,
             'cbu_common' => 0.02,
             'imprest' => 0.01,
-            'insurance' => 0.0192
+            'insurance' => 0.0192,
         ]);
         LoanType::create([
             'code' => 'RES-PL',
@@ -156,7 +156,7 @@ return new class extends Migration
             'service_fee' => 0.005,
             'cbu_common' => 0.02,
             'imprest' => 0.01,
-            'insurance' => 0.0192
+            'insurance' => 0.0192,
         ]);
         LoanType::create([
             'code' => 'RES-LBP CL',
@@ -166,7 +166,7 @@ return new class extends Migration
             'service_fee' => 0.005,
             'cbu_common' => 0.02,
             'imprest' => 0.01,
-            'insurance' => 0.0192
+            'insurance' => 0.0192,
         ]);
         LoanType::create([
             'code' => 'RES-RL',
@@ -175,7 +175,7 @@ return new class extends Migration
             'service_fee' => 0.005,
             'cbu_common' => 0.02,
             'imprest' => 0.01,
-            'insurance' => 0.0192
+            'insurance' => 0.0192,
         ]);
     }
 

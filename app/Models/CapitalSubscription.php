@@ -22,7 +22,7 @@ class CapitalSubscription extends Model
         'amount_subscribed' => 'decimal:4',
         'initial_amount_paid' => 'decimal:4',
         'number_of_terms' => 'integer',
-        'transaction_date' => 'immutable_date'
+        'transaction_date' => 'immutable_date',
     ];
 
     public function member(): BelongsTo

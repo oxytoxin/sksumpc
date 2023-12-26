@@ -3,20 +3,14 @@
 namespace App\Filament\App\Resources;
 
 use App\Filament\App\Resources\SystemConfigurationResource\Pages;
-use App\Filament\App\Resources\SystemConfigurationResource\RelationManagers;
 use App\Models\SystemConfiguration;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
-use Filament\Forms;
-use Filament\Forms\Components\KeyValue;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class SystemConfigurationResource extends Resource
 {
@@ -48,7 +42,7 @@ class SystemConfigurationResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')
+                TextColumn::make('name'),
             ])
             ->filters([
                 //

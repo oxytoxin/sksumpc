@@ -2,25 +2,21 @@
 
 namespace App\Filament\App\Resources;
 
-use Filament\Forms;
-use Filament\Tables;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Filament\Resources\Resource;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\DatePicker;
-use Illuminate\Database\Eloquent\Builder;
-use App\Models\CapitalSubscriptionBilling;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\App\Resources\CapitalSubscriptionBillingResource\Pages;
-use App\Filament\App\Resources\CapitalSubscriptionBillingResource\RelationManagers;
+use App\Models\CapitalSubscriptionBilling;
 use App\Models\CapitalSubscriptionBillingPayment;
 use DB;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
 use Filament\Notifications\Notification;
+use Filament\Resources\Resource;
+use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
 class CapitalSubscriptionBillingResource extends Resource
 {
@@ -48,7 +44,7 @@ class CapitalSubscriptionBillingResource extends Resource
                 DatePicker::make('date')
                     ->date()
                     ->required()
-                    ->native(false)
+                    ->native(false),
             ]);
     }
 
@@ -60,23 +56,23 @@ class CapitalSubscriptionBillingResource extends Resource
                 TextColumn::make('created_at')->date('m/d/Y')->label('Date Generated'),
                 TextColumn::make('reference_number'),
                 IconColumn::make('posted')
-                    ->boolean()
+                    ->boolean(),
             ])
             ->filters([
                 //
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->visible(fn ($record) => !$record->posted)
+                    ->visible(fn ($record) => ! $record->posted)
                     ->form([
                         Select::make('payment_type_id')
                             ->paymenttype()
                             ->default(null)
                             ->selectablePlaceholder(true),
-                        TextInput::make('reference_number')
+                        TextInput::make('reference_number'),
                     ]),
                 Tables\Actions\DeleteAction::make()
-                    ->visible(fn ($record) => !$record->posted)
+                    ->visible(fn ($record) => ! $record->posted)
                     ->action(function (CapitalSubscriptionBilling $record) {
                         $record->capital_subscription_billing_payments()->delete();
                         $record->delete();
@@ -84,10 +80,10 @@ class CapitalSubscriptionBillingResource extends Resource
                 Action::make('post_payments')
                     ->button()
                     ->color('success')
-                    ->visible(fn ($record) => !$record->posted)
+                    ->visible(fn ($record) => ! $record->posted)
                     ->requiresConfirmation()
                     ->action(function (CapitalSubscriptionBilling $record) {
-                        if (!$record->reference_number || !$record->payment_type_id) {
+                        if (! $record->reference_number || ! $record->payment_type_id) {
                             return Notification::make()->title('Billing reference number and payment type is missing!')->danger()->send();
                         }
                         DB::beginTransaction();
@@ -106,11 +102,11 @@ class CapitalSubscriptionBillingResource extends Resource
                                 'transaction_date' => today(),
                             ]);
                             $cp->update([
-                                'posted' => true
+                                'posted' => true,
                             ]);
                         });
                         $record->update([
-                            'posted' => true
+                            'posted' => true,
                         ]);
                         DB::commit();
                         Notification::make()->title('Payments posted!')->success()->send();

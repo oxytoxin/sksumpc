@@ -29,17 +29,17 @@ class SavingsOperation extends Page
                     ->tabs([
                         Tab::make('SAVINGS')
                             ->schema([
-                                ViewEntry::make('summary')->view('filament.app.views.savings-regular')
+                                ViewEntry::make('summary')->view('filament.app.views.savings-regular'),
                             ]),
                         Tab::make('IMPREST')
                             ->schema([
-                                ViewEntry::make('summary')->view('filament.app.views.savings-imprest')
+                                ViewEntry::make('summary')->view('filament.app.views.savings-imprest'),
                             ]),
                         Tab::make('TIME DEPOSIT')
                             ->schema([
-                                ViewEntry::make('summary')->view('filament.app.views.savings-time-deposit')
+                                ViewEntry::make('summary')->view('filament.app.views.savings-time-deposit'),
                             ]),
-                    ])
+                    ]),
             ]);
     }
 }

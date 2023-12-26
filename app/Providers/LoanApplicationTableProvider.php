@@ -2,16 +2,15 @@
 
 namespace App\Providers;
 
-use App\Models\DisapprovalReason;
-use App\Models\LoanType;
-use Filament\Tables\Table;
 use App\Models\LoanApplication;
-use Filament\Tables\Filters\Filter;
-use Illuminate\Support\ServiceProvider;
-use Filament\Tables\Enums\FiltersLayout;
+use App\Models\LoanType;
 use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\ServiceProvider;
 
 class LoanApplicationTableProvider extends ServiceProvider
 {
@@ -73,7 +72,7 @@ class LoanApplicationTableProvider extends ServiceProvider
                         );
                 });
 
-            if (!$type || $type == LoanApplication::STATUS_DISAPPROVED) {
+            if (! $type || $type == LoanApplication::STATUS_DISAPPROVED) {
                 $filters[] = Filter::make('date_disapproved')
                     ->form([
                         DatePicker::make('disapproved_from')->native(false),
@@ -91,6 +90,7 @@ class LoanApplicationTableProvider extends ServiceProvider
                             );
                     });
             }
+
             return static::filters($filters)
                 ->filtersLayout(FiltersLayout::AboveContent);
         });

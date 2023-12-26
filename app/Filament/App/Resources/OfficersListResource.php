@@ -3,19 +3,14 @@
 namespace App\Filament\App\Resources;
 
 use App\Filament\App\Resources\OfficersListResource\Pages;
-use App\Filament\App\Resources\OfficersListResource\RelationManagers;
 use App\Models\OfficersList;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
-use Filament\Forms;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class OfficersListResource extends Resource
 {
@@ -61,8 +56,8 @@ class OfficersListResource extends Resource
                                 'Clerk',
                                 'Liaison Officer',
                                 'Utility',
-                            ])
-                    ])
+                            ]),
+                    ]),
             ])->columns(1);
     }
 
@@ -70,7 +65,7 @@ class OfficersListResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('year')
+                TextColumn::make('year'),
             ])
             ->filters([
                 //

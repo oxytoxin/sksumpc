@@ -7,22 +7,18 @@ use App\Filament\App\Resources\MemberResource;
 use App\Models\Imprest;
 use App\Models\Member;
 use App\Models\User;
-use Filament\Forms\Components\DatePicker;
 use Filament\Resources\Pages\Page;
 use Filament\Tables\Actions\Action;
-use Filament\Tables\Columns\Summarizers\Sum;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
-use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Contracts\Support\Htmlable;
 
 class ImprestSubsidiaryLedger extends Page implements HasTable
 {
-    use InteractsWithTable, HasSignatories;
+    use HasSignatories, InteractsWithTable;
 
     protected static string $resource = MemberResource::class;
 
@@ -42,12 +38,12 @@ class ImprestSubsidiaryLedger extends Page implements HasTable
             [
                 'action' => 'Prepared by:',
                 'name' => auth()->user()->name,
-                'position' => 'Teller/Cashier'
+                'position' => 'Teller/Cashier',
             ],
             [
                 'action' => 'Noted:',
                 'name' => $manager?->name ?? 'FLORA C. DAMANDAMAN',
-                'position' => 'Manager'
+                'position' => 'Manager',
             ],
         ];
     }
@@ -65,7 +61,7 @@ class ImprestSubsidiaryLedger extends Page implements HasTable
                 Action::make('back')
                     ->extraAttributes(['wire:ignore' => true])
                     ->label('Back to Imprests')
-                    ->url(route('filament.app.resources.members.view', ['record' => $this->member, 'tab' => '-mso-tab', 'mso_type' => 2]))
+                    ->url(route('filament.app.resources.members.view', ['record' => $this->member, 'tab' => '-mso-tab', 'mso_type' => 2])),
             ])
             ->paginated(['all']);
     }

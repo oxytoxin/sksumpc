@@ -35,7 +35,7 @@ class UserAccountManagement extends Page implements HasTable
             ->query(User::query())
             ->columns([
                 TextColumn::make('name'),
-                TextColumn::make('roles.name')
+                TextColumn::make('roles.name'),
             ])
             ->actions([
                 EditAction::make()
@@ -48,19 +48,20 @@ class UserAccountManagement extends Page implements HasTable
                         TextInput::make('password')
                             ->password(),
                         Select::make('roles')
-                            ->relationship('roles', 'name')
+                            ->relationship('roles', 'name'),
                     ])
                     ->action(function ($data, $record) {
                         $roles = $data['roles'];
                         unset($data['roles']);
-                        if (!$data['password'])
+                        if (! $data['password']) {
                             unset($data['password']);
-                        else
+                        } else {
                             $data['password'] = Hash::make($data['password']);
+                        }
                         $record->update($data);
                         $record->roles()->sync($roles);
                     }),
-                DeleteAction::make()
+                DeleteAction::make(),
             ]);
     }
 }

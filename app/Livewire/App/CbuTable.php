@@ -12,9 +12,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Get;
 use Filament\Notifications\Notification;
-use Filament\Support\RawJs;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\CreateAction;
@@ -28,12 +26,10 @@ use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Database\Eloquent\Builder;
-use Livewire\Component;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Str;
 use Livewire\Attributes\On;
-
-use function Filament\Support\format_money;
+use Livewire\Component;
 
 class CbuTable extends Component implements HasForms, HasTable
 {
@@ -77,7 +73,7 @@ class CbuTable extends Component implements HasForms, HasTable
                         $query
                             ->when($data['value'] == 'paid', fn ($query) => $query->where('outstanding_balance', 0))
                             ->when($data['value'] == 'ongoing', fn ($query) => $query->where('outstanding_balance', '>', 0));
-                    })
+                    }),
             ], layout: FiltersLayout::AboveContent)
             ->actions([
                 Action::make('Pay')
@@ -124,7 +120,7 @@ class CbuTable extends Component implements HasForms, HasTable
                     ])
                     ->action(function ($record, $data) {
                         $record->update([
-                            'monthly_payment' => $data['monthly_payment']
+                            'monthly_payment' => $data['monthly_payment'],
                         ]);
                         unset($data['monthly_payment']);
                         $record->payments()->create($data);
@@ -144,7 +140,7 @@ class CbuTable extends Component implements HasForms, HasTable
             ])
             ->headerActions([
                 CreateAction::make()
-                    ->visible(fn () => !$this->member->capital_subscriptions()->where('outstanding_balance', '>', 0)->exists() && auth()->user()->can('manage cbu'))
+                    ->visible(fn () => ! $this->member->capital_subscriptions()->where('outstanding_balance', '>', 0)->exists() && auth()->user()->can('manage cbu'))
                     ->createAnother(false)
                     ->form([
                         DatePicker::make('transaction_date')->required()->default(today()),
@@ -188,7 +184,7 @@ class CbuTable extends Component implements HasForms, HasTable
                     ->action(function ($data) {
                         DB::beginTransaction();
                         $this->member->capital_subscriptions()->update([
-                            'is_common' => false
+                            'is_common' => false,
                         ]);
                         $cbu = $this->member->capital_subscriptions()->create([
                             ...$data,
@@ -203,7 +199,7 @@ class CbuTable extends Component implements HasForms, HasTable
                 ViewAction::make('subsidiary_ledger')
                     ->icon('heroicon-o-clipboard-document-list')
                     ->label('Subsidiary Ledger')
-                    ->url(route('filament.app.resources.members.cbu-subsidiary-ledger', ['member' => $this->member]))
+                    ->url(route('filament.app.resources.members.cbu-subsidiary-ledger', ['member' => $this->member])),
             ])
             ->bulkActions([]);
     }

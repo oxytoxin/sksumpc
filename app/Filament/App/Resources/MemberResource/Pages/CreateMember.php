@@ -37,6 +37,7 @@ class CreateMember extends CreateRecord
             'par_value' => ShareCapitalProvider::PAR_VALUE,
         ]);
         DB::commit();
+
         return $member;
     }
 }

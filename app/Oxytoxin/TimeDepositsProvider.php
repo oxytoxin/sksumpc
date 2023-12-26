@@ -7,17 +7,23 @@ use Carbon\CarbonImmutable;
 class TimeDepositsProvider
 {
     const NUMBER_OF_DAYS = 180;
+
     const DAYS_ANNUALLY = 365;
+
     const MINIMUM_DEPOSIT = 10000;
 
     public static function getInterestRate(?float $amount): float
     {
-        if ($amount < 99999.99)
+        if ($amount < 99999.99) {
             return 0.03;
-        if (10000.00 <= $amount && $amount < 1000000.00)
+        }
+        if ($amount >= 10000.00 && $amount < 1000000.00) {
             return 0.035;
-        if (1000000.00 <= $amount)
+        }
+        if ($amount >= 1000000.00) {
             return 0.04;
+        }
+
         return 0.03;
     }
 

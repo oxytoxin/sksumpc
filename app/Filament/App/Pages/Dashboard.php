@@ -24,7 +24,7 @@ class Dashboard extends Page
             NewStatsOverview::class,
             CbuChart::class,
             IncomeChart::class,
-            TotalStatsOverview::class
+            TotalStatsOverview::class,
         ];
     }
 }

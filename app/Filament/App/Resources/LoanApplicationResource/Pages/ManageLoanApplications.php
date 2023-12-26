@@ -2,14 +2,13 @@
 
 namespace App\Filament\App\Resources\LoanApplicationResource\Pages;
 
-use Filament\Actions;
-use App\Models\LoanType;
+use App\Filament\App\Resources\LoanApplicationResource;
 use App\Models\LoanApplication;
+use App\Models\LoanType;
 use App\Oxytoxin\LoansProvider;
 use Filament\Actions\CreateAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ManageRecords;
-use App\Filament\App\Resources\LoanApplicationResource;
 
 class ManageLoanApplications extends ManageRecords
 {

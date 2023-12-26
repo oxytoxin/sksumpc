@@ -3,7 +3,6 @@
 namespace App\Filament\App\Resources\CapitalSubscriptionResource\Pages;
 
 use App\Filament\App\Resources\CapitalSubscriptionResource;
-use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
 class ListCapitalSubscriptions extends ListRecords

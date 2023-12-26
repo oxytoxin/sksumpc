@@ -14,7 +14,7 @@ class CashCollectiblePayment extends Model
 
     protected $casts = [
         'amount' => 'decimal:4',
-        'transaction_date' => 'immutable_date'
+        'transaction_date' => 'immutable_date',
     ];
 
     public function cash_collectible()
@@ -31,7 +31,6 @@ class CashCollectiblePayment extends Model
     {
         return $this->belongsTo(Member::class);
     }
-
 
     protected static function booted()
     {
