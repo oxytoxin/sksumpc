@@ -18,16 +18,16 @@
             </thead>
             <tbody>
                 @foreach ($this->table->getRecords() as $record)
-                    <tr>
-                        <td class="text-left px-4 border border-black whitespace-nowrap">{{ $record->alt_full_name }}</td>
-                        <td class="text-center px-4 border border-black whitespace-nowrap">{{ $record->capital_subscriptions_sum_number_of_shares }}</td>
-                        <td class="text-right px-4 border border-black whitespace-nowrap">{{ $record->capital_subscriptions_sum_amount_subscribed }}</td>
-                        <td class="text-center px-4 border border-black whitespace-nowrap">{{ number_format($this->number_of_shares_paid($record), 2) }}</td>
-                        <td class="text-right px-4 border border-black whitespace-nowrap">{{ $record->capital_subscription_payments_sum_amount }}</td>
-                        <td class="text-right px-4 border border-black whitespace-nowrap">{{ $record->capital_subscriptions_sum_amount_subscribed - $record->capital_subscription_payments_sum_amount }}</td>
-                        <td class="text-right px-4 border border-black whitespace-nowrap">{{ number_format($this->amount_shares_paid($record), 2) }}</td>
-                        <td class="text-right px-4 border border-black whitespace-nowrap">{{ $record->capital_subscription_payments_sum_amount - $this->amount_shares_paid($record) }}</td>
-                    </tr>
+                <tr>
+                    <td class="text-left px-4 border border-black whitespace-nowrap">{{ $record->alt_full_name }}</td>
+                    <td class="text-center px-4 border border-black whitespace-nowrap">{{ $record->capital_subscriptions_sum_number_of_shares }}</td>
+                    <td class="text-right px-4 border border-black whitespace-nowrap">{{ $record->capital_subscriptions_sum_amount_subscribed }}</td>
+                    <td class="text-center px-4 border border-black whitespace-nowrap">{{ number_format($this->number_of_shares_paid($record), 2) }}</td>
+                    <td class="text-right px-4 border border-black whitespace-nowrap">{{ $record->capital_subscription_payments_sum_amount }}</td>
+                    <td class="text-right px-4 border border-black whitespace-nowrap">{{ $record->capital_subscriptions_sum_amount_subscribed - $record->capital_subscription_payments_sum_amount }}</td>
+                    <td class="text-right px-4 border border-black whitespace-nowrap">{{ number_format($this->amount_shares_paid($record), 2) }}</td>
+                    <td class="text-right px-4 border border-black whitespace-nowrap">{{ $record->capital_subscription_payments_sum_amount - $this->amount_shares_paid($record) }}</td>
+                </tr>
                 @endforeach
             </tbody>
         </table>

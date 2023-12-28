@@ -15,6 +15,7 @@ class LoanType extends Model
 
     protected $casts = [
         'interest_rate' => 'decimal:4',
+        'surcharge_rate' => 'decimal:4',
         'interest' => 'decimal:4',
         'service_fee' => 'decimal:4',
         'cbu_common' => 'decimal:4',

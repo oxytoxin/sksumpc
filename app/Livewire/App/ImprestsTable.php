@@ -2,11 +2,13 @@
 
 namespace App\Livewire\App;
 
+use App\Actions\Savings\CreateNewSavingsTransaction;
 use App\Models\Imprest;
 use App\Models\Member;
-use App\Oxytoxin\ImprestData;
+use App\Models\SavingsAccount;
+use App\Oxytoxin\DTO\ImprestData;
 use App\Oxytoxin\ImprestsProvider;
-use App\Oxytoxin\SavingsData;
+use App\Oxytoxin\DTO\SavingsData;
 use App\Oxytoxin\SavingsProvider;
 use DB;
 use Filament\Forms\Components\DatePicker;
@@ -74,7 +76,7 @@ class ImprestsTable extends Component implements HasForms, HasTable
                     ->action(function ($data) {
                         DB::beginTransaction();
                         $member = Member::find($this->member_id);
-                        ImprestsProvider::createImprest($member, (new ImprestData(...$data)));
+                        ImprestsProvider::createImprest($member, ImprestData::from($data));
                         DB::commit();
                     })
                     ->createAnother(false),
@@ -96,7 +98,7 @@ class ImprestsTable extends Component implements HasForms, HasTable
                         $data['reference_number'] = '';
                         DB::beginTransaction();
                         $member = Member::find($this->member_id);
-                        ImprestsProvider::createImprest($member, (new ImprestData(...$data)));
+                        ImprestsProvider::createImprest($member, ImprestData::from($data));
                         DB::commit();
                     })
                     ->createAnother(false),
@@ -106,6 +108,10 @@ class ImprestsTable extends Component implements HasForms, HasTable
                     ->color(Color::Amber)
                     ->form([
                         DatePicker::make('transaction_date')->required()->default(today()),
+                        Select::make('savings_account_id')
+                            ->options(SavingsAccount::whereMemberId($this->member_id)->pluck('number', 'id'))
+                            ->required()
+                            ->label('Account'),
                         TextInput::make('amount')
                             ->required()
                             ->moneymask(),
@@ -113,13 +119,13 @@ class ImprestsTable extends Component implements HasForms, HasTable
                     ->action(function ($data) {
                         DB::beginTransaction();
                         $member = Member::find($this->member_id);
-                        $data['type'] = 'OR';
+                        $data['payment_type_id'] = 1;
                         $data['reference_number'] = '#TRANSFERFROMIMPRESTS';
                         $data['amount'] = $data['amount'] * -1;
-                        $im = ImprestsProvider::createImprest($member, (new ImprestData(...$data)));
+                        $im = ImprestsProvider::createImprest($member, ImprestData::from($data));
                         $data['amount'] = $data['amount'] * -1;
                         $data['reference_number'] = $im->reference_number;
-                        SavingsProvider::createSavings($member, (new SavingsData(...$data)));
+                        CreateNewSavingsTransaction::run($member, SavingsData::from($data));
                         DB::commit();
                     })
                     ->createAnother(false),

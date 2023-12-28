@@ -276,18 +276,21 @@ class MemberResource extends Resource
                     ])->relationship('membership_acceptance'),
                 Section::make('Initial Capital Subscription')
                     ->hiddenOn('edit')
+                    ->visible(fn($get) => $get('member_type_id'))
                     ->schema([
-                        TextInput::make('number_of_terms')->readOnly()->minValue(0)->default(ShareCapitalProvider::INITIAL_NUMBER_OF_TERMS),
+                        TextInput::make('number_of_terms')->readOnly()->minValue(0)->default(12),
                         TextInput::make('number_of_shares')->minValue(0)->default(0)
                             ->live(true)
                             ->afterStateUpdated(function ($set, $state, $get) {
-                                $data = ShareCapitalProvider::fromNumberOfShares($state, ShareCapitalProvider::INITIAL_NUMBER_OF_TERMS);
+                                $memberType = MemberType::find($get('member_type_id'));
+                                $data = ShareCapitalProvider::fromNumberOfShares($state, $memberType->initial_number_of_terms, $memberType->par_value);
                                 $set('amount_subscribed', number_format($data['amount_subscribed'], 2));
                             }),
                         TextInput::make('amount_subscribed')
                             ->moneymask()->default(0)
                             ->afterStateUpdated(function ($set, $state, $get) {
-                                $data = ShareCapitalProvider::fromAmountSubscribed($state, ShareCapitalProvider::INITIAL_NUMBER_OF_TERMS);
+                                $memberType = MemberType::find($get('member_type_id'));
+                                $data = ShareCapitalProvider::fromAmountSubscribed($state, $memberType->initial_number_of_terms, $memberType->par_value);
                                 $set('number_of_shares', $data['number_of_shares']);
                             }),
                     ]),

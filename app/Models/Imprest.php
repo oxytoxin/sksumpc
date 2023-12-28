@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Oxytoxin\ImprestsProvider;
+use App\Oxytoxin\TimeDepositsProvider;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -44,10 +45,12 @@ class Imprest extends Model
 
         Imprest::created(function (Imprest $imprest) {
             if ($imprest->reference_number == ImprestsProvider::FROM_TRANSFER_CODE) {
-                $imprest->reference_number = str('IT-')->append(today()->format('Y').'-')->append(str_pad($imprest->id, 6, '0', STR_PAD_LEFT));
+                $imprest->reference_number = str('IT-')->append(today()->format('Y') . '-')->append(str_pad($imprest->id, 6, '0', STR_PAD_LEFT));
+            } else if ($imprest->reference_number == TimeDepositsProvider::FROM_TRANSFER_CODE) {
+                $imprest->reference_number = str('TD-')->append(today()->format('Y') . '-')->append(str_pad($imprest->id, 6, '0', STR_PAD_LEFT));
             } else {
                 if ($imprest->amount < 0) {
-                    $imprest->reference_number = str('IW-')->append(today()->format('Y').'-')->append(str_pad($imprest->id, 6, '0', STR_PAD_LEFT));
+                    $imprest->reference_number = str('IW-')->append(today()->format('Y') . '-')->append(str_pad($imprest->id, 6, '0', STR_PAD_LEFT));
                 }
             }
 

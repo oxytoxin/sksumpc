@@ -12,6 +12,8 @@ class TimeDepositsProvider
 
     const MINIMUM_DEPOSIT = 10000;
 
+    const FROM_TRANSFER_CODE = '#FROMTIMEDEPOSITS';
+
     public static function getInterestRate(?float $amount): float
     {
         if ($amount < 99999.99) {

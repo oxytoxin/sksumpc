@@ -144,12 +144,12 @@ class CbuTable extends Component implements HasForms, HasTable
                     ->createAnother(false)
                     ->form([
                         DatePicker::make('transaction_date')->required()->default(today()),
-                        Placeholder::make('number_of_terms')->content(ShareCapitalProvider::ADDITIONAL_NUMBER_OF_TERMS),
+                        Placeholder::make('number_of_terms')->content($this->member->member_type->additional_number_of_terms),
                         TextInput::make('number_of_shares')->numeric()->minValue(1)->default(144)
                             ->live(true)
                             ->afterStateUpdated(function ($set, $state, $get) {
-                                $amount_subscribed = ($state ?? 0) * ShareCapitalProvider::PAR_VALUE + ($get('initial_amount_paid') ?? 0);
-                                $monthly_payment = ($amount_subscribed - ($get('initial_amount_paid') ?? 0)) / ShareCapitalProvider::ADDITIONAL_NUMBER_OF_TERMS;
+                                $amount_subscribed = ($state ?? 0) * $this->member->member_type->par_value + ($get('initial_amount_paid') ?? 0);
+                                $monthly_payment = ($amount_subscribed - ($get('initial_amount_paid') ?? 0)) / $this->member->member_type->additional_number_of_terms;
                                 $set('amount_subscribed', $amount_subscribed);
                                 $set('monthly_payment', $monthly_payment);
                             }),
@@ -158,16 +158,16 @@ class CbuTable extends Component implements HasForms, HasTable
                             ->moneymask()
                             ->default($this->member->member_type->minimum_initial_payment)
                             ->afterStateUpdated(function ($set, $get, $record, $state) {
-                                $amount_subscribed = ($get('monthly_payment') ?? 0) * ShareCapitalProvider::ADDITIONAL_NUMBER_OF_TERMS + ($get('initial_amount_paid') ?? 0);
+                                $amount_subscribed = ($get('monthly_payment') ?? 0) * $this->member->member_type->additional_number_of_terms + ($get('initial_amount_paid') ?? 0);
                                 $set('amount_subscribed', $amount_subscribed);
                             }),
                         TextInput::make('monthly_payment')
                             ->required()
                             ->moneymask()
-                            ->default((72000 - $this->member->member_type->minimum_initial_payment) / ShareCapitalProvider::ADDITIONAL_NUMBER_OF_TERMS)
+                            ->default((72000 - $this->member->member_type->minimum_initial_payment) / $this->member->member_type->additional_number_of_terms)
                             ->afterStateUpdated(function ($set, $get, $record, $state) {
-                                $amount_subscribed = ($state ?? 0) * ShareCapitalProvider::ADDITIONAL_NUMBER_OF_TERMS + ($get('initial_amount_paid') ?? 0);
-                                $number_of_shares = $amount_subscribed / ShareCapitalProvider::PAR_VALUE;
+                                $amount_subscribed = ($state ?? 0) * $this->member->member_type->additional_number_of_terms + ($get('initial_amount_paid') ?? 0);
+                                $number_of_shares = $amount_subscribed / $this->member->member_type->par_value;
                                 $set('amount_subscribed', $amount_subscribed);
                                 $set('number_of_shares', $number_of_shares);
                             }),
@@ -175,8 +175,8 @@ class CbuTable extends Component implements HasForms, HasTable
                             ->default(72000)
                             ->moneymask()
                             ->afterStateUpdated(function ($set, $state, $get) {
-                                $number_of_shares = ($state ?? 0) / ShareCapitalProvider::PAR_VALUE;
-                                $monthly_payment = (($state ?? 0) - ($get('initial_amount_paid') ?? 0)) / ShareCapitalProvider::ADDITIONAL_NUMBER_OF_TERMS;
+                                $number_of_shares = ($state ?? 0) / $this->member->member_type->par_value;
+                                $monthly_payment = (($state ?? 0) - ($get('initial_amount_paid') ?? 0)) / $this->member->member_type->additional_number_of_terms;
                                 $set('monthly_payment', $monthly_payment);
                                 $set('number_of_shares', $number_of_shares);
                             }),
@@ -188,8 +188,8 @@ class CbuTable extends Component implements HasForms, HasTable
                         ]);
                         $cbu = $this->member->capital_subscriptions()->create([
                             ...$data,
-                            'number_of_terms' => ShareCapitalProvider::ADDITIONAL_NUMBER_OF_TERMS,
-                            'par_value' => ShareCapitalProvider::PAR_VALUE,
+                            'number_of_terms' => $this->member->member_type->additional_number_of_terms,
+                            'par_value' => $this->member->member_type->par_value,
                             'is_common' => true,
                             'code' => Str::random(12),
                         ]);
@@ -202,6 +202,11 @@ class CbuTable extends Component implements HasForms, HasTable
                     ->url(route('filament.app.resources.members.cbu-subsidiary-ledger', ['member' => $this->member])),
             ])
             ->bulkActions([]);
+    }
+
+    public function mount()
+    {
+        $this->member->load('member_type');
     }
 
     public function render(): View

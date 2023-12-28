@@ -19,7 +19,7 @@ class CdjLoanReport extends Page implements HasForms
 
     protected static string $view = 'filament.app.pages.bookkeeper.cdj-loan-report';
 
-    protected ?string $heading = 'CDJ SL - Loans Receivables';
+    protected static ?string $title = 'CDJ SL - Loans Receivables';
 
     protected static ?string $navigationLabel = 'CDJ SL - Loans Receivables';
 

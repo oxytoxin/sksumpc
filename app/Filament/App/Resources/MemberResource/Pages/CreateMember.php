@@ -34,7 +34,7 @@ class CreateMember extends CreateRecord
             'outstanding_balance' => $amount_subscribed,
             'is_common' => true,
             'transaction_date' => today(),
-            'par_value' => ShareCapitalProvider::PAR_VALUE,
+            'par_value' => $member->member_type->par_value,
         ]);
         DB::commit();
 

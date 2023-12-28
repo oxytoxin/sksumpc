@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('loan_application_id')->constrained();
             $table->foreignId('loan_type_id')->constrained();
             $table->string('reference_number');
+            $table->string('check_number')->nullable();
             $table->string('priority_number');
             $table->decimal('gross_amount', 18, 4);
             $table->decimal('deductions_amount', 18, 4);

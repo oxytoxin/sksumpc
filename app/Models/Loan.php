@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Oxytoxin\ImprestData;
+use App\Oxytoxin\DTO\ImprestData;
 use App\Oxytoxin\ImprestsProvider;
 use App\Oxytoxin\LoansProvider;
 use App\Oxytoxin\ShareCapitalProvider;
@@ -46,7 +46,7 @@ class Loan extends Model
 
     public function getDeductionsListAttribute()
     {
-        return collect($this->deductions)->map(fn ($d) => $d['name'].': '.format_money($d['amount'], 'PHP'))->toArray();
+        return collect($this->deductions)->map(fn ($d) => $d['name'] . ': ' . format_money($d['amount'], 'PHP'))->toArray();
     }
 
     public function getMaturityDateAttribute()
@@ -115,9 +115,9 @@ class Loan extends Model
                 $cbu_amount = collect($loan->deductions)->firstWhere('code', 'cbu_common')['amount'];
                 $cbu = $loan->member->capital_subscriptions()->create([
                     'number_of_terms' => 0,
-                    'number_of_shares' => $cbu_amount / ShareCapitalProvider::PAR_VALUE,
+                    'number_of_shares' => $cbu_amount / $loan->member->member_type->par_value,
                     'amount_subscribed' => $cbu_amount,
-                    'par_value' => ShareCapitalProvider::PAR_VALUE,
+                    'par_value' => $loan->member->member_type->par_value,
                     'is_common' => false,
                     'code' => Str::random(12),
                     'transaction_date' => $loan->transaction_date,

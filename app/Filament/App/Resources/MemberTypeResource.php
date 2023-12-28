@@ -40,6 +40,15 @@ class MemberTypeResource extends Resource
                 TextInput::make('minimum_initial_payment')
                     ->required()
                     ->moneymask(),
+                TextInput::make('par_value')
+                    ->required()
+                    ->moneymask(),
+                TextInput::make('surcharge_rate')
+                    ->required()
+                    ->numeric(),
+                TextInput::make('minimum_initial_payment')
+                    ->required()
+                    ->moneymask(),
             ]);
     }
 
@@ -49,9 +58,12 @@ class MemberTypeResource extends Resource
             ->columns([
                 TextColumn::make('name')
                     ->searchable(),
-                TextColumn::make('default_number_of_shares'),
+                TextColumn::make('default_number_of_shares')->numeric(),
                 TextColumn::make('default_amount_subscribed')->money('PHP'),
                 TextColumn::make('minimum_initial_payment')->money('PHP'),
+                TextColumn::make('par_value')->money('PHP'),
+                TextColumn::make('surcharge_rate')
+                    ->formatStateUsing(fn ($state) => $state * 100 .'%'),
             ])
             ->filters([
                 //

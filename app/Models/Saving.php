@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Oxytoxin\SavingsProvider;
+use App\Oxytoxin\TimeDepositsProvider;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -50,10 +51,12 @@ class Saving extends Model
 
         static::created(function (Saving $saving) {
             if ($saving->reference_number == SavingsProvider::FROM_TRANSFER_CODE) {
-                $saving->reference_number = str('ST-')->append(today()->format('Y').'-')->append(str_pad($saving->id, 6, '0', STR_PAD_LEFT));
+                $saving->reference_number = str('ST-')->append(today()->format('Y') . '-')->append(str_pad($saving->id, 6, '0', STR_PAD_LEFT));
+            } else if ($saving->reference_number == TimeDepositsProvider::FROM_TRANSFER_CODE) {
+                $saving->reference_number = str('TD-')->append(today()->format('Y') . '-')->append(str_pad($saving->id, 6, '0', STR_PAD_LEFT));
             } else {
                 if ($saving->amount < 0) {
-                    $saving->reference_number = str('SW-')->append(today()->format('Y').'-')->append(str_pad($saving->id, 6, '0', STR_PAD_LEFT));
+                    $saving->reference_number = str('SW-')->append(today()->format('Y') . '-')->append(str_pad($saving->id, 6, '0', STR_PAD_LEFT));
                 }
             }
             $saving->save();

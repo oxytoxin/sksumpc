@@ -4,10 +4,11 @@ namespace App\Filament\App\Resources;
 
 use App\Filament\App\Resources\LoanTypeResource\Pages;
 use App\Models\LoanType;
-use Filament\Forms;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
 class LoanTypeResource extends Resource
@@ -29,29 +30,33 @@ class LoanTypeResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('code')
+                TextInput::make('code')
                     ->required()
                     ->maxLength(125),
-                Forms\Components\TextInput::make('name')
+                TextInput::make('name')
                     ->required()
                     ->maxLength(125),
-                Forms\Components\TextInput::make('interest_rate')
-                    ->required()
-                    ->numeric()
-                    ->default(0.000),
-                Forms\Components\TextInput::make('service_fee')
+                TextInput::make('interest_rate')
                     ->required()
                     ->numeric()
                     ->default(0.0000),
-                Forms\Components\TextInput::make('cbu_common')
+                TextInput::make('surcharge_rate')
                     ->required()
                     ->numeric()
                     ->default(0.0000),
-                Forms\Components\TextInput::make('imprest')
+                TextInput::make('service_fee')
                     ->required()
                     ->numeric()
                     ->default(0.0000),
-                Forms\Components\TextInput::make('insurance')
+                TextInput::make('cbu_common')
+                    ->required()
+                    ->numeric()
+                    ->default(0.0000),
+                TextInput::make('imprest')
+                    ->required()
+                    ->numeric()
+                    ->default(0.0000),
+                TextInput::make('insurance')
                     ->required()
                     ->numeric()
                     ->default(0.0000),
@@ -62,30 +67,39 @@ class LoanTypeResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('code')
+                TextColumn::make('code')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('interest_rate')
+                TextColumn::make('interest_rate')
                     ->numeric()
+                    ->formatStateUsing(fn ($state) => $state * 100 .'%')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('service_fee')
+                TextColumn::make('surcharge_rate')
                     ->numeric()
+                    ->formatStateUsing(fn ($state) => $state * 100 .'%')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('cbu_common')
+                TextColumn::make('service_fee')
                     ->numeric()
+                    ->formatStateUsing(fn ($state) => $state * 100 .'%')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('imprest')
+                TextColumn::make('cbu_common')
                     ->numeric()
+                    ->formatStateUsing(fn ($state) => $state * 100 .'%')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('insurance')
+                TextColumn::make('imprest')
+                    ->numeric()
+                    ->formatStateUsing(fn ($state) => $state * 100 .'%')
+                    ->sortable(),
+                TextColumn::make('insurance')
                     ->numeric(4)
+                    ->formatStateUsing(fn ($state) => $state * 100 .'%')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

@@ -4,6 +4,7 @@ namespace App\Oxytoxin;
 
 use App\Models\Imprest;
 use App\Models\Member;
+use App\Oxytoxin\DTO\ImprestData;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\ValidationException;

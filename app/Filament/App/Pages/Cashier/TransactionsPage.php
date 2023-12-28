@@ -2,15 +2,16 @@
 
 namespace App\Filament\App\Pages\Cashier;
 
+use App\Actions\Savings\CreateNewSavingsTransaction;
 use App\Models\CapitalSubscription;
 use App\Models\CashCollectible;
 use App\Models\Loan;
 use App\Models\Member;
 use App\Models\SavingsAccount;
 use App\Models\TimeDeposit;
-use App\Oxytoxin\ImprestData;
+use App\Oxytoxin\DTO\ImprestData;
 use App\Oxytoxin\ImprestsProvider;
-use App\Oxytoxin\SavingsData;
+use App\Oxytoxin\DTO\SavingsData;
 use App\Oxytoxin\SavingsProvider;
 use App\Oxytoxin\TimeDepositsProvider;
 use DB;
@@ -132,7 +133,7 @@ class TransactionsPage extends Page
                 $member = Member::find($data['member_id']);
                 unset($data['member_id'], $data['action']);
                 $data['reference_number'] ??= '';
-                SavingsProvider::createSavings($member, (new SavingsData(...$data)));
+                CreateNewSavingsTransaction::run($member, SavingsData::from($data));
                 DB::commit();
                 Notification::make()->title('Savings transaction completed!')->success()->send();
             });
@@ -179,7 +180,7 @@ class TransactionsPage extends Page
                 $member = Member::find($data['member_id']);
                 unset($data['member_id'], $data['action']);
                 $data['reference_number'] ??= '';
-                ImprestsProvider::createImprest($member, (new ImprestData(...$data)));
+                ImprestsProvider::createImprest($member, ImprestData::from($data));
                 DB::commit();
                 Notification::make()->title('Imprests transaction completed!')->success()->send();
             });
@@ -304,7 +305,7 @@ class TransactionsPage extends Page
                 $record = CashCollectible::find($data['cash_collectible_id']);
                 unset($data['cash_collectible_id']);
                 $record->payments()->create($data);
-                Notification::make()->title('Payment made for '.$record->name.'!')->success()->send();
+                Notification::make()->title('Payment made for ' . $record->name . '!')->success()->send();
             });
     }
 }

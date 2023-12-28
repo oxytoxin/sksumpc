@@ -111,13 +111,13 @@ class SeedMembers extends Command
 
     private function seedCBU($data)
     {
-        $member = Member::where('mpc_code', $data['mpc_code'])->first();
+        $member = Member::where('mpc_code', $data['mpc_code'])->with('member_type')->first();
         if ($member) {
             try {
                 $cbu = $member->initial_capital_subscription()->create([
-                    'code' => ShareCapitalProvider::EXISTING_CAPITAL_CODE,
+                    'code' => '',
                     'number_of_shares' => $data['shares_subscribed'],
-                    'number_of_terms' => ShareCapitalProvider::ADDITIONAL_NUMBER_OF_TERMS,
+                    'number_of_terms' => $member->member_type->additional_number_of_terms,
                     'is_common' => true,
                     'par_value' => $data['amount_shares_subscribed'] / $data['shares_subscribed'],
                     'amount_subscribed' => $data['amount_shares_subscribed'],

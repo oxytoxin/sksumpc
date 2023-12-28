@@ -6,29 +6,19 @@ use App\Models\CapitalSubscription;
 
 class ShareCapitalProvider
 {
-    const PAR_VALUE = 500;
-
-    const INITIAL_NUMBER_OF_TERMS = 12;
-
-    const ADDITIONAL_NUMBER_OF_TERMS = 36;
-
-    const INITIAL_CAPITAL_CODE = 'Initial Capital Subscription';
-
-    const EXISTING_CAPITAL_CODE = 'Existing Capital Subscription';
-
-    public static function fromAmountSubscribed($amount, $terms): array
+    public static function fromAmountSubscribed($amount, $terms, $par_value): array
     {
         return [
             'monthly_payment' => $amount / $terms,
-            'number_of_shares' => $amount / static::PAR_VALUE,
+            'number_of_shares' => $amount / $par_value,
         ];
     }
 
-    public static function fromNumberOfShares($shares, $terms): array
+    public static function fromNumberOfShares($shares, $terms, $par_value): array
     {
         return [
-            'monthly_payment' => floatval($shares) * static::PAR_VALUE / $terms,
-            'amount_subscribed' => floatval($shares) * static::PAR_VALUE,
+            'monthly_payment' => floatval($shares) * $par_value / $terms,
+            'amount_subscribed' => floatval($shares) * $par_value,
         ];
     }
 

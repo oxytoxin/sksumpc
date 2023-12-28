@@ -32,6 +32,17 @@ class LoanApplication extends Model
         'approvals' => DataCollection::class.':'.LoanApproval::class,
     ];
 
+    public function getStatusNameAttribute()
+    {
+        return match($this->status){
+            self::STATUS_PROCESSING => 'processing',
+            self::STATUS_APPROVED => 'approved',
+            self::STATUS_DISAPPROVED => 'disapproved',
+            self::STATUS_POSTED => 'posted',
+            default => 'processing'
+        };
+    }
+
     public function disapproval_reason()
     {
         return $this->belongsTo(DisapprovalReason::class);

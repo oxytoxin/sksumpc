@@ -2,12 +2,13 @@
 
 namespace App\Livewire\App;
 
+use App\Actions\Savings\CreateNewSavingsTransaction;
 use App\Models\Member;
 use App\Models\Saving;
 use App\Models\SavingsAccount;
-use App\Oxytoxin\ImprestData;
+use App\Oxytoxin\DTO\ImprestData;
 use App\Oxytoxin\ImprestsProvider;
-use App\Oxytoxin\SavingsData;
+use App\Oxytoxin\DTO\SavingsData;
 use App\Oxytoxin\SavingsProvider;
 use DB;
 use Filament\Forms\Components\DatePicker;
@@ -53,7 +54,7 @@ class SavingsTable extends Component implements HasForms, HasTable
             ])
             ->filters([
                 SelectFilter::make('savings_account_id')
-                    ->options(SavingsAccount::whereMemberId($this->member_id)->pluck('name', 'id'))
+                    ->options(SavingsAccount::whereMemberId($this->member_id)->pluck('number', 'id'))
                     ->label('Account'),
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
@@ -94,7 +95,8 @@ class SavingsTable extends Component implements HasForms, HasTable
                         ->action(function ($data) {
                             DB::beginTransaction();
                             $member = Member::find($this->member_id);
-                            SavingsProvider::createSavings($member, (new SavingsData(...$data, savings_account_id: $this->tableFilters['savings_account_id']['value'])));
+                            $data['savings_account_id'] = $this->tableFilters['savings_account_id']['value'];
+                            CreateNewSavingsTransaction::run($member, SavingsData::from($data));
                             DB::commit();
                         })
                         ->createAnother(false),
@@ -116,7 +118,8 @@ class SavingsTable extends Component implements HasForms, HasTable
                             DB::beginTransaction();
                             $member = Member::find($this->member_id);
                             $data['reference_number'] = '';
-                            SavingsProvider::createSavings($member, (new SavingsData(...$data, savings_account_id: $this->tableFilters['savings_account_id']['value'])));
+                            $data['savings_account_id'] = $this->tableFilters['savings_account_id']['value'];
+                            CreateNewSavingsTransaction::run($member, SavingsData::from($data));
                             DB::commit();
                         })
                         ->createAnother(false),
@@ -133,13 +136,15 @@ class SavingsTable extends Component implements HasForms, HasTable
                         ->action(function ($data) {
                             DB::beginTransaction();
                             $member = Member::find($this->member_id);
-                            $data['type'] = 'OR';
+                            $data['savings_account_id'] = $this->tableFilters['savings_account_id']['value'];
+                            $data['payment_type_id'] = 1;
                             $data['amount'] = $data['amount'] * -1;
                             $data['reference_number'] = SavingsProvider::FROM_TRANSFER_CODE;
-                            $st = SavingsProvider::createSavings($member, (new SavingsData(...$data)));
+                            $st = CreateNewSavingsTransaction::run($member, SavingsData::from($data));
+                            unset($data['savings_account_id']);
                             $data['amount'] = $data['amount'] * -1;
                             $data['reference_number'] = $st->reference_number;
-                            ImprestsProvider::createImprest($member, (new ImprestData(...$data)));
+                            ImprestsProvider::createImprest($member, ImprestData::from($data));
                             DB::commit();
                         })
                         ->createAnother(false),

@@ -109,6 +109,9 @@ use function Filament\Support\format_money;
                             </tr>
                         </thead>
                         <tbody>
+                            <tr>
+                                <td colspan="8" class="border border-black px-2 font-bold">Loans</td>
+                            </tr>
                             @forelse ($loan_application->member->loans()->with('loan_type')->get() as $loan)
                             <tr>
                                 <td class="border border-black px-2">{{ $loan->transaction_date->format('m/d/Y') }}</td>
@@ -123,6 +126,25 @@ use function Filament\Support\format_money;
                             @empty
                             <tr>
                                 <td colspan="8" class="border border-black px-2 text-center">No loans found.</td>
+                            </tr>
+                            @endforelse
+                            <tr>
+                                <td colspan="8" class="border border-black px-2 font-bold">Loan Applications</td>
+                            </tr>
+                            @forelse ($loan_application->member->loan_applications()->with('loan_type')->get() as $loan_application)
+                            <tr>
+                                <td class="border border-black px-2">{{ $loan_application->transaction_date->format('m/d/Y') }}</td>
+                                <td class="border border-black px-2"></td>
+                                <td class="border border-black px-2">{{ $loan_application->loan_type->name }}</td>
+                                <td class="border border-black px-2"></td>
+                                <td class="border border-black px-2">{{ format_money($loan_application->desired_amount, 'PHP') }}</td>
+                                <td class="border border-black px-2"></td>
+                                <td class="border border-black px-2"></td>
+                                <td class="border border-black px-2">{{ $loan_application->status_name }}</td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="8" class="border border-black px-2 text-center">No loan applications found.</td>
                             </tr>
                             @endforelse
                         </tbody>
