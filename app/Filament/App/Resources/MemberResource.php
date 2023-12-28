@@ -114,15 +114,14 @@ class MemberResource extends Resource
             $tabs[] = Tab::make('CBU')
                 ->schema([
                     ViewEntry::make('cbu')
-                        ->view('filament.app.views.cbu-table'),
+                        ->view('livewire-placeholder', ['component' => 'app.cbu-table']),
                 ]);
         }
-
         if (auth()->user()->canany(['manage payments', 'manage mso'])) {
             $tabs[] = Tab::make('MSO')
                 ->schema([
                     ViewEntry::make('mso')
-                        ->view('filament.app.views.mso-table'),
+                        ->view('livewire-placeholder', ['component' => 'app.mso-table']),
                 ]);
         }
 
@@ -130,7 +129,7 @@ class MemberResource extends Resource
             $tabs[] = Tab::make('Loan')
                 ->schema([
                     ViewEntry::make('loan')
-                        ->view('filament.app.views.loans-table'),
+                        ->view('livewire-placeholder', ['component' => 'app.loans-table']),
                 ]);
         }
 
@@ -216,14 +215,14 @@ class MemberResource extends Resource
                                     ->relationship('region', 'description'),
                                 Select::make('province_id')
                                     ->live()
-                                    ->disabled(fn ($get) => ! $get('region_id'))
+                                    ->disabled(fn ($get) => !$get('region_id'))
                                     ->relationship('province', 'name', fn ($query, $get) => $query->whereRegionId($get('region_id'))),
                                 Select::make('municipality_id')
                                     ->live()
-                                    ->disabled(fn ($get) => ! $get('province_id'))
+                                    ->disabled(fn ($get) => !$get('province_id'))
                                     ->relationship('municipality', 'name', fn ($query, $get) => $query->whereProvinceId($get('province_id'))),
                                 Select::make('barangay_id')
-                                    ->disabled(fn ($get) => ! $get('municipality_id'))
+                                    ->disabled(fn ($get) => !$get('municipality_id'))
                                     ->relationship('barangay', 'name', fn ($query, $get) => $query->whereMunicipalityId($get('municipality_id'))),
                             ])->columns(2),
                     ]),
@@ -276,7 +275,7 @@ class MemberResource extends Resource
                     ])->relationship('membership_acceptance'),
                 Section::make('Initial Capital Subscription')
                     ->hiddenOn('edit')
-                    ->visible(fn($get) => $get('member_type_id'))
+                    ->visible(fn ($get) => $get('member_type_id'))
                     ->schema([
                         TextInput::make('number_of_terms')->readOnly()->minValue(0)->default(12),
                         TextInput::make('number_of_shares')->minValue(0)->default(0)
@@ -378,7 +377,7 @@ class MemberResource extends Resource
                             ->password(),
                     ])
                     ->action(function (Member $record, $data) {
-                        if (! OverrideProvider::promptManagerPasskey($data['passkey'])) {
+                        if (!OverrideProvider::promptManagerPasskey($data['passkey'])) {
                             return;
                         }
                         DB::beginTransaction();

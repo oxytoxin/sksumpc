@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
         $this->call(CashCollectiblesSeeder::class);
         $this->call(PatronageStatusSeeder::class);
         $this->call(GenderSeeder::class);
+        $this->call(TrialBalanceEntrySeeder::class);
         Artisan::call('app:seed-members');
     }
 }

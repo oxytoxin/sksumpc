@@ -27,4 +27,24 @@ class LoanType extends Model
     {
         return $this->hasMany(Loan::class);
     }
+
+    protected static function booted()
+    {
+        static::created(function (LoanType $loanType) {
+            TrialBalanceEntry::create([
+                'name' => strtolower($loanType->name),
+                'auditable_type' => LoanType::class,
+                'auditable_id' => $loanType->id,
+            ])->insertBeforeNode(
+                TrialBalanceEntry::firstWhere('name', 'allowance for probable losses-loans')
+            );
+            TrialBalanceEntry::create([
+                'name' => strtolower($loanType->name),
+                'auditable_type' => LoanType::class,
+                'auditable_id' => $loanType->id,
+            ])->insertBeforeNode(
+                TrialBalanceEntry::firstWhere('name', 'service fee-loans')
+            );
+        });
+    }
 }
