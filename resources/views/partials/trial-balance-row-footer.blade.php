@@ -5,15 +5,15 @@
     $total_crj_loans_credit = 0;
     $total_cdj_loans_debit = 0;
     $total_cdj_loans_credit = 0;
-    $loan_receivable = LoanAmortization::receivable(month: 2, year: 2024);
+    $loan_receivable = LoanAmortization::receivable(month: $data['month'], year: $data['year']);
     $total_crj_loans_credit += $loan_receivable->sum('principal_balance');
     $total_crj_loans_credit += $loan_receivable->sum('interest_balance');
-    $loan_disbursed = LoanAmortization::disbursed(month: 2, year: 2024);
+    $loan_disbursed = LoanAmortization::disbursed(month: $data['month'], year: $data['year']);
     $total_cdj_loans_credit += $loan_disbursed->sum('principal_payment');
     $total_cdj_loans_credit += $loan_disbursed->sum('interest_payment');
     $loan_debit_amount = Loan::posted()
-        ->whereMonth('transaction_date', 2)
-        ->whereYear('transaction_date', 2024)
+        ->whereMonth('transaction_date', $data['month'])
+        ->whereYear('transaction_date', $data['year'])
         ->sum('gross_amount');
     $total_cdj_loans_debit += $loan_debit_amount;
 @endphp

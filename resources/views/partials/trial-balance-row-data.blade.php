@@ -10,16 +10,16 @@
 
     $loan_type = $trial_balance_entry->auditable;
     if ($loan_type && $loan_type instanceof LoanType) {
-        $loan_receivable = LoanAmortization::receivable(loan_type: $loan_type, month: 2, year: 2024);
-        $loan_disbursed = LoanAmortization::disbursed(loan_type: $loan_type, month: 2, year: 2024);
+        $loan_receivable = LoanAmortization::receivable(loan_type: $loan_type, month: $data['month'], year: $data['year']);
+        $loan_disbursed = LoanAmortization::disbursed(loan_type: $loan_type, month: $data['month'], year: $data['year']);
     }
     if ($trial_balance_entry->parent?->name === 'loans receivable' && $loan_type instanceof LoanType) {
         $crj_loans_receivable = $loan_receivable->sum('principal_balance');
         $cdj_loans_receivable = $loan_disbursed->sum('principal_payment');
         $loan_debit_amount = Loan::posted()
             ->whereLoanTypeId($loan_type->id)
-            ->whereMonth('transaction_date', 2)
-            ->whereYear('transaction_date', 2024)
+            ->whereMonth('transaction_date', $data['month'])
+            ->whereYear('transaction_date', $data['year'])
             ->sum('gross_amount');
         $crj_credit_total += $crj_loans_receivable;
         $cdj_credit_total += $cdj_loans_receivable;

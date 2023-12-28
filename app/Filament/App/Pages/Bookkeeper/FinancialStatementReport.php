@@ -2,49 +2,64 @@
 
 namespace App\Filament\App\Pages\Bookkeeper;
 
+use Livewire;
 use App\Models\Loan;
-use App\Models\LoanAmortization;
 use App\Models\LoanType;
-use App\Models\TrialBalanceEntry;
+use Filament\Forms\Form;
+use Filament\Pages\Page;
 use Filament\Actions\Action;
-use Filament\Actions\Concerns\InteractsWithActions;
-use Filament\Actions\Contracts\HasActions;
-use Filament\Forms\Concerns\InteractsWithForms;
+use App\Models\LoanAmortization;
+use Filament\Infolists\Infolist;
+use App\Models\TrialBalanceEntry;
+use Livewire\Attributes\Computed;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Infolists\Components\Tabs;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Infolists\Components\Tabs\Tab;
 use Filament\Infolists\Components\ViewEntry;
-use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
-use Filament\Infolists\Infolist;
-use Filament\Pages\Page;
-use Livewire;
-use Livewire\Attributes\Computed;
-use PhpOffice\PhpSpreadsheet\IOFactory;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Infolists\Concerns\InteractsWithInfolists;
 
-class FinancialStatementReport extends Page implements HasActions, HasInfolists, HasForms
+class FinancialStatementReport extends Page implements HasActions, HasForms
 {
-    use InteractsWithActions, InteractsWithInfolists, InteractsWithForms;
+    use InteractsWithActions, InteractsWithForms;
 
     protected static string $view = 'filament.app.pages.bookkeeper.financial-statement-report';
 
     protected static ?string $navigationGroup = 'Bookkeeping';
 
+    public $data = [];
 
-    public function infolist(Infolist $infolist): Infolist
+    public function form(Form $form): Form
     {
-        return $infolist
-            ->schema([
-                Tabs::make()
-                    ->tabs([
-                        Tab::make('Trial Balance')
-                            ->schema([
-                                ViewEntry::make('trial_balance')
-                                    ->label('')
-                                    ->view('livewire-placeholder', ['component' => 'app.bookkeeper.reports.trial-balance-report'])
-                            ])
-                    ])
-            ]);
+        return $form->schema([
+            Select::make('month')
+                ->options(oxy_get_month_range())
+                ->selectablePlaceholder(false)
+                ->default(today()->month)
+                ->live(),
+            Select::make('year')
+                ->options(oxy_get_year_range())
+                ->selectablePlaceholder(false)
+                ->default(today()->year)
+                ->live(),
+        ])
+            ->columns(4)
+            ->statePath('data');
+    }
+
+    public function updated($name, $value)
+    {
+        $this->dispatch('dateChanged', $this->data);
+    }
+
+    public function mount()
+    {
+        $this->form->fill();
     }
 
     #[Computed]
@@ -69,13 +84,13 @@ class FinancialStatementReport extends Page implements HasActions, HasInfolists,
                     $worksheet->setCellValue("$column$row", str_repeat(" ", $entry->depth * 4) . strtoupper($entry->name));
                     $loan_type = $entry->auditable;
                     if ($loan_type && $loan_type instanceof LoanType) {
-                        $loan_receivable = LoanAmortization::receivable(loan_type: $loan_type, month: 2, year: 2024);
-                        $loan_disbursed = LoanAmortization::disbursed(loan_type: $loan_type, month: 2, year: 2024);
+                        $loan_receivable = LoanAmortization::receivable(loan_type: $loan_type, month: $this->data['month'] ?? null, year: $this->data['year'] ?? null);
+                        $loan_disbursed = LoanAmortization::disbursed(loan_type: $loan_type, month: $this->data['month'] ?? null, year: $this->data['year'] ?? null);
                     }
                     if ($entry->parent?->name === 'loans receivable' && $loan_type instanceof LoanType) {
                         $crj_loans_receivable = $loan_receivable->sum('principal_balance');
                         $cdj_loans_receivable = $loan_disbursed->sum('principal_payment');
-                        $loan_debit_amount = Loan::posted()->whereLoanTypeId($loan_type->id)->whereMonth('transaction_date', 2)->whereYear('transaction_date', 2024)->sum('gross_amount');
+                        $loan_debit_amount = Loan::posted()->whereLoanTypeId($loan_type->id)->whereMonth('transaction_date', $this->data['month'] ?? null)->whereYear('transaction_date', $this->data['year'] ?? null)->sum('gross_amount');
                         $worksheet->setCellValue("E$row", $crj_loans_receivable);
                         $worksheet->setCellValue("S$row", $cdj_loans_receivable);
                         $worksheet->setCellValue("R$row", $loan_debit_amount);
