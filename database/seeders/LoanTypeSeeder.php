@@ -128,20 +128,8 @@ class LoanTypeSeeder extends Seeder
             'insurance' => 0.0192,
         ]);
         LoanType::create([
-            'code' => 'RES-LBP ATM',
-            'name' => 'Restructuring-LBP ATM',
-            'minimum_cbu' => 117000,
-            'max_amount' => 350000,
-            'interest_rate' => 0.01,
-            'surcharge_rate' => 0.01,
-            'service_fee' => 0.005,
-            'cbu_common' => 0.02,
-            'imprest' => 0.01,
-            'insurance' => 0.0192,
-        ]);
-        LoanType::create([
-            'code' => 'RES-KL',
-            'name' => 'Restructuring-KL',
+            'code' => 'RES-RL',
+            'name' => 'RES-Regular Loan',
             'interest_rate' => 0.01,
             'surcharge_rate' => 0.01,
             'service_fee' => 0.005,
@@ -151,7 +139,29 @@ class LoanTypeSeeder extends Seeder
         ]);
         LoanType::create([
             'code' => 'RES-PL',
-            'name' => 'Restructuring-PL',
+            'name' => 'RES-Providential Loan',
+            'interest_rate' => 0.01,
+            'surcharge_rate' => 0.01,
+            'service_fee' => 0.005,
+            'cbu_common' => 0.02,
+            'imprest' => 0.01,
+            'insurance' => 0.0192,
+        ]);
+        LoanType::create([
+            'code' => 'RES-KL',
+            'name' => 'RES-Kabuhayan Loan',
+            'interest_rate' => 0.01,
+            'surcharge_rate' => 0.01,
+            'service_fee' => 0.005,
+            'cbu_common' => 0.02,
+            'imprest' => 0.01,
+            'insurance' => 0.0192,
+        ]);
+        LoanType::create([
+            'code' => 'RES-LBP ATM',
+            'name' => 'RES-LBP ATM Card Loan',
+            'minimum_cbu' => 117000,
+            'max_amount' => 350000,
             'interest_rate' => 0.01,
             'surcharge_rate' => 0.01,
             'service_fee' => 0.005,
@@ -163,16 +173,6 @@ class LoanTypeSeeder extends Seeder
             'code' => 'RES-LBP CL',
             'name' => 'RES-LBP Commodity Loan',
             'minimum_cbu' => 50000,
-            'interest_rate' => 0.01,
-            'surcharge_rate' => 0.01,
-            'service_fee' => 0.005,
-            'cbu_common' => 0.02,
-            'imprest' => 0.01,
-            'insurance' => 0.0192,
-        ]);
-        LoanType::create([
-            'code' => 'RES-RL',
-            'name' => 'Restructuring-RL',
             'interest_rate' => 0.01,
             'surcharge_rate' => 0.01,
             'service_fee' => 0.005,
