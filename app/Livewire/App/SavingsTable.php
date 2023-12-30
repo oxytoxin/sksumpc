@@ -2,13 +2,16 @@
 
 namespace App\Livewire\App;
 
-use App\Actions\Savings\CreateNewSavingsTransaction;
+use App\Actions\Imprests\DepositToImprestAccount;
+use App\Actions\Savings\DepositToSavingsAccount;
+use App\Actions\Savings\WithdrawFromSavingsAccount;
+use App\Actions\Savings\GenerateSavingsInterestForMember;
 use App\Models\Member;
 use App\Models\Saving;
 use App\Models\SavingsAccount;
-use App\Oxytoxin\DTO\ImprestData;
+use App\Oxytoxin\DTO\MSO\ImprestData;
 use App\Oxytoxin\ImprestsProvider;
-use App\Oxytoxin\DTO\SavingsData;
+use App\Oxytoxin\DTO\MSO\SavingsData;
 use App\Oxytoxin\SavingsProvider;
 use DB;
 use Filament\Forms\Components\DatePicker;
@@ -18,8 +21,10 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Support\Colors\Color;
 use Filament\Tables;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -49,7 +54,7 @@ class SavingsTable extends Component implements HasForms, HasTable
                 TextColumn::make('withdrawal')->label('Withdrawal')->money('PHP'),
                 TextColumn::make('deposit')->label('Deposit/Interest')->money('PHP'),
                 TextColumn::make('balance')->money('PHP'),
-                TextColumn::make('number_of_days'),
+                TextColumn::make('days_till_next_transaction'),
                 TextColumn::make('interest')->money('PHP'),
             ])
             ->filters([
@@ -58,7 +63,9 @@ class SavingsTable extends Component implements HasForms, HasTable
                     ->label('Account'),
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
-            ->actions([])
+            ->actions([
+                DeleteAction::make()
+            ])
             ->headerActions([
                 CreateAction::make('NewAccount')
                     ->label('New Account')
@@ -82,7 +89,6 @@ class SavingsTable extends Component implements HasForms, HasTable
                         ->label('Deposit')
                         ->modalHeading('Deposit Savings')
                         ->form([
-                            DatePicker::make('transaction_date')->required()->default(today()),
                             Select::make('payment_type_id')
                                 ->paymenttype()
                                 ->required(),
@@ -96,7 +102,7 @@ class SavingsTable extends Component implements HasForms, HasTable
                             DB::beginTransaction();
                             $member = Member::find($this->member_id);
                             $data['savings_account_id'] = $this->tableFilters['savings_account_id']['value'];
-                            CreateNewSavingsTransaction::run($member, SavingsData::from($data));
+                            DepositToSavingsAccount::run($member, SavingsData::from($data));
                             DB::commit();
                         })
                         ->createAnother(false),
@@ -105,7 +111,6 @@ class SavingsTable extends Component implements HasForms, HasTable
                         ->modalHeading('Withdraw Savings')
                         ->color(Color::Red)
                         ->form([
-                            DatePicker::make('transaction_date')->required()->default(today()),
                             Select::make('payment_type_id')
                                 ->paymenttype()
                                 ->required(),
@@ -114,13 +119,10 @@ class SavingsTable extends Component implements HasForms, HasTable
                                 ->moneymask(),
                         ])
                         ->action(function ($data) {
-                            $data['amount'] = $data['amount'] * -1;
-                            DB::beginTransaction();
                             $member = Member::find($this->member_id);
-                            $data['reference_number'] = '';
+                            $data['reference_number'] = 'SW-';
                             $data['savings_account_id'] = $this->tableFilters['savings_account_id']['value'];
-                            CreateNewSavingsTransaction::run($member, SavingsData::from($data));
-                            DB::commit();
+                            WithdrawFromSavingsAccount::run($member, SavingsData::from($data));
                         })
                         ->createAnother(false),
                     CreateAction::make('to_imprests')
@@ -128,7 +130,6 @@ class SavingsTable extends Component implements HasForms, HasTable
                         ->modalHeading('Transfer to Imprests')
                         ->color(Color::Amber)
                         ->form([
-                            DatePicker::make('transaction_date')->required()->default(today()),
                             TextInput::make('amount')
                                 ->required()
                                 ->moneymask(),
@@ -138,13 +139,11 @@ class SavingsTable extends Component implements HasForms, HasTable
                             $member = Member::find($this->member_id);
                             $data['savings_account_id'] = $this->tableFilters['savings_account_id']['value'];
                             $data['payment_type_id'] = 1;
-                            $data['amount'] = $data['amount'] * -1;
                             $data['reference_number'] = SavingsProvider::FROM_TRANSFER_CODE;
-                            $st = CreateNewSavingsTransaction::run($member, SavingsData::from($data));
+                            $st = WithdrawFromSavingsAccount::run($member, SavingsData::from($data));
                             unset($data['savings_account_id']);
-                            $data['amount'] = $data['amount'] * -1;
                             $data['reference_number'] = $st->reference_number;
-                            ImprestsProvider::createImprest($member, ImprestData::from($data));
+                            DepositToImprestAccount::run($member, ImprestData::from($data));
                             DB::commit();
                         })
                         ->createAnother(false),

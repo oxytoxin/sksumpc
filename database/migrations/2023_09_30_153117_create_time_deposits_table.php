@@ -24,7 +24,7 @@ return new class extends Migration
             $table->decimal('maturity_amount', 18, 4);
             $table->decimal('interest_rate', 7, 2);
             $table->decimal('interest', 18, 4)->virtualAs('maturity_amount - amount');
-            $table->date('transaction_date');
+            $table->date('transaction_date')->default(DB::raw('CURDATE()'));
             $table->string('tdc_number')->unique();
             $table->foreignId('cashier_id')->nullable()->constrained('users', 'id')->nullOnDelete();
 

@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Oxytoxin\DTO;
+namespace App\Oxytoxin\DTO\MSO;
 
 use Spatie\LaravelData\Data;
 
-class ImprestData extends Data
+class SavingsData extends Data
 {
     public function __construct(
-        public string $transaction_date,
         public int $payment_type_id,
         public string $reference_number,
-        public float $amount
+        public float $amount,
+        public int $savings_account_id
     ) {
     }
 }

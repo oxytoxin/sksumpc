@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreignId('payment_type_id')->constrained();
             $table->string('reference_number');
             $table->decimal('amount', 18, 4);
-            $table->date('transaction_date');
+            $table->date('transaction_date')->default(DB::raw('CURDATE()'));
             $table->foreignId('cashier_id')->nullable()->constrained('users', 'id')->nullOnDelete();
 
             $table->timestamps();

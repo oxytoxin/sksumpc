@@ -3,9 +3,11 @@
 namespace App\Providers;
 
 use App\Models\PaymentType;
+use Carbon\CarbonImmutable;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
@@ -42,6 +44,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Schema::defaultStringLength(125);
+        Date::use(CarbonImmutable::class);
         Model::unguard();
     }
 }

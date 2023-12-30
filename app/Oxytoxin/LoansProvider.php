@@ -22,7 +22,7 @@ class LoansProvider
 
     public static function computeInterest($amount, ?LoanType $loanType, $number_of_terms, $transaction_date)
     {
-        if (! $loanType || ! $amount || ! $number_of_terms) {
+        if (!$loanType || !$amount || !$number_of_terms) {
             return 0;
         }
         // original
@@ -41,7 +41,7 @@ class LoansProvider
 
     public static function computeMonthlyPayment($amount, ?LoanType $loanType, $number_of_terms, $transaction_date)
     {
-        if (! $loanType || ! $amount || ! $number_of_terms) {
+        if (!$loanType || !$amount || !$number_of_terms) {
             return 0;
         }
         // original
@@ -75,7 +75,7 @@ class LoansProvider
 
     public static function computeDeductions(?LoanType $loanType, $gross_amount, ?Member $member, $existing_loan_id = null): array
     {
-        if (! $loanType) {
+        if (!$loanType) {
             return [];
         }
         $deductions = [
@@ -141,7 +141,7 @@ class LoansProvider
     {
         $schedule = [];
         $outstanding_balance = $loan->gross_amount;
-        $start = $loan->transaction_date;
+        $start = $loan->transaction_date ?? today();
         $term = 1;
         $amortization = LoansProvider::computeRegularAmortization($loan);
         bcscale(10);

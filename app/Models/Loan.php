@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Oxytoxin\DTO\ImprestData;
+use App\Oxytoxin\DTO\MSO\ImprestData;
 use App\Oxytoxin\ImprestsProvider;
 use App\Oxytoxin\LoansProvider;
 use App\Oxytoxin\ShareCapitalProvider;

@@ -2,8 +2,12 @@
 
 namespace App\Livewire\App;
 
+use App\Actions\CapitalSubscription\CreateNewCapitalSubscription;
+use App\Actions\CapitalSubscription\PayCapitalSubscription;
 use App\Models\CapitalSubscription;
 use App\Models\Member;
+use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionData;
+use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionPaymentData;
 use App\Oxytoxin\ShareCapitalProvider;
 use DB;
 use Filament\Forms\Components\DatePicker;
@@ -76,7 +80,8 @@ class CbuTable extends Component implements HasForms, HasTable
                     }),
             ], layout: FiltersLayout::AboveContent)
             ->actions([
-                Action::make('Pay')
+                Action::make('pay')
+                    ->label(fn ($record) => $record->payments()->exists() ? 'Pay' : 'Initial Payment')
                     ->icon('heroicon-o-banknotes')
                     ->form([
                         Select::make('payment_type_id')
@@ -86,47 +91,16 @@ class CbuTable extends Component implements HasForms, HasTable
                             ->unique('capital_subscription_payments'),
                         TextInput::make('amount')
                             ->required()
-                            ->default(fn ($record) => $record->monthly_payment)
+                            ->default(fn ($record) => $record->payments()->exists() ? $record->monthly_payment : $record->initial_amount_paid)
                             ->moneymask(),
+                        Placeholder::make('monthly_payment_required')->content(fn ($record) => $record->monthly_payment),
                         TextInput::make('remarks'),
-                        DatePicker::make('transaction_date')->default(today())->native(false)->label('Date'),
                     ])
                     ->action(function ($record, $data) {
-                        $record->payments()->create($data);
+                        PayCapitalSubscription::run($record, CapitalSubscriptionPaymentData::from($data));
                         Notification::make()->title('Payment made for capital subscription!')->success()->send();
                     })
-                    ->visible(fn ($record) => $record->outstanding_balance > 0 && $record->payments()->exists()),
-                Action::make('initial_payment')
-                    ->label('Initial Payment')
-                    ->icon('heroicon-o-banknotes')
-                    ->form([
-                        Select::make('payment_type_id')
-                            ->paymenttype()
-                            ->required(),
-                        TextInput::make('reference_number')->required()
-                            ->unique('capital_subscription_payments'),
-                        TextInput::make('amount')
-                            ->required()
-                            ->moneymask()
-                            ->default(fn ($record) => $record->initial_amount_paid)
-                            ->readOnly(),
-                        TextInput::make('monthly_payment')
-                            ->required()
-                            ->moneymask()
-                            ->default(fn ($record) => $record->monthly_payment)
-                            ->readOnly(),
-                        TextInput::make('remarks'),
-                        DatePicker::make('transaction_date')->default(today())->native(false)->label('Date'),
-                    ])
-                    ->action(function ($record, $data) {
-                        $record->update([
-                            'monthly_payment' => $data['monthly_payment'],
-                        ]);
-                        unset($data['monthly_payment']);
-                        $record->payments()->create($data);
-                        Notification::make()->title('Payment made for capital subscription!')->success()->send();
-                    })
-                    ->hidden(fn ($record) => $record->payments()->exists()),
+                    ->visible(fn ($record) => $record->outstanding_balance > 0),
                 ActionGroup::make([
                     ViewAction::make()
                         ->label('Payments')
@@ -140,10 +114,9 @@ class CbuTable extends Component implements HasForms, HasTable
             ])
             ->headerActions([
                 CreateAction::make()
-                    ->visible(fn () => ! $this->member->capital_subscriptions()->where('outstanding_balance', '>', 0)->exists() && auth()->user()->can('manage cbu'))
+                    ->visible(fn () => !$this->member->capital_subscriptions()->where('outstanding_balance', '>', 0)->exists() && auth()->user()->can('manage cbu'))
                     ->createAnother(false)
                     ->form([
-                        DatePicker::make('transaction_date')->required()->default(today()),
                         Placeholder::make('number_of_terms')->content($this->member->member_type->additional_number_of_terms),
                         TextInput::make('number_of_shares')->numeric()->minValue(1)->default(144)
                             ->live(true)
@@ -157,7 +130,7 @@ class CbuTable extends Component implements HasForms, HasTable
                             ->required()
                             ->moneymask()
                             ->default($this->member->member_type->minimum_initial_payment)
-                            ->afterStateUpdated(function ($set, $get, $record, $state) {
+                            ->afterStateUpdated(function ($set, $get) {
                                 $amount_subscribed = ($get('monthly_payment') ?? 0) * $this->member->member_type->additional_number_of_terms + ($get('initial_amount_paid') ?? 0);
                                 $set('amount_subscribed', $amount_subscribed);
                             }),
@@ -165,7 +138,7 @@ class CbuTable extends Component implements HasForms, HasTable
                             ->required()
                             ->moneymask()
                             ->default((72000 - $this->member->member_type->minimum_initial_payment) / $this->member->member_type->additional_number_of_terms)
-                            ->afterStateUpdated(function ($set, $get, $record, $state) {
+                            ->afterStateUpdated(function ($set, $get, $state) {
                                 $amount_subscribed = ($state ?? 0) * $this->member->member_type->additional_number_of_terms + ($get('initial_amount_paid') ?? 0);
                                 $number_of_shares = $amount_subscribed / $this->member->member_type->par_value;
                                 $set('amount_subscribed', $amount_subscribed);
@@ -182,18 +155,12 @@ class CbuTable extends Component implements HasForms, HasTable
                             }),
                     ])
                     ->action(function ($data) {
-                        DB::beginTransaction();
-                        $this->member->capital_subscriptions()->update([
-                            'is_common' => false,
-                        ]);
-                        $cbu = $this->member->capital_subscriptions()->create([
-                            ...$data,
-                            'number_of_terms' => $this->member->member_type->additional_number_of_terms,
-                            'par_value' => $this->member->member_type->par_value,
-                            'is_common' => true,
-                            'code' => Str::random(12),
-                        ]);
-                        DB::commit();
+                        $data['number_of_terms'] = $this->member->member_type->additional_number_of_terms;
+                        $data['par_value'] = $this->member->member_type->par_value;
+                        $data['is_common'] = true;
+                        $data['code'] = Str::random(12);
+                        $cbu_data = CapitalSubscriptionData::from($data);
+                        CreateNewCapitalSubscription::run($this->member, $cbu_data);
                         Notification::make()->title('Capital subscription created!')->success()->send();
                     }),
                 ViewAction::make('subsidiary_ledger')

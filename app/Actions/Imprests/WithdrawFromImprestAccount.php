@@ -1,35 +1,22 @@
 <?php
 
-namespace App\Oxytoxin;
+namespace App\Actions\Imprests;
 
 use App\Models\Imprest;
 use App\Models\Member;
 use App\Oxytoxin\DTO\MSO\ImprestData;
+use App\Oxytoxin\ImprestsProvider;
 use Filament\Notifications\Notification;
-use Illuminate\Support\Carbon;
+use Lorisleiva\Actions\Concerns\AsAction;
 use Illuminate\Validation\ValidationException;
 
-class ImprestsProvider
+class WithdrawFromImprestAccount
 {
-    const INTEREST_RATE = 0.02;
+    use AsAction;
 
-    const MINIMUM_AMOUNT_FOR_INTEREST = 1000;
-
-    const FROM_TRANSFER_CODE = '#TRANSFERFROMIMPRESTS';
-
-    public static function calculateInterest($amount, $interest, $days)
+    public function handle(Member $member, ImprestData $data)
     {
-        if ($amount < static::MINIMUM_AMOUNT_FOR_INTEREST) {
-            return 0;
-        }
-
-        return $amount * $interest * $days / 365;
-    }
-
-    public static function createImprest(Member $member, ImprestData $data)
-    {
-        $isWithdrawal = $data->amount < 0;
-        if ($isWithdrawal && ($member->imprests()->sum('amount') + $data->amount < 500)) {
+        if ($member->imprests()->sum('amount') - $data->amount < 500) {
             Notification::make()->title('Invalid Amount')->body('A P500 balance should remain.')->danger()->send();
             throw ValidationException::withMessages([
                 'mountedTableActionsData.0.amount' => 'Invalid Amount. A P500 balance should remain.',
@@ -39,7 +26,7 @@ class ImprestsProvider
         return Imprest::create([
             'payment_type_id' => $data->payment_type_id,
             'reference_number' => $data->reference_number,
-            'amount' => $data->amount,
+            'amount' => $data->amount * -1,
             'interest_rate' => ImprestsProvider::INTEREST_RATE,
             'member_id' => $member->id,
         ]);

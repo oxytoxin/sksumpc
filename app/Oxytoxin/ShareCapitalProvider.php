@@ -25,7 +25,7 @@ class ShareCapitalProvider
     public static function generateAmortizationSchedule(CapitalSubscription $cbu): array
     {
         $schedule = [];
-        $start = $cbu->transaction_date;
+        $start = $cbu->transaction_date ?? today();
         $term = 1;
         $outstanding_balance = $cbu->outstanding_balance;
         bcscale(10);
@@ -39,7 +39,6 @@ class ShareCapitalProvider
             $outstanding_balance = round(bcsub($outstanding_balance, $cbu->monthly_payment), 2);
             $term++;
         } while ($term <= $cbu->number_of_terms);
-
         return $schedule;
     }
 }

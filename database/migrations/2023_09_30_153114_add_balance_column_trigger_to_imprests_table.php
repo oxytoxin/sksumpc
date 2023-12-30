@@ -14,7 +14,7 @@ return new class extends Migration
             CREATE TRIGGER update_imprests_balance BEFORE INSERT ON imprests
             FOR EACH ROW
             BEGIN
-                DECLARE total_balance DECIMAL(14, 2);
+                DECLARE total_balance DECIMAL(18, 4);
 
                 SELECT COALESCE(SUM(amount), 0) INTO total_balance
                 FROM imprests

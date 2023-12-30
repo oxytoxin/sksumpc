@@ -23,10 +23,9 @@ return new class extends Migration
             $table->decimal('withdrawal', 18, 4)->nullable()->virtualAs('IF(amount < 0, amount * -1, null)');
             $table->decimal('interest_rate', 7, 2);
             $table->decimal('interest', 18, 4)->default(0);
-            $table->date('transaction_date');
+            $table->date('transaction_date')->default(DB::raw('CURDATE()'));
             $table->decimal('balance', 18, 4)->default(0);
             $table->date('interest_date')->nullable();
-            $table->integer('number_of_days')->virtualAs('COALESCE(DATEDIFF(COALESCE(interest_date, CURDATE()), transaction_date), 0)');
             $table->boolean('accrued')->default(false);
             $table->foreignId('cashier_id')->nullable()->constrained('users', 'id')->nullOnDelete();
             $table->timestamps();

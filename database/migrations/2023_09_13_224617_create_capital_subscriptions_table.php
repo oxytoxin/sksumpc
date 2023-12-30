@@ -22,7 +22,7 @@ return new class extends Migration
             $table->decimal('monthly_payment', 18, 4)->nullable();
             $table->decimal('initial_amount_paid', 18, 4)->nullable();
             $table->decimal('par_value');
-            $table->date('transaction_date');
+            $table->date('transaction_date')->default(DB::raw('CURDATE()'));
             $table->timestamps();
         });
     }

@@ -2,16 +2,21 @@
 
 namespace App\Filament\App\Pages\Cashier;
 
-use App\Actions\Savings\CreateNewSavingsTransaction;
+use App\Actions\CapitalSubscription\PayCapitalSubscription;
+use App\Actions\Imprests\DepositToImprestAccount;
+use App\Actions\Imprests\WithdrawFromImprestAccount;
+use App\Actions\Savings\DepositToSavingsAccount;
+use App\Actions\Savings\WithdrawFromSavingsAccount;
 use App\Models\CapitalSubscription;
 use App\Models\CashCollectible;
 use App\Models\Loan;
 use App\Models\Member;
 use App\Models\SavingsAccount;
 use App\Models\TimeDeposit;
-use App\Oxytoxin\DTO\ImprestData;
+use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionPaymentData;
+use App\Oxytoxin\DTO\MSO\ImprestData;
 use App\Oxytoxin\ImprestsProvider;
-use App\Oxytoxin\DTO\SavingsData;
+use App\Oxytoxin\DTO\MSO\SavingsData;
 use App\Oxytoxin\SavingsProvider;
 use App\Oxytoxin\TimeDepositsProvider;
 use DB;
@@ -82,7 +87,7 @@ class TransactionsPage extends Page
             ->action(function ($data) {
                 $record = CapitalSubscription::find($data['capital_subscription_id']);
                 unset($data['member_id'], $data['capital_subscription_id']);
-                $record->payments()->create($data);
+                PayCapitalSubscription::run($record, CapitalSubscriptionPaymentData::from($data));
                 Notification::make()->title('Payment made for capital subscription!')->success()->send();
             });
     }
@@ -116,7 +121,6 @@ class TransactionsPage extends Page
                     ->live()
                     ->default('1')
                     ->required(),
-                DatePicker::make('transaction_date')->required()->default(today()),
                 Select::make('payment_type_id')
                     ->paymenttype()
                     ->required(),
@@ -128,13 +132,17 @@ class TransactionsPage extends Page
                     ->moneymask(),
             ])
             ->action(function ($data) {
-                $data['amount'] = $data['amount'] * $data['action'];
-                DB::beginTransaction();
+                $isDeposit = $data['action'] == 1;
                 $member = Member::find($data['member_id']);
                 unset($data['member_id'], $data['action']);
-                $data['reference_number'] ??= '';
-                CreateNewSavingsTransaction::run($member, SavingsData::from($data));
-                DB::commit();
+                if ($isDeposit) {
+                    $savingsData = SavingsData::from($data);
+                    DepositToSavingsAccount::run($member, $savingsData);
+                } else {
+                    $data['reference_number'] = 'SW-';
+                    $savingsData = SavingsData::from($data);
+                    WithdrawFromSavingsAccount::run($member, $savingsData);
+                }
                 Notification::make()->title('Savings transaction completed!')->success()->send();
             });
     }
@@ -163,7 +171,6 @@ class TransactionsPage extends Page
                     ->live()
                     ->default('1')
                     ->required(),
-                DatePicker::make('transaction_date')->required()->default(today()),
                 Select::make('payment_type_id')
                     ->paymenttype()
                     ->required(),
@@ -175,13 +182,17 @@ class TransactionsPage extends Page
                     ->moneymask(),
             ])
             ->action(function ($data) {
-                $data['amount'] = $data['amount'] * $data['action'];
-                DB::beginTransaction();
+                $isDeposit = $data['action'] == 1;
                 $member = Member::find($data['member_id']);
                 unset($data['member_id'], $data['action']);
-                $data['reference_number'] ??= '';
-                ImprestsProvider::createImprest($member, ImprestData::from($data));
-                DB::commit();
+                if ($isDeposit) {
+                    $imprestData = ImprestData::from($data);
+                    DepositToImprestAccount::run($member, $imprestData);
+                } else {
+                    $data['reference_number'] = 'IW-';
+                    $imprestData = ImprestData::from($data);
+                    WithdrawFromImprestAccount::run($member, $imprestData);
+                }
                 Notification::make()->title('Imprests transaction completed!')->success()->send();
             });
     }

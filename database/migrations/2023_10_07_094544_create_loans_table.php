@@ -28,7 +28,7 @@ return new class extends Migration
             $table->decimal('interest', 18, 4);
             $table->decimal('monthly_payment', 16, 4);
             $table->date('release_date');
-            $table->date('transaction_date');
+            $table->date('transaction_date')->default(DB::raw('CURDATE()'));
             $table->boolean('posted')->default(false);
             $table->timestamps();
         });

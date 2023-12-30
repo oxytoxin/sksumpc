@@ -17,7 +17,6 @@ return new class extends Migration
             $table->foreignIdFor(Member::class)->constrained();
             $table->string('number');
             $table->string('name');
-            $table->decimal('balance', 18, 4)->default(0);
             $table->timestamps();
         });
     }
