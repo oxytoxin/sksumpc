@@ -29,6 +29,7 @@ class WithdrawFromImprestAccount
             'amount' => $data->amount * -1,
             'interest_rate' => ImprestsProvider::INTEREST_RATE,
             'member_id' => $member->id,
+            'transaction_date' => $data->transaction_date,
         ]);
     }
 }

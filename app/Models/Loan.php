@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Actions\Imprests\DepositToImprestAccount;
 use App\Oxytoxin\DTO\MSO\ImprestData;
 use App\Oxytoxin\ImprestsProvider;
 use App\Oxytoxin\LoansProvider;
@@ -120,20 +121,19 @@ class Loan extends Model
                     'par_value' => $loan->member->member_type->par_value,
                     'is_common' => false,
                     'code' => Str::random(12),
-                    'transaction_date' => $loan->transaction_date,
+                    'transaction_date' => today(),
                 ]);
                 $cbu->payments()->create([
                     'payment_type_id' => 2,
                     'reference_number' => $loan->reference_number,
                     'amount' => $cbu_amount,
-                    'transaction_date' => $loan->transaction_date,
+                    'transaction_date' => today(),
                 ]);
-                ImprestsProvider::createImprest($loan->member, (new ImprestData(
-                    transaction_date: $loan->transaction_date,
+                DepositToImprestAccount::run($loan->member, new ImprestData(
                     payment_type_id: 1,
                     reference_number: $loan->reference_number,
                     amount: collect($loan->deductions)->firstWhere('code', 'imprest')['amount'],
-                )));
+                ));
                 $buyOut = collect($loan->deductions)->where('code', 'buy_out');
                 if (count($buyOut)) {
                     $existing = $loan->member->loans()->find($buyOut->first()['loan_id']);
@@ -141,7 +141,7 @@ class Loan extends Model
                         'payment_type_id' => 2,
                         'reference_number' => $loan->reference_number,
                         'amount' => $buyOut->sum('amount'),
-                        'transaction_date' => $loan->transaction_date,
+                        'transaction_date' => today(),
                     ]);
                 }
                 DB::commit();

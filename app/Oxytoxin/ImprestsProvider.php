@@ -12,36 +12,6 @@ use Illuminate\Validation\ValidationException;
 class ImprestsProvider
 {
     const INTEREST_RATE = 0.02;
-
     const MINIMUM_AMOUNT_FOR_INTEREST = 1000;
-
     const FROM_TRANSFER_CODE = '#TRANSFERFROMIMPRESTS';
-
-    public static function calculateInterest($amount, $interest, $days)
-    {
-        if ($amount < static::MINIMUM_AMOUNT_FOR_INTEREST) {
-            return 0;
-        }
-
-        return $amount * $interest * $days / 365;
-    }
-
-    public static function createImprest(Member $member, ImprestData $data)
-    {
-        $isWithdrawal = $data->amount < 0;
-        if ($isWithdrawal && ($member->imprests()->sum('amount') + $data->amount < 500)) {
-            Notification::make()->title('Invalid Amount')->body('A P500 balance should remain.')->danger()->send();
-            throw ValidationException::withMessages([
-                'mountedTableActionsData.0.amount' => 'Invalid Amount. A P500 balance should remain.',
-            ]);
-        }
-
-        return Imprest::create([
-            'payment_type_id' => $data->payment_type_id,
-            'reference_number' => $data->reference_number,
-            'amount' => $data->amount,
-            'interest_rate' => ImprestsProvider::INTEREST_RATE,
-            'member_id' => $member->id,
-        ]);
-    }
 }

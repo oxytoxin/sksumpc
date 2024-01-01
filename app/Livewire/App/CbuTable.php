@@ -97,7 +97,11 @@ class CbuTable extends Component implements HasForms, HasTable
                         TextInput::make('remarks'),
                     ])
                     ->action(function ($record, $data) {
-                        PayCapitalSubscription::run($record, CapitalSubscriptionPaymentData::from($data));
+                        PayCapitalSubscription::run($record, new CapitalSubscriptionPaymentData(
+                            payment_type_id: $data['payment_type_id'],
+                            reference_number: $data['reference_number'],
+                            amount: $data['amount']
+                        ));
                         Notification::make()->title('Payment made for capital subscription!')->success()->send();
                     })
                     ->visible(fn ($record) => $record->outstanding_balance > 0),
@@ -155,11 +159,16 @@ class CbuTable extends Component implements HasForms, HasTable
                             }),
                     ])
                     ->action(function ($data) {
-                        $data['number_of_terms'] = $this->member->member_type->additional_number_of_terms;
-                        $data['par_value'] = $this->member->member_type->par_value;
-                        $data['is_common'] = true;
-                        $data['code'] = Str::random(12);
-                        $cbu_data = CapitalSubscriptionData::from($data);
+                        $cbu_data = new CapitalSubscriptionData(
+                            number_of_terms: $this->member->member_type->additional_number_of_terms,
+                            number_of_shares: $data['number_of_shares'],
+                            initial_amount_paid: $data['initial_amount_paid'],
+                            monthly_payment: $data['monthly_payment'],
+                            amount_subscribed: $data['amount_subscribed'],
+                            par_value: $this->member->member_type->par_value,
+                            is_common: true,
+                            code: Str::random(12)
+                        );
                         CreateNewCapitalSubscription::run($this->member, $cbu_data);
                         Notification::make()->title('Capital subscription created!')->success()->send();
                     }),

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\App;
 
+use App\Actions\Imprests\DepositToImprestAccount;
 use App\Actions\Savings\DepositToSavingsAccount;
 use App\Actions\Savings\WithdrawFromSavingsAccount;
 use App\Models\Member;
@@ -171,12 +172,11 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                             $record->update([
                                 'withdrawal_date' => today(),
                             ]);
-
-                            ImprestsProvider::createImprest(Member::find($this->member_id), (new ImprestData(
+                            DepositToImprestAccount::run(Member::find($this->member_id), new ImprestData(
                                 payment_type_id: 1,
                                 reference_number: TimeDepositsProvider::FROM_TRANSFER_CODE,
                                 amount: $record->maturity_amount
-                            )));
+                            ));
                             Notification::make()->title('Time deposit claimed.')->success()->send();
                         })
                         ->visible(fn (TimeDeposit $record) => $record->maturity_date->isBefore(today()) && is_null($record->withdrawal_date))

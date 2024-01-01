@@ -116,13 +116,17 @@ class ImprestsTable extends Component implements HasForms, HasTable
                     ->action(function ($data) {
                         DB::beginTransaction();
                         $member = Member::find($this->member_id);
-                        $data['payment_type_id'] = 1;
-                        $data['reference_number'] = '#TRANSFERFROMIMPRESTS';
-                        $data['amount'] = $data['amount'] * -1;
-                        $im = ImprestsProvider::createImprest($member, ImprestData::from($data));
-                        $data['amount'] = $data['amount'] * -1;
-                        $data['reference_number'] = $im->reference_number;
-                        DepositToSavingsAccount::run($member, SavingsData::from($data));
+                        $im = WithdrawFromImprestAccount::run($member, new ImprestData(
+                            payment_type_id: 1,
+                            reference_number: ImprestsProvider::FROM_TRANSFER_CODE,
+                            amount: $data['amount']
+                        ));
+                        DepositToSavingsAccount::run($member, new SavingsData(
+                            payment_type_id: 1,
+                            reference_number: $im->reference_number,
+                            amount: $data['amount'],
+                            savings_account_id: $data['savings_account_id']
+                        ));
                         DB::commit();
                     })
                     ->createAnother(false),

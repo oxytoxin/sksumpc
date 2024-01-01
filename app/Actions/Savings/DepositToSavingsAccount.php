@@ -25,6 +25,7 @@ class DepositToSavingsAccount
             'amount' => $data->amount,
             'interest_rate' => SavingsProvider::INTEREST_RATE,
             'member_id' => $member->id,
+            'transaction_date' => $data->transaction_date,
         ]);
     }
 }

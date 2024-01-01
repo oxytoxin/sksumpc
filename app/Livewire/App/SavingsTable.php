@@ -5,7 +5,6 @@ namespace App\Livewire\App;
 use App\Actions\Imprests\DepositToImprestAccount;
 use App\Actions\Savings\DepositToSavingsAccount;
 use App\Actions\Savings\WithdrawFromSavingsAccount;
-use App\Actions\Savings\GenerateSavingsInterestForMember;
 use App\Models\Member;
 use App\Models\Saving;
 use App\Models\SavingsAccount;

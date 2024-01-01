@@ -6,10 +6,14 @@ use App\Models\LoanApplication;
 use App\Models\Member;
 use App\Models\User;
 use Filament\Tables\Actions\CreateAction;
+use PhpOffice\PhpSpreadsheet\Calculation\Financial\CashFlow\Constant\Periodic\Cumulative;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertModelExists;
 use function Pest\Livewire\livewire;
+
+it('test loan functions from phpspreadsheet', function () {
+});
 
 it('can create a new loan', function () {
     $member = Member::find(663);
@@ -34,7 +38,7 @@ it('can create a new loan', function () {
     ]);
     assertModelExists($la);
     livewire(LoansTable::class, ['member' => $member])
-        ->callTableAction(name: CreateAction::class, data: ['loan_application_id' => $la->id, 'transaction_date' => today()->addMonth()]);
+        ->callTableAction(name: CreateAction::class, data: ['loan_application_id' => $la->id, 'transaction_date' => today()]);
     $loan = Loan::latest()->first();
     $loan->posted = true;
     $loan->save();

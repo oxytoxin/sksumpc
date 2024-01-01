@@ -13,6 +13,9 @@ class DisapprovalReasonSeeder extends Seeder
     public function run(): void
     {
         DisapprovalReason::create([
+            'name' => 'Bad Standing',
+        ]);
+        DisapprovalReason::create([
             'name' => 'Others',
         ]);
     }

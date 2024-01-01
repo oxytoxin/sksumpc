@@ -33,6 +33,7 @@ class WithdrawFromSavingsAccount
             'amount' => $data->amount * -1,
             'interest_rate' => SavingsProvider::INTEREST_RATE,
             'member_id' => $member->id,
+            'transaction_date' => $data->transaction_date,
         ]);
     }
 }

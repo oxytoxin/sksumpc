@@ -136,6 +136,11 @@ class Member extends Model implements HasMedia
         return $this->hasMany(Imprest::class)->whereNull('interest_date');
     }
 
+    public function imprests_unaccrued(): HasMany
+    {
+        return $this->hasMany(Imprest::class)->where('accrued', false);
+    }
+
     public function loans(): HasMany
     {
         return $this->hasMany(Loan::class);
