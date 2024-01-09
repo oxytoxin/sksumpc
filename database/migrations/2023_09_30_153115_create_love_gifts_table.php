@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('imprests', function (Blueprint $table) {
+        Schema::create('love_gifts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('member_id')->constrained();
             $table->foreignId('payment_type_id')->constrained();
@@ -28,6 +28,20 @@ return new class extends Migration
             $table->foreignId('cashier_id')->nullable()->constrained('users', 'id')->nullOnDelete();
             $table->timestamps();
         });
+
+        DB::unprepared('
+        CREATE TRIGGER update_love_gifts_balance BEFORE INSERT ON love_gifts
+        FOR EACH ROW
+        BEGIN
+            DECLARE total_balance DECIMAL(18, 4);
+
+            SELECT COALESCE(SUM(amount), 0) INTO total_balance
+            FROM love_gifts
+            WHERE member_id = NEW.member_id;
+
+            SET NEW.balance = total_balance + NEW.amount;
+        END;
+    ');
     }
 
     /**
@@ -35,6 +49,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('imprests');
+        Schema::dropIfExists('love_gifts');
     }
 };

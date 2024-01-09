@@ -98,11 +98,13 @@ class SavingsTable extends Component implements HasForms, HasTable
                                 ->moneymask(),
                         ])
                         ->action(function ($data) {
-                            DB::beginTransaction();
                             $member = Member::find($this->member_id);
-                            $data['savings_account_id'] = $this->tableFilters['savings_account_id']['value'];
-                            DepositToSavingsAccount::run($member, SavingsData::from($data));
-                            DB::commit();
+                            DepositToSavingsAccount::run($member, new SavingsData(
+                                payment_type_id: $data['payment_type_id'],
+                                reference_number: $data['reference_number'],
+                                amount: $data['amount'],
+                                savings_account_id: $this->tableFilters['savings_account_id']['value']
+                            ));
                         })
                         ->createAnother(false),
                     CreateAction::make('Withdraw')

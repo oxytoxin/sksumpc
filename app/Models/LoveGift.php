@@ -3,17 +3,15 @@
 namespace App\Models;
 
 use App\Oxytoxin\ImprestsProvider;
+use App\Oxytoxin\LoveGiftProvider;
 use App\Oxytoxin\TimeDepositsProvider;
-use DB;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\DB;
 
-/**
- * @mixin IdeHelperImprest
- */
-class Imprest extends Model
+class LoveGift extends Model
 {
     use HasFactory;
 
@@ -49,23 +47,23 @@ class Imprest extends Model
             "));
         });
 
-        static::creating(function (Imprest $imprest) {
-            $imprest->cashier_id = auth()->id();
+        static::creating(function (LoveGift $loveGift) {
+            $loveGift->cashier_id = auth()->id();
         });
 
-        Imprest::created(function (Imprest $imprest) {
-            $prefix = match ($imprest->reference_number) {
-                ImprestsProvider::FROM_TRANSFER_CODE  => 'IT-',
+        static::created(function (LoveGift $loveGift) {
+            $prefix = match ($loveGift->reference_number) {
+                LoveGiftProvider::FROM_TRANSFER_CODE  => 'LGT-',
                 TimeDepositsProvider::FROM_TRANSFER_CODE  => 'TD-',
             };
 
-            if ($imprest->amount < 0) {
-                $prefix = 'IW';
+            if ($loveGift->amount < 0) {
+                $prefix = 'LGW';
             }
 
-            $imprest->reference_number = str($prefix)->append(today()->format('Y') . '-')->append(str_pad($imprest->id, 6, '0', STR_PAD_LEFT));
+            $loveGift->reference_number = str($prefix)->append(today()->format('Y') . '-')->append(str_pad($loveGift->id, 6, '0', STR_PAD_LEFT));
 
-            $imprest->save();
+            $loveGift->save();
         });
     }
 }
