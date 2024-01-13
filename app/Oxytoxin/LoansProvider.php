@@ -22,7 +22,7 @@ class LoansProvider
 
     public static function computeInterest($amount, ?LoanType $loanType, $number_of_terms, $transaction_date)
     {
-        if (! $loanType || ! $amount || ! $number_of_terms) {
+        if (!$loanType || !$amount || !$number_of_terms) {
             return 0;
         }
         $loan = Loan::make([
@@ -39,13 +39,10 @@ class LoansProvider
 
     public static function computeMonthlyPayment($amount, ?LoanType $loanType, $number_of_terms, $transaction_date)
     {
-        if (! $loanType || ! $amount || ! $number_of_terms) {
+        if (!$loanType || !$amount || !$number_of_terms) {
             return 0;
         }
-        // original
-        // return round($amount * (1 + $loanType->interest_rate * $number_of_terms) / $number_of_terms, 2);
 
-        // from Excel
         $loan = Loan::make([
             'interest_rate' => $loanType->interest_rate,
             'gross_amount' => $amount,
@@ -58,22 +55,22 @@ class LoansProvider
 
     public static function computeRegularAmortization(Loan $loan)
     {
-        $pt = $loan->number_of_terms;
-        $mi = $loan->interest_rate;
-        $la = $loan->gross_amount;
-        $o = 1 + $mi;
-        $p = pow($o, $pt);
-        $q = $mi * $p;
+        $number_of_terms = $loan->number_of_terms;
+        $interest_rate = $loan->interest_rate;
+        $gross_amount = $loan->gross_amount;
+        $o = 1 + $interest_rate;
+        $p = pow($o, $number_of_terms);
+        $q = $interest_rate * $p;
         $r = $p - 1;
         $s = $q / $r;
-        $t = $la * $s;
+        $t = $gross_amount * $s;
 
-        return round($t, 2);
+        return round($t, 4);
     }
 
     public static function computeDeductions(?LoanType $loanType, $gross_amount, ?Member $member, $existing_loan_id = null): array
     {
-        if (! $loanType) {
+        if (!$loanType) {
             return [];
         }
         $deductions = [
@@ -132,56 +129,50 @@ class LoansProvider
         $schedule = [];
         $outstanding_balance = $loan->gross_amount;
         $start = $loan->transaction_date ?? today();
-        $term = 1;
         $amortization = LoansProvider::computeRegularAmortization($loan);
         bcscale(10);
-        do {
-            if ($term == 1) {
-                if ($loan->transaction_date->day <= 10) {
-                    $days = $start->diffInDays($start->endOfMonth()) + 1;
+
+        for ($i = 1; $i <= $loan->number_of_terms; $i++) {
+            if ($start->day <= 10) {
+                if ($i == 1) {
+                    $days = LoansProvider::DAYS_IN_MONTH - $start->day;
+                } else if ($i == $loan->number_of_terms) {
+                    $days = LoansProvider::DAYS_IN_MONTH + $start->day;
                 } else {
-                    $days = $start->diffInDays($start->addMonthNoOverflow()->endOfMonth()) + 1;
+                    $days = LoansProvider::DAYS_IN_MONTH;
                 }
-            } elseif ($term == $loan->number_of_terms) {
-                $days = $start->diffInDays($loan->transaction_date->addMonthsNoOverflow($loan->number_of_terms));
+                $date = $start->addMonthsNoOverflow($i - 1);
             } else {
-                $days = 30;
+                if ($i == 1) {
+                    $days = (LoansProvider::DAYS_IN_MONTH * 2) - $start->day;
+                } else if ($i == $loan->number_of_terms) {
+                    $days = $start->day;
+                } else {
+                    $days = LoansProvider::DAYS_IN_MONTH;
+                }
+                $date = $start->addMonthsNoOverflow($i);
             }
 
             $interest = bcmul($loan->interest_rate, bcmul($outstanding_balance, bcdiv($days, LoansProvider::DAYS_IN_MONTH)));
-            if ($term == $loan->number_of_terms) {
-                $interest = bcmul($loan->interest_rate, $outstanding_balance);
+            if ($i == $loan->number_of_terms) {
                 $amortization = bcadd($outstanding_balance, $interest);
                 $principal = $outstanding_balance;
             } else {
                 $principal = bcsub($amortization, $interest);
             }
 
-            if ($loan->transaction_date->day <= 10) {
-                $date = $loan->transaction_date->addMonthsNoOverflow($term - 1);
-            } else {
-                $date = $loan->transaction_date->addMonthsNoOverflow($term);
-            }
-
             $schedule[] = [
-                'term' => $term,
+                'term' => $i,
                 'date' => $date,
                 'days' => $days,
                 'amortization' => $amortization,
                 'interest' => $interest,
                 'principal' => $principal,
-                'previous_balance' => round($outstanding_balance, 2),
+                'previous_balance' => round($outstanding_balance, 4),
             ];
 
-            $outstanding_balance = round(bcsub($outstanding_balance, $principal), 2);
-            if ($start->day <= 10) {
-                $start = $start->endOfMonth();
-            } else {
-                $start = $start->addMonthNoOverflow()->endOfMonth();
-            }
-            $term++;
-        } while ($term <= $loan->number_of_terms);
-
+            $outstanding_balance = round(bcsub($outstanding_balance, $principal), 4);
+        }
         return $schedule;
     }
 }

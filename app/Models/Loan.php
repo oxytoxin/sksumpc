@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Actions\Loans\RunLoanProcessesAfterPosting;
+use App\Actions\Loans\UpdateLoanDeductionsData;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -47,12 +48,12 @@ class Loan extends Model
 
     public function getDeductionsListAttribute()
     {
-        return collect($this->deductions)->map(fn ($d) => $d['name'].': '.format_money($d['amount'], 'PHP'))->toArray();
+        return collect($this->deductions)->map(fn ($d) => $d['name'] . ': ' . format_money($d['amount'], 'PHP'))->toArray();
     }
 
     public function getMaturityDateAttribute()
     {
-        return $this->release_date->addMonthsNoOverflow($this->number_of_terms);
+        return $this->transaction_date->addMonthsNoOverflow($this->number_of_terms);
     }
 
     public function loan_type(): BelongsTo
@@ -104,14 +105,7 @@ class Loan extends Model
     {
 
         static::saving(function (Loan $loan) {
-            $loan->outstanding_balance = $loan->gross_amount;
-            $loan->deductions_amount = collect($loan->deductions)->sum('amount');
-            $loan->service_fee = collect($loan->deductions)->firstWhere('code', 'service_fee')['amount'] ?? 0;
-            $loan->cbu_amount = collect($loan->deductions)->firstWhere('code', 'cbu_amount')['amount'] ?? 0;
-            $loan->imprest_amount = collect($loan->deductions)->firstWhere('code', 'imprest_amount')['amount'] ?? 0;
-            $loan->insurance_amount = collect($loan->deductions)->firstWhere('code', 'insurance_amount')['amount'] ?? 0;
-            $loan->loan_buyout_interest = collect($loan->deductions)->firstWhere('code', 'loan_buyout_interest')['amount'] ?? 0;
-            $loan->loan_buyout_principal = collect($loan->deductions)->firstWhere('code', 'loan_buyout_principal')['amount'] ?? 0;
+            $loan = UpdateLoanDeductionsData::run($loan);
             if ($loan->posted) {
                 RunLoanProcessesAfterPosting::run($loan);
             }
