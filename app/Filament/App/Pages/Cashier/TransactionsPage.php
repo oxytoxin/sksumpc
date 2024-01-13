@@ -15,9 +15,7 @@ use App\Models\SavingsAccount;
 use App\Models\TimeDeposit;
 use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionPaymentData;
 use App\Oxytoxin\DTO\MSO\ImprestData;
-use App\Oxytoxin\ImprestsProvider;
 use App\Oxytoxin\DTO\MSO\SavingsData;
-use App\Oxytoxin\SavingsProvider;
 use App\Oxytoxin\TimeDepositsProvider;
 use DB;
 use Filament\Actions\Action;
@@ -316,7 +314,7 @@ class TransactionsPage extends Page
                 $record = CashCollectible::find($data['cash_collectible_id']);
                 unset($data['cash_collectible_id']);
                 $record->payments()->create($data);
-                Notification::make()->title('Payment made for ' . $record->name . '!')->success()->send();
+                Notification::make()->title('Payment made for '.$record->name.'!')->success()->send();
             });
     }
 }

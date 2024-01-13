@@ -39,6 +39,7 @@ class ShareCapitalProvider
             $outstanding_balance = round(bcsub($outstanding_balance, $cbu->monthly_payment), 2);
             $term++;
         } while ($term <= $cbu->number_of_terms);
+
         return $schedule;
     }
 }

@@ -24,6 +24,10 @@ class DatabaseSeeder extends Seeder
         $this->call(PatronageStatusSeeder::class);
         $this->call(GenderSeeder::class);
         $this->call(TrialBalanceEntrySeeder::class);
+        $this->call(LedgerAccountCategoriesSeeder::class);
+        $this->call(LedgerAccountsSeeder::class);
+        $this->command->info("Seeding members...\n");
         Artisan::call('app:seed-members');
+        $this->command->info("Seeded members...\n");
     }
 }

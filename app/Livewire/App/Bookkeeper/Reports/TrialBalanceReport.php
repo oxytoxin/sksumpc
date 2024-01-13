@@ -2,9 +2,9 @@
 
 namespace App\Livewire\App\Bookkeeper\Reports;
 
-use Livewire\Component;
 use App\Models\TrialBalanceEntry;
 use Livewire\Attributes\On;
+use Livewire\Component;
 
 class TrialBalanceReport extends Component
 {

@@ -2,6 +2,8 @@
 
 namespace App\Filament\App\Resources;
 
+use App\Actions\LoanApplications\ApproveLoanApplication;
+use App\Actions\LoanApplications\DisapproveLoanApplication;
 use App\Filament\App\Resources\LoanApplicationResource\Pages;
 use App\Livewire\App\Loans\Traits\HasViewLoanDetailsActionGroup;
 use App\Models\Loan;
@@ -89,7 +91,6 @@ class LoanApplicationResource extends Resource
                     ->live(),
                 TextInput::make('priority_number'),
                 TextInput::make('desired_amount')->moneymask()->required(),
-                DatePicker::make('transaction_date')->required()->native(false)->default(today()),
                 TextInput::make('purpose'),
             ]);
     }
@@ -122,10 +123,8 @@ class LoanApplicationResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make()->visible(fn ($record) => auth()->user()->can('manage loans') && $record->status == LoanApplication::STATUS_PROCESSING),
                 Action::make('Approve')
-                    ->action(function ($record, $data) {
-                        $record->update([
-                            'status' => LoanApplication::STATUS_APPROVED,
-                        ]);
+                    ->action(function (LoanApplication $record, $data) {
+                        ApproveLoanApplication::run($record);
                         Notification::make()->title('Loan application approved!')->success()->send();
                     })
                     ->requiresConfirmation()
@@ -140,13 +139,13 @@ class LoanApplicationResource extends Resource
                             ->required(),
                         TextInput::make('remarks'),
                     ])
-                    ->action(function ($record, $data) {
-                        $record->update([
-                            'priority_number' => $data['priority_number'],
-                            'status' => LoanApplication::STATUS_DISAPPROVED,
-                            'disapproval_date' => today(),
-                            'remarks' => $data['remarks'],
-                        ]);
+                    ->action(function (LoanApplication $record, $data) {
+                        DisapproveLoanApplication::run(
+                            loan_application: $record,
+                            disapproval_reason_id: $data['disapproval_reason_id'],
+                            priority_number: $data['priority_number'],
+                            remarks: $data['remarks']
+                        );
                         Notification::make()->title('Loan application disapproved!')->success()->send();
                     })
                     ->requiresConfirmation()
@@ -154,9 +153,10 @@ class LoanApplicationResource extends Resource
                     ->color('danger')
                     ->visible(fn ($record) => $record->status == LoanApplication::STATUS_PROCESSING),
                 Action::make('new_loan')
-                    ->visible(fn ($record) => auth()->user()->can('manage loans') && !$record->loan && $record->status == LoanApplication::STATUS_APPROVED)
+                    ->visible(fn ($record) => auth()->user()->can('manage loans') && ! $record->loan && $record->status == LoanApplication::STATUS_APPROVED)
                     ->fillForm(function ($record) {
                         $deductions = LoansProvider::computeDeductions($record->loan_type, $record->desired_amount, $record->member);
+
                         return [
                             'gross_amount' => $record->desired_amount,
                             'number_of_terms' => $record->number_of_terms,
@@ -177,7 +177,7 @@ class LoanApplicationResource extends Resource
                         Grid::make(3)
                             ->schema([
                                 Placeholder::make('interest_rate')
-                                    ->content(fn ($get) => str($record->loan_type?->interest_rate * 100 ?? 0)->append('%')->toString()),
+                                    ->content(fn ($record) => str($record->loan_type?->interest_rate * 100 ?? 0)->append('%')->toString()),
                                 Placeholder::make('interest')
                                     ->content(fn ($get) => format_money(LoansProvider::computeInterest($get('gross_amount') ?? 0, $record->loan_type, $get('number_of_terms'), $get('transaction_date')), 'PHP')),
                                 Placeholder::make('monthly_payment')

@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Kalnoy\Nestedset\NodeTrait;
 
+/**
+ * @mixin IdeHelperTrialBalanceEntry
+ */
 class TrialBalanceEntry extends Model
 {
     use HasFactory, NodeTrait;

@@ -2,19 +2,13 @@
 
 namespace App\Models;
 
-use App\Actions\Imprests\DepositToImprestAccount;
-use App\Oxytoxin\DTO\MSO\ImprestData;
-use App\Oxytoxin\ImprestsProvider;
-use App\Oxytoxin\LoansProvider;
-use App\Oxytoxin\ShareCapitalProvider;
-use DB;
+use App\Actions\Loans\RunLoanProcessesAfterPosting;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Str;
 
 use function Filament\Support\format_money;
 
@@ -33,6 +27,12 @@ class Loan extends Model
         'deductions' => 'array',
         'number_of_terms' => 'integer',
         'interest' => 'decimal:4',
+        'service_fee' => 'decimal:4',
+        'cbu_amount' => 'decimal:4',
+        'imprest_amount' => 'decimal:4',
+        'insurance_amount' => 'decimal:4',
+        'loan_buyout_interest' => 'decimal:4',
+        'loan_buyout_principal' => 'decimal:4',
         'interest_rate' => 'decimal:4',
         'monthly_payment' => 'decimal:4',
         'release_date' => 'immutable_date',
@@ -47,7 +47,7 @@ class Loan extends Model
 
     public function getDeductionsListAttribute()
     {
-        return collect($this->deductions)->map(fn ($d) => $d['name'] . ': ' . format_money($d['amount'], 'PHP'))->toArray();
+        return collect($this->deductions)->map(fn ($d) => $d['name'].': '.format_money($d['amount'], 'PHP'))->toArray();
     }
 
     public function getMaturityDateAttribute()
@@ -106,45 +106,14 @@ class Loan extends Model
         static::saving(function (Loan $loan) {
             $loan->outstanding_balance = $loan->gross_amount;
             $loan->deductions_amount = collect($loan->deductions)->sum('amount');
+            $loan->service_fee = collect($loan->deductions)->firstWhere('code', 'service_fee')['amount'] ?? 0;
+            $loan->cbu_amount = collect($loan->deductions)->firstWhere('code', 'cbu_amount')['amount'] ?? 0;
+            $loan->imprest_amount = collect($loan->deductions)->firstWhere('code', 'imprest_amount')['amount'] ?? 0;
+            $loan->insurance_amount = collect($loan->deductions)->firstWhere('code', 'insurance_amount')['amount'] ?? 0;
+            $loan->loan_buyout_interest = collect($loan->deductions)->firstWhere('code', 'loan_buyout_interest')['amount'] ?? 0;
+            $loan->loan_buyout_principal = collect($loan->deductions)->firstWhere('code', 'loan_buyout_principal')['amount'] ?? 0;
             if ($loan->posted) {
-                DB::beginTransaction();
-                $loan->loan_application->update([
-                    'status' => LoanApplication::STATUS_POSTED,
-                ]);
-                $amortization_schedule = LoansProvider::generateAmortizationSchedule($loan);
-                $loan->loan_amortizations()->createMany($amortization_schedule);
-                $cbu_amount = collect($loan->deductions)->firstWhere('code', 'cbu_common')['amount'];
-                $cbu = $loan->member->capital_subscriptions()->create([
-                    'number_of_terms' => 0,
-                    'number_of_shares' => $cbu_amount / $loan->member->member_type->par_value,
-                    'amount_subscribed' => $cbu_amount,
-                    'par_value' => $loan->member->member_type->par_value,
-                    'is_common' => false,
-                    'code' => Str::random(12),
-                    'transaction_date' => today(),
-                ]);
-                $cbu->payments()->create([
-                    'payment_type_id' => 2,
-                    'reference_number' => $loan->reference_number,
-                    'amount' => $cbu_amount,
-                    'transaction_date' => today(),
-                ]);
-                DepositToImprestAccount::run($loan->member, new ImprestData(
-                    payment_type_id: 1,
-                    reference_number: $loan->reference_number,
-                    amount: collect($loan->deductions)->firstWhere('code', 'imprest')['amount'],
-                ));
-                $buyOut = collect($loan->deductions)->where('code', 'buy_out');
-                if (count($buyOut)) {
-                    $existing = $loan->member->loans()->find($buyOut->first()['loan_id']);
-                    $existing?->payments()->create([
-                        'payment_type_id' => 2,
-                        'reference_number' => $loan->reference_number,
-                        'amount' => $buyOut->sum('amount'),
-                        'transaction_date' => today(),
-                    ]);
-                }
-                DB::commit();
+                RunLoanProcessesAfterPosting::run($loan);
             }
         });
     }

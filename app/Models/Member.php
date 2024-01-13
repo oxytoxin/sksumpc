@@ -22,7 +22,7 @@ class Member extends Model implements HasMedia
 
     protected $casts = [
         'dob' => 'immutable_date',
-        'dependents' => DataCollection::class . ':' . MemberDependent::class,
+        'dependents' => DataCollection::class.':'.MemberDependent::class,
         'other_income_sources' => 'array',
         'annual_income' => 'decimal:4',
     ];
@@ -30,7 +30,7 @@ class Member extends Model implements HasMedia
     protected static function booted(): void
     {
         static::created(function (Member $member) {
-            $member->mpc_code = 'MPCSKSU' . $member->id;
+            $member->mpc_code = 'MPCSKSU'.$member->id;
             $member->save();
         });
     }
@@ -139,6 +139,21 @@ class Member extends Model implements HasMedia
     public function imprests_unaccrued(): HasMany
     {
         return $this->hasMany(Imprest::class)->where('accrued', false);
+    }
+
+    public function love_gifts(): HasMany
+    {
+        return $this->hasMany(LoveGift::class);
+    }
+
+    public function love_gifts_no_interest(): HasMany
+    {
+        return $this->hasMany(LoveGift::class)->whereNull('interest_date');
+    }
+
+    public function love_gifts_unaccrued(): HasMany
+    {
+        return $this->hasMany(LoveGift::class)->where('accrued', false);
     }
 
     public function loans(): HasMany

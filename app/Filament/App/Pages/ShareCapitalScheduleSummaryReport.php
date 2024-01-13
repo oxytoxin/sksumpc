@@ -4,7 +4,6 @@ namespace App\Filament\App\Pages;
 
 use App\Models\CapitalSubscriptionPayment;
 use App\Models\MemberType;
-use App\Oxytoxin\ShareCapitalProvider;
 use Filament\Pages\Page;
 use Livewire\Attributes\Computed;
 

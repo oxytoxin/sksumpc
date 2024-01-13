@@ -22,11 +22,9 @@ class LoansProvider
 
     public static function computeInterest($amount, ?LoanType $loanType, $number_of_terms, $transaction_date)
     {
-        if (!$loanType || !$amount || !$number_of_terms) {
+        if (! $loanType || ! $amount || ! $number_of_terms) {
             return 0;
         }
-        // original
-        //return round($amount * $loanType->interest_rate * $number_of_terms, 2);
         $loan = Loan::make([
             'interest_rate' => $loanType->interest_rate,
             'gross_amount' => $amount,
@@ -41,7 +39,7 @@ class LoansProvider
 
     public static function computeMonthlyPayment($amount, ?LoanType $loanType, $number_of_terms, $transaction_date)
     {
-        if (!$loanType || !$amount || !$number_of_terms) {
+        if (! $loanType || ! $amount || ! $number_of_terms) {
             return 0;
         }
         // original
@@ -75,7 +73,7 @@ class LoansProvider
 
     public static function computeDeductions(?LoanType $loanType, $gross_amount, ?Member $member, $existing_loan_id = null): array
     {
-        if (!$loanType) {
+        if (! $loanType) {
             return [];
         }
         $deductions = [
@@ -89,19 +87,19 @@ class LoansProvider
                 'name' => 'CBU-Common',
                 'amount' => round($loanType->cbu_common * $gross_amount, 2),
                 'readonly' => true,
-                'code' => 'cbu_common',
+                'code' => 'cbu_amount',
             ],
             [
                 'name' => 'Imprest Savings',
                 'amount' => round($loanType->imprest * $gross_amount, 2),
                 'readonly' => true,
-                'code' => 'imprest',
+                'code' => 'imprest_amount',
             ],
             [
                 'name' => 'Insurance-LOAN',
                 'amount' => round($loanType->insurance * $gross_amount, 2),
                 'readonly' => false,
-                'code' => 'insurance',
+                'code' => 'insurance_amount',
             ],
         ];
         $existing = $member?->loans()->wherePosted(true)->where('loan_type_id', $loanType->id)->where('outstanding_balance', '>', 0)->whereNot('id', $existing_loan_id)->first();
@@ -113,23 +111,15 @@ class LoansProvider
                 'name' => 'Loan Buy-out Interest',
                 'amount' => $interest_remaining,
                 'readonly' => true,
-                'code' => 'buy_out',
+                'code' => 'loan_buyout_interest',
                 'loan_id' => $existing->id,
             ];
 
             $deductions[] = [
                 'name' => 'Loan Buy-out Principal',
-                'amount' => $amortizations->sum('principal') - $amortizations->sum('principal_payment'),
+                'amount' => $existing->outstanding_balance,
                 'readonly' => true,
-                'code' => 'buy_out',
-                'loan_id' => $existing->id,
-            ];
-
-            $deductions[] = [
-                'name' => 'Loan Buy-out Arrears',
-                'amount' => $amortizations->sum('arrears'),
-                'readonly' => true,
-                'code' => 'buy_out',
+                'code' => 'loan_buyout_principal',
                 'loan_id' => $existing->id,
             ];
         }

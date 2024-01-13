@@ -5,8 +5,6 @@ namespace Database\Seeders;
 use App\Models\CashCollectible;
 use App\Models\LoanType;
 use App\Models\TrialBalanceEntry;
-use DB;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class TrialBalanceEntrySeeder extends Seeder
@@ -27,19 +25,19 @@ class TrialBalanceEntrySeeder extends Seeder
                 ['name' => 'petty cash fund'],
                 ['name' => 'revolving fund'],
                 ['name' => 'advances to officers,employees & members'],
-            ]
+            ],
         ]);
         $loan_type_names = LoanType::get()->map(fn ($loan_type) => [
             'name' => strtolower($loan_type->name),
             'auditable_type' => LoanType::class,
-            'auditable_id' => $loan_type->id
+            'auditable_id' => $loan_type->id,
         ]);
         TrialBalanceEntry::create([
             'name' => 'loans receivable',
             'children' => [
                 ...$loan_type_names->toArray(),
-                ['name' => 'allowance for probable losses-loans']
-            ]
+                ['name' => 'allowance for probable losses-loans'],
+            ],
         ]);
         $cash_collectible_names = CashCollectible::get()->map(fn ($cash_collectible) => [
             'name' => strtolower($cash_collectible->name),
@@ -52,19 +50,19 @@ class TrialBalanceEntrySeeder extends Seeder
                 ...$cash_collectible_names,
                 ['name' => 'allowance for probable losses-a/r'],
                 ['name' => 'purchases'],
-            ]
+            ],
         ]);
         TrialBalanceEntry::create([
             'name' => 'merchandise inventory',
             'children' => [
                 ...$cash_collectible_names,
-            ]
+            ],
         ]);
         TrialBalanceEntry::create([
             'name' => 'other current assets',
             'children' => [
                 ['name' => 'deposit to suppliers'],
-            ]
+            ],
         ]);
         TrialBalanceEntry::create([
             'name' => 'property & equipment',
@@ -79,7 +77,7 @@ class TrialBalanceEntrySeeder extends Seeder
                 ['name' => 'accu.depreciation-office building'],
                 ['name' => 'office building extension'],
                 ['name' => 'accu.depreciation-building extension'],
-            ]
+            ],
         ]);
         TrialBalanceEntry::create([
             'name' => 'other funds and deposits',
@@ -98,7 +96,7 @@ class TrialBalanceEntrySeeder extends Seeder
                 ['name' => 'other investment- climbs'],
                 ['name' => 'other investment- ticketing office'],
                 ['name' => 'other investment- cash bond pal'],
-            ]
+            ],
         ]);
         TrialBalanceEntry::create([
             'name' => 'liabilities',
@@ -110,7 +108,7 @@ class TrialBalanceEntrySeeder extends Seeder
                 ['name' => 'interest on share capital payable'],
                 ['name' => 'patronage refund payable'],
                 ['name' => 'due to union/federation (cetf)'],
-            ]
+            ],
         ]);
         TrialBalanceEntry::create([
             'name' => 'other current liabilities',
@@ -123,7 +121,7 @@ class TrialBalanceEntrySeeder extends Seeder
                 ['name' => 'employees retirement fund payable'],
                 ['name' => 'members benefit fund payable'],
                 ['name' => 'withholding tax payable'],
-            ]
+            ],
         ]);
         TrialBalanceEntry::create([
             'name' => 'members equity',
@@ -139,7 +137,7 @@ class TrialBalanceEntrySeeder extends Seeder
                 ['name' => 'coop education & training fund'],
                 ['name' => 'optional fund'],
                 ['name' => 'community development fund'],
-            ]
+            ],
         ]);
         TrialBalanceEntry::create([
             'name' => 'income',
@@ -165,7 +163,7 @@ class TrialBalanceEntrySeeder extends Seeder
                         ['name' => 'lbp'],
                         ['name' => 'lbp sksu mpc statutory funds'],
                         ['name' => 'dbp time deposit'],
-                    ]
+                    ],
                 ],
                 [
                     'name' => 'other income',
@@ -181,7 +179,7 @@ class TrialBalanceEntrySeeder extends Seeder
                         ['name' => 'logo(student & faculty)'],
                         ['name' => 'ticketing'],
                         ['name' => 'foodcourt'],
-                    ]
+                    ],
                 ],
             ],
         ]);
@@ -228,7 +226,7 @@ class TrialBalanceEntrySeeder extends Seeder
                 ['name' => 'members benefit expense'],
                 ['name' => 'general assembly expense'],
                 ['name' => 'social & community services expense'],
-            ]
+            ],
         ]);
     }
 }

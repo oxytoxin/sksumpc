@@ -22,7 +22,7 @@
 
             @case(3)
                 <div>
-                    @livewire('app.time-deposits-table', ['member_id' => $member->id])
+                    @livewire('app.love-gifts-table', ['member_id' => $member->id])
                 </div>
             @break
 

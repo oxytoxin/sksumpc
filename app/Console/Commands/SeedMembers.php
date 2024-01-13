@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use App\Models\Member;
 use App\Models\MembershipStatus;
-use App\Oxytoxin\ShareCapitalProvider;
 use DateTimeImmutable;
 use DB;
 use Illuminate\Console\Command;

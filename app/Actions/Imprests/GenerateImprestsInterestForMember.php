@@ -25,7 +25,7 @@ class GenerateImprestsInterestForMember
                     days: $i->days_till_next_transaction,
                     minimum_amount: ImprestsProvider::MINIMUM_AMOUNT_FOR_INTEREST
                 ),
-                'interest_date' => today()
+                'interest_date' => today(),
             ]);
         });
 
@@ -36,7 +36,7 @@ class GenerateImprestsInterestForMember
             amount: $total_interest
         ));
         $member->imprests_unaccrued()->update([
-            'accrued' => true
+            'accrued' => true,
         ]);
         DB::commit();
     }

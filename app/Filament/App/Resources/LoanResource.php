@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Resources;
 
+use App\Actions\Loans\ApproveLoanPosting;
 use App\Filament\App\Resources\LoanResource\Pages;
 use App\Livewire\App\Loans\Traits\HasViewLoanDetailsActionGroup;
 use App\Models\Loan;
@@ -83,9 +84,7 @@ class LoanResource extends Resource
             ->filtersLayout(FiltersLayout::AboveContent)
             ->actions([
                 Action::make('approve')
-                    ->action(fn ($record) => $record->update([
-                        'posted' => true,
-                    ]))
+                    ->action(fn (Loan $record) => ApproveLoanPosting::run($record))
                     ->hidden(fn ($record) => $record->posted)
                     ->requiresConfirmation(),
                 static::getStaticViewLoanDetailsActionGroup(),

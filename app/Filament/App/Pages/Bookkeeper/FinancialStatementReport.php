@@ -2,27 +2,20 @@
 
 namespace App\Filament\App\Pages\Bookkeeper;
 
-use Livewire;
 use App\Models\Loan;
+use App\Models\LoanAmortization;
 use App\Models\LoanType;
+use App\Models\TrialBalanceEntry;
+use Filament\Actions\Action;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Pages\Page;
-use Filament\Actions\Action;
-use App\Models\LoanAmortization;
-use Filament\Infolists\Infolist;
-use App\Models\TrialBalanceEntry;
 use Livewire\Attributes\Computed;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Infolists\Components\Tabs;
 use PhpOffice\PhpSpreadsheet\IOFactory;
-use Filament\Actions\Contracts\HasActions;
-use Filament\Infolists\Components\Tabs\Tab;
-use Filament\Infolists\Components\ViewEntry;
-use Filament\Infolists\Contracts\HasInfolists;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Actions\Concerns\InteractsWithActions;
-use Filament\Infolists\Concerns\InteractsWithInfolists;
 
 class FinancialStatementReport extends Page implements HasActions, HasForms
 {
@@ -81,7 +74,7 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
                 $worksheet->insertNewRowBefore($row, $trial_balance_entries->count());
                 $trial_balance_entries_tree = $trial_balance_entries->toFlatTree();
                 foreach ($trial_balance_entries_tree as $entry) {
-                    $worksheet->setCellValue("$column$row", str_repeat(" ", $entry->depth * 4) . strtoupper($entry->name));
+                    $worksheet->setCellValue("$column$row", str_repeat(' ', $entry->depth * 4).strtoupper($entry->name));
                     $loan_type = $entry->auditable;
                     if ($loan_type && $loan_type instanceof LoanType) {
                         $loan_receivable = LoanAmortization::receivable(loan_type: $loan_type, month: $this->data['month'] ?? null, year: $this->data['year'] ?? null);
@@ -113,9 +106,10 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
                     $worksheet->setCellValue("AE$row", "=SUM(C$row,Q$row,AA$row,AC$row)-SUM(P$row,Z$row,AB$row)");
                     $row++;
                 }
-                $path = storage_path('app/livewire-tmp/trial_balance-' . today()->year . '.xlsx');
+                $path = storage_path('app/livewire-tmp/trial_balance-'.today()->year.'.xlsx');
                 $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
                 $writer->save($path);
+
                 return response()->download($path);
             });
     }

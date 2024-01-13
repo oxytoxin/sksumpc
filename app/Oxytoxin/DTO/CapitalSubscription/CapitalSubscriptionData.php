@@ -6,7 +6,6 @@ use Spatie\LaravelData\Data;
 
 class CapitalSubscriptionData extends Data
 {
-
     public function __construct(
         public int $number_of_terms,
         public string $number_of_shares,

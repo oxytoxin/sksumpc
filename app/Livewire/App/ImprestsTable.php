@@ -9,11 +9,9 @@ use App\Models\Imprest;
 use App\Models\Member;
 use App\Models\SavingsAccount;
 use App\Oxytoxin\DTO\MSO\ImprestData;
-use App\Oxytoxin\ImprestsProvider;
 use App\Oxytoxin\DTO\MSO\SavingsData;
-use App\Oxytoxin\SavingsProvider;
+use App\Oxytoxin\ImprestsProvider;
 use DB;
-use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -93,7 +91,7 @@ class ImprestsTable extends Component implements HasForms, HasTable
                         TextInput::make('amount')
                             ->required()
                             ->moneymask(),
-                        Hidden::make('reference_number')->default('IW-')
+                        Hidden::make('reference_number')->default('IW-'),
                     ])
                     ->action(function ($data) {
                         $member = Member::find($this->member_id);

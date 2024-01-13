@@ -4,7 +4,6 @@ namespace App\Filament\App\Resources\MemberResource\Pages;
 
 use App\Filament\App\Resources\MemberResource;
 use App\Models\MemberType;
-use App\Oxytoxin\ShareCapitalProvider;
 use DB;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;

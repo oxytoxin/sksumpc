@@ -9,6 +9,7 @@ class InterestCalculator
         if ($amount < $minimum_amount) {
             return 0;
         }
+
         return $amount * $rate * $days / $total_days;
     }
 }

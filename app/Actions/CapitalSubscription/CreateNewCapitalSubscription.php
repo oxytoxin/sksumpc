@@ -20,6 +20,7 @@ class CreateNewCapitalSubscription
         ]);
         $cbu = $member->capital_subscriptions()->create($data->toArray());
         DB::commit();
+
         return $cbu;
     }
 }

@@ -4,7 +4,6 @@ use App\Actions\Savings\DepositToSavingsAccount;
 use App\Actions\Savings\GenerateSavingsInterestForMember;
 use App\Actions\Savings\WithdrawFromSavingsAccount;
 use App\Models\Member;
-use App\Models\Saving;
 use App\Models\User;
 use App\Oxytoxin\DTO\MSO\SavingsData;
 
@@ -18,7 +17,7 @@ it('can accrue quarterly interest', function () {
     $member = Member::find(664);
     $savings_account = $member->savings_accounts()->create([
         'name' => 'Default',
-        'number' => 12345
+        'number' => 12345,
     ]);
     $data = new SavingsData(
         payment_type_id: 1,

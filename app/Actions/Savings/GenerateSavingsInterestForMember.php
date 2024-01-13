@@ -26,7 +26,7 @@ class GenerateSavingsInterestForMember
                         days: $s->days_till_next_transaction,
                         minimum_amount: SavingsProvider::MINIMUM_AMOUNT_FOR_INTEREST
                     ),
-                    'interest_date' => today()
+                    'interest_date' => today(),
                 ]);
             });
 
@@ -38,7 +38,7 @@ class GenerateSavingsInterestForMember
                 savings_account_id: $account->id,
             ));
             $account->savings_unaccrued()->update([
-                'accrued' => true
+                'accrued' => true,
             ]);
         }
         DB::commit();
