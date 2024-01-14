@@ -29,7 +29,7 @@ class ManageLoanApplications extends ManageRecords
                         monthly_payment: LoansProvider::computeMonthlyPayment($data['desired_amount'], LoanType::find($data['loan_type_id']), $data['number_of_terms'], today()),
                         purpose: $data['purpose'],
                     );
-                    CreateNewLoanApplication::run($loan_application_data);
+                    app(CreateNewLoanApplication::class)->handle($loan_application_data);
                     Notification::make()->title('New loan application created.')->success()->send();
                 })
                 ->visible(auth()->user()->can('manage loans'))

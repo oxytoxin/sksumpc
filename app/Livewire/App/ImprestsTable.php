@@ -76,7 +76,11 @@ class ImprestsTable extends Component implements HasForms, HasTable
                     ->action(function ($data) {
                         DB::beginTransaction();
                         $member = Member::find($this->member_id);
-                        DepositToImprestAccount::run($member, ImprestData::from($data));
+                        app(DepositToImprestAccount::class)->handle($member, new ImprestData(
+                            payment_type_id: $data['payment_type_id'],
+                            reference_number: $data['reference_number'],
+                            amount: $data['amount']
+                        ));
                         DB::commit();
                     })
                     ->createAnother(false),
@@ -95,7 +99,7 @@ class ImprestsTable extends Component implements HasForms, HasTable
                     ])
                     ->action(function ($data) {
                         $member = Member::find($this->member_id);
-                        WithdrawFromImprestAccount::run($member, ImprestData::from($data));
+                        app(WithdrawFromImprestAccount::class)->handle($member, ImprestData::from($data));
                     })
                     ->createAnother(false),
                 CreateAction::make('to_savings')
@@ -114,12 +118,12 @@ class ImprestsTable extends Component implements HasForms, HasTable
                     ->action(function ($data) {
                         DB::beginTransaction();
                         $member = Member::find($this->member_id);
-                        $im = WithdrawFromImprestAccount::run($member, new ImprestData(
+                        $im = app(WithdrawFromImprestAccount::class)->handle($member, new ImprestData(
                             payment_type_id: 1,
                             reference_number: ImprestsProvider::FROM_TRANSFER_CODE,
                             amount: $data['amount']
                         ));
-                        DepositToSavingsAccount::run($member, new SavingsData(
+                        app(DepositToSavingsAccount::class)->handle($member, new SavingsData(
                             payment_type_id: 1,
                             reference_number: $im->reference_number,
                             amount: $data['amount'],

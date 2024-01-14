@@ -70,7 +70,7 @@ class LoveGiftsTable extends Component implements HasForms, HasTable
                     ->action(function ($data) {
                         DB::beginTransaction();
                         $member = Member::find($this->member_id);
-                        DepositToLoveGiftsAccount::run($member, new LoveGiftData(
+                        app(DepositToLoveGiftsAccount::class)->handle($member, new LoveGiftData(
                             payment_type_id: $data['payment_type_id'],
                             reference_number: $data['reference_number'],
                             amount: $data['amount'],
@@ -93,7 +93,7 @@ class LoveGiftsTable extends Component implements HasForms, HasTable
                     ])
                     ->action(function ($data) {
                         $member = Member::find($this->member_id);
-                        WithdrawFromLoveGiftsAccount::run($member, new LoveGiftData(
+                        app(WithdrawFromLoveGiftsAccount::class)->handle($member, new LoveGiftData(
                             payment_type_id: $data['payment_type_id'],
                             reference_number: $data['reference_number'],
                             amount: $data['amount']

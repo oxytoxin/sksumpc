@@ -26,19 +26,19 @@ it('can accrue quarterly interest', function () {
         transaction_date: today(),
         savings_account_id: $savings_account->id,
     );
-    DepositToSavingsAccount::run($member, $data);
+    app(DepositToSavingsAccount::class)->handle($member, $data);
     assertEquals(round($savings_account->savings()->sum('amount'), 2), 5543.49);
 
     travelTo(date_create('01/31/2023'));
     $data->transaction_date = today();
     $data->amount = 500;
-    DepositToSavingsAccount::run($member, $data);
+    app(DepositToSavingsAccount::class)->handle($member, $data);
     assertEquals(round($savings_account->savings()->sum('amount'), 2), 6043.49);
 
     travelTo(date_create('03/03/2023'));
     $data->transaction_date = today();
     $data->amount = 500;
-    DepositToSavingsAccount::run($member, $data);
+    app(DepositToSavingsAccount::class)->handle($member, $data);
     assertEquals(round($savings_account->savings()->sum('amount'), 2), 6543.49);
 
     travelTo(date_create('03/31/2023'));
@@ -48,18 +48,18 @@ it('can accrue quarterly interest', function () {
     travelTo(date_create('04/05/2023'));
     $data->transaction_date = today();
     $data->amount = 400;
-    DepositToSavingsAccount::run($member, $data);
+    app(DepositToSavingsAccount::class)->handle($member, $data);
     assertEquals(round($savings_account->savings()->sum('amount'), 2), 6958.35);
 
     travelTo(date_create('04/11/2023'));
     $data->transaction_date = today();
     $data->amount = 5000;
-    WithdrawFromSavingsAccount::run($member, $data);
+    app(WithdrawFromSavingsAccount::class)->handle($member, $data);
     assertEquals(round($savings_account->savings()->sum('amount'), 2), 1958.35);
 
     travelTo(date_create('05/04/2023'));
     $data->transaction_date = today();
     $data->amount = 400;
-    DepositToSavingsAccount::run($member, $data);
+    app(DepositToSavingsAccount::class)->handle($member, $data);
     assertEquals(round($savings_account->savings()->sum('amount'), 2), 2358.35);
 });

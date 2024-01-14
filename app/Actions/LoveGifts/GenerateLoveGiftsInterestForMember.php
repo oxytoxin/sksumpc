@@ -30,7 +30,7 @@ class GenerateLoveGiftsInterestForMember
         });
 
         $total_interest = $member->imprests_unaccrued()->sum('interest');
-        DepositToLoveGiftsAccount::run($member, new LoveGiftData(
+        app(DepositToLoveGiftsAccount::class)->handle($member, new LoveGiftData(
             payment_type_id: 1,
             reference_number: '#INTEREST',
             amount: $total_interest

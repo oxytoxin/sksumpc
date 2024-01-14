@@ -125,8 +125,8 @@ class LoanApplicationResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make()->visible(fn ($record) => auth()->user()->can('manage loans') && $record->status == LoanApplication::STATUS_PROCESSING),
                 Action::make('Approve')
-                    ->action(function (LoanApplication $record, $data) {
-                        ApproveLoanApplication::run($record);
+                    ->action(function (LoanApplication $record) {
+                        app(ApproveLoanApplication::class)->handle($record);
                         Notification::make()->title('Loan application approved!')->success()->send();
                     })
                     ->requiresConfirmation()
@@ -142,7 +142,7 @@ class LoanApplicationResource extends Resource
                         TextInput::make('remarks'),
                     ])
                     ->action(function (LoanApplication $record, $data) {
-                        DisapproveLoanApplication::run(
+                        app(DisapproveLoanApplication::class)->handle(
                             loan_application: $record,
                             disapproval_reason_id: $data['disapproval_reason_id'],
                             priority_number: $data['priority_number'],
@@ -228,7 +228,7 @@ class LoanApplicationResource extends Resource
                             release_date: today(),
                             transaction_date: today(),
                         );
-                        CreateNewLoan::run($record, $loanData);
+                        app(CreateNewLoan::class)->handle($record, $loanData);
                         Notification::make()->title('New loan created.')->success()->send();
                     }),
                 Action::make('print')

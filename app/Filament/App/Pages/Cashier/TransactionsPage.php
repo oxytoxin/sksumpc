@@ -87,7 +87,7 @@ class TransactionsPage extends Page
             ->action(function ($data) {
                 $record = CapitalSubscription::find($data['capital_subscription_id']);
                 unset($data['member_id'], $data['capital_subscription_id']);
-                PayCapitalSubscription::run($record, CapitalSubscriptionPaymentData::from($data));
+                app(PayCapitalSubscription::class)->handle($record, CapitalSubscriptionPaymentData::from($data));
                 Notification::make()->title('Payment made for capital subscription!')->success()->send();
             });
     }
@@ -134,14 +134,20 @@ class TransactionsPage extends Page
             ->action(function ($data) {
                 $isDeposit = $data['action'] == 1;
                 $member = Member::find($data['member_id']);
-                unset($data['member_id'], $data['action']);
                 if ($isDeposit) {
-                    $savingsData = SavingsData::from($data);
-                    DepositToSavingsAccount::run($member, $savingsData);
+                    app(DepositToSavingsAccount::class)->handle($member, new SavingsData(
+                        payment_type_id: $data['payment_type_id'],
+                        reference_number: $data['reference_number'],
+                        amount: $data['amount'],
+                        savings_account_id: $data['savings_account_id']
+                    ));
                 } else {
-                    $data['reference_number'] = 'SW-';
-                    $savingsData = SavingsData::from($data);
-                    WithdrawFromSavingsAccount::run($member, $savingsData);
+                    app(WithdrawFromSavingsAccount::class)->handle($member, new SavingsData(
+                        payment_type_id: $data['payment_type_id'],
+                        reference_number: 'SW-',
+                        amount: $data['amount'],
+                        savings_account_id: $data['savings_account_id']
+                    ));
                 }
                 Notification::make()->title('Savings transaction completed!')->success()->send();
             });
@@ -184,14 +190,18 @@ class TransactionsPage extends Page
             ->action(function ($data) {
                 $isDeposit = $data['action'] == 1;
                 $member = Member::find($data['member_id']);
-                unset($data['member_id'], $data['action']);
                 if ($isDeposit) {
-                    $imprestData = ImprestData::from($data);
-                    DepositToImprestAccount::run($member, $imprestData);
+                    app(DepositToImprestAccount::class)->handle($member, new ImprestData(
+                        payment_type_id: $data['payment_type_id'],
+                        reference_number: $data['reference_number'],
+                        amount: $data['amount']
+                    ));
                 } else {
-                    $data['reference_number'] = 'IW-';
-                    $imprestData = ImprestData::from($data);
-                    WithdrawFromImprestAccount::run($member, $imprestData);
+                    app(WithdrawFromImprestAccount::class)->handle($member, new ImprestData(
+                        payment_type_id: $data['payment_type_id'],
+                        reference_number: 'IW-',
+                        amount: $data['amount']
+                    ));
                 }
                 Notification::make()->title('Imprests transaction completed!')->success()->send();
             });
@@ -275,7 +285,7 @@ class TransactionsPage extends Page
             ])
             ->action(function ($data) {
                 $record = Loan::find($data['loan_id']);
-                PayLoan::run($record, new LoanPaymentData(
+                app(PayLoan::class)->handle($record, new LoanPaymentData(
                     payment_type_id: $data['payment_type_id'],
                     reference_number: $data['reference_number'],
                     amount: $data['amount'],

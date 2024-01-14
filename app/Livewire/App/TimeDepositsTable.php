@@ -153,7 +153,7 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                             $record->update([
                                 'withdrawal_date' => today(),
                             ]);
-                            DepositToSavingsAccount::run(Member::find($this->member_id), (new SavingsData(
+                            app(DepositToSavingsAccount::class)->handle(Member::find($this->member_id), (new SavingsData(
                                 payment_type_id: 1,
                                 reference_number: TimeDepositsProvider::FROM_TRANSFER_CODE,
                                 amount: $record->maturity_amount,
@@ -169,7 +169,7 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                             $record->update([
                                 'withdrawal_date' => today(),
                             ]);
-                            DepositToImprestAccount::run(Member::find($this->member_id), new ImprestData(
+                            app(DepositToImprestAccount::class)->handle(Member::find($this->member_id), new ImprestData(
                                 payment_type_id: 1,
                                 reference_number: TimeDepositsProvider::FROM_TRANSFER_CODE,
                                 amount: $record->maturity_amount

@@ -30,7 +30,7 @@ class GenerateImprestsInterestForMember
         });
 
         $total_interest = $member->imprests_unaccrued()->sum('interest');
-        DepositToImprestAccount::run($member, new ImprestData(
+        app(DepositToImprestAccount::class)->handle($member, new ImprestData(
             payment_type_id: 1,
             reference_number: '#INTEREST',
             amount: $total_interest

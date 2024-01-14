@@ -96,7 +96,7 @@ class SavingsTable extends Component implements HasForms, HasTable
                         ])
                         ->action(function ($data) {
                             $member = Member::find($this->member_id);
-                            DepositToSavingsAccount::run($member, new SavingsData(
+                            app(DepositToSavingsAccount::class)->handle($member, new SavingsData(
                                 payment_type_id: $data['payment_type_id'],
                                 reference_number: $data['reference_number'],
                                 amount: $data['amount'],
@@ -120,7 +120,7 @@ class SavingsTable extends Component implements HasForms, HasTable
                             $member = Member::find($this->member_id);
                             $data['reference_number'] = 'SW-';
                             $data['savings_account_id'] = $this->tableFilters['savings_account_id']['value'];
-                            WithdrawFromSavingsAccount::run($member, SavingsData::from($data));
+                            app(WithdrawFromSavingsAccount::class)->handle($member, SavingsData::from($data));
                         })
                         ->createAnother(false),
                     CreateAction::make('to_imprests')
@@ -135,13 +135,17 @@ class SavingsTable extends Component implements HasForms, HasTable
                         ->action(function ($data) {
                             DB::beginTransaction();
                             $member = Member::find($this->member_id);
-                            $data['savings_account_id'] = $this->tableFilters['savings_account_id']['value'];
-                            $data['payment_type_id'] = 1;
-                            $data['reference_number'] = SavingsProvider::FROM_TRANSFER_CODE;
-                            $st = WithdrawFromSavingsAccount::run($member, SavingsData::from($data));
-                            unset($data['savings_account_id']);
-                            $data['reference_number'] = $st->reference_number;
-                            DepositToImprestAccount::run($member, ImprestData::from($data));
+                            $st = app(WithdrawFromSavingsAccount::class)->handle($member, new SavingsData(
+                                payment_type_id: 1,
+                                reference_number: SavingsProvider::FROM_TRANSFER_CODE,
+                                amount: $data['amount'],
+                                savings_account_id: $this->tableFilters['savings_account_id']['value'],
+                            ));
+                            app(DepositToImprestAccount::class)->handle($member, new ImprestData(
+                                payment_type_id: 1,
+                                reference_number: $st->reference_number,
+                                amount: $data['amount']
+                            ));
                             DB::commit();
                         })
                         ->createAnother(false),

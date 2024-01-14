@@ -194,7 +194,7 @@ class LoansTable extends Component implements HasForms, HasTable
                         TextInput::make('remarks'),
                     ])
                     ->action(function (Loan $record, $data) {
-                        PayLoan::run($record, new LoanPaymentData(
+                        app(PayLoan::class)->handle($record, new LoanPaymentData(
                             payment_type_id: $data['payment_type_id'],
                             reference_number: $data['reference_number'],
                             amount: $data['amount'],
@@ -286,7 +286,7 @@ class LoansTable extends Component implements HasForms, HasTable
                             release_date: today(),
                             transaction_date: today(),
                         );
-                        CreateNewLoan::run($loanApplication, $loanData);
+                        app(CreateNewLoan::class)->handle($loanApplication, $loanData);
                         $this->dispatch('refresh');
                         Notification::make()->title('New loan created.')->success()->send();
                     })

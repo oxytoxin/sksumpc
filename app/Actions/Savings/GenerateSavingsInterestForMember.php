@@ -31,7 +31,7 @@ class GenerateSavingsInterestForMember
             });
 
             $total_interest = $account->savings_unaccrued()->sum('interest');
-            DepositToSavingsAccount::run($member, new SavingsData(
+            app(DepositToSavingsAccount::class)->handle($member, new SavingsData(
                 payment_type_id: 1,
                 reference_number: '#INTEREST',
                 amount: $total_interest,

@@ -39,7 +39,7 @@ class RunLoanProcessesAfterPosting
             'amount' => $cbu_amount,
             'transaction_date' => today(),
         ]);
-        DepositToImprestAccount::run($loan->member, new ImprestData(
+        app(DepositToImprestAccount::class)->handle($loan->member, new ImprestData(
             payment_type_id: 1,
             reference_number: $loan->reference_number,
             amount: collect($loan->deductions)->firstWhere('code', 'imprest_amount')['amount'],

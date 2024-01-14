@@ -94,7 +94,7 @@ class CbuTable extends Component implements HasForms, HasTable
                         TextInput::make('remarks'),
                     ])
                     ->action(function ($record, $data) {
-                        PayCapitalSubscription::run($record, new CapitalSubscriptionPaymentData(
+                        app(PayCapitalSubscription::class)->handle($record, new CapitalSubscriptionPaymentData(
                             payment_type_id: $data['payment_type_id'],
                             reference_number: $data['reference_number'],
                             amount: $data['amount']
@@ -115,7 +115,7 @@ class CbuTable extends Component implements HasForms, HasTable
             ])
             ->headerActions([
                 CreateAction::make()
-                    ->visible(fn () => ! $this->member->capital_subscriptions()->where('outstanding_balance', '>', 0)->exists() && auth()->user()->can('manage cbu'))
+                    ->visible(fn () => !$this->member->capital_subscriptions()->where('outstanding_balance', '>', 0)->exists() && auth()->user()->can('manage cbu'))
                     ->createAnother(false)
                     ->form([
                         Placeholder::make('number_of_terms')->content($this->member->member_type->additional_number_of_terms),
@@ -166,7 +166,7 @@ class CbuTable extends Component implements HasForms, HasTable
                             is_common: true,
                             code: Str::random(12)
                         );
-                        CreateNewCapitalSubscription::run($this->member, $cbu_data);
+                        app(CreateNewCapitalSubscription::class)->handle($this->member, $cbu_data);
                         Notification::make()->title('Capital subscription created!')->success()->send();
                     }),
                 ViewAction::make('subsidiary_ledger')

@@ -105,9 +105,9 @@ class Loan extends Model
     {
 
         static::saving(function (Loan $loan) {
-            $loan = UpdateLoanDeductionsData::run($loan);
+            $loan = app(UpdateLoanDeductionsData::class)->handle($loan);
             if ($loan->posted) {
-                RunLoanProcessesAfterPosting::run($loan);
+                app(RunLoanProcessesAfterPosting::class)->handle($loan);
             }
         });
     }

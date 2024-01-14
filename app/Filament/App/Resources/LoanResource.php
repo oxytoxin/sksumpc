@@ -84,7 +84,7 @@ class LoanResource extends Resource
             ->filtersLayout(FiltersLayout::AboveContent)
             ->actions([
                 Action::make('approve')
-                    ->action(fn (Loan $record) => ApproveLoanPosting::run($record))
+                    ->action(fn (Loan $record) => app(ApproveLoanPosting::class)->handle($record))
                     ->hidden(fn ($record) => $record->posted)
                     ->requiresConfirmation(),
                 static::getStaticViewLoanDetailsActionGroup(),
