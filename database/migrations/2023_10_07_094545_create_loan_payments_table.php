@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('loan_payments', function (Blueprint $table) {
             $table->id();
+            $table->boolean('buy_out')->default(false);
             $table->foreignId('loan_id')->constrained();
             $table->decimal('amount', 18, 4);
             $table->decimal('interest_payment', 18, 4)->default(0);

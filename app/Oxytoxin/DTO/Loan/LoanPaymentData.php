@@ -13,6 +13,7 @@ class LoanPaymentData extends Data
         public int $payment_type_id,
         public string $reference_number,
         public string $amount,
+        public bool $buy_out = false,
         public ?string $remarks = null,
         public Carbon|CarbonImmutable|null $transaction_date = null,
     ) {

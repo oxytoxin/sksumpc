@@ -21,6 +21,7 @@ class PayLoan
         $interest_payment = min($loanPaymentData->amount, $interest_due);
         $principal_payment = $loanPaymentData->amount - $interest_payment;
         $loan->payments()->create([
+            'buy_out' => $loanPaymentData->buy_out,
             'payment_type_id' => $loanPaymentData->payment_type_id,
             'amount' => $loanPaymentData->amount,
             'interest_payment' => $interest_payment,

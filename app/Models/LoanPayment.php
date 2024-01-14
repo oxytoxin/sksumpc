@@ -19,6 +19,7 @@ class LoanPayment extends Model
         'interest' => 'decimal:4',
         'principal_payment' => 'decimal:4',
         'transaction_date' => 'immutable_date',
+        'buy_out' => 'boolean',
     ];
 
     public function loan()

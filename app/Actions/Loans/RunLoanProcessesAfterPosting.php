@@ -5,6 +5,7 @@ namespace App\Actions\Loans;
 use App\Actions\Imprests\DepositToImprestAccount;
 use App\Models\Loan;
 use App\Models\LoanApplication;
+use App\Oxytoxin\DTO\Loan\LoanPaymentData;
 use App\Oxytoxin\DTO\MSO\ImprestData;
 use App\Oxytoxin\LoansProvider;
 use Illuminate\Support\Facades\DB;
@@ -48,12 +49,12 @@ class RunLoanProcessesAfterPosting
         $buyOutInterest = collect($loan->deductions)->firstWhere('code', 'buy_out_interest');
         if ($buyOutPrincipal) {
             $existing = $loan->member->loans()->find($buyOutPrincipal['loan_id']);
-            $existing?->payments()->create([
-                'payment_type_id' => 2,
-                'reference_number' => $loan->reference_number,
-                'amount' => ($buyOutPrincipal['amount'] ?? 0) + ($buyOutInterest['amount'] ?? 0),
-                'transaction_date' => today(),
-            ]);
+            app(PayLoan::class)->handle(loan: $existing, loanPaymentData: new LoanPaymentData(
+                buy_out: true,
+                payment_type_id: 2,
+                reference_number: $loan->reference_number,
+                amount: ($buyOutPrincipal['amount'] ?? 0) + ($buyOutInterest['amount'] ?? 0),
+            ));
         }
         DB::commit();
     }
