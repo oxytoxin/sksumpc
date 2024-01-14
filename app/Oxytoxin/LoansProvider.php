@@ -5,6 +5,8 @@ namespace App\Oxytoxin;
 use App\Models\Loan;
 use App\Models\LoanType;
 use App\Models\Member;
+use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 
 class LoansProvider
 {
@@ -20,7 +22,29 @@ class LoansProvider
 
     const DAYS_IN_MONTH = 30;
 
-    public static function computeInterest($amount, ?LoanType $loanType, $number_of_terms, $transaction_date)
+    public static function getAccruableDays(Carbon|CarbonImmutable $start, Carbon|CarbonImmutable $end)
+    {
+        if ($start->month == $end->month && $start->year == $end->year) {
+            $days_of_start_month = max($end->day - $start->day, 0);
+            $days_of_end_month = 0;
+        } else {
+            $days_of_start_month = max(LoansProvider::DAYS_IN_MONTH - $start->day, 0);
+            $days_of_end_month = min($end->day, LoansProvider::DAYS_IN_MONTH);
+        }
+        $days_of_months_between = max($start->diffInMonths($end) - 1, 0) * LoansProvider::DAYS_IN_MONTH;
+
+        $total_days = $days_of_start_month + $days_of_months_between + $days_of_end_month;
+
+        return $total_days;
+    }
+
+    public static function computeAccruedInterest(Loan $loan, $outstanding_balance, $days)
+    {
+        bcscale(10);
+        return bcmul($loan->interest_rate, bcmul($outstanding_balance, bcdiv($days, LoansProvider::DAYS_IN_MONTH)));
+    }
+
+    public static function computeInterest($amount, ?LoanType $loanType, $number_of_terms, $transaction_date = null)
     {
         if (!$loanType || !$amount || !$number_of_terms) {
             return 0;
@@ -37,7 +61,7 @@ class LoansProvider
         return collect($schedule)->sum('interest');
     }
 
-    public static function computeMonthlyPayment($amount, ?LoanType $loanType, $number_of_terms, $transaction_date)
+    public static function computeMonthlyPayment($amount, ?LoanType $loanType, $number_of_terms, $transaction_date = null)
     {
         if (!$loanType || !$amount || !$number_of_terms) {
             return 0;

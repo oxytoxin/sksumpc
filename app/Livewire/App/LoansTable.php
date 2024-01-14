@@ -2,11 +2,15 @@
 
 namespace App\Livewire\App;
 
+use App\Actions\Loans\CreateNewLoan;
+use App\Actions\Loans\PayLoan;
 use App\Livewire\App\Loans\Traits\HasViewLoanDetailsActionGroup;
 use App\Models\Loan;
 use App\Models\LoanApplication;
 use App\Models\LoanType;
 use App\Models\Member;
+use App\Oxytoxin\DTO\Loan\LoanData;
+use App\Oxytoxin\DTO\Loan\LoanPaymentData;
 use App\Oxytoxin\LoansProvider;
 use App\Oxytoxin\OverrideProvider;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
@@ -158,7 +162,7 @@ class LoansTable extends Component implements HasForms, HasTable
                         DatePicker::make('release_date')->required()->native(false),
                     ])
                     ->action(function ($data, $record) {
-                        if (! OverrideProvider::promptManagerPasskey($data['passkey'])) {
+                        if (!OverrideProvider::promptManagerPasskey($data['passkey'])) {
                             return;
                         }
                         unset($data['passkey']);
@@ -188,10 +192,14 @@ class LoansTable extends Component implements HasForms, HasTable
                             ->unique('loan_payments'),
                         TextInput::make('amount')->required()->numeric()->minValue(1)->prefix('P')->default(fn ($record) => $record->monthly_payment),
                         TextInput::make('remarks'),
-                        DatePicker::make('transaction_date')->default(today())->native(false)->label('Date'),
                     ])
-                    ->action(function ($record, $data) {
-                        $record->payments()->create($data);
+                    ->action(function (Loan $record, $data) {
+                        PayLoan::run($record, new LoanPaymentData(
+                            payment_type_id: $data['payment_type_id'],
+                            reference_number: $data['reference_number'],
+                            amount: $data['amount'],
+                            remarks: $data['remarks'],
+                        ));
                         Notification::make()->title('Payment made for loan!')->success()->send();
                     })
                     ->visible(fn ($record) => $record->outstanding_balance > 0 && $record->posted && auth()->user()->can('manage payments')),
@@ -262,19 +270,23 @@ class LoansTable extends Component implements HasForms, HasTable
                     ])
                     ->action(function ($data) {
                         $loanApplication = LoanApplication::find($data['loan_application_id']);
-                        $loanApplication->update([
-                            'priority_number' => $data['priority_number'],
-                        ]);
                         $loanType = $loanApplication->loan_type;
-                        Loan::create([
-                            ...$data,
-                            'reference_number' => $loanApplication->reference_number,
-                            'loan_type_id' => $loanType->id,
-                            'interest_rate' => $loanType->interest_rate,
-                            'interest' => LoansProvider::computeInterest($data['gross_amount'], $loanType, $data['number_of_terms'], $data['transaction_date']),
-                            'member_id' => $this->member->id,
-                            'monthly_payment' => LoansProvider::computeMonthlyPayment($data['gross_amount'], $loanType, $data['number_of_terms'], $data['transaction_date']),
-                        ]);
+                        $loanData = new LoanData(
+                            member_id: $loanApplication->member_id,
+                            loan_application_id: $loanApplication->id,
+                            loan_type_id: $loanType->id,
+                            reference_number: $loanApplication->reference_number,
+                            interest_rate: $loanType->interest_rate,
+                            priority_number: $data['priority_number'],
+                            gross_amount: $data['gross_amount'],
+                            deductions: $data['deductions'],
+                            number_of_terms: $data['number_of_terms'],
+                            interest: LoansProvider::computeInterest($data['gross_amount'], $loanType, $data['number_of_terms'], $data['transaction_date']),
+                            monthly_payment: LoansProvider::computeMonthlyPayment($data['gross_amount'], $loanType, $data['number_of_terms'], $data['transaction_date']),
+                            release_date: today(),
+                            transaction_date: today(),
+                        );
+                        CreateNewLoan::run($loanApplication, $loanData);
                         $this->dispatch('refresh');
                         Notification::make()->title('New loan created.')->success()->send();
                     })

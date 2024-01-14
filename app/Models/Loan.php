@@ -68,7 +68,7 @@ class Loan extends Model
 
     public function last_payment(): HasOne
     {
-        return $this->hasOne(LoanPayment::class)->latestOfMany();
+        return $this->hasOne(LoanPayment::class)->latestOfMany('transaction_date');
     }
 
     public function scopePending(Builder $query)

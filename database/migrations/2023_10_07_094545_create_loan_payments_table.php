@@ -15,9 +15,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('loan_id')->constrained();
             $table->decimal('amount', 18, 4);
-            $table->decimal('interest', 18, 4)->virtualAs('amount - principal_payment');
-            $table->decimal('principal_payment', 18, 4);
-            $table->foreignId('payment_type_id')->constrained()->constrained();
+            $table->decimal('interest_payment', 18, 4)->default(0);
+            $table->decimal('principal_payment', 18, 4)->default(0);
+            $table->decimal('surcharge_payment', 18, 4)->default(0);
+            $table->foreignId('payment_type_id')->constrained();
             $table->string('reference_number');
             $table->string('remarks')->nullable();
             $table->date('transaction_date')->default(DB::raw('CURDATE()'));

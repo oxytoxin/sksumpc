@@ -5,6 +5,7 @@ namespace App\Filament\App\Pages\Cashier;
 use App\Actions\CapitalSubscription\PayCapitalSubscription;
 use App\Actions\Imprests\DepositToImprestAccount;
 use App\Actions\Imprests\WithdrawFromImprestAccount;
+use App\Actions\Loans\PayLoan;
 use App\Actions\Savings\DepositToSavingsAccount;
 use App\Actions\Savings\WithdrawFromSavingsAccount;
 use App\Models\CapitalSubscription;
@@ -14,6 +15,7 @@ use App\Models\Member;
 use App\Models\SavingsAccount;
 use App\Models\TimeDeposit;
 use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionPaymentData;
+use App\Oxytoxin\DTO\Loan\LoanPaymentData;
 use App\Oxytoxin\DTO\MSO\ImprestData;
 use App\Oxytoxin\DTO\MSO\SavingsData;
 use App\Oxytoxin\TimeDepositsProvider;
@@ -273,8 +275,12 @@ class TransactionsPage extends Page
             ])
             ->action(function ($data) {
                 $record = Loan::find($data['loan_id']);
-                unset($data['member_id'], $data['loan_id']);
-                $record->payments()->create($data);
+                PayLoan::run($record, new LoanPaymentData(
+                    payment_type_id: $data['payment_type_id'],
+                    reference_number: $data['reference_number'],
+                    amount: $data['amount'],
+                    remarks: $data['remarks'],
+                ));
                 Notification::make()->title('Payment made for loan!')->success()->send();
             });
     }
@@ -314,7 +320,7 @@ class TransactionsPage extends Page
                 $record = CashCollectible::find($data['cash_collectible_id']);
                 unset($data['cash_collectible_id']);
                 $record->payments()->create($data);
-                Notification::make()->title('Payment made for '.$record->name.'!')->success()->send();
+                Notification::make()->title('Payment made for ' . $record->name . '!')->success()->send();
             });
     }
 }

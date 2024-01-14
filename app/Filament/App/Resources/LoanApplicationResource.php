@@ -135,7 +135,7 @@ class LoanApplicationResource extends Resource
                     ->visible(fn ($record) => $record->status == LoanApplication::STATUS_PROCESSING),
                 Action::make('Disapprove')
                     ->form([
-                        TextInput::make('priority_number'),
+                        TextInput::make('priority_number')->default(fn ($record) => $record->priority_number),
                         Select::make('disapproval_reason_id')
                             ->relationship('disapproval_reason', 'name')
                             ->required(),
@@ -215,8 +215,16 @@ class LoanApplicationResource extends Resource
                             gross_amount: $data['gross_amount'],
                             deductions: $data['deductions'],
                             number_of_terms: $data['number_of_terms'],
-                            interest: LoansProvider::computeInterest($data['gross_amount'], $loanType, $data['number_of_terms'], $data['transaction_date']),
-                            monthly_payment: LoansProvider::computeMonthlyPayment($data['gross_amount'], $loanType, $data['number_of_terms'], $data['transaction_date']),
+                            interest: LoansProvider::computeInterest(
+                                amount: $data['gross_amount'],
+                                loanType: $loanType,
+                                number_of_terms: $data['number_of_terms'],
+                            ),
+                            monthly_payment: LoansProvider::computeMonthlyPayment(
+                                amount: $data['gross_amount'],
+                                loanType: $loanType,
+                                number_of_terms: $data['number_of_terms'],
+                            ),
                             release_date: today(),
                             transaction_date: today(),
                         );
