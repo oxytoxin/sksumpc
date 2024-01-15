@@ -25,6 +25,11 @@ class CdjLoanReport extends Page implements HasForms
 
     public $data = [];
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
     public function form(Form $form): Form
     {
         return $form->schema([

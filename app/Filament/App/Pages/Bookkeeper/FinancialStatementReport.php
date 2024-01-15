@@ -25,6 +25,11 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
 
     protected static ?string $navigationGroup = 'Bookkeeping';
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()->can('manage bookkeeping');
+    }
+
     public $data = [];
 
     public function form(Form $form): Form
@@ -55,12 +60,6 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
         $this->form->fill();
     }
 
-    #[Computed]
-    public function trialBalanceEntries()
-    {
-        return TrialBalanceEntry::get()->toTree();
-    }
-
     public function downloadTrialBalance()
     {
         return Action::make('downloadTrialBalance')
@@ -74,7 +73,7 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
                 $worksheet->insertNewRowBefore($row, $trial_balance_entries->count());
                 $trial_balance_entries_tree = $trial_balance_entries->toFlatTree();
                 foreach ($trial_balance_entries_tree as $entry) {
-                    $worksheet->setCellValue("$column$row", str_repeat(' ', $entry->depth * 4).strtoupper($entry->name));
+                    $worksheet->setCellValue("$column$row", str_repeat(' ', $entry->depth * 4) . strtoupper($entry->name));
                     $loan_type = $entry->auditable;
                     if ($loan_type && $loan_type instanceof LoanType) {
                         $loan_receivable = LoanAmortization::receivable(loan_type: $loan_type, month: $this->data['month'] ?? null, year: $this->data['year'] ?? null);
@@ -106,7 +105,7 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
                     $worksheet->setCellValue("AE$row", "=SUM(C$row,Q$row,AA$row,AC$row)-SUM(P$row,Z$row,AB$row)");
                     $row++;
                 }
-                $path = storage_path('app/livewire-tmp/trial_balance-'.today()->year.'.xlsx');
+                $path = storage_path('app/livewire-tmp/trial_balance-' . today()->year . '.xlsx');
                 $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
                 $writer->save($path);
 

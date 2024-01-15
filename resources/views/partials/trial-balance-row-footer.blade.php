@@ -1,70 +1,47 @@
-@php
-    use App\Models\LoanAmortization;
-    use App\Models\Loan;
-    $total_crj_loans_debit = 0;
-    $total_crj_loans_credit = 0;
-    $total_cdj_loans_debit = 0;
-    $total_cdj_loans_credit = 0;
-    $loan_receivable = LoanAmortization::receivable(month: $data['month'], year: $data['year']);
-    $total_crj_loans_credit += $loan_receivable->sum('principal_balance');
-    $total_crj_loans_credit += $loan_receivable->sum('interest_balance');
-    $loan_disbursed = LoanAmortization::disbursed(month: $data['month'], year: $data['year']);
-    $total_cdj_loans_credit += $loan_disbursed->sum('principal_payment');
-    $total_cdj_loans_credit += $loan_disbursed->sum('interest_payment');
-    $loan_debit_amount = Loan::posted()
-        ->whereMonth('transaction_date', $data['month'])
-        ->whereYear('transaction_date', $data['year'])
-        ->sum('gross_amount');
-    $total_cdj_loans_debit += $loan_debit_amount;
-@endphp
 <tr>
     <td class="border border-black px-2 uppercase text-xs whitespace-nowrap font-bold">
         TOTAL
     </td>
-    <td class="border border-black px-2"></td>
-    <td class="border border-black px-2"></td>
-    <td class="border border-black px-2">
-        {{ $total_crj_loans_debit > 0 ? number_format($total_crj_loans_debit, 2) : '' }}
+    <td class="border border-black px-2 text-xs"></td>
+    <td class="border border-black px-2 text-xs"></td>
+    <td class="border border-black px-2 text-xs"></td>
+    <td class="border border-black px-2 text-xs">
+        {{ number_format($this->crj_loan_receivables->sum('total_principal') + $this->crj_loan_receivables->sum('total_interest'), 2) }}
     </td>
-    <td class="border border-black px-2">
-        {{ $total_crj_loans_credit > 0 ? number_format($total_crj_loans_credit, 2) : '' }}
+    <td class="border border-black px-2 text-xs"></td>
+    <td class="border border-black px-2 text-xs"></td>
+    <td class="border border-black px-2 text-xs"></td>
+    <td class="border border-black px-2 text-xs"></td>
+    <td class="border border-black px-2 text-xs"></td>
+    <td class="border border-black px-2 text-xs"></td>
+    <td class="border border-black px-2 text-xs"></td>
+    <td class="border border-black px-2 text-xs"></td>
+    <td class="border border-black px-2 text-xs"></td>
+    <td class="border border-black px-2 text-xs"></td>
+    <td class="border border-black px-2 text-xs"></td>
+    <td class="border border-black px-2 text-xs">
+        {{ number_format($this->crj_loan_receivables->sum('total_principal') + $this->crj_loan_receivables->sum('total_interest'), 2) }}
     </td>
-    <td class="border border-black px-2"></td>
-    <td class="border border-black px-2"></td>
-    <td class="border border-black px-2"></td>
-    <td class="border border-black px-2"></td>
-    <td class="border border-black px-2"></td>
-    <td class="border border-black px-2"></td>
-    <td class="border border-black px-2"></td>
-    <td class="border border-black px-2"></td>
-    <td class="border border-black px-2"></td>
-    <td class="border border-black px-2"></td>
-    <td class="border border-black px-2">
-        {{ $total_crj_loans_debit > 0 ? number_format($total_crj_loans_debit, 2) : '' }}
+    <td class="border border-black px-2 text-xs">
+        {{ number_format($this->cdj_loan_disbursements->sum('total_amount'), 2) }}
     </td>
-    <td class="border border-black px-2">
-        {{ $total_crj_loans_credit > 0 ? number_format($total_crj_loans_credit, 2) : '' }}
+    <td class="border border-black px-2 text-xs">
+        {{ number_format($this->cdj_loan_receivables->sum('total_principal') + $this->cdj_loan_receivables->sum('total_interest'), 2) }}
     </td>
-    <td class="border border-black px-2">
-        {{ $total_cdj_loans_debit > 0 ? number_format($total_cdj_loans_debit, 2) : '' }}
+    <td class="border border-black px-2 text-xs"></td>
+    <td class="border border-black px-2 text-xs"></td>
+    <td class="border border-black px-2 text-xs"></td>
+    <td class="border border-black px-2 text-xs"></td>
+    <td class="border border-black px-2 text-xs"></td>
+    <td class="border border-black px-2 text-xs"></td>
+    <td class="border border-black px-2 text-xs">
+        {{ number_format($this->cdj_loan_disbursements->sum('total_amount'), 2) }}
     </td>
-    <td class="border border-black px-2">
-        {{ $total_cdj_loans_credit > 0 ? number_format($total_cdj_loans_credit, 2) : '' }}
+    <td class="border border-black px-2 text-xs">
+        {{ number_format($this->cdj_loan_receivables->sum('total_principal') + $this->cdj_loan_receivables->sum('total_interest'), 2) }}
     </td>
-    <td class="border border-black px-2"></td>
-    <td class="border border-black px-2"></td>
-    <td class="border border-black px-2"></td>
-    <td class="border border-black px-2"></td>
-    <td class="border border-black px-2"></td>
-    <td class="border border-black px-2"></td>
-    <td class="border border-black px-2">
-        {{ $total_cdj_loans_debit > 0 ? number_format($total_cdj_loans_debit, 2) : '' }}
-    </td>
-    <td class="border border-black px-2">
-        {{ $total_cdj_loans_credit > 0 ? number_format($total_cdj_loans_credit, 2) : '' }}
-    </td>
-    <td class="border border-black px-2"></td>
-    <td class="border border-black px-2"></td>
-    <td class="border border-black px-2"></td>
-    <td class="border border-black px-2"></td>
+    <td class="border border-black px-2 text-xs"></td>
+    <td class="border border-black px-2 text-xs"></td>
+    <td class="border border-black px-2 text-xs"></td>
+    <td class="border border-black px-2 text-xs"></td>
 </tr>
