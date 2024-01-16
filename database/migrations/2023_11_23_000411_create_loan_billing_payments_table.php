@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Loan;
 use App\Models\LoanAmortization;
 use App\Models\LoanBilling;
 use App\Models\Member;
@@ -18,7 +19,7 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(LoanBilling::class)->constrained();
             $table->foreignIdFor(Member::class)->constrained();
-            $table->foreignIdFor(LoanAmortization::class)->constrained();
+            $table->foreignIdFor(Loan::class)->constrained();
             $table->decimal('amount_due', 18, 4);
             $table->decimal('amount_paid', 18, 4);
             $table->boolean('posted')->default(false);

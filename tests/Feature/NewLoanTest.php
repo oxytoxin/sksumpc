@@ -15,7 +15,7 @@ it('test loan functions from phpspreadsheet', function () {
 });
 
 it('can create a new loan', function () {
-    $member = Member::find(663);
+    $member = Member::find(664);
     actingAs(User::find(1));
     $la = LoanApplication::create([
         'member_id' => $member->id,

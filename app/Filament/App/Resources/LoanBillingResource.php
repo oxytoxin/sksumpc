@@ -2,9 +2,11 @@
 
 namespace App\Filament\App\Resources;
 
+use App\Actions\Loans\PayLoan;
 use App\Filament\App\Resources\LoanBillingResource\Pages;
 use App\Models\LoanBilling;
 use App\Models\LoanBillingPayment;
+use App\Oxytoxin\DTO\Loan\LoanPaymentData;
 use DB;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
@@ -71,7 +73,7 @@ class LoanBillingResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->visible(fn ($record) => ! $record->posted)
+                    ->visible(fn ($record) => !$record->posted)
                     ->form([
                         Select::make('payment_type_id')
                             ->paymenttype()
@@ -80,7 +82,7 @@ class LoanBillingResource extends Resource
                         TextInput::make('reference_number'),
                     ]),
                 Tables\Actions\DeleteAction::make()
-                    ->visible(fn ($record) => ! $record->posted)
+                    ->visible(fn ($record) => !$record->posted)
                     ->action(function (LoanBilling $record) {
                         $record->loan_billing_payments()->delete();
                         $record->delete();
@@ -88,30 +90,21 @@ class LoanBillingResource extends Resource
                 Action::make('post_payments')
                     ->button()
                     ->color('success')
-                    ->visible(fn ($record) => ! $record->posted)
+                    ->visible(fn ($record) => !$record->posted)
                     ->requiresConfirmation()
                     ->action(function (LoanBilling $record) {
-                        if (! $record->reference_number || ! $record->payment_type_id) {
+                        if (!$record->reference_number || !$record->payment_type_id) {
                             return Notification::make()->title('Billing reference number and payment type is missing!')->danger()->send();
                         }
                         DB::beginTransaction();
                         $record->loan_billing_payments()->each(function (LoanBillingPayment $lp) use ($record) {
-                            $loan = $lp->loan_amortization->loan;
-                            $amortization = $lp->loan_amortization;
-                            $amortization->update([
-                                'amount_paid' => $lp->amount_paid,
-                            ]);
-                            $amortization->refresh();
-                            $loan->payments()->createQuietly([
-                                'cashier_id' => auth()->id(),
-                                'principal_payment' => $amortization->principal_payment,
-                                'payment_type_id' => $record->payment_type_id,
-                                'reference_number' => $record->reference_number,
-                                'amount' => $lp->amount_paid,
-                                'transaction_date' => today(),
-                            ]);
+                            app(PayLoan::class)->handle($lp->loan, new LoanPaymentData(
+                                payment_type_id: $record->payment_type_id,
+                                reference_number: $record->reference_number,
+                                amount: $lp->amount_paid,
+                            ));
                             $lp->update([
-                                'posted' => true,
+                                'posted' => true
                             ]);
                         });
                         $record->update([

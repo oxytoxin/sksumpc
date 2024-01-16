@@ -37,14 +37,14 @@ class LoanBilling extends Model
     {
         static::created(function (LoanBilling $loanBilling) {
             DB::beginTransaction();
-            LoanAmortization::whereRelation('loan', 'loan_type_id', $loanBilling->loan_type_id)->where('billable_date', $loanBilling->date->format('F Y'))->whereNull('amount_paid')->each(function ($la) use ($loanBilling) {
+            Loan::wherePosted(true)->where('outstanding_balance', '>', 0)->whereLoanTypeId($loanBilling->loan_type_id)->each(function ($loan) use ($loanBilling) {
                 LoanBillingPayment::firstOrCreate([
-                    'member_id' => $la->loan->member_id,
+                    'member_id' => $loan->member_id,
                     'loan_billing_id' => $loanBilling->id,
-                    'loan_amortization_id' => $la->id,
                 ], [
-                    'amount_due' => $la->amortization,
-                    'amount_paid' => $la->amortization,
+                    'loan_id' => $loan->id,
+                    'amount_due' => $loan->monthly_payment,
+                    'amount_paid' => $loan->monthly_payment,
                 ]);
             });
             $loanBilling->cashier_id = auth()->id();
