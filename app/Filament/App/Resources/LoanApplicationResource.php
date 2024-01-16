@@ -10,7 +10,7 @@ use App\Livewire\App\Loans\Traits\HasViewLoanDetailsActionGroup;
 use App\Models\Loan;
 use App\Models\LoanApplication;
 use App\Oxytoxin\DTO\Loan\LoanData;
-use App\Oxytoxin\LoansProvider;
+use App\Oxytoxin\Providers\LoansProvider;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;

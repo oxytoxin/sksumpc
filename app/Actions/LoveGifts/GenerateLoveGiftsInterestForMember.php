@@ -4,7 +4,7 @@ namespace App\Actions\LoveGifts;
 
 use App\Models\Member;
 use App\Oxytoxin\DTO\MSO\LoveGiftData;
-use App\Oxytoxin\LoveGiftProvider;
+use App\Oxytoxin\Providers\LoveGiftProvider;
 use App\Oxytoxin\Services\InterestCalculator;
 use DB;
 use Lorisleiva\Actions\Concerns\AsAction;

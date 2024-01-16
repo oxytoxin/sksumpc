@@ -14,7 +14,6 @@ class TrialBalanceEntrySeeder extends Seeder
      */
     public function run(): void
     {
-        TrialBalanceEntry::truncate();
         TrialBalanceEntry::create([
             'name' => 'assets',
             'children' => [
@@ -118,7 +117,7 @@ class TrialBalanceEntrySeeder extends Seeder
                 ],
                 [
                     'name' => 'accu.depreciation-foodcourt',
-                    'code' => 13521
+                    'code' => 14121
                 ],
                 [
                     'name' => 'dormitory',
@@ -126,7 +125,7 @@ class TrialBalanceEntrySeeder extends Seeder
                 ],
                 [
                     'name' => 'accu.depreciation-dormitory',
-                    'code' => 13521
+                    'code' => 14121
                 ],
                 [
                     'name' => 'furnitures, fixtures & equipment',

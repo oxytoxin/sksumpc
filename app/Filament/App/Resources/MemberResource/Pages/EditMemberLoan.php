@@ -6,7 +6,7 @@ use App\Filament\App\Resources\MemberResource;
 use App\Models\Loan;
 use App\Models\LoanType;
 use App\Models\Member;
-use App\Oxytoxin\LoansProvider;
+use App\Oxytoxin\Providers\LoansProvider;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;

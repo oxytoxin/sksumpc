@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Oxytoxin;
+namespace App\Oxytoxin\Providers;
 
 use App\Models\Loan;
 use App\Models\LoanType;

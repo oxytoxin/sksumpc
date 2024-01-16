@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Oxytoxin\LoveGiftProvider;
-use App\Oxytoxin\TimeDepositsProvider;
+use App\Oxytoxin\Providers\LoveGiftProvider;
+use App\Oxytoxin\Providers\TimeDepositsProvider;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

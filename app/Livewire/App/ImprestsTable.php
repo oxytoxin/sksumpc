@@ -10,7 +10,7 @@ use App\Models\Member;
 use App\Models\SavingsAccount;
 use App\Oxytoxin\DTO\MSO\ImprestData;
 use App\Oxytoxin\DTO\MSO\SavingsData;
-use App\Oxytoxin\ImprestsProvider;
+use App\Oxytoxin\Providers\ImprestsProvider;
 use DB;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;

@@ -18,7 +18,7 @@ use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionPaymentData;
 use App\Oxytoxin\DTO\Loan\LoanPaymentData;
 use App\Oxytoxin\DTO\MSO\ImprestData;
 use App\Oxytoxin\DTO\MSO\SavingsData;
-use App\Oxytoxin\TimeDepositsProvider;
+use App\Oxytoxin\Providers\TimeDepositsProvider;
 use DB;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;

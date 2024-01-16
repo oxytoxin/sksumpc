@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Oxytoxin;
+namespace App\Oxytoxin\Providers;
 
 use App\Models\User;
 use Filament\Notifications\Notification;
@@ -17,7 +17,7 @@ class OverrideProvider
                 $passed = true;
             }
         }
-        if (! $passed) {
+        if (!$passed) {
             Notification::make()->title('Incorrect password.')->danger()->send();
 
             return false;

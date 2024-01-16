@@ -6,7 +6,7 @@ use App\Models\Member;
 use App\Models\Saving;
 use App\Models\SavingsAccount;
 use App\Oxytoxin\DTO\MSO\SavingsData;
-use App\Oxytoxin\SavingsProvider;
+use App\Oxytoxin\Providers\SavingsProvider;
 use Lorisleiva\Actions\Concerns\AsAction;
 
 class DepositToSavingsAccount

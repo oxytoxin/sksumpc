@@ -31,7 +31,13 @@
 
             <tbody>
                 @foreach ($trial_balance_entries as $trial_balance_entry)
-                    @include('partials.trial-balance-row-data')
+                    @if (
+                        $trial_balance_entry->parent?->name === 'loans receivable' &&
+                            $trial_balance_entry->auditable instanceof App\Models\LoanType)
+                        @include('partials.loan-receivables-row-data')
+                    @else
+                        @include('partials.trial-balance-row-data')
+                    @endif
                 @endforeach
                 @include('partials.trial-balance-row-footer')
             </tbody>

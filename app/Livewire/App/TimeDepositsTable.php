@@ -9,7 +9,7 @@ use App\Models\SavingsAccount;
 use App\Models\TimeDeposit;
 use App\Oxytoxin\DTO\MSO\ImprestData;
 use App\Oxytoxin\DTO\MSO\SavingsData;
-use App\Oxytoxin\TimeDepositsProvider;
+use App\Oxytoxin\Providers\TimeDepositsProvider;
 use DB;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Placeholder;

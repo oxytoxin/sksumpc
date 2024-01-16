@@ -47,10 +47,6 @@ class CashCollectiblesSeeder extends Seeder
         ]);
         CashCollectible::create([
             'cash_collectible_category_id' => $ccg->id,
-            'name' => 'LOVE GIFT',
-        ]);
-        CashCollectible::create([
-            'cash_collectible_category_id' => $ccg->id,
             'name' => 'A/P',
         ]);
         CashCollectible::create([

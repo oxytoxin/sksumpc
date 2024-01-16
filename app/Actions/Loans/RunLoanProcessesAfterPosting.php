@@ -7,7 +7,7 @@ use App\Models\Loan;
 use App\Models\LoanApplication;
 use App\Oxytoxin\DTO\Loan\LoanPaymentData;
 use App\Oxytoxin\DTO\MSO\ImprestData;
-use App\Oxytoxin\LoansProvider;
+use App\Oxytoxin\Providers\LoansProvider;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Lorisleiva\Actions\Concerns\AsAction;

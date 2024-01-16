@@ -5,7 +5,7 @@ namespace App\Actions\Imprests;
 use App\Models\Imprest;
 use App\Models\Member;
 use App\Oxytoxin\DTO\MSO\ImprestData;
-use App\Oxytoxin\ImprestsProvider;
+use App\Oxytoxin\Providers\ImprestsProvider;
 use Filament\Notifications\Notification;
 use Illuminate\Validation\ValidationException;
 use Lorisleiva\Actions\Concerns\AsAction;

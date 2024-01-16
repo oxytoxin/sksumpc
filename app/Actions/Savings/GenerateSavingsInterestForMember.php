@@ -4,7 +4,7 @@ namespace App\Actions\Savings;
 
 use App\Models\Member;
 use App\Oxytoxin\DTO\MSO\SavingsData;
-use App\Oxytoxin\SavingsProvider;
+use App\Oxytoxin\Providers\SavingsProvider;
 use App\Oxytoxin\Services\InterestCalculator;
 use DB;
 use Lorisleiva\Actions\Concerns\AsAction;

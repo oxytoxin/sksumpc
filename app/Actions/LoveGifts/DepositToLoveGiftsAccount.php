@@ -5,7 +5,7 @@ namespace App\Actions\LoveGifts;
 use App\Models\LoveGift;
 use App\Models\Member;
 use App\Oxytoxin\DTO\MSO\LoveGiftData;
-use App\Oxytoxin\LoveGiftProvider;
+use App\Oxytoxin\Providers\LoveGiftProvider;
 use Lorisleiva\Actions\Concerns\AsAction;
 
 class DepositToLoveGiftsAccount

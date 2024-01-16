@@ -6,7 +6,7 @@ use App\Models\Loan;
 use App\Models\LoanApplication;
 use Illuminate\Support\Facades\DB;
 use App\Oxytoxin\DTO\Loan\LoanData;
-use App\Oxytoxin\LoansProvider;
+use App\Oxytoxin\Providers\LoansProvider;
 use Lorisleiva\Actions\Concerns\AsAction;
 
 class CreateNewLoan

@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Oxytoxin\SavingsProvider;
-use App\Oxytoxin\TimeDepositsProvider;
+use App\Oxytoxin\Providers\SavingsProvider;
+use App\Oxytoxin\Providers\TimeDepositsProvider;
 use DB;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

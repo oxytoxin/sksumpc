@@ -4,7 +4,7 @@ namespace App\Filament\App\Resources\MemberResource\Pages;
 
 use App\Filament\App\Resources\MemberResource;
 use App\Models\Loan;
-use App\Oxytoxin\LoansProvider;
+use App\Oxytoxin\Providers\LoansProvider;
 use Filament\Resources\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
 

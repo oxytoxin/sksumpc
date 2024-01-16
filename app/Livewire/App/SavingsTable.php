@@ -10,7 +10,7 @@ use App\Models\Saving;
 use App\Models\SavingsAccount;
 use App\Oxytoxin\DTO\MSO\ImprestData;
 use App\Oxytoxin\DTO\MSO\SavingsData;
-use App\Oxytoxin\SavingsProvider;
+use App\Oxytoxin\Providers\SavingsProvider;
 use DB;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;

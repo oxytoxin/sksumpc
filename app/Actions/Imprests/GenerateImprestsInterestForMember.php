@@ -4,7 +4,7 @@ namespace App\Actions\Imprests;
 
 use App\Models\Member;
 use App\Oxytoxin\DTO\MSO\ImprestData;
-use App\Oxytoxin\ImprestsProvider;
+use App\Oxytoxin\Providers\ImprestsProvider;
 use App\Oxytoxin\Services\InterestCalculator;
 use DB;
 use Lorisleiva\Actions\Concerns\AsAction;

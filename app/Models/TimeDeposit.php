@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Oxytoxin\TimeDepositsProvider;
+use App\Oxytoxin\Providers\TimeDepositsProvider;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

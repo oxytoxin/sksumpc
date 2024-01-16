@@ -4,7 +4,7 @@ namespace App\Actions\Loans;
 
 use App\Models\Loan;
 use App\Oxytoxin\DTO\Loan\LoanPaymentData;
-use App\Oxytoxin\LoansProvider;
+use App\Oxytoxin\Providers\LoansProvider;
 use Carbon\Carbon;
 use Lorisleiva\Actions\Concerns\AsAction;
 
