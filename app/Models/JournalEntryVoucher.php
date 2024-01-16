@@ -15,7 +15,7 @@ class JournalEntryVoucher extends Model
 
     public function journal_entry_voucher_items()
     {
-        return $this->hasMany(JournalEntryVoucherItems::class);
+        return $this->hasMany(JournalEntryVoucherItem::class);
     }
 
     protected static function booted()

@@ -17,4 +17,9 @@ class TrialBalanceEntry extends Model
     {
         return $this->morphTo();
     }
+
+    public function journal_entry_voucher_items()
+    {
+        return $this->hasMany(JournalEntryVoucherItem::class);
+    }
 }

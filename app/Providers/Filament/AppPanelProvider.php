@@ -94,7 +94,7 @@ class AppPanelProvider extends PanelProvider
                         var mywindow = window.open('', title, 'height=1000,width=1000');
                         mywindow.document.write('<html><head>');
                         mywindow.document.write('<title>' + title + '</title>');
-                        mywindow.document.write(`<link rel='stylesheet' href='{$customcss}' /></head><body >`);
+                        mywindow.document.write(`<link rel='stylesheet' href='$customcss'><body>`);
                         mywindow.document.write(data);
                         mywindow.document.close();
                         mywindow.focus();

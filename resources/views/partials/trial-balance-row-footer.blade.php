@@ -1,6 +1,5 @@
 @php
     use App\Oxytoxin\Providers\TrialBalanceProvider;
-
 @endphp
 <tr>
     <td class="border border-black px-2 uppercase text-xs whitespace-nowrap font-bold">

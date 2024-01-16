@@ -50,16 +50,14 @@ class JournalEntryVoucherResource extends Resource
                             ->searchable(['code', 'name'])
                             ->options(
                                 TrialBalanceEntry::doesntHave('descendants')
-                                    ->selectRaw("concat(code, ' - ', upper(name)) as codename")
-                                    ->pluck('codename')
+                                    ->selectRaw("concat(code, ' - ', upper(name)) as codename, id")
+                                    ->pluck('codename', 'id')
                             )
                             ->required()
                             ->label('Account'),
                         TextInput::make('debit')
-                            ->required(fn ($get) => !$get('credit'))
                             ->moneymask(),
                         TextInput::make('credit')
-                            ->required(fn ($get) => !$get('debit'))
                             ->moneymask(),
 
                     ])

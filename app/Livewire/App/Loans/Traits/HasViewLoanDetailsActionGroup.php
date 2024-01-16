@@ -82,22 +82,22 @@ trait HasViewLoanDetailsActionGroup
                 ->url(fn ($record) => route('filament.app.resources.loan-applications.view', ['record' => $record])),
             Action::make('payments')
                 ->icon('heroicon-o-currency-dollar')
-                ->visible(fn ($record) => $record->loan()->exists())
+                ->visible(fn ($record) => $record->loan)
                 ->modalContent(fn ($record) => view('filament.app.views.loan-payments', ['loan' => $record->loan])),
             Action::make('amortization')
                 ->label('Amortization Schedule')
                 ->icon('heroicon-o-calendar-days')
-                ->visible(fn ($record) => $record->loan()->exists())
+                ->visible(fn ($record) => $record->loan)
                 ->url(fn ($record) => route('filament.app.resources.members.loan-amortization-schedule', ['loan' => $record->loan])),
             Action::make('sl')
                 ->label('Subsidiary Ledger')
                 ->icon('heroicon-o-queue-list')
-                ->visible(fn ($record) => $record->loan()->exists())
+                ->visible(fn ($record) => $record->loan)
                 ->url(fn ($record) => route('filament.app.resources.members.loan-subsidiary-ledger', ['loan' => $record->loan])),
             Action::make('ds')
                 ->label('Disclosure Sheet')
                 ->icon('heroicon-o-document')
-                ->visible(fn ($record) => $record->loan()->exists())
+                ->visible(fn ($record) => $record->loan)
                 ->url(fn ($record) => route('filament.app.resources.members.loan-disclosure-sheet', ['loan' => $record->loan])),
         ])
             ->button()

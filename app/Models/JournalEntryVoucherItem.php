@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class JournalEntryVoucherItems extends Model
+class JournalEntryVoucherItem extends Model
 {
     use HasFactory;
 
@@ -17,5 +17,10 @@ class JournalEntryVoucherItems extends Model
     public function journal_entry_voucher()
     {
         return $this->belongsTo(JournalEntryVoucher::class);
+    }
+
+    public function trial_balance_entry()
+    {
+        return $this->belongsTo(TrialBalanceEntry::class);
     }
 }

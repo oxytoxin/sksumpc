@@ -100,6 +100,7 @@ class LoanApplicationResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn ($query) => $query->with('loan'))
             ->columns([
                 TextColumn::make('member.full_name')->searchable(),
                 TextColumn::make('priority_number')->searchable(),
