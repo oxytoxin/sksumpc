@@ -9,7 +9,7 @@
     <td class="border border-black px-2 text-xs"></td>
     <td class="border border-black px-2 text-xs"></td>
     <td class="border border-black px-2 text-xs">
-        {{ number_format(TrialBalanceProvider::getCrjLoanReceivablesTotal($data['month'], $data['year']), 2) }}
+        {{ renumber_format(TrialBalanceProvider::getCrjLoanReceivablesTotal($data['month'], $data['year']), 2) }}
     </td>
     <td class="border border-black px-2 text-xs"></td>
     <td class="border border-black px-2 text-xs"></td>
@@ -23,13 +23,13 @@
     <td class="border border-black px-2 text-xs"></td>
     <td class="border border-black px-2 text-xs"></td>
     <td class="border border-black px-2 text-xs">
-        {{ number_format(TrialBalanceProvider::getCrjLoanReceivablesTotal($data['month'], $data['year']), 2) }}
+        {{ renumber_format(TrialBalanceProvider::getCrjLoanReceivablesTotal($data['month'], $data['year']), 2) }}
     </td>
     <td class="border border-black px-2 text-xs">
-        {{ number_format(TrialBalanceProvider::getCdjLoanDisbursementsTotal($data['month'], $data['year']), 2) }}
+        {{ renumber_format(TrialBalanceProvider::getCdjLoanDisbursementsTotal($data['month'], $data['year']), 2) }}
     </td>
     <td class="border border-black px-2 text-xs">
-        {{ number_format(TrialBalanceProvider::getCdjLoanReceivablesTotal($data['month'], $data['year']), 2) }}
+        {{ renumber_format(TrialBalanceProvider::getCdjLoanReceivablesTotal($data['month'], $data['year']), 2) }}
     </td>
     <td class="border border-black px-2 text-xs"></td>
     <td class="border border-black px-2 text-xs"></td>
@@ -38,13 +38,17 @@
     <td class="border border-black px-2 text-xs"></td>
     <td class="border border-black px-2 text-xs"></td>
     <td class="border border-black px-2 text-xs">
-        {{ number_format(TrialBalanceProvider::getCdjLoanDisbursementsTotal($data['month'], $data['year']), 2) }}
+        {{ renumber_format(TrialBalanceProvider::getCdjLoanDisbursementsTotal($data['month'], $data['year']), 2) }}
     </td>
     <td class="border border-black px-2 text-xs">
-        {{ number_format(TrialBalanceProvider::getCdjLoanReceivablesTotal($data['month'], $data['year']), 2) }}
+        {{ renumber_format(TrialBalanceProvider::getCdjLoanReceivablesTotal($data['month'], $data['year']), 2) }}
     </td>
-    <td class="border border-black px-2 text-xs"></td>
-    <td class="border border-black px-2 text-xs"></td>
+    <td class="border border-black px-2 text-right text-xs">
+        {{ renumber_format($this->jev_entries->sum('total_debit'), 2) }}
+    </td>
+    <td class="border border-black px-2 text-right text-xs">
+        {{ renumber_format($this->jev_entries->sum('total_credit'), 2) }}
+    </td>
     <td class="border border-black px-2 text-xs"></td>
     <td class="border border-black px-2 text-xs"></td>
 </tr>

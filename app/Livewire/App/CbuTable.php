@@ -108,8 +108,7 @@ class CbuTable extends Component implements HasForms, HasTable
                         ->modalContent(fn ($record) => view('filament.app.views.cbu-payments', ['cbu' => $record])),
                     ViewAction::make()
                         ->label('Amortization Schedule')
-                        ->url(fn ($record) => route('filament.app.resources.members.cbu-amortization-schedule', ['cbu' => $record]))
-                        ->modalContent(fn ($record) => view('filament.app.views.cbu-payments', ['cbu' => $record])),
+                        ->url(fn ($record) => route('filament.app.resources.members.cbu-amortization-schedule', ['cbu' => $record])),
                 ]),
 
             ])

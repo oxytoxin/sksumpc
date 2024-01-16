@@ -5,7 +5,9 @@
             <thead>
                 <tr>
                     <th class="border border-black px-2 whitespace-nowrap" rowspan="2">TRIAL BALANCE</th>
-                    <th class="border border-black px-2 whitespace-nowrap" colspan="2">BALANCE AS OF</th>
+                    <th class="border border-black px-2 whitespace-nowrap uppercase" colspan="2">BALANCE AS OF
+                        {{ Carbon\Carbon::create(month: $data['month'], year: $data['year'])->subMonthNoOverflow()->format('F Y') }}
+                    </th>
                     <th class="border border-black px-2 whitespace-nowrap" colspan="2">CRJ-LOANS</th>
                     <th class="border border-black px-2 whitespace-nowrap" colspan="2">CRJ-OTHERS</th>
                     <th class="border border-black px-2 whitespace-nowrap" colspan="2">CRJ-MSO</th>
@@ -28,7 +30,6 @@
                     @endforeach
                 </tr>
             </thead>
-
             <tbody>
                 @foreach ($trial_balance_entries as $trial_balance_entry)
                     @if (

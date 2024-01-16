@@ -15,7 +15,11 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -47,10 +51,8 @@ class JournalEntryVoucherResource extends Resource
                     ->columnWidths(['trial_balance_entry_id' => '20rem'])
                     ->schema([
                         Select::make('trial_balance_entry_id')
-                            ->searchable(['code', 'name'])
                             ->options(
-                                TrialBalanceEntry::doesntHave('descendants')
-                                    ->selectRaw("concat(code, ' - ', upper(name)) as codename, id")
+                                TrialBalanceEntry::whereNotNull('code')
                                     ->pluck('codename', 'id')
                             )
                             ->required()
@@ -71,11 +73,25 @@ class JournalEntryVoucherResource extends Resource
                 TextColumn::make('name'),
                 TextColumn::make('reference_number'),
                 TextColumn::make('transaction_date')->date('F d, Y'),
+                TextColumn::make('description'),
             ])
             ->filters([
-                //
+                Filter::make('transaction_date')
+                    ->dateRange('transaction_date'),
+                SelectFilter::make('trial_balance_entry_id')
+                    ->label('Account')
+                    ->options(TrialBalanceEntry::whereNotNull('code')->pluck('codename', 'id'))
+                    ->query(fn ($query, $data) => $query->when($data['value'], fn ($q) => $q->whereRelation('journal_entry_voucher_items', 'trial_balance_entry_id', $data['value'])))
             ])
             ->actions([
+                Action::make('view')
+                    ->button()
+                    ->color('success')
+                    ->outlined()
+                    ->modalHeading("JEV Preview")
+                    ->modalCancelAction(false)
+                    ->modalSubmitAction(false)
+                    ->modalContent(fn ($record) => view('components.app.bookkeeper.reports.journal-entry-voucher-preview', ['journal_entry_voucher' => $record])),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])

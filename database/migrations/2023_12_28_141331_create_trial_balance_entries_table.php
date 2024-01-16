@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->integer('code')->nullable();
+            $table->string('codename')->virtualAs("upper(concat(code, ' - ', name))");
             $table->nullableMorphs('auditable');
             $table->nestedSet();
             $table->timestamps();

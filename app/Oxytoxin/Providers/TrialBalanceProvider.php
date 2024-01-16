@@ -39,6 +39,18 @@ class TrialBalanceProvider
             ->sum('total_amount');
     }
 
+    public static function getJevEntries($month = null, $year = null)
+    {
+        return DB::table('journal_entry_voucher_items')
+            ->join('journal_entry_vouchers', 'journal_entry_voucher_items.journal_entry_voucher_id', 'journal_entry_vouchers.id')
+            ->when($month, fn ($q) => $q->whereMonth('journal_entry_vouchers.transaction_date', $month))
+            ->when($year, fn ($q) => $q->whereYear('journal_entry_vouchers.transaction_date', $year))
+            ->selectRaw("sum(debit) as total_debit, sum(credit) as total_credit, trial_balance_entry_id")
+            ->groupBy('trial_balance_entry_id')
+            ->get()
+            ->collect();
+    }
+
     public static function getCrjLoanReceivables($month = null, $year = null)
     {
         return DB::table('loan_payments')

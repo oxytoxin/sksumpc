@@ -37,6 +37,12 @@ class TrialBalanceReport extends Component
         return TrialBalanceProvider::getCdjLoanDisbursements($this->data['month'], $this->data['year']);
     }
 
+    #[Computed]
+    public function JevEntries()
+    {
+        return TrialBalanceProvider::getJevEntries($this->data['month'], $this->data['year']);
+    }
+
     public function render()
     {
         return view('livewire.app.bookkeeper.reports.trial-balance-report', [
