@@ -36,8 +36,8 @@
             href="{{ urldecode(
                 route('filament.app.resources.journal-entry-vouchers.index', [
                     'tableFilters[trial_balance_entry_id][value]' => $trial_balance_entry->id,
-                    'tableFilters[transaction_date][from]' => Carbon\Carbon::create(month: $data['month'], year: $data['year'])->startOfMonth()->format('Y-m-d'),
-                    'tableFilters[transaction_date][to]' => Carbon\Carbon::create(month: $data['month'], year: $data['year'])->endOfMonth()->format('Y-m-d'),
+                    'tableFilters[transaction_date][from]' => Carbon\Carbon::create(month: $data['month'], year: $data['year'])->startOfMonth()->format('Y-m-d  H:i:s'),
+                    'tableFilters[transaction_date][to]' => Carbon\Carbon::create(month: $data['month'], year: $data['year'])->endOfMonth()->format('Y-m-d  H:i:s'),
                 ]),
             ) }}">
             {{ renumber_format($this->jev_entries->firstWhere('trial_balance_entry_id', $trial_balance_entry->id)?->total_debit, 2) }}
@@ -48,8 +48,8 @@
             href="{{ urldecode(
                 route('filament.app.resources.journal-entry-vouchers.index', [
                     'tableFilters[trial_balance_entry_id][value]' => $trial_balance_entry->id,
-                    'tableFilters[transaction_date][from]' => Carbon\Carbon::create(month: $data['month'], year: $data['year'])->startOfMonth()->format('Y-m-d'),
-                    'tableFilters[transaction_date][to]' => Carbon\Carbon::create(month: $data['month'], year: $data['year'])->endOfMonth()->format('Y-m-d'),
+                    'tableFilters[transaction_date][from]' => Carbon\Carbon::create(month: $data['month'], year: $data['year'])->startOfMonth()->format('Y-m-d H:i:s'),
+                    'tableFilters[transaction_date][to]' => Carbon\Carbon::create(month: $data['month'], year: $data['year'])->endOfMonth()->format('Y-m-d H:i:s'),
                 ]),
             ) }}">
             {{ renumber_format($this->jev_entries->firstWhere('trial_balance_entry_id', $trial_balance_entry->id)?->total_credit, 2) }}
