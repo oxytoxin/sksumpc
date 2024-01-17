@@ -11,10 +11,10 @@ class TrialBalanceProvider
 {
     public static function getBalanceForwardedEntries($month = null, $year = null)
     {
-        $date = Carbon::create(month: $month, year: $year);
+        $date = Carbon::create(month: $month, year: $year)->subMonthNoOverflow();
         $summary = BalanceForwardedSummary::query()
-            ->when($month, fn ($q) => $q->whereMonth('generated_date', $date->subMonthNoOverflow()->month))
-            ->when($year, fn ($q) => $q->whereYear('generated_date', $year))
+            ->when($month, fn ($q) => $q->whereMonth('generated_date', $date->month))
+            ->when($year, fn ($q) => $q->whereYear('generated_date', $date->year))
             ->latest()
             ->first();
         if (!$summary)

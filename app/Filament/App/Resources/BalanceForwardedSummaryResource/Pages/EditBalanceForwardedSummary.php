@@ -3,8 +3,10 @@
 namespace App\Filament\App\Resources\BalanceForwardedSummaryResource\Pages;
 
 use App\Filament\App\Resources\BalanceForwardedSummaryResource;
+use Carbon\Carbon;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Database\Eloquent\Model;
 
 class EditBalanceForwardedSummary extends EditRecord
 {
@@ -27,5 +29,17 @@ class EditBalanceForwardedSummary extends EditRecord
 
         /** @internal Read the DocBlock above the following method. */
         $this->fillFormWithDataAndCallHooks($data);
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    protected function handleRecordUpdate(Model $record, array $data): Model
+    {
+        $data['generated_date'] = Carbon::create(month: $data['month'], year: $data['year'])->endOfMonth();
+        unset($data['month'], $data['year']);
+        $record->update($data);
+
+        return $record;
     }
 }
