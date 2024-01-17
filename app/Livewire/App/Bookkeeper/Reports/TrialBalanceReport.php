@@ -21,6 +21,12 @@ class TrialBalanceReport extends Component
     }
 
     #[Computed]
+    public function BalanceForwardedEntries()
+    {
+        return TrialBalanceProvider::getBalanceForwardedEntries($this->data['month'], $this->data['year']);
+    }
+
+    #[Computed]
     public function CrjLoanReceivables()
     {
         return TrialBalanceProvider::getCrjLoanReceivables($this->data['month'], $this->data['year']);

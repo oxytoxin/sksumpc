@@ -10,7 +10,7 @@ class BalanceForwardedSummary extends Model
     use HasFactory;
 
     protected $casts = [
-        'generation_date' => 'immutable_date'
+        'generated_date' => 'immutable_date'
     ];
 
     public function balance_forwarded_entries()

@@ -3,7 +3,7 @@
 namespace App\Filament\App\Resources;
 
 use App\Filament\App\Resources\BalanceForwardedSummaryResource\Pages;
-use App\Filament\App\Resources\BalanceForwardedSummaryResource\RelationManagers;
+use App\Filament\App\Resources\BalanceForwardedSummaryResource\RelationManagers\BalanceForwardedEntriesRelationManager;
 use App\Models\BalanceForwardedSummary;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
@@ -51,7 +51,7 @@ class BalanceForwardedSummaryResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('transaction_date')
+                TextColumn::make('generated_date')
                     ->date('F Y')
             ])
             ->filters([
@@ -70,7 +70,7 @@ class BalanceForwardedSummaryResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            BalanceForwardedEntriesRelationManager::class
         ];
     }
 

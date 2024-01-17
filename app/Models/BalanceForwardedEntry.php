@@ -17,4 +17,9 @@ class BalanceForwardedEntry extends Model
     {
         return $this->belongsTo(BalanceForwardedSummary::class);
     }
+
+    public function trial_balance_entry()
+    {
+        return $this->belongsTo(TrialBalanceEntry::class);
+    }
 }

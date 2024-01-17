@@ -5,8 +5,12 @@
     ]) style="padding-left: {{ $trial_balance_entry->depth + 1 }}rem;">
         {{ "$trial_balance_entry->code $trial_balance_entry->name" }}
     </td>
-    <td class="border border-black px-2 text-right text-xs"></td>
-    <td class="border border-black px-2 text-right text-xs"></td>
+    <td class="border border-black px-2 text-right text-xs">
+        {{ renumber_format($this->balance_forwarded_entries->firstWhere('trial_balance_entry_id', $trial_balance_entry->id)?->total_debit, 2) }}
+    </td>
+    <td class="border border-black px-2 text-right text-xs">
+        {{ renumber_format($this->balance_forwarded_entries->firstWhere('trial_balance_entry_id', $trial_balance_entry->id)?->total_credit, 2) }}
+    </td>
     <td class="border border-black px-2 text-right text-xs"></td>
     <td class="border border-black px-2 text-right text-xs"></td>
     <td class="border border-black px-2 text-right text-xs"></td>

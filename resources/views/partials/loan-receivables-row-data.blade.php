@@ -31,15 +31,19 @@
     ]) style="padding-left: {{ $trial_balance_entry->depth + 1 }}rem;">
         {{ "$trial_balance_entry->code $trial_balance_entry->name" }}
     </td>
-    <td class="border border-black px-2 text-right text-xs"></td>
-    <td class="border border-black px-2 text-right text-xs"></td>
+    <td class="border border-black px-2 text-right text-xs">
+        {{ renumber_format($this->balance_forwarded_entries->firstWhere('trial_balance_entry_id', $trial_balance_entry->id)?->total_debit, 2) }}
+    </td>
+    <td class="border border-black px-2 text-right text-xs">
+        {{ renumber_format($this->balance_forwarded_entries->firstWhere('trial_balance_entry_id', $trial_balance_entry->id)?->total_credit, 2) }}
+    </td>
     <td class="border border-black px-2 text-right text-xs"></td>
     <td class="border border-black px-2 text-right text-xs">
         @isset($crj_loans_principal)
-        <span>{{ renumber_format($crj_loans_principal, 2) }}</span>
+            <span>{{ renumber_format($crj_loans_principal, 2) }}</span>
         @endisset
         @isset($crj_loans_interest)
-        <span>{{ renumber_format($crj_loans_interest, 2) }}</span>
+            <span>{{ renumber_format($crj_loans_interest, 2) }}</span>
         @endisset
     </td>
     <td class="border border-black px-2 text-right text-xs"></td>
@@ -61,10 +65,10 @@
     </td>
     <td class="border border-black px-2 text-right text-xs">
         @isset($cdj_loans_receivable)
-        {{ renumber_format($cdj_loans_receivable, 2) }}
+            {{ renumber_format($cdj_loans_receivable, 2) }}
         @endisset
         @isset($cdj_loans_interest)
-        {{ renumber_format($cdj_loans_interest, 2) }}
+            {{ renumber_format($cdj_loans_interest, 2) }}
         @endisset
     </td>
     <td class="border border-black px-2 text-right text-xs"></td>

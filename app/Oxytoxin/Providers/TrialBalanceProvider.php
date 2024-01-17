@@ -2,10 +2,30 @@
 
 namespace App\Oxytoxin\Providers;
 
+use App\Models\BalanceForwardedEntry;
+use App\Models\BalanceForwardedSummary;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class TrialBalanceProvider
 {
+    public static function getBalanceForwardedEntries($month = null, $year = null)
+    {
+        $date = Carbon::create(month: $month, year: $year);
+        $summary = BalanceForwardedSummary::query()
+            ->when($month, fn ($q) => $q->whereMonth('generated_date', $date->subMonthNoOverflow()->month))
+            ->when($year, fn ($q) => $q->whereYear('generated_date', $year))
+            ->latest()
+            ->first();
+        if (!$summary)
+            return collect();
+        return DB::table('balance_forwarded_entries')
+            ->selectRaw("sum(debit) as total_debit, sum(credit) as total_credit, trial_balance_entry_id")
+            ->groupBy('trial_balance_entry_id')
+            ->get()
+            ->collect();
+    }
+
     public static function getCrjLoanReceivablesTotal($month = null, $year = null)
     {
         return DB::table('loan_payments')
