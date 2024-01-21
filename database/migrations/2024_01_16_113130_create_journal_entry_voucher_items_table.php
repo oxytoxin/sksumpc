@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('journal_entry_voucher_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(JournalEntryVoucher::class)->constrained();
-            $table->foreignIdFor(TrialBalanceEntry::class)->constrained();
+            $table->foreignIdFor(JournalEntryVoucher::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignIdFor(TrialBalanceEntry::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->decimal('credit', 18, 4)->nullable();
             $table->decimal('debit', 18, 4)->nullable();
             $table->timestamps();

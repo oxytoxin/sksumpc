@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\LedgerAccount;
-use DB;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Spatie\SimpleExcel\SimpleExcelReader;
 
 class LedgerAccountsSeeder extends Seeder

@@ -6,6 +6,7 @@ use App\Filament\App\Resources\JournalEntryVoucherResource\Pages;
 use App\Filament\App\Resources\JournalEntryVoucherResource\RelationManagers;
 use App\Models\JournalEntryVoucher;
 use App\Models\TrialBalanceEntry;
+use App\Rules\BalancedJev;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
@@ -47,6 +48,7 @@ class JournalEntryVoucherResource extends Resource
                 TableRepeater::make('journal_entry_voucher_items')
                     ->hideLabels()
                     ->relationship()
+                    ->rule(new BalancedJev)
                     ->columnSpanFull()
                     ->columnWidths(['trial_balance_entry_id' => '20rem'])
                     ->schema([

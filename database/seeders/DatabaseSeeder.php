@@ -4,8 +4,9 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
-use Artisan;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Artisan;
 
 class DatabaseSeeder extends Seeder
 {
@@ -29,5 +30,9 @@ class DatabaseSeeder extends Seeder
         $this->command->info("Seeding members...\n");
         Artisan::call('app:seed-members');
         $this->command->info("Seeded members...\n");
+
+        if (App::environment('local')) {
+            $this->call(SeedInitialTestData::class);
+        }
     }
 }
