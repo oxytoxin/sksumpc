@@ -20,6 +20,7 @@ class TrialBalanceProvider
         if (!$summary)
             return collect();
         return DB::table('balance_forwarded_entries')
+            ->where('balance_forwarded_summary_id', $summary->id)
             ->selectRaw("sum(debit) as total_debit, sum(credit) as total_credit, trial_balance_entry_id")
             ->groupBy('trial_balance_entry_id')
             ->get()
