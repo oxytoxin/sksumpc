@@ -3,6 +3,7 @@
 namespace App\Actions\Loans;
 
 use App\Models\Loan;
+use App\Models\LoanPayment;
 use App\Oxytoxin\DTO\Loan\LoanPaymentData;
 use App\Oxytoxin\Providers\LoansProvider;
 use Carbon\Carbon;
@@ -12,7 +13,7 @@ class PayLoan
 {
     use AsAction;
 
-    public function handle(Loan $loan, LoanPaymentData $loanPaymentData)
+    public function handle(Loan $loan, LoanPaymentData $loanPaymentData): LoanPayment
     {
         $start = $loan->last_payment?->transaction_date ?? $loan->transaction_date;
         $end = $loanPaymentData->transaction_date;
@@ -20,7 +21,7 @@ class PayLoan
         $interest_due = LoansProvider::computeAccruedInterest($loan, $loan->outstanding_balance, $total_days);
         $interest_payment = min($loanPaymentData->amount, $interest_due);
         $principal_payment = $loanPaymentData->amount - $interest_payment;
-        $loan->payments()->create([
+        return $loan->payments()->create([
             'buy_out' => $loanPaymentData->buy_out,
             'payment_type_id' => $loanPaymentData->payment_type_id,
             'amount' => $loanPaymentData->amount,

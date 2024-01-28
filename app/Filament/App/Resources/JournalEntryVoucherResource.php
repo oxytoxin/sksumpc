@@ -63,7 +63,6 @@ class JournalEntryVoucherResource extends Resource
                             ->moneymask(),
                         TextInput::make('credit')
                             ->moneymask(),
-
                     ])
             ]);
     }

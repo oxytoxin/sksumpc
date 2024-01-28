@@ -13,16 +13,10 @@ class PaymentTypesSeeder extends Seeder
     public function run(): void
     {
         PaymentType::create([
-            'name' => 'OR',
+            'name' => 'CASH',
         ]);
         PaymentType::create([
             'name' => 'JEV',
-        ]);
-        PaymentType::create([
-            'name' => 'CV',
-        ]);
-        PaymentType::create([
-            'name' => 'CASH',
         ]);
         PaymentType::create([
             'name' => 'CHECK',

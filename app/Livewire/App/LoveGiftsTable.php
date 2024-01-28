@@ -7,6 +7,7 @@ use App\Actions\LoveGifts\WithdrawFromLoveGiftsAccount;
 use App\Models\LoveGift;
 use App\Models\Member;
 use App\Oxytoxin\DTO\MSO\LoveGiftData;
+use App\Oxytoxin\Providers\LoveGiftProvider;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -55,13 +56,13 @@ class LoveGiftsTable extends Component implements HasForms, HasTable
             ->headerActions([
                 CreateAction::make('Deposit')
                     ->label('Deposit')
-                    ->modalHeading('Deposit Imprest')
+                    ->modalHeading('Deposit Love Gift')
                     ->form([
                         Select::make('payment_type_id')
                             ->paymenttype()
                             ->required(),
                         TextInput::make('reference_number')->required()
-                            ->unique('imprests'),
+                            ->unique('love_gifts'),
                         TextInput::make('amount')
                             ->required()
                             ->numeric()
@@ -80,7 +81,7 @@ class LoveGiftsTable extends Component implements HasForms, HasTable
                     ->createAnother(false),
                 CreateAction::make('Withdraw')
                     ->label('Withdraw')
-                    ->modalHeading('Withdraw Imprest')
+                    ->modalHeading('Withdraw Love Gift')
                     ->color(Color::Red)
                     ->form([
                         Select::make('payment_type_id')
@@ -89,13 +90,12 @@ class LoveGiftsTable extends Component implements HasForms, HasTable
                         TextInput::make('amount')
                             ->required()
                             ->moneymask(),
-                        Hidden::make('reference_number')->default('IW-'),
                     ])
                     ->action(function ($data) {
                         $member = Member::find($this->member_id);
                         app(WithdrawFromLoveGiftsAccount::class)->handle($member, new LoveGiftData(
                             payment_type_id: $data['payment_type_id'],
-                            reference_number: $data['reference_number'],
+                            reference_number: LoveGiftProvider::WITHDRAWAL_TRANSFER_CODE,
                             amount: $data['amount']
                         ));
                     })

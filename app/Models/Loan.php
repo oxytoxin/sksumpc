@@ -81,6 +81,11 @@ class Loan extends Model
         return $query->wherePosted(true);
     }
 
+    public function scopePayable(Builder $query)
+    {
+        return $query->wherePosted(true)->where('outstanding_balance', '>', 0);
+    }
+
     public function loan_amortizations()
     {
         return $this->hasMany(LoanAmortization::class);

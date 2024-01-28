@@ -248,8 +248,12 @@ class TrialBalanceEntrySeeder extends Seeder
             ],
         ]);
         TrialBalanceEntry::create([
-            'name' => 'other current liabilities',
+            'name' => 'other liabilities',
             'children' => [
+                [
+                    'name' => 'other current liabilities',
+                    'code' => 21490
+                ],
                 [
                     'name' => 'loan refunds',
                     'code' => 21490

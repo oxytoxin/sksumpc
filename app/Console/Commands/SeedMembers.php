@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Actions\Memberships\CreateMemberInitialAccounts;
 use App\Models\Member;
 use App\Models\MembershipStatus;
 use DateTimeImmutable;
@@ -30,7 +31,7 @@ class SeedMembers extends Command
      */
     public function handle()
     {
-        if (! Member::count()) {
+        if (!Member::count()) {
             DB::beginTransaction();
             $rows = SimpleExcelReader::create(storage_path('csv/PROFILING.xlsx'))->getRows();
             $rows->each(function (array $memberData) {
@@ -91,6 +92,10 @@ class SeedMembers extends Command
                 }
             });
             DB::commit();
+            foreach (Member::all() as $key => $member) {
+                app(CreateMemberInitialAccounts::class)->handle($member);
+                $this->info('account created.');
+            }
         }
         // DB::beginTransaction();
         // $rows = SimpleExcelReader::create(storage_path('csv/CBU.xlsx'))->fromSheetName('REGULAR')->getRows();

@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('loans', function (Blueprint $table) {
             $table->id();
+            $table->string('account_number')->index()->unique();
             $table->foreignId('member_id')->constrained();
             $table->foreignId('loan_application_id')->constrained();
             $table->foreignId('loan_type_id')->constrained();

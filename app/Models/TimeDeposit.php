@@ -36,6 +36,8 @@ class TimeDeposit extends Model
     protected static function booted()
     {
         static::creating(function (TimeDeposit $td) {
+            $td->account_number = str('21112-1015-')
+                ->append(str_pad((TimeDeposit::latest('id')->first()?->id ?? 0) + 1, 6, '0', STR_PAD_LEFT));
             $td->cashier_id = auth()->id();
             $td->interest_rate = TimeDepositsProvider::getInterestRate($td->amount);
             $td->number_of_days = TimeDepositsProvider::NUMBER_OF_DAYS;

@@ -4,6 +4,8 @@ namespace App\Oxytoxin\Providers;
 
 use App\Models\BalanceForwardedEntry;
 use App\Models\BalanceForwardedSummary;
+use App\Models\DisbursementVoucherItem;
+use App\Models\TrialBalanceEntry;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -11,10 +13,9 @@ class TrialBalanceProvider
 {
     public static function getBalanceForwardedEntries($month = null, $year = null)
     {
-        $date = Carbon::create(month: $month, year: $year)->subMonthNoOverflow();
         $summary = BalanceForwardedSummary::query()
-            ->when($month, fn ($q) => $q->whereMonth('generated_date', $date->month))
-            ->when($year, fn ($q) => $q->whereYear('generated_date', $date->year))
+            ->when($month, fn ($q) => $q->whereMonth('generated_date', $month))
+            ->when($year, fn ($q) => $q->whereYear('generated_date', $year))
             ->latest()
             ->first();
         if (!$summary)
@@ -27,38 +28,6 @@ class TrialBalanceProvider
             ->collect();
     }
 
-    public static function getCrjLoanReceivablesTotal($month = null, $year = null)
-    {
-        return DB::table('loan_payments')
-            ->when($month, fn ($q) => $q->whereMonth('loan_payments.transaction_date', $month))
-            ->when($year, fn ($q) => $q->whereYear('loan_payments.transaction_date', $year))
-            ->where('buy_out', false)
-            ->selectRaw("sum(principal_payment) + sum(interest_payment) as total_amount")
-            ->get()
-            ->sum('total_amount');
-    }
-
-    public static function getCdjLoanReceivablesTotal($month = null, $year = null)
-    {
-        return DB::table('loan_payments')
-            ->when($month, fn ($q) => $q->whereMonth('loan_payments.transaction_date', $month))
-            ->when($year, fn ($q) => $q->whereYear('loan_payments.transaction_date', $year))
-            ->where('buy_out', true)
-            ->selectRaw("sum(principal_payment) + sum(interest_payment) as total_amount")
-            ->get()
-            ->sum('total_amount');
-    }
-
-    public static function getCdjLoanDisbursementsTotal($month = null, $year = null)
-    {
-        return DB::table('loans')
-            ->when($month, fn ($q) => $q->whereMonth('loans.transaction_date', $month))
-            ->when($year, fn ($q) => $q->whereYear('loans.transaction_date', $year))
-            ->where('posted', true)
-            ->selectRaw("sum(gross_amount) as total_amount")
-            ->get()
-            ->sum('total_amount');
-    }
 
     public static function getJevEntries($month = null, $year = null)
     {
@@ -70,6 +39,47 @@ class TrialBalanceProvider
             ->groupBy('trial_balance_entry_id')
             ->get()
             ->collect();
+    }
+
+    public static function getTrialBalanceEntries()
+    {
+        return TrialBalanceEntry::withDepth()->defaultOrder()->with('auditable', 'parent')->get()->toFlatTree();
+    }
+
+    public static function getTrialBalanceColumns()
+    {
+        return [
+            'BALANCE FORWARDED DEBIT',
+            'BALANCE FORWARDED CREDIT',
+            'CRJ-LOANS DEBIT',
+            'CRJ-LOANS CREDIT',
+            'CRJ-OTHERS DEBIT',
+            'CRJ-OTHERS CREDIT',
+            'CRJ-MSO DEBIT',
+            'CRJ-MSO CREDIT',
+            'CRJ-RICE DEBIT',
+            'CRJ-RICE CREDIT',
+            'CRJ-LAB DEBIT',
+            'CRJ-LAB CREDIT',
+            'CRJ-DORM DEBIT',
+            'CRJ-DORM CREDIT',
+            'CRJ TOTAL DEBIT',
+            'CRJ TOTAL CREDIT',
+            'CDJ-LOANS DEBIT',
+            'CDJ-LOANS CREDIT',
+            'CDJ-OTHERS DEBIT',
+            'CDJ-OTHERS CREDIT',
+            'CDJ-MSO DEBIT',
+            'CDJ-MSO CREDIT',
+            'CDJ-RICE DEBIT',
+            'CDJ-RICE CREDIT',
+            'CDJ TOTAL DEBIT',
+            'CDJ TOTAL CREDIT',
+            'JEV DEBIT',
+            'JEV CREDIT',
+            'ENDING BALANCE DEBIT',
+            'ENDING BALANCE CREDIT',
+        ];
     }
 
     public static function getCrjLoanReceivables($month = null, $year = null)
@@ -85,28 +95,16 @@ class TrialBalanceProvider
             ->collect();
     }
 
-    public static function getCdjLoanReceivables($month = null, $year = null)
+    public static function getCdjEntries($month = null, $year = null)
     {
-        return DB::table('loan_payments')
-            ->join('loans', 'loan_payments.loan_id', 'loans.id')
-            ->when($month, fn ($q) => $q->whereMonth('loan_payments.transaction_date', $month))
-            ->when($year, fn ($q) => $q->whereYear('loan_payments.transaction_date', $year))
-            ->where('buy_out', true)
-            ->selectRaw("sum(principal_payment) as total_principal, sum(interest_payment) as total_interest, loan_type_id")
-            ->groupBy('loan_type_id')
+        return DisbursementVoucherItem::query()
+            ->join('disbursement_vouchers', 'disbursement_vouchers.id', 'disbursement_voucher_items.disbursement_voucher_id')
+            ->whereMonth('transaction_date', $month)
+            ->whereYear('transaction_date', $year)
+            ->selectRaw("sum(debit) as total_debit, sum(credit) as total_credit,trial_balance_entry_id, cdj_column")
+            ->groupBy('trial_balance_entry_id', 'cdj_column')
             ->get()
-            ->collect();
-    }
-
-    public static function getCdjLoanDisbursements($month = null, $year = null)
-    {
-        return DB::table('loans')
-            ->when($month, fn ($q) => $q->whereMonth('loans.transaction_date', $month))
-            ->when($year, fn ($q) => $q->whereYear('loans.transaction_date', $year))
-            ->where('posted', true)
-            ->selectRaw("sum(gross_amount) as total_amount, loan_type_id")
-            ->groupBy('loan_type_id')
-            ->get()
-            ->collect();
+            ->collect()
+            ->groupBy('cdj_column');
     }
 }

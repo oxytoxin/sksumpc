@@ -56,13 +56,10 @@ class Imprest extends Model
         Imprest::created(function (Imprest $imprest) {
             $prefix = match ($imprest->reference_number) {
                 ImprestsProvider::FROM_TRANSFER_CODE => 'IT-',
+                ImprestsProvider::WITHDRAWAL_TRANSFER_CODE => 'IW-',
                 TimeDepositsProvider::FROM_TRANSFER_CODE => 'TD-',
                 default => null
             };
-
-            if (!$prefix && $imprest->amount < 0) {
-                $prefix = 'IW-';
-            }
 
             if ($prefix) {
                 $imprest->reference_number = str($prefix)->append(today()->format('Y') . '-')->append(str_pad($imprest->id, 6, '0', STR_PAD_LEFT));

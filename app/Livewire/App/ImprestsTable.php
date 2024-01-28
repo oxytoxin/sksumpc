@@ -95,10 +95,10 @@ class ImprestsTable extends Component implements HasForms, HasTable
                         TextInput::make('amount')
                             ->required()
                             ->moneymask(),
-                        Hidden::make('reference_number')->default('IW-'),
                     ])
                     ->action(function ($data) {
                         $member = Member::find($this->member_id);
+                        $data['reference_number'] = ImprestsProvider::WITHDRAWAL_TRANSFER_CODE;
                         app(WithdrawFromImprestAccount::class)->handle($member, ImprestData::from($data));
                     })
                     ->createAnother(false),

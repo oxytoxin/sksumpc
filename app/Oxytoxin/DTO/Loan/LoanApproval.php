@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Oxytoxin\DTO;
+namespace App\Oxytoxin\DTO\Loan;
 
 use Spatie\LaravelData\Data;
 

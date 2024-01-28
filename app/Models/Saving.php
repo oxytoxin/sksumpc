@@ -62,13 +62,10 @@ class Saving extends Model
         static::created(function (Saving $saving) {
             $prefix = match ($saving->reference_number) {
                 SavingsProvider::FROM_TRANSFER_CODE => 'ST-',
+                SavingsProvider::WITHDRAWAL_TRANSFER_CODE => 'SW-',
                 TimeDepositsProvider::FROM_TRANSFER_CODE => 'TD-',
                 default => null
             };
-
-            if (!$prefix && $saving->amount < 0) {
-                $prefix = 'SW-';
-            }
 
             if ($prefix) {
                 $saving->reference_number = str($prefix)->append(today()->format('Y') . '-')->append(str_pad($saving->id, 6, '0', STR_PAD_LEFT));

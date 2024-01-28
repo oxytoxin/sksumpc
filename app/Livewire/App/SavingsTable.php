@@ -3,11 +3,13 @@
 namespace App\Livewire\App;
 
 use App\Actions\Imprests\DepositToImprestAccount;
+use App\Actions\Savings\CreateNewSavingsAccount;
 use App\Actions\Savings\DepositToSavingsAccount;
 use App\Actions\Savings\WithdrawFromSavingsAccount;
 use App\Models\Member;
 use App\Models\Saving;
 use App\Models\SavingsAccount;
+use App\Oxytoxin\DTO\MSO\Accounts\SavingsAccountData;
 use App\Oxytoxin\DTO\MSO\ImprestData;
 use App\Oxytoxin\DTO\MSO\SavingsData;
 use App\Oxytoxin\Providers\SavingsProvider;
@@ -16,6 +18,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Notifications\Notification;
 use Filament\Support\Colors\Color;
 use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
@@ -69,14 +72,13 @@ class SavingsTable extends Component implements HasForms, HasTable
                     ->form([
                         TextInput::make('name')
                             ->required(),
-                        TextInput::make('number')
-                            ->required(),
                     ])
                     ->action(function ($data) {
-                        SavingsAccount::create([
-                            'member_id' => $this->member_id,
-                            ...$data,
-                        ]);
+                        app(CreateNewSavingsAccount::class)->handle(new SavingsAccountData(
+                            member_id: $this->member_id,
+                            name: $data['name'],
+                        ));
+                        Notification::make()->title('Savings account created!')->success()->send();
                     })
                     ->color(Color::Emerald)
                     ->createAnother(false),
@@ -118,7 +120,7 @@ class SavingsTable extends Component implements HasForms, HasTable
                         ])
                         ->action(function ($data) {
                             $member = Member::find($this->member_id);
-                            $data['reference_number'] = 'SW-';
+                            $data['reference_number'] = SavingsProvider::WITHDRAWAL_TRANSFER_CODE;
                             $data['savings_account_id'] = $this->tableFilters['savings_account_id']['value'];
                             app(WithdrawFromSavingsAccount::class)->handle($member, SavingsData::from($data));
                         })

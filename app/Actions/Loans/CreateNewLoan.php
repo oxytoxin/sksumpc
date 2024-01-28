@@ -20,6 +20,7 @@ class CreateNewLoan
             'priority_number' => $loanData->priority_number,
         ]);
         $loan = Loan::create([
+            'account_number' => $loanData->account_number,
             'priority_number' => $loanData->priority_number,
             'transaction_date' => $loanData->transaction_date,
             'release_date' => $loanData->release_date,

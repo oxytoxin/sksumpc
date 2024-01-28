@@ -2,6 +2,7 @@
 
 namespace App\Oxytoxin\DTO\Loan;
 
+use App\Models\Loan;
 use Spatie\LaravelData\Data;
 
 class LoanData extends Data
@@ -22,7 +23,14 @@ class LoanData extends Data
         public $transaction_date = null,
         public array $deductions = [],
         public ?string $check_number = null,
+        public ?string $account_number = null,
     ) {
+        if (!$this->account_number) {
+            $this->account_number =  str('21230-')
+                ->append(str_pad($loan_type_id, 3, '0', STR_PAD_LEFT))
+                ->append('-')
+                ->append(str_pad((Loan::latest('id')->first()?->id ?? 0) + 1, 6, '0', STR_PAD_LEFT));
+        }
         $this->transaction_date ??= today();
     }
 }

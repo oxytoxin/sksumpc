@@ -5,10 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * @mixin IdeHelperLedgerAccountCategory
- */
-class LedgerAccountCategory extends Model
+class LoveGiftAccount extends Model
 {
     use HasFactory;
+
+    public function member()
+    {
+        return $this->belongsTo(Member::class);
+    }
 }

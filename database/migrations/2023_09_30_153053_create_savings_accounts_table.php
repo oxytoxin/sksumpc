@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::create('savings_accounts', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Member::class)->constrained();
-            $table->string('number');
+            $table->string('number')->index()->unique();
             $table->string('name');
             $table->timestamps();
         });

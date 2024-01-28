@@ -20,16 +20,16 @@
         </thead>
         <tbody class="text-xs mt-4">
             <tr class="border-t-2 border-x-2 border-black">
-                <td class="border-black border-r px-2">NAME:</td>
+                <td class="border-black border-r px-2 w-1/6">NAME:</td>
                 <td colspan="2" class="border-t border-black px-2">{{ $journal_entry_voucher->name }}</td>
-                <td class="border-black border-x border-t px-2"> DATE:</td>
+                <td class="border-black border-x border-t px-2 w-1/6"> DATE:</td>
                 <td colspan="2" class="border-t border-black px-2">
                     {{ $journal_entry_voucher->transaction_date->format('m/d/Y') }}</td>
             </tr>
             <tr class="border-b-2 border-x-2 border-black">
-                <td class="border-black border-r border-t px-2">ADDRESS:</td>
+                <td class="border-black border-r border-t px-2 w-1/6">ADDRESS:</td>
                 <td colspan="2" class="border-t border-black px-2">{{ $journal_entry_voucher->address }}</td>
-                <td class="border-black border-x border-t px-2"> JEV#:</td>
+                <td class="border-black border-x border-t px-2 w-1/6"> JEV#:</td>
                 <td colspan="2" class="border-t border-black px-2">{{ $journal_entry_voucher->reference_number }}
                 </td>
             </tr>

@@ -56,13 +56,10 @@ class LoveGift extends Model
         static::created(function (LoveGift $loveGift) {
             $prefix = match ($loveGift->reference_number) {
                 LoveGiftProvider::FROM_TRANSFER_CODE => 'LGT-',
+                LoveGiftProvider::WITHDRAWAL_TRANSFER_CODE => 'LGW-',
                 TimeDepositsProvider::FROM_TRANSFER_CODE => 'TD-',
                 default => null
             };
-
-            if (!$prefix && $loveGift->amount < 0) {
-                $prefix = 'LGW-';
-            }
 
             if ($prefix) {
                 $loveGift->reference_number = str($prefix)->append(today()->format('Y') . '-')->append(str_pad($loveGift->id, 6, '0', STR_PAD_LEFT));

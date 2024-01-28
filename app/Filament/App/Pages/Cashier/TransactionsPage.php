@@ -18,6 +18,8 @@ use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionPaymentData;
 use App\Oxytoxin\DTO\Loan\LoanPaymentData;
 use App\Oxytoxin\DTO\MSO\ImprestData;
 use App\Oxytoxin\DTO\MSO\SavingsData;
+use App\Oxytoxin\Providers\ImprestsProvider;
+use App\Oxytoxin\Providers\SavingsProvider;
 use App\Oxytoxin\Providers\TimeDepositsProvider;
 use DB;
 use Filament\Actions\Action;
@@ -144,7 +146,7 @@ class TransactionsPage extends Page
                 } else {
                     app(WithdrawFromSavingsAccount::class)->handle($member, new SavingsData(
                         payment_type_id: $data['payment_type_id'],
-                        reference_number: 'SW-',
+                        reference_number: SavingsProvider::WITHDRAWAL_TRANSFER_CODE,
                         amount: $data['amount'],
                         savings_account_id: $data['savings_account_id']
                     ));
@@ -199,7 +201,7 @@ class TransactionsPage extends Page
                 } else {
                     app(WithdrawFromImprestAccount::class)->handle($member, new ImprestData(
                         payment_type_id: $data['payment_type_id'],
-                        reference_number: 'IW-',
+                        reference_number: ImprestsProvider::WITHDRAWAL_TRANSFER_CODE,
                         amount: $data['amount']
                     ));
                 }
