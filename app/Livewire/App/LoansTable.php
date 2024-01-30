@@ -51,6 +51,7 @@ class LoansTable extends Component implements HasForms, HasTable
         return $table
             ->query(Loan::whereMemberId($this->member->id))
             ->columns([
+                TextColumn::make('account_number'),
                 TextColumn::make('reference_number'),
                 TextColumn::make('loan_type.code'),
                 // TextColumn::make('deductions_list')
