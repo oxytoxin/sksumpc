@@ -69,35 +69,35 @@ class SummarizeTrialBalanceReport
                         $row_data[$trial_balance_column]['AMOUNT'] = $crj_total_credit;
                         break;
                     case 'CDJ-LOANS DEBIT':
-                        $row_data[$trial_balance_column]['AMOUNT'] = $cdj_entries[1]->firstWhere('trial_balance_entry_id', $trial_balance_entry->id)?->total_debit;
+                        $row_data[$trial_balance_column]['AMOUNT'] = ($cdj_entries[1] ?? collect())->firstWhere('trial_balance_entry_id', $trial_balance_entry->id)?->total_debit;
                         $cdj_total_debit += $row_data[$trial_balance_column]['AMOUNT'] ?? 0;
                         break;
                     case 'CDJ-LOANS CREDIT':
-                        $row_data[$trial_balance_column]['AMOUNT'] = $cdj_entries[1]->firstWhere('trial_balance_entry_id', $trial_balance_entry->id)?->total_credit;
+                        $row_data[$trial_balance_column]['AMOUNT'] = ($cdj_entries[1] ?? collect())->firstWhere('trial_balance_entry_id', $trial_balance_entry->id)?->total_credit;
                         $cdj_total_credit += $row_data[$trial_balance_column]['AMOUNT'] ?? 0;
                         break;
                     case 'CDJ-OTHERS DEBIT':
-                        $row_data[$trial_balance_column]['AMOUNT'] = $cdj_entries[2]->firstWhere('trial_balance_entry_id', $trial_balance_entry->id)?->total_debit;
+                        $row_data[$trial_balance_column]['AMOUNT'] = ($cdj_entries[2] ?? collect())->firstWhere('trial_balance_entry_id', $trial_balance_entry->id)?->total_debit;
                         $cdj_total_debit += $row_data[$trial_balance_column]['AMOUNT'] ?? 0;
                         break;
                     case 'CDJ-OTHERS CREDIT':
-                        $row_data[$trial_balance_column]['AMOUNT'] = $cdj_entries[2]->firstWhere('trial_balance_entry_id', $trial_balance_entry->id)?->total_credit;
+                        $row_data[$trial_balance_column]['AMOUNT'] = ($cdj_entries[2] ?? collect())->firstWhere('trial_balance_entry_id', $trial_balance_entry->id)?->total_credit;
                         $cdj_total_credit += $row_data[$trial_balance_column]['AMOUNT'] ?? 0;
                         break;
                     case 'CDJ-MSO DEBIT':
-                        $row_data[$trial_balance_column]['AMOUNT'] = $cdj_entries[3]->firstWhere('trial_balance_entry_id', $trial_balance_entry->id)?->total_debit;
+                        $row_data[$trial_balance_column]['AMOUNT'] = ($cdj_entries[3] ?? collect())->firstWhere('trial_balance_entry_id', $trial_balance_entry->id)?->total_debit;
                         $cdj_total_debit += $row_data[$trial_balance_column]['AMOUNT'] ?? 0;
                         break;
                     case 'CDJ-MSO CREDIT':
-                        $row_data[$trial_balance_column]['AMOUNT'] = $cdj_entries[3]->firstWhere('trial_balance_entry_id', $trial_balance_entry->id)?->total_credit;
+                        $row_data[$trial_balance_column]['AMOUNT'] = ($cdj_entries[3] ?? collect())->firstWhere('trial_balance_entry_id', $trial_balance_entry->id)?->total_credit;
                         $cdj_total_credit += $row_data[$trial_balance_column]['AMOUNT'] ?? 0;
                         break;
                     case 'CDJ-RICE DEBIT':
-                        $row_data[$trial_balance_column]['AMOUNT'] = $cdj_entries[4]->firstWhere('trial_balance_entry_id', $trial_balance_entry->id)?->total_debit;
+                        $row_data[$trial_balance_column]['AMOUNT'] = ($cdj_entries[4] ?? collect())->firstWhere('trial_balance_entry_id', $trial_balance_entry->id)?->total_debit;
                         $cdj_total_debit += $row_data[$trial_balance_column]['AMOUNT'] ?? 0;
                         break;
                     case 'CDJ-RICE CREDIT':
-                        $row_data[$trial_balance_column]['AMOUNT'] = $cdj_entries[4]->firstWhere('trial_balance_entry_id', $trial_balance_entry->id)?->total_credit;
+                        $row_data[$trial_balance_column]['AMOUNT'] = ($cdj_entries[4] ?? collect())->firstWhere('trial_balance_entry_id', $trial_balance_entry->id)?->total_credit;
                         $cdj_total_credit += $row_data[$trial_balance_column]['AMOUNT'] ?? 0;
                         break;
                     case 'CDJ TOTAL DEBIT':
