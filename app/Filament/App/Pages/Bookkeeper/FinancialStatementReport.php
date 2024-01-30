@@ -79,7 +79,7 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
                         $loan_receivable = LoanAmortization::receivable(loan_type: $loan_type, month: $this->data['month'] ?? null, year: $this->data['year'] ?? null);
                         $loan_disbursed = LoanAmortization::disbursed(loan_type: $loan_type, month: $this->data['month'] ?? null, year: $this->data['year'] ?? null);
                     }
-                    if ($entry->parent?->name === 'loans receivable' && $loan_type instanceof LoanType) {
+                    if ($entry->parent?->name === 'loans receivables' && $loan_type instanceof LoanType) {
                         $crj_loans_receivable = $loan_receivable->sum('principal_balance');
                         $cdj_loans_receivable = $loan_disbursed->sum('principal_payment');
                         $loan_debit_amount = Loan::posted()->whereLoanTypeId($loan_type->id)->whereMonth('transaction_date', $this->data['month'] ?? null)->whereYear('transaction_date', $this->data['year'] ?? null)->sum('gross_amount');

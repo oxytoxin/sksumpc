@@ -14,7 +14,9 @@ return new class extends Migration
         Schema::create('trial_balance_entries', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('category')->nullable()->index();
             $table->string('code')->nullable()->index();
+            $table->tinyInteger('operator');
             $table->string('codename')->virtualAs("upper(concat(code, ' - ', name))");
             $table->nullableMorphs('auditable');
             $table->nestedSet();

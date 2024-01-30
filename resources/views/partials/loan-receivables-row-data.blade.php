@@ -9,7 +9,7 @@
 
     $auditable = $trial_balance_entry->auditable;
 
-    if ($trial_balance_entry->parent?->name === 'loans receivable') {
+    if ($trial_balance_entry->parent?->name === 'loans receivables') {
         $crj_loans_principal = $this->crj_loan_receivables->firstWhere('loan_type_id', $auditable->id)?->total_principal;
         $cdj_loans_receivable = $this->cdj_loan_receivables->firstWhere('loan_type_id', $auditable->id)?->total_principal;
         $loan_debit_amount = $this->cdj_loan_disbursements->firstWhere('loan_type_id', $auditable->id)?->total_amount;

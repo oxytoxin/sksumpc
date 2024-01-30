@@ -2,8 +2,12 @@
 
 namespace App\Livewire\App\Bookkeeper\Reports;
 
+use App\Actions\BookkeeperReports\SummarizeTrialBalanceReport;
 use App\Models\CashCollectible;
 use App\Models\LoanType;
+use App\Models\TrialBalanceEntry;
+use App\Oxytoxin\Providers\FinancialStatementProvider;
+use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -18,107 +22,30 @@ class FinancialConditionReport extends Component
         $this->data = $data;
     }
 
+
+
     #[Computed]
     public function items()
     {
-        $loan_types = LoanType::get()->map(fn ($l) => [
-            'name' => strtoupper($l->name),
-        ]);
-        $cash_collectibles = CashCollectible::get()->map(fn ($cc) => [
-            'name' => strtoupper($cc->name)
-        ]);
+        $cash_equivalents = TrialBalanceEntry::query()->where('category', 'cash equivalents')->pluck('id');
+        $trial_balance_summary = app(SummarizeTrialBalanceReport::class)->handle(month: $this->data['month'], year: $this->data['year']);
+        $cash_equivalent_entries = FinancialStatementProvider::getEntries($trial_balance_summary, $cash_equivalents, 'TOTAL CASH AND CASH EQUIVALENTS');
+        $loans_receivables_entries = FinancialStatementProvider::getEntries($trial_balance_summary, TrialBalanceEntry::query()->firstWhere('name', 'loans receivables')->descendants()->pluck('id'), 'TOTAL LOAN RECEIVABLES', TrialBalanceEntry::query()->firstWhere('name', 'loans receivables')->descendants()->where('category', null)->pluck('id'), 'NET LOAN RECEIVABLES');
         return [
             [
-                'title' => 'ASSETS',
-                'children' => [
-                    [
-                        'title' => 'CASH AND CASH EQUIVALENTS',
-                        'entries' => [
-                            [
-                                'name' => 'CASH ON HAND',
-                            ],
-                            [
-                                'name' => 'CASH IN BANK- DBP (GENERAL FUND)',
-                            ],
-                            [
-                                'name' => 'CASH IN BANK- DBP (MSO FUND)',
-                            ],
-                            [
-                                'name' => 'CASH IN BANK- LBP',
-                            ],
-                            [
-                                'name' => 'PETTY CASH FUND',
-                            ],
-                            [
-                                'name' => 'REVOLVING FUND',
-                            ],
-                        ],
-                    ],
-                    [
-                        'title' => 'LOANS RECEIVABLES',
-                        'entries' => $loan_types,
-                    ],
-                    [
-                        'title' => 'ACCOUNTS RECEIVABLES',
-                        'entries' => $cash_collectibles,
-                    ],
-                ],
+                'type' => 'title',
+                'data' => ['name' => 'ASSETS'],
             ],
             [
-                'title' => 'LIABILITIES',
-                'children' => [
-                    [
-                        'title' => 'DEPOSIT LIABILITIES',
-                        'entries' => [
-                            [
-                                'name' => 'SAVINGS DEPOSIT',
-                            ],
-                            [
-                                'name' => 'TIME DEPOSIT',
-                            ],
-                        ],
-                    ],
-                ],
+                'type' => 'header',
+                'data' => ['name' => 'CASH AND CASH EQUIVALENTS', 'current' => 'CURRENT', 'previous' => 'PREVIOUS', 'incdec' => 'INCREASE/DECREASE'],
             ],
+            ...$cash_equivalent_entries,
             [
-                'title' => 'MEMBERS EQUITY',
-                'children' => [
-                    [
-                        'title' => 'SHARE CAPITAL COMMON',
-                        'entries' => [
-                            [
-                                'name' => 'SUBSCRIBED SHARE CAPITAL',
-                            ],
-                            [
-                                'name' => 'LESS: SUBSCRIPTION RECEIVABLES',
-                            ],
-                            [
-                                'name' => 'PAID UP SHARE CAPITAL',
-                            ],
-                            [
-                                'name' => 'DEPOSIT ON SHARE CAPITAL',
-                            ],
-                        ],
-                    ],
-                    [
-                        'title' => 'SHARE CAPITAL PREFERRED',
-                        'entries' => [
-                            [
-                                'name' => 'SUBSCRIBED SHARE CAPITAL',
-                            ],
-                            [
-                                'name' => 'LESS: SUBSCRIPTION RECEIVABLES',
-                            ],
-                            [
-                                'name' => 'PAID UP SHARE CAPITAL',
-                            ],
-                            [
-                                'name' => 'DEPOSIT ON SHARE CAPITAL',
-                            ],
-                        ],
-                    ],
-                ],
+                'type' => 'header',
+                'data' => ['name' => 'LOANS RECEIVABLES', 'current' => '', 'previous' => '', 'incdec' => ''],
             ],
+            ...$loans_receivables_entries,
         ];
     }
 

@@ -8,7 +8,7 @@
         <div class="my-4">
             <h4>Name: {{ $member->full_name }}</h4>
             <h4>Campus: {{ $member->division?->name }}</h4>
-            <h4>Account Number:</h4>
+            <h4>Account Number: {{ $member->imprest_account?->number }}</h4>
         </div>
         <table class="w-full print:text-[10pt]">
             <thead>
@@ -27,10 +27,13 @@
                 @endphp
                 @foreach ($this->table->getRecords() as $record)
                     <tr>
-                        <th class="text-left px-4 border-2 border-black">{{ $record->transaction_date->format('m/d/Y') }}</th>
+                        <th class="text-left px-4 border-2 border-black">
+                            {{ $record->transaction_date->format('m/d/Y') }}</th>
                         <td class="text-left px-4 border-2 border-black">{{ $record->reference_number }}</td>
-                        <td class="text-right px-4 border-2 border-black">{{ $record->withdrawal ? number_format($record->withdrawal, 2) : '' }}</td>
-                        <td class="text-right px-4 border-2 border-black">{{ $record->deposit ? number_format($record->deposit, 2) : '' }}</td>
+                        <td class="text-right px-4 border-2 border-black">
+                            {{ $record->withdrawal ? number_format($record->withdrawal, 2) : '' }}</td>
+                        <td class="text-right px-4 border-2 border-black">
+                            {{ $record->deposit ? number_format($record->deposit, 2) : '' }}</td>
                         @php
                             $total += $record->amount;
                         @endphp
@@ -43,6 +46,7 @@
         <x-app.cashier.reports.signatories :signatories="$signatories" />
     </div>
     <div class="p-4 flex justify-end">
-        <x-filament::button icon="heroicon-o-printer" @click="printOut($refs.print.outerHTML, 'Imprests Subsidiary Ledger')">Print</x-filament::button>
+        <x-filament::button icon="heroicon-o-printer"
+            @click="printOut($refs.print.outerHTML, 'Imprests Subsidiary Ledger')">Print</x-filament::button>
     </div>
 </div>

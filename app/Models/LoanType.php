@@ -35,6 +35,9 @@ class LoanType extends Model
                 'name' => strtolower($loanType->name),
                 'auditable_type' => LoanType::class,
                 'auditable_id' => $loanType->id,
+                'operator' => 1,
+                'category' => 'loans receivables',
+                'code' => 11210,
             ])->insertBeforeNode(
                 TrialBalanceEntry::firstWhere('name', 'allowance for probable losses-loans')
             );
@@ -42,6 +45,9 @@ class LoanType extends Model
                 'name' => strtolower($loanType->name),
                 'auditable_type' => LoanType::class,
                 'auditable_id' => $loanType->id,
+                'operator' => -1,
+                'category' => 'interest income from loans',
+                'code' => 40110,
             ])->insertBeforeNode(
                 TrialBalanceEntry::firstWhere('name', 'service fee-loans')
             );

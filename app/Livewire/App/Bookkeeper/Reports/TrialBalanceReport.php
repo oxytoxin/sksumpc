@@ -2,7 +2,7 @@
 
 namespace App\Livewire\App\Bookkeeper\Reports;
 
-use App\Actions\TrialBalance\SummarizeTrialBalanceReport;
+use App\Actions\BookkeeperReports\SummarizeTrialBalanceReport;
 use App\Oxytoxin\Providers\TrialBalanceProvider;
 use Illuminate\Support\Carbon;
 use Livewire\Attributes\Computed;

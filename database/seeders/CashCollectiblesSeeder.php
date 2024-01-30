@@ -13,6 +13,8 @@ class CashCollectiblesSeeder extends Seeder
      */
     public function run(): void
     {
+        $d = CashCollectible::getEventDispatcher();
+        CashCollectible::unsetEventDispatcher();
         $ccg = CashCollectibleCategory::create([
             'name' => 'RICE AND GROCERIES',
         ]);
@@ -77,5 +79,6 @@ class CashCollectiblesSeeder extends Seeder
             'cash_collectible_category_id' => $ccg->id,
             'name' => 'LAND RENTAL',
         ]);
+        CashCollectible::setEventDispatcher($d);
     }
 }

@@ -126,6 +126,16 @@ class Member extends Model implements HasMedia
         return $this->hasMany(Saving::class)->where('accrued', false);
     }
 
+    public function imprest_account()
+    {
+        return $this->hasOne(ImprestAccount::class);
+    }
+
+    public function love_gift_account()
+    {
+        return $this->hasOne(LoveGiftAccount::class);
+    }
+
     public function imprests(): HasMany
     {
         return $this->hasMany(Imprest::class);

@@ -23,4 +23,28 @@ class CashCollectible extends Model
     {
         return $this->belongsTo(CashCollectibleCategory::class);
     }
+
+    protected static function booted()
+    {
+        static::created(function (CashCollectible $cashCollectible) {
+            TrialBalanceEntry::create([
+                'name' => strtolower($cashCollectible->name),
+                'auditable_type' => CashCollectible::class,
+                'auditable_id' => $cashCollectible->id,
+                'operator' => 1,
+                'code' => 11250,
+            ])->insertBeforeNode(
+                TrialBalanceEntry::firstWhere('name', 'allowance for probable losses-a/r')
+            );
+            TrialBalanceEntry::create([
+                'name' => strtolower($cashCollectible->name),
+                'auditable_type' => CashCollectible::class,
+                'auditable_id' => $cashCollectible->id,
+                'operator' => 1,
+                'code' => 11510,
+            ])->insertBeforeNode(
+                TrialBalanceEntry::firstWhere('name', 'other current assets')
+            );
+        });
+    }
 }

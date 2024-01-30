@@ -5,7 +5,7 @@
     ]) style="padding-left: {{ $trial_balance_entry['DETAILS']['DEPTH'] + 1 }}rem;">
         {{ $trial_balance_entry['DETAILS']['NAME'] }}
     </td>
-    @foreach ($trial_balance_entry['DATA'] as $trial_balance_entry_data)
+    @foreach ($trial_balance_entry['DATA'] as $key => $trial_balance_entry_data)
         <td class="border border-black px-2 text-right text-xs">
             <a
                 @isset($trial_balance_entry_data['URL'])

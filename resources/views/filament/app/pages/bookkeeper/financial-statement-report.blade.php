@@ -2,7 +2,7 @@
     {{ $this->form }}
 
     {{-- {{ $this->downloadTrialBalance }} --}}
-    <div x-data="{ activeTab: 'trial_balance' }">
+    <div x-data="{ activeTab: 'financial_condition' }">
         <x-filament::tabs>
             <x-filament::tabs.item alpine-active="activeTab === 'trial_balance'" @click="activeTab = 'trial_balance'">
                 Trial Balance

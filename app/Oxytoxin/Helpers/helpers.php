@@ -16,5 +16,10 @@ function renumber_format($number, $decimals = 0)
 {
     if (!$number || !floatval($number))
         return '';
-    return number_format($number, $decimals);
+    if ($number < 0) {
+        $result = str('(')->append(number_format(abs($number), 2))->append(')');
+    } else {
+        $result = number_format($number, $decimals);
+    }
+    return $result;
 }
