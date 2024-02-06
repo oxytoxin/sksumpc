@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('cash_collectibles', function (Blueprint $table) {
+        Schema::create('account_types', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(\App\Models\CashCollectibleCategory::class)->constrained();
             $table->string('name');
-            $table->boolean('has_inventory')->default(false);
+            $table->tinyInteger('debit_operator');
+            $table->tinyInteger('credit_operator');
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('cash_collectibles');
+        Schema::dropIfExists('account_types');
     }
 };

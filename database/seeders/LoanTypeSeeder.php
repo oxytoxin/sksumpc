@@ -13,7 +13,7 @@ class LoanTypeSeeder extends Seeder
     public function run(): void
     {
 
-        LoanType::forceCreateQuietly([
+        LoanType::create([
             'code' => 'RL',
             'name' => 'Regular Loan',
             'minimum_cbu' => 117000,
@@ -25,7 +25,7 @@ class LoanTypeSeeder extends Seeder
             'imprest' => 0.01,
             'insurance' => 0.0192,
         ]);
-        LoanType::forceCreateQuietly([
+        LoanType::create([
             'code' => 'EL',
             'name' => 'Emergency Loan',
             'max_amount' => 30000,
@@ -36,7 +36,7 @@ class LoanTypeSeeder extends Seeder
             'imprest' => 0.01,
             'insurance' => 0.0192,
         ]);
-        LoanType::forceCreateQuietly([
+        LoanType::create([
             'code' => 'PL',
             'name' => 'Providential Loan',
             'minimum_cbu' => 23334,
@@ -48,7 +48,7 @@ class LoanTypeSeeder extends Seeder
             'imprest' => 0.01,
             'insurance' => 0.0192,
         ]);
-        LoanType::forceCreateQuietly([
+        LoanType::create([
             'code' => 'CL',
             'name' => 'Commodity Loan',
             'minimum_cbu' => 50000,
@@ -60,7 +60,7 @@ class LoanTypeSeeder extends Seeder
             'imprest' => 0.01,
             'insurance' => 0.0192,
         ]);
-        LoanType::forceCreateQuietly([
+        LoanType::create([
             'code' => 'KL',
             'name' => 'Kabuhayan Loan',
             'minimum_cbu' => 16667,
@@ -71,7 +71,7 @@ class LoanTypeSeeder extends Seeder
             'imprest' => 0.01,
             'insurance' => 0.0192,
         ]);
-        LoanType::forceCreateQuietly([
+        LoanType::create([
             'code' => 'SL',
             'name' => 'Special Loan',
             'interest_rate' => 0.01,
@@ -81,7 +81,7 @@ class LoanTypeSeeder extends Seeder
             'imprest' => 0.01,
             'insurance' => 0.0192,
         ]);
-        LoanType::forceCreateQuietly([
+        LoanType::create([
             'code' => 'FNPL',
             'name' => 'Fly Now Pay Later Loan',
             'minimum_cbu' => 10000,
@@ -93,7 +93,7 @@ class LoanTypeSeeder extends Seeder
             'imprest' => 0.01,
             'insurance' => 0.0192,
         ]);
-        LoanType::forceCreateQuietly([
+        LoanType::create([
             'code' => 'ACL',
             'name' => 'Additional Commodity Loan',
             'interest_rate' => 0.01,
@@ -104,7 +104,7 @@ class LoanTypeSeeder extends Seeder
             'insurance' => 0.0192,
         ]);
 
-        LoanType::forceCreateQuietly([
+        LoanType::create([
             'code' => 'LBP-ATM',
             'name' => 'LBP ATM CARD Loan',
             'minimum_cbu' => 117000,
@@ -116,7 +116,7 @@ class LoanTypeSeeder extends Seeder
             'imprest' => 0.01,
             'insurance' => 0.0192,
         ]);
-        LoanType::forceCreateQuietly([
+        LoanType::create([
             'code' => 'LBP-RL',
             'name' => 'LBP-Regular Loan',
             'interest_rate' => 0.01,
@@ -126,7 +126,7 @@ class LoanTypeSeeder extends Seeder
             'imprest' => 0.01,
             'insurance' => 0.0192,
         ]);
-        LoanType::forceCreateQuietly([
+        LoanType::create([
             'code' => 'RES-RL',
             'name' => 'RES-Regular Loan',
             'interest_rate' => 0.01,
@@ -136,7 +136,7 @@ class LoanTypeSeeder extends Seeder
             'imprest' => 0.01,
             'insurance' => 0.0192,
         ]);
-        LoanType::forceCreateQuietly([
+        LoanType::create([
             'code' => 'RES-PL',
             'name' => 'RES-Providential Loan',
             'interest_rate' => 0.01,
@@ -146,7 +146,7 @@ class LoanTypeSeeder extends Seeder
             'imprest' => 0.01,
             'insurance' => 0.0192,
         ]);
-        LoanType::forceCreateQuietly([
+        LoanType::create([
             'code' => 'RES-KL',
             'name' => 'RES-Kabuhayan Loan',
             'interest_rate' => 0.01,
@@ -156,7 +156,7 @@ class LoanTypeSeeder extends Seeder
             'imprest' => 0.01,
             'insurance' => 0.0192,
         ]);
-        LoanType::forceCreateQuietly([
+        LoanType::create([
             'code' => 'RES-LBP ATM',
             'name' => 'RES-LBP ATM Card Loan',
             'minimum_cbu' => 117000,
@@ -168,7 +168,7 @@ class LoanTypeSeeder extends Seeder
             'imprest' => 0.01,
             'insurance' => 0.0192,
         ]);
-        LoanType::forceCreateQuietly([
+        LoanType::create([
             'code' => 'RES-LBP CL',
             'name' => 'RES-LBP Commodity Loan',
             'minimum_cbu' => 50000,

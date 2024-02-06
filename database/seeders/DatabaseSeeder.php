@@ -19,12 +19,21 @@ class DatabaseSeeder extends Seeder
         $this->call(UserRoleSeeder::class);
         $this->call(DisapprovalReasonSeeder::class);
         $this->call(LoanApproversSeeder::class);
-        $this->call(LoanTypeSeeder::class);
         $this->call(PaymentTypesSeeder::class);
-        $this->call(CashCollectiblesSeeder::class);
         $this->call(PatronageStatusSeeder::class);
         $this->call(GenderSeeder::class);
+
         $this->call(TrialBalanceEntrySeeder::class);
+        $this->call(AccountTypeSeeder::class);
+        $this->call(AssetAccountsSeeder::class);
+        $this->call(LiabilitiesAccountsSeeder::class);
+        $this->call(RevenueAccountsSeeder::class);
+        $this->call(EquityAccountsSeeder::class);
+        $this->call(ExpenseAccountsSeeder::class);
+
+        $this->call(CashCollectiblesSeeder::class);
+        $this->call(LoanTypeSeeder::class);
+
         $this->command->info("Seeding members...\n");
         Artisan::call('app:seed-members');
         $this->command->info("Seeded members...\n");

@@ -31,26 +31,22 @@ class LoanType extends Model
     protected static function booted()
     {
         static::created(function (LoanType $loanType) {
-            TrialBalanceEntry::create([
-                'name' => strtolower($loanType->name),
-                'auditable_type' => LoanType::class,
-                'auditable_id' => $loanType->id,
-                'operator' => 1,
-                'category' => 'loans receivables',
-                'code' => 11210,
-            ])->insertBeforeNode(
-                TrialBalanceEntry::firstWhere('name', 'allowance for probable losses-loans')
-            );
-            TrialBalanceEntry::create([
-                'name' => strtolower($loanType->name),
-                'auditable_type' => LoanType::class,
-                'auditable_id' => $loanType->id,
-                'operator' => -1,
-                'category' => 'interest income from loans',
-                'code' => 40110,
-            ])->insertBeforeNode(
-                TrialBalanceEntry::firstWhere('name', 'service fee-loans')
-            );
+            $loan_receivables = Account::firstWhere('tag', 'loan_receivables');
+            $loan_interests = Account::firstWhere('tag', 'loan_interests');
+            Account::create([
+                'account_type_id' => $loan_receivables->account_type_id,
+                'name' => strtoupper($loanType->name),
+                'number' => str($loan_receivables->number)->append('-')->append(mb_str_pad($loanType->id, 3, '0', STR_PAD_LEFT)),
+                'accountable_type' => LoanType::class,
+                'accountable_id' => $loanType->id,
+            ]);
+            Account::create([
+                'account_type_id' => $loan_interests->account_type_id,
+                'name' => strtoupper($loanType->name),
+                'number' => str($loan_interests->number)->append('-')->append(mb_str_pad($loanType->id, 3, '0', STR_PAD_LEFT)),
+                'accountable_type' => LoanType::class,
+                'accountable_id' => $loanType->id,
+            ]);
         });
     }
 }
