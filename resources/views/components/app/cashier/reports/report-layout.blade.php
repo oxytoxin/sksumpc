@@ -18,8 +18,12 @@
         @isset($buttons)
             {{ $buttons }}
         @else
-            <x-filament::button color="success" tag="a" href="{{ back()->getTargetUrl() }}">Previous Page</x-filament::button>
-            <x-filament::button icon="heroicon-o-printer" @click="printOut($refs.print.outerHTML, '')">Print</x-filament::button>
+            <x-filament::button color="success" tag="a" href="{{ back()->getTargetUrl() }}">
+                Previous Page
+            </x-filament::button>
+            <x-filament::button icon="heroicon-o-printer" @click="printOut($refs.print.outerHTML, '')">
+                Print
+            </x-filament::button>
         @endisset
     </div>
 </div>
