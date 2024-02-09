@@ -53,11 +53,21 @@ class CashCollectiblesSeeder extends Seeder
         ]);
         CashCollectible::create([
             'cash_collectible_category_id' => $ccg->id,
-            'name' => 'PLANE TICKET',
+            'name' => 'TICKETING',
+        ]);
+        CashCollectible::create([
+            'cash_collectible_category_id' => $ccg->id,
+            'name' => 'FACULTY CLOTH',
+            'has_inventory' => true,
         ]);
         CashCollectible::create([
             'cash_collectible_category_id' => $ccg->id,
             'name' => 'CLOTH',
+            'has_inventory' => true,
+        ]);
+        CashCollectible::create([
+            'cash_collectible_category_id' => $ccg->id,
+            'name' => 'LOGO',
             'has_inventory' => true,
         ]);
         CashCollectible::create([

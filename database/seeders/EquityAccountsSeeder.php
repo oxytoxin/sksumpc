@@ -17,9 +17,11 @@ class EquityAccountsSeeder extends Seeder
         Account::create(["account_type_id" => 4, "name" => "PAID UP SHARE CAPITAL- PREFERRED", "number" => "30230"]);
         Account::create(["account_type_id" => 4, "name" => "DEPOSIT FOR SHARE CAPITAL", "number" => "30300"]);
         Account::create(["account_type_id" => 4, "name" => "UNDIVIDED NET SURPLUS", "number" => "30600"]);
-        Account::create(["account_type_id" => 4, "name" => "RESERVE FUND", "number" => "30810"]);
-        Account::create(["account_type_id" => 4, "name" => "COOP. EDUCATION & TRAINING FUND", "number" => "30820"]);
-        Account::create(["account_type_id" => 4, "name" => "COMMUNITY DEVELOPMENT FUND", "number" => "30830"]);
-        Account::create(["account_type_id" => 4, "name" => "OPTIONAL FUND", "number" => "30840"]);
+        Account::create(["account_type_id" => 4, "name" => "STATUTORY FUND", "number" => "30800", "children" => [
+            ["account_type_id" => 4, "name" => "RESERVE FUND", "number" => "30810"],
+            ["account_type_id" => 4, "name" => "COOP. EDUCATION & TRAINING FUND", "number" => "30820"],
+            ["account_type_id" => 4, "name" => "COMMUNITY DEVELOPMENT FUND", "number" => "30830"],
+            ["account_type_id" => 4, "name" => "OPTIONAL FUND", "number" => "30840"],
+        ]]);
     }
 }

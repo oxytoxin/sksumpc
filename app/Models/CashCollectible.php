@@ -32,10 +32,18 @@ class CashCollectible extends Model
     {
         static::created(function (CashCollectible $cashCollectible) {
             $account_receivables = Account::firstWhere('tag', 'account_receivables');
+            $other_income = Account::firstWhere('tag', 'other_income');
             Account::create([
                 'account_type_id' => $account_receivables->account_type_id,
                 'name' => strtoupper($cashCollectible->name),
                 'number' => str($account_receivables->number)->append('-')->append(mb_str_pad($cashCollectible->id, 3, '0', STR_PAD_LEFT)),
+                'accountable_type' => CashCollectible::class,
+                'accountable_id' => $cashCollectible->id,
+            ]);
+            Account::create([
+                'account_type_id' => $other_income->account_type_id,
+                'name' => strtoupper($cashCollectible->name),
+                'number' => str($other_income->number)->append('-')->append(mb_str_pad($cashCollectible->id, 3, '0', STR_PAD_LEFT)),
                 'accountable_type' => CashCollectible::class,
                 'accountable_id' => $cashCollectible->id,
             ]);
