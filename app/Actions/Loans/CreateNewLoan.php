@@ -2,8 +2,10 @@
 
 namespace App\Actions\Loans;
 
+use App\Models\Account;
 use App\Models\Loan;
 use App\Models\LoanApplication;
+use App\Models\LoanType;
 use Illuminate\Support\Facades\DB;
 use App\Oxytoxin\DTO\Loan\LoanData;
 use App\Oxytoxin\Providers\LoansProvider;
@@ -19,8 +21,17 @@ class CreateNewLoan
         $loanApplication->update([
             'priority_number' => $loanData->priority_number,
         ]);
+        $loanType = LoanType::find($loanData->loan_type_id);
+        $loans_payable_account = Account::whereNull('member_id')->whereTag('loans_payable')->first();
+        $account = Account::create([
+            'name' => strtoupper($loanType->name),
+            'number' => $loanData->account_number,
+            'account_type_id' => $loans_payable_account->account_type_id,
+            'member_id' => $loanData->member_id,
+            'tag' => 'loan',
+        ], $loans_payable_account);
         $loan = Loan::create([
-            'account_number' => $loanData->account_number,
+            'loan_account_id' => $account->id,
             'priority_number' => $loanData->priority_number,
             'transaction_date' => $loanData->transaction_date,
             'release_date' => $loanData->release_date,

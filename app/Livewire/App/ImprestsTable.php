@@ -2,32 +2,34 @@
 
 namespace App\Livewire\App;
 
-use App\Actions\Imprests\DepositToImprestAccount;
-use App\Actions\Imprests\WithdrawFromImprestAccount;
-use App\Actions\Savings\DepositToSavingsAccount;
-use App\Models\Imprest;
+use DB;
+use Filament\Tables;
 use App\Models\Member;
+use App\Models\Imprest;
+use Livewire\Component;
+use Filament\Tables\Table;
+use Livewire\Attributes\On;
 use App\Models\SavingsAccount;
+use App\Models\TransactionType;
+use Filament\Support\Colors\Color;
+use Illuminate\Contracts\View\View;
 use App\Oxytoxin\DTO\MSO\ImprestData;
 use App\Oxytoxin\DTO\MSO\SavingsData;
-use App\Oxytoxin\Providers\ImprestsProvider;
-use DB;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Support\Colors\Color;
-use Filament\Tables;
-use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
-use Filament\Tables\Table;
-use Illuminate\Contracts\View\View;
-use Livewire\Attributes\On;
-use Livewire\Component;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Actions\CreateAction;
+use App\Oxytoxin\Providers\ImprestsProvider;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Forms\Concerns\InteractsWithForms;
+use App\Actions\Savings\DepositToSavingsAccount;
+use Filament\Tables\Concerns\InteractsWithTable;
+use App\Actions\Imprests\DepositToImprestAccount;
+use App\Actions\Imprests\WithdrawFromImprestAccount;
 
 class ImprestsTable extends Component implements HasForms, HasTable
 {
@@ -80,7 +82,7 @@ class ImprestsTable extends Component implements HasForms, HasTable
                             payment_type_id: $data['payment_type_id'],
                             reference_number: $data['reference_number'],
                             amount: $data['amount']
-                        ));
+                        ), TransactionType::firstWhere('name', 'CRJ'));
                         DB::commit();
                     })
                     ->createAnother(false),
@@ -99,7 +101,7 @@ class ImprestsTable extends Component implements HasForms, HasTable
                     ->action(function ($data) {
                         $member = Member::find($this->member_id);
                         $data['reference_number'] = ImprestsProvider::WITHDRAWAL_TRANSFER_CODE;
-                        app(WithdrawFromImprestAccount::class)->handle($member, ImprestData::from($data));
+                        app(WithdrawFromImprestAccount::class)->handle($member, ImprestData::from($data), TransactionType::firstWhere('name', 'CRJ'));
                     })
                     ->createAnother(false),
                 CreateAction::make('to_savings')
@@ -122,13 +124,13 @@ class ImprestsTable extends Component implements HasForms, HasTable
                             payment_type_id: 1,
                             reference_number: ImprestsProvider::FROM_TRANSFER_CODE,
                             amount: $data['amount']
-                        ));
+                        ), TransactionType::firstWhere('name', 'CRJ'));
                         app(DepositToSavingsAccount::class)->handle($member, new SavingsData(
                             payment_type_id: 1,
                             reference_number: $im->reference_number,
                             amount: $data['amount'],
                             savings_account_id: $data['savings_account_id']
-                        ));
+                        ), TransactionType::firstWhere('name', 'CRJ'));
                         DB::commit();
                     })
                     ->createAnother(false),

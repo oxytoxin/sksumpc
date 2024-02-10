@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
         $this->call(PatronageStatusSeeder::class);
         $this->call(GenderSeeder::class);
 
-        $this->call(TrialBalanceEntrySeeder::class);
+        $this->call(TransactionTypesSeeder::class);
         $this->call(AccountTypeSeeder::class);
         $this->call(AssetAccountsSeeder::class);
         $this->call(LiabilitiesAccountsSeeder::class);

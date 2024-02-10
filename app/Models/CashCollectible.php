@@ -36,26 +36,29 @@ class CashCollectible extends Model
             Account::create([
                 'account_type_id' => $account_receivables->account_type_id,
                 'name' => strtoupper($cashCollectible->name),
-                'number' => str($account_receivables->number)->append('-')->append(mb_str_pad($cashCollectible->id, 3, '0', STR_PAD_LEFT)),
+                'number' => str($account_receivables->number)->append('-')->append(mb_str_pad($cashCollectible->id, 4, '0', STR_PAD_LEFT)),
                 'accountable_type' => CashCollectible::class,
                 'accountable_id' => $cashCollectible->id,
-            ]);
+                'tag' => 'account_receivables',
+            ], $account_receivables);
             Account::create([
                 'account_type_id' => $other_income->account_type_id,
                 'name' => strtoupper($cashCollectible->name),
-                'number' => str($other_income->number)->append('-')->append(mb_str_pad($cashCollectible->id, 3, '0', STR_PAD_LEFT)),
+                'number' => str($other_income->number)->append('-')->append(mb_str_pad($cashCollectible->id, 4, '0', STR_PAD_LEFT)),
                 'accountable_type' => CashCollectible::class,
                 'accountable_id' => $cashCollectible->id,
-            ]);
+                'tag' => 'other_income',
+            ], $other_income);
             if ($cashCollectible->has_inventory) {
                 $merchandise_inventory = Account::firstWhere('tag', 'merchandise_inventory');
                 Account::create([
                     'account_type_id' => $merchandise_inventory->account_type_id,
                     'name' => strtoupper($cashCollectible->name),
-                    'number' => str($merchandise_inventory->number)->append('-')->append(mb_str_pad($cashCollectible->id, 3, '0', STR_PAD_LEFT)),
+                    'number' => str($merchandise_inventory->number)->append('-')->append(mb_str_pad($cashCollectible->id, 4, '0', STR_PAD_LEFT)),
                     'accountable_type' => CashCollectible::class,
                     'accountable_id' => $cashCollectible->id,
-                ]);
+                    'tag' => 'merchandise_inventory',
+                ], $merchandise_inventory);
             }
         });
     }

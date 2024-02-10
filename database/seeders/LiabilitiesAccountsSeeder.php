@@ -16,13 +16,13 @@ class LiabilitiesAccountsSeeder extends Seeder
         Account::create(["account_type_id" => 2, "name" => "CURRENT LIABILITIES", "number" => "21000", "children" => [
             [
                 "account_type_id" => 2, "name" => "DEPOSIT LIABILITIES", "number" => "21100", "children" => [
-                    ["account_type_id" => 2, "name" => "SAVINGS DEPOSIT", "number" => "21110"],
-                    ["account_type_id" => 2, "name" => "TIME DEPOSIT", "number" => "21112"],
+                    ["account_type_id" => 2, "name" => "SAVINGS DEPOSIT", "number" => "21110", "tag" => "member_savings"],
+                    ["account_type_id" => 2, "name" => "TIME DEPOSIT", "number" => "21112", "tag" => "member_time_deposits"],
                     ["account_type_id" => 2, "name" => "OTHER DEPOSIT LIABILITIES", "number" => "21113"],
                 ],
             ],
             ["account_type_id" => 2, "name" => "ACCOUNTS PAYABLE", "number" => "21210"],
-            ["account_type_id" => 2, "name" => "LOANS PAYABLE", "number" => "21230"],
+            ["account_type_id" => 2, "name" => "LOANS PAYABLE", "number" => "21230", "tag" => "loans_payable"],
             ["account_type_id" => 2, "name" => "OTHER PAYABLES", "number" => "21290"],
             ["account_type_id" => 2, "name" => "SSS/ECC/PHILHEALTH/PAG-IBIG PREMIUM CONTRIBUTIONS PAYABLE", "number" => "21320"],
             ["account_type_id" => 2, "name" => "SSS/PAGIBIG LOANS PAYABLE", "number" => "21330"],

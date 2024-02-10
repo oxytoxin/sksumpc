@@ -29,9 +29,10 @@ class TimeDepositsProvider
         return 0.03;
     }
 
-    public static function getMaturityAmount(?float $amount): float
+    public static function getMaturityAmount(?float $amount, $interest_rate = null): float
     {
-        return $amount ? round($amount * (1 + static::getInterestRate($amount) * static::NUMBER_OF_DAYS / static::DAYS_ANNUALLY), 2) : 0;
+        $interest_rate ??= static::getInterestRate($amount);
+        return $amount ? round($amount * (1 + $interest_rate * static::NUMBER_OF_DAYS / static::DAYS_ANNUALLY), 2) : 0;
     }
 
     public static function getMaturityDate($date_from): CarbonImmutable

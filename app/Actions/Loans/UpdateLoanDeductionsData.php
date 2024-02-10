@@ -19,6 +19,7 @@ class UpdateLoanDeductionsData
         $loan->insurance_amount = collect($loan->deductions)->firstWhere('code', 'insurance_amount')['amount'] ?? 0;
         $loan->loan_buyout_interest = collect($loan->deductions)->firstWhere('code', 'loan_buyout_interest')['amount'] ?? 0;
         $loan->loan_buyout_principal = collect($loan->deductions)->firstWhere('code', 'loan_buyout_principal')['amount'] ?? 0;
+        $loan->loan_buyout_id = collect($loan->deductions)->firstWhere('code', 'loan_buyout_principal')['loan_id'] ?? null;
         return $loan;
     }
 }

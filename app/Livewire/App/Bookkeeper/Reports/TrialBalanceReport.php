@@ -2,12 +2,15 @@
 
 namespace App\Livewire\App\Bookkeeper\Reports;
 
-use App\Actions\BookkeeperReports\SummarizeTrialBalanceReport;
-use App\Oxytoxin\Providers\TrialBalanceProvider;
-use Illuminate\Support\Carbon;
-use Livewire\Attributes\Computed;
-use Livewire\Attributes\On;
+use App\Models\Account;
 use Livewire\Component;
+use Livewire\Attributes\On;
+use Illuminate\Support\Carbon;
+use App\Models\TransactionType;
+use Livewire\Attributes\Computed;
+use App\Oxytoxin\Providers\TrialBalanceProvider;
+use App\Actions\BookkeeperReports\SummarizeTrialBalanceReport;
+use Staudenmeir\LaravelAdjacencyList\Eloquent\Builder;
 
 class TrialBalanceReport extends Component
 {
@@ -20,15 +23,26 @@ class TrialBalanceReport extends Component
     }
 
     #[Computed]
-    public function TrialBalanceEntries()
+    public function Accounts()
     {
-        return app(SummarizeTrialBalanceReport::class)->handle($this->data['month'], $this->data['year']);
+        return Account::withQueryConstraint(function (Builder $query) {
+            $query
+                ->withSum(['recursiveCrjTransactions as total_crj_debit' => fn ($query) => $query->whereMonth('transaction_date', $this->data['month'])->whereYear('transaction_date', $this->data['year'])], 'debit')
+                ->withSum(['recursiveCrjTransactions as total_crj_credit' => fn ($query) => $query->whereMonth('transaction_date', $this->data['month'])->whereYear('transaction_date', $this->data['year'])], 'credit')
+                ->withSum(['recursiveCdjTransactions as total_cdj_debit' => fn ($query) => $query->whereMonth('transaction_date', $this->data['month'])->whereYear('transaction_date', $this->data['year'])], 'debit')
+                ->withSum(['recursiveCdjTransactions as total_cdj_credit' => fn ($query) => $query->whereMonth('transaction_date', $this->data['month'])->whereYear('transaction_date', $this->data['year'])], 'credit')
+                ->withSum(['recursiveJevTransactions as total_jev_debit' => fn ($query) => $query->whereMonth('transaction_date', $this->data['month'])->whereYear('transaction_date', $this->data['year'])], 'debit')
+                ->withSum(['recursiveJevTransactions as total_jev_credit' => fn ($query) => $query->whereMonth('transaction_date', $this->data['month'])->whereYear('transaction_date', $this->data['year'])], 'credit')
+                ->whereNull('accounts.member_id');
+        }, function () {
+            return Account::tree()->get();
+        })->toTree();
     }
 
     #[Computed]
-    public function TrialBalanceHeaderColumns()
+    public function TransactionTypes()
     {
-        return collect(TrialBalanceProvider::getTrialBalanceColumns())->map(fn ($column) => str($column)->replace(['CREDIT', 'DEBIT'], '')->trim())->unique();
+        return TransactionType::get();
     }
 
     public function render()

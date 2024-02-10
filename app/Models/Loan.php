@@ -41,6 +41,11 @@ class Loan extends Model
         'posted' => 'boolean',
     ];
 
+    public function loan_account()
+    {
+        return $this->belongsTo(LoanAccount::class);
+    }
+
     public function member(): BelongsTo
     {
         return $this->belongsTo(Member::class);

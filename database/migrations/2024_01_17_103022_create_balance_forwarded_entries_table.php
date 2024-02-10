@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Account;
 use App\Models\BalanceForwardedSummary;
 use App\Models\TrialBalanceEntry;
 use Illuminate\Database\Migrations\Migration;
@@ -16,7 +17,7 @@ return new class extends Migration
         Schema::create('balance_forwarded_entries', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(BalanceForwardedSummary::class)->constrained();
-            $table->foreignIdFor(TrialBalanceEntry::class)->constrained();
+            $table->foreignIdFor(Account::class)->constrained();
             $table->decimal('credit', 18, 4)->nullable();
             $table->decimal('debit', 18, 4)->nullable();
             $table->timestamps();

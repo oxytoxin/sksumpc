@@ -21,7 +21,7 @@ return new class extends Migration
             $table->decimal('running_balance', 18, 4);
             $table->string('reference_number');
             $table->string('remarks')->nullable();
-            $table->date('transaction_date')->default(DB::raw('CURDATE()'))->default(DB::raw('CURDATE()'));
+            $table->date('transaction_date')->default(DB::raw('(CURRENT_DATE)'));
             $table->foreignId('cashier_id')->nullable()->constrained('users', 'id')->nullOnDelete();
             $table->timestamps();
         });

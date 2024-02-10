@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('cash_beginnings', function (Blueprint $table) {
             $table->id();
             $table->decimal('amount', 18, 4);
-            $table->date('transaction_date')->default(DB::raw('CURDATE()'));
+            $table->date('transaction_date')->default(DB::raw('(CURRENT_DATE)'));
             $table->foreignId('cashier_id')->nullable()->constrained('users', 'id')->nullOnDelete();
             $table->timestamps();
         });

@@ -25,10 +25,11 @@ return new class extends Migration
             $table->string('purpose')->nullable();
             $table->decimal('monthly_payment', 16, 4);
             $table->smallInteger('status')->default(LoanApplication::STATUS_PROCESSING);
-            $table->date('transaction_date')->default(DB::raw('CURDATE()'));
+            $table->date('transaction_date')->default(DB::raw('(CURRENT_DATE)'));
             $table->foreignIdFor(DisapprovalReason::class)->nullable()->constrained();
             $table->date('disapproval_date')->nullable();
-            $table->json('approvals')->default('(JSON_ARRAY())');
+            // $table->json('approvals')->default('(JSON_ARRAY())');
+            $table->json('approvals')->nullable();
             $table->string('remarks')->nullable();
             $table->timestamps();
         });

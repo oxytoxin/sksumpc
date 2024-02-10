@@ -24,21 +24,7 @@ class FinancialOperationReport extends Component
     #[Computed]
     public function items()
     {
-        $loan_interests = TrialBalanceEntry::query()->where('category', 'interest income from loans')->pluck('id');
-        $trial_balance_summary = app(SummarizeTrialBalanceReport::class)->handle(month: $this->data['month'], year: $this->data['year']);
-
-        $loan_interests_entries = FinancialStatementProvider::getEntries(summary: $trial_balance_summary, ids: $loan_interests, total_name: 'TOTAL INTEREST INCOME FROM LOANS', debit: false);
-        return [
-            [
-                'type' => 'title',
-                'data' => ['name' => 'INCOME'],
-            ],
-            [
-                'type' => 'header',
-                'data' => ['name' => 'INTEREST INCOME FROM LOANS', 'current' => 'CURRENT', 'previous' => 'PREVIOUS', 'incdec' => 'INCREASE/DECREASE'],
-            ],
-            ...$loan_interests_entries,
-        ];
+        return collect();
     }
 
     public function render()

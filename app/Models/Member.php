@@ -35,6 +35,11 @@ class Member extends Model implements HasMedia
         });
     }
 
+    public function accounts()
+    {
+        return $this->hasMany(Account::class);
+    }
+
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('profile_photo')
@@ -90,7 +95,16 @@ class Member extends Model implements HasMedia
     {
         return $this->hasMany(CapitalSubscription::class);
     }
-
+    public function capital_subscription_account(): HasOne
+    {
+        return  match ($this->member_type_id) {
+            1 => $this->hasOne(Account::class)->whereTag('member_common_cbu_paid'),
+            2 => $this->hasOne(Account::class)->whereTag('member_common_cbu_paid'),
+            3 => $this->hasOne(Account::class)->whereTag('member_preferred_cbu_paid'),
+            4 => $this->hasOne(Account::class)->whereTag('member_laboratory_cbu_paid'),
+            default => $this->hasOne(Account::class)->whereTag('member_common_cbu_paid'),
+        };
+    }
     public function capital_subscriptions_common(): HasOne
     {
         return $this->hasOne(CapitalSubscription::class)->where('is_common', true)->latestOfMany();

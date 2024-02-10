@@ -14,6 +14,7 @@ use App\Models\Loan;
 use App\Models\Member;
 use App\Models\SavingsAccount;
 use App\Models\TimeDeposit;
+use App\Models\TransactionType;
 use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionPaymentData;
 use App\Oxytoxin\DTO\Loan\LoanPaymentData;
 use App\Oxytoxin\DTO\MSO\ImprestData;
@@ -89,7 +90,7 @@ class TransactionsPage extends Page
             ->action(function ($data) {
                 $record = CapitalSubscription::find($data['capital_subscription_id']);
                 unset($data['member_id'], $data['capital_subscription_id']);
-                app(PayCapitalSubscription::class)->handle($record, CapitalSubscriptionPaymentData::from($data));
+                app(PayCapitalSubscription::class)->handle($record, CapitalSubscriptionPaymentData::from($data), TransactionType::firstWhere('name', 'CRJ'));
                 Notification::make()->title('Payment made for capital subscription!')->success()->send();
             });
     }
@@ -142,14 +143,14 @@ class TransactionsPage extends Page
                         reference_number: $data['reference_number'],
                         amount: $data['amount'],
                         savings_account_id: $data['savings_account_id']
-                    ));
+                    ), TransactionType::firstWhere('name', 'CRJ'));
                 } else {
                     app(WithdrawFromSavingsAccount::class)->handle($member, new SavingsData(
                         payment_type_id: $data['payment_type_id'],
                         reference_number: SavingsProvider::WITHDRAWAL_TRANSFER_CODE,
                         amount: $data['amount'],
                         savings_account_id: $data['savings_account_id']
-                    ));
+                    ), TransactionType::firstWhere('name', 'CRJ'));
                 }
                 Notification::make()->title('Savings transaction completed!')->success()->send();
             });
@@ -197,13 +198,13 @@ class TransactionsPage extends Page
                         payment_type_id: $data['payment_type_id'],
                         reference_number: $data['reference_number'],
                         amount: $data['amount']
-                    ));
+                    ), TransactionType::firstWhere('name', 'CRJ'));
                 } else {
                     app(WithdrawFromImprestAccount::class)->handle($member, new ImprestData(
                         payment_type_id: $data['payment_type_id'],
                         reference_number: ImprestsProvider::WITHDRAWAL_TRANSFER_CODE,
                         amount: $data['amount']
-                    ));
+                    ), TransactionType::firstWhere('name', 'CRJ'));
                 }
                 Notification::make()->title('Imprests transaction completed!')->success()->send();
             });

@@ -3,6 +3,7 @@
 namespace App\Filament\App\Resources;
 
 use App\Actions\Loans\ApproveLoanPosting;
+use App\Actions\Loans\CreateLoanDisbursementVoucher;
 use App\Filament\App\Resources\LoanResource\Pages;
 use App\Livewire\App\Loans\Traits\HasViewLoanDetailsActionGroup;
 use App\Models\Loan;
@@ -48,6 +49,7 @@ class LoanResource extends Resource
     {
         return $table
             ->columns([
+                TextColumn::make('loan_account.number')->label('Account Number')->searchable(),
                 TextColumn::make('member.full_name')->searchable(),
                 TextColumn::make('loan_type.name'),
                 TextColumn::make('gross_amount')->money('PHP'),
@@ -83,9 +85,13 @@ class LoanResource extends Resource
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
             ->actions([
-                Action::make('approve')
+                Action::make('dv')
+                    ->label('DV')
                     ->action(fn (Loan $record) => app(ApproveLoanPosting::class)->handle($record))
                     ->hidden(fn ($record) => $record->posted)
+                    ->button()
+                    ->color('success')
+                    ->icon('heroicon-o-shield-check')
                     ->requiresConfirmation(),
                 static::getStaticViewLoanDetailsActionGroup(),
                 Action::make('print')

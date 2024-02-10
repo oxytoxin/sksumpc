@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\Member;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,10 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('savings_accounts', function (Blueprint $table) {
+        Schema::create('transaction_types', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Member::class)->constrained();
-            $table->string('number')->index()->unique();
             $table->string('name');
             $table->timestamps();
         });
@@ -26,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('savings_accounts');
+        Schema::dropIfExists('transaction_types');
     }
 };

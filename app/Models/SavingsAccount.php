@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * @mixin IdeHelperSavingsAccount
  */
-class SavingsAccount extends Model
+class SavingsAccount extends Account
 {
     use HasFactory;
 
@@ -33,5 +33,13 @@ class SavingsAccount extends Model
     public function member()
     {
         return $this->belongsTo(Member::class);
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::addGlobalScope('member_regular_savings', function ($query) {
+            $query->whereNotNull('member_id')->whereTag('regular_savings');
+        });
     }
 }

@@ -24,17 +24,17 @@ class RevenueAccountsSeeder extends Seeder
         Account::create(["account_type_id" => 3, "name" => "MISCELLANEOUS INCOME", "number" => "40700"]);
         Account::create(["account_type_id" => 3, "name" => "COMMISSION INCOME", "number" => "40630"]);
         Account::create(["account_type_id" => 3, "name" => "INTEREST INCOME FROM DEPOSITS", "tag" => "deposit_interests", "number" => "40610", "children" => [
-            ["account_type_id" => 3, "name" => "DBP (GENERAL FUND)", "number" => "40610-001"],
-            ["account_type_id" => 3, "name" => "DBP (MSO FUND)", "number" => "40610-002"],
-            ["account_type_id" => 3, "name" => "LBP", "number" => "40610-003"],
-            ["account_type_id" => 3, "name" => "LBP SKSU MPC STATUTORY FUNDS", "number" => "40610-004"],
-            ["account_type_id" => 3, "name" => "DBP TIME DEPOSIT", "number" => "40610-005"],
+            ["account_type_id" => 3, "name" => "DBP (GENERAL FUND)", "number" => "40610-0001"],
+            ["account_type_id" => 3, "name" => "DBP (MSO FUND)", "number" => "40610-0002"],
+            ["account_type_id" => 3, "name" => "LBP", "number" => "40610-0003"],
+            ["account_type_id" => 3, "name" => "LBP SKSU MPC STATUTORY FUNDS", "number" => "40610-0004"],
+            ["account_type_id" => 3, "name" => "DBP TIME DEPOSIT", "number" => "40610-0005"],
         ]]);
         Account::create(["account_type_id" => 3, "name" => "INTEREST INCOME FROM TREASURY BILLS", "number" => "40640"]);
         Account::create(["account_type_id" => 3, "name" => "OTHER INCOME", "number" => "40600", "tag" => "other_income", "children" => [
-            ["account_type_id" => 3, "name" => "INVESTMENT", "number" => "40600-001"],
-            ["account_type_id" => 3, "name" => "PORTA CEILI", "number" => "40600-001"],
-            ["account_type_id" => 3, "name" => "DORMITORY", "number" => "40600-001"],
+            ["account_type_id" => 3, "name" => "INVESTMENT", "number" => "40600-0001"],
+            ["account_type_id" => 3, "name" => "PORTA CEILI", "number" => "40600-0002"],
+            ["account_type_id" => 3, "name" => "DORMITORY", "number" => "40600-0003"],
         ]]);
         Account::create(["account_type_id" => 3, "name" => "FILING FEES", "number" => "40130"]);
         Account::create(["account_type_id" => 3, "name" => "SERVICE INCOME", "number" => "40210"]);

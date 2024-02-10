@@ -8,12 +8,20 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @mixin IdeHelperImprestAccount
  */
-class ImprestAccount extends Model
+class ImprestAccount extends Account
 {
     use HasFactory;
 
     public function member()
     {
         return $this->belongsTo(Member::class);
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::addGlobalScope('member_imprest_savings', function ($query) {
+            $query->whereNotNull('member_id')->whereTag('imprest_savings');
+        });
     }
 }

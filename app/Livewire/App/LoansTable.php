@@ -150,7 +150,6 @@ class LoansTable extends Component implements HasForms, HasTable
                                 Placeholder::make('deductions_amount')
                                     ->content(fn ($get) => format_money(collect($get('deductions'))->map(function ($d) {
                                         $d['amount'] = str_replace(',', '', filled($d['amount']) ? $d['amount'] : 0);
-
                                         return $d;
                                     })->sum('amount'), 'PHP')),
                                 Placeholder::make('net_amount')

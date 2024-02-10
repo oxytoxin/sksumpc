@@ -9,6 +9,7 @@ use App\Models\SavingsAccount;
 use App\Models\TimeDeposit;
 use App\Oxytoxin\DTO\MSO\ImprestData;
 use App\Oxytoxin\DTO\MSO\SavingsData;
+use App\Oxytoxin\Providers\SavingsProvider;
 use App\Oxytoxin\Providers\TimeDepositsProvider;
 use DB;
 use Filament\Forms\Components\DatePicker;
@@ -80,9 +81,9 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                             ->required()
                             ->default(today()),
                     ])
-                    ->action(function ($record, $data) {
+                    ->action(function (TimeDeposit $record, $data) {
                         $record->update([
-                            'maturity_amount' => $record->amount - $record->amount * 0.01,
+                            'maturity_amount' => TimeDepositsProvider::getMaturityAmount($record->amount, SavingsProvider::INTEREST_RATE),
                             'withdrawal_date' => $data['withdrawal_date'],
                         ]);
                         Notification::make()->title('Time deposite claimed.')->success()->send();
@@ -137,7 +138,7 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                             'member_id' => $this->member_id,
                         ]);
                         DB::commit();
-                        Notification::make()->title('Time deposite roll-overed.')->success()->send();
+                        Notification::make()->title('Time deposit roll-overed.')->success()->send();
                     })
                     ->visible(fn (TimeDeposit $record) => $record->maturity_date->isBefore(today()) && is_null($record->withdrawal_date))
                     ->icon('heroicon-o-banknotes')

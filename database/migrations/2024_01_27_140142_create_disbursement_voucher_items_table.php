@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Account;
 use App\Models\DisbursementVoucher;
 use App\Models\TrialBalanceEntry;
 use App\Models\JournalEntryVoucher;
@@ -17,7 +18,7 @@ return new class extends Migration
         Schema::create('disbursement_voucher_items', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(DisbursementVoucher::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
-            $table->foreignIdFor(TrialBalanceEntry::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignIdFor(Account::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->decimal('credit', 18, 4)->nullable();
             $table->decimal('debit', 18, 4)->nullable();
             $table->timestamps();

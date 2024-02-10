@@ -2,12 +2,14 @@
 
 namespace App\Actions\LoveGifts;
 
+use DB;
 use App\Models\Member;
+use App\Models\TransactionType;
 use App\Oxytoxin\DTO\MSO\LoveGiftData;
+use Lorisleiva\Actions\Concerns\AsAction;
 use App\Oxytoxin\Providers\LoveGiftProvider;
 use App\Oxytoxin\Services\InterestCalculator;
-use DB;
-use Lorisleiva\Actions\Concerns\AsAction;
+use App\Actions\LoveGifts\DepositToLoveGiftsAccount;
 
 class GenerateLoveGiftsInterestForMember
 {
@@ -17,7 +19,7 @@ class GenerateLoveGiftsInterestForMember
     {
         $interestCalculator = app(InterestCalculator::class);
         DB::beginTransaction();
-        $member->imprests_no_interest()->each(function ($i) use ($interestCalculator) {
+        $member->love_gifts_no_interest()->each(function ($i) use ($interestCalculator) {
             $i->update([
                 'interest' => $interestCalculator->calculate(
                     amount: $i->balance,
@@ -34,7 +36,7 @@ class GenerateLoveGiftsInterestForMember
             payment_type_id: 1,
             reference_number: '#INTEREST',
             amount: $total_interest
-        ));
+        ), TransactionType::firstWhere('name', 'CDJ'));
         $member->imprests_unaccrued()->update([
             'accrued' => true,
         ]);

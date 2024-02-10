@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Account;
 use App\Models\JournalEntryVoucher;
 use App\Models\TrialBalanceEntry;
 use Illuminate\Database\Migrations\Migration;
@@ -16,7 +17,7 @@ return new class extends Migration
         Schema::create('journal_entry_voucher_items', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(JournalEntryVoucher::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
-            $table->foreignIdFor(TrialBalanceEntry::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignIdFor(Account::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->decimal('credit', 18, 4)->nullable();
             $table->decimal('debit', 18, 4)->nullable();
             $table->timestamps();

@@ -5,6 +5,7 @@ namespace App\Actions\Loans;
 use App\Actions\Imprests\DepositToImprestAccount;
 use App\Models\Loan;
 use App\Models\LoanApplication;
+use App\Models\TransactionType;
 use App\Oxytoxin\DTO\Loan\LoanPaymentData;
 use App\Oxytoxin\DTO\MSO\ImprestData;
 use App\Oxytoxin\Providers\LoansProvider;
@@ -22,14 +23,15 @@ class RunLoanProcessesAfterPosting
         $loan->loan_application->update([
             'status' => LoanApplication::STATUS_POSTED,
         ]);
+        $member = $loan->member;
         $amortization_schedule = LoansProvider::generateAmortizationSchedule($loan);
         $loan->loan_amortizations()->createMany($amortization_schedule);
         $cbu_amount = collect($loan->deductions)->firstWhere('code', 'cbu_amount')['amount'];
-        $cbu = $loan->member->capital_subscriptions()->create([
+        $cbu = $member->capital_subscriptions()->create([
             'number_of_terms' => 0,
-            'number_of_shares' => $cbu_amount / $loan->member->member_type->par_value,
+            'number_of_shares' => $cbu_amount / $member->member_type->par_value,
             'amount_subscribed' => $cbu_amount,
-            'par_value' => $loan->member->member_type->par_value,
+            'par_value' => $member->member_type->par_value,
             'is_common' => false,
             'code' => Str::random(12),
             'transaction_date' => today(),
@@ -40,20 +42,18 @@ class RunLoanProcessesAfterPosting
             'amount' => $cbu_amount,
             'transaction_date' => today(),
         ]);
-        app(DepositToImprestAccount::class)->handle($loan->member, new ImprestData(
+        app(DepositToImprestAccount::class)->handle($member, new ImprestData(
             payment_type_id: 1,
             reference_number: $loan->reference_number,
-            amount: collect($loan->deductions)->firstWhere('code', 'imprest_amount')['amount'],
-        ));
-        $buyOutPrincipal = collect($loan->deductions)->firstWhere('code', 'buy_out_principal');
-        $buyOutInterest = collect($loan->deductions)->firstWhere('code', 'buy_out_interest');
-        if ($buyOutPrincipal) {
-            $existing = $loan->member->loans()->find($buyOutPrincipal['loan_id']);
+            amount: $loan->imprest_amount,
+        ), TransactionType::firstWhere('name', 'CDJ'));
+        if ($loan->loan_buyout_id) {
+            $existing = $member->loans()->find($loan->loan_buyout_id);
             app(PayLoan::class)->handle(loan: $existing, loanPaymentData: new LoanPaymentData(
                 buy_out: true,
                 payment_type_id: 2,
                 reference_number: $loan->reference_number,
-                amount: ($buyOutPrincipal['amount'] ?? 0) + ($buyOutInterest['amount'] ?? 0),
+                amount: $loan->loan_buyout_principal + $loan->loan_buyout_interest,
             ));
         }
         DB::commit();

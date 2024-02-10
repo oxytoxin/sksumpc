@@ -3,14 +3,18 @@
 namespace App\Filament\App\Resources\BalanceForwardedSummaryResource\RelationManagers;
 
 use Filament\Forms;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
+use App\Models\Account;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\DB;
+use App\Models\BalanceForwardedEntry;
+use Filament\Forms\Components\Select;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Resources\RelationManagers\RelationManager;
 
 class BalanceForwardedEntriesRelationManager extends RelationManager
 {
@@ -20,10 +24,12 @@ class BalanceForwardedEntriesRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Select::make('trial_balance_entry_id')
-                    ->label('Trial Balance Entry')
+                Select::make('account_id')
+                    ->label('Account')
                     ->columnSpanFull()
-                    ->relationship('trial_balance_entry', 'codename', fn ($query) => $query->whereNotNull('code')),
+                    ->searchable()
+                    ->preload()
+                    ->options(Account::withCode()->whereNull('member_id')->pluck('code', 'id')),
                 TextInput::make('debit')
                     ->moneymask(),
                 TextInput::make('credit')
@@ -34,9 +40,9 @@ class BalanceForwardedEntriesRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute('trial_balance_entry_id')
             ->columns([
-                Tables\Columns\TextColumn::make('trial_balance_entry.codename'),
+                Tables\Columns\TextColumn::make('account.number')->label('Account Number'),
+                Tables\Columns\TextColumn::make('account.fullname')->label('Account Name'),
                 Tables\Columns\TextColumn::make('debit'),
                 Tables\Columns\TextColumn::make('credit'),
             ])

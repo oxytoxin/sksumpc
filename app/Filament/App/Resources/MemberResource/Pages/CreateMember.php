@@ -2,11 +2,12 @@
 
 namespace App\Filament\App\Resources\MemberResource\Pages;
 
-use App\Filament\App\Resources\MemberResource;
-use App\Models\MemberType;
 use DB;
-use Filament\Resources\Pages\CreateRecord;
+use App\Models\MemberType;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Resources\Pages\CreateRecord;
+use App\Filament\App\Resources\MemberResource;
+use App\Actions\Memberships\CreateMemberInitialAccounts;
 
 class CreateMember extends CreateRecord
 {
@@ -35,8 +36,8 @@ class CreateMember extends CreateRecord
             'transaction_date' => today(),
             'par_value' => $member->member_type->par_value,
         ]);
+        app(CreateMemberInitialAccounts::class)->handle($member);
         DB::commit();
-
         return $member;
     }
 }

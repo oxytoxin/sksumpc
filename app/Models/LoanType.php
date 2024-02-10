@@ -36,17 +36,19 @@ class LoanType extends Model
             Account::create([
                 'account_type_id' => $loan_receivables->account_type_id,
                 'name' => strtoupper($loanType->name),
-                'number' => str($loan_receivables->number)->append('-')->append(mb_str_pad($loanType->id, 3, '0', STR_PAD_LEFT)),
+                'number' => str($loan_receivables->number)->append('-')->append(mb_str_pad($loanType->id, 4, '0', STR_PAD_LEFT)),
                 'accountable_type' => LoanType::class,
                 'accountable_id' => $loanType->id,
-            ]);
+                'tag' => 'loan_receivables',
+            ], $loan_receivables);
             Account::create([
                 'account_type_id' => $loan_interests->account_type_id,
                 'name' => strtoupper($loanType->name),
-                'number' => str($loan_interests->number)->append('-')->append(mb_str_pad($loanType->id, 3, '0', STR_PAD_LEFT)),
+                'number' => str($loan_interests->number)->append('-')->append(mb_str_pad($loanType->id, 4, '0', STR_PAD_LEFT)),
                 'accountable_type' => LoanType::class,
                 'accountable_id' => $loanType->id,
-            ]);
+                'tag' => 'loan_interests',
+            ], $loan_interests);
         });
     }
 }

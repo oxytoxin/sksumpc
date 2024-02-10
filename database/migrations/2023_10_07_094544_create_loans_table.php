@@ -1,5 +1,10 @@
 <?php
 
+use App\Models\Loan;
+use App\Models\LoanAccount;
+use App\Models\LoanApplication;
+use App\Models\LoanType;
+use App\Models\Member;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,10 +18,11 @@ return new class extends Migration
     {
         Schema::create('loans', function (Blueprint $table) {
             $table->id();
-            $table->string('account_number')->index()->unique();
-            $table->foreignId('member_id')->constrained();
-            $table->foreignId('loan_application_id')->constrained();
-            $table->foreignId('loan_type_id')->constrained();
+            $table->foreignIdFor(LoanAccount::class)->constrained('accounts');
+            $table->foreignIdFor(Loan::class, 'loan_buyout_id')->nullable()->constrained('loans');
+            $table->foreignIdFor(Member::class)->constrained();
+            $table->foreignIdFor(LoanApplication::class)->constrained();
+            $table->foreignIdFor(LoanType::class)->constrained();
             $table->string('reference_number');
             $table->string('check_number')->nullable();
             $table->string('priority_number');
@@ -35,7 +41,7 @@ return new class extends Migration
             $table->decimal('deductions_amount', 18, 4);
             $table->decimal('monthly_payment', 16, 4);
             $table->date('release_date');
-            $table->date('transaction_date')->default(DB::raw('CURDATE()'));
+            $table->date('transaction_date')->default(DB::raw('(CURRENT_DATE)'));
             $table->boolean('posted')->default(false);
             $table->timestamps();
         });

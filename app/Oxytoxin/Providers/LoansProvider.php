@@ -125,9 +125,10 @@ class LoansProvider
         ];
         $existing = $member?->loans()->wherePosted(true)->where('loan_type_id', $loanType->id)->where('outstanding_balance', '>', 0)->whereNot('id', $existing_loan_id)->first();
         if ($existing) {
-            $amortizations = $existing->loan_amortizations;
-            $interest_paid = $amortizations->sum('amount_paid') - $amortizations->sum('principal_payment');
-            $interest_remaining = $amortizations->sum('interest') - $interest_paid;
+            $start = $existing->last_payment?->transaction_date ?? $existing->transaction_date;
+            $end = today();
+            $total_days = LoansProvider::getAccruableDays($start, $end);
+            $interest_remaining = LoansProvider::computeAccruedInterest($existing, $existing->outstanding_balance, $total_days);
             $deductions[] = [
                 'name' => 'Loan Buy-out Interest',
                 'amount' => $interest_remaining,

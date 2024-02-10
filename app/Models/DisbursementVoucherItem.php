@@ -22,8 +22,8 @@ class DisbursementVoucherItem extends Model
         return $this->belongsTo(DisbursementVoucher::class);
     }
 
-    public function trial_balance_entry()
+    public function account()
     {
-        return $this->belongsTo(TrialBalanceEntry::class);
+        return $this->belongsTo(Account::class);
     }
 }

@@ -21,7 +21,7 @@ return new class extends Migration
             $table->decimal('withdrawal', 18, 4)->nullable()->virtualAs('IF(amount < 0, amount * -1, null)');
             $table->decimal('interest_rate', 7, 4);
             $table->decimal('interest', 18, 4)->default(0);
-            $table->date('transaction_date')->default(DB::raw('CURDATE()'));
+            $table->date('transaction_date')->default(DB::raw('(CURRENT_DATE)'));
             $table->date('interest_date')->nullable();
             $table->decimal('balance', 18, 4)->default(0);
             $table->boolean('accrued')->default(false);
