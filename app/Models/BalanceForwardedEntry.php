@@ -16,7 +16,7 @@ class BalanceForwardedEntry extends Model
         'debit' => 'decimal:4',
     ];
 
-    public function balance_forwarded()
+    public function balance_forwarded_summary()
     {
         return $this->belongsTo(BalanceForwardedSummary::class);
     }

@@ -6,6 +6,7 @@ use App\Actions\CapitalSubscription\CreateNewCapitalSubscription;
 use App\Actions\CapitalSubscription\PayCapitalSubscription;
 use App\Models\CapitalSubscription;
 use App\Models\Member;
+use App\Models\TransactionType;
 use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionData;
 use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionPaymentData;
 use Filament\Forms\Components\Placeholder;
@@ -98,7 +99,7 @@ class CbuTable extends Component implements HasForms, HasTable
                             payment_type_id: $data['payment_type_id'],
                             reference_number: $data['reference_number'],
                             amount: $data['amount']
-                        ));
+                        ), TransactionType::firstWhere('name', 'CRJ'));
                         Notification::make()->title('Payment made for capital subscription!')->success()->send();
                     })
                     ->visible(fn ($record) => $record->outstanding_balance > 0),

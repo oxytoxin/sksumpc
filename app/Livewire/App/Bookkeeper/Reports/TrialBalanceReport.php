@@ -8,9 +8,12 @@ use Livewire\Attributes\On;
 use Illuminate\Support\Carbon;
 use App\Models\TransactionType;
 use Livewire\Attributes\Computed;
+use Illuminate\Support\Facades\DB;
 use App\Oxytoxin\Providers\TrialBalanceProvider;
-use App\Actions\BookkeeperReports\SummarizeTrialBalanceReport;
 use Staudenmeir\LaravelAdjacencyList\Eloquent\Builder;
+use App\Actions\BookkeeperReports\SummarizeTrialBalanceReport;
+use App\Models\BalanceForwardedEntry;
+use Illuminate\Database\Query\JoinClause;
 
 class TrialBalanceReport extends Component
 {
@@ -25,17 +28,57 @@ class TrialBalanceReport extends Component
     #[Computed]
     public function Accounts()
     {
-        return Account::withQueryConstraint(function (Builder $query) {
+        return Account::withQueryConstraint(function ($query) {
             $query
-                ->withSum(['recursiveCrjTransactions as total_crj_debit' => fn ($query) => $query->whereMonth('transaction_date', $this->data['month'])->whereYear('transaction_date', $this->data['year'])], 'debit')
-                ->withSum(['recursiveCrjTransactions as total_crj_credit' => fn ($query) => $query->whereMonth('transaction_date', $this->data['month'])->whereYear('transaction_date', $this->data['year'])], 'credit')
-                ->withSum(['recursiveCdjTransactions as total_cdj_debit' => fn ($query) => $query->whereMonth('transaction_date', $this->data['month'])->whereYear('transaction_date', $this->data['year'])], 'debit')
-                ->withSum(['recursiveCdjTransactions as total_cdj_credit' => fn ($query) => $query->whereMonth('transaction_date', $this->data['month'])->whereYear('transaction_date', $this->data['year'])], 'credit')
-                ->withSum(['recursiveJevTransactions as total_jev_debit' => fn ($query) => $query->whereMonth('transaction_date', $this->data['month'])->whereYear('transaction_date', $this->data['year'])], 'debit')
-                ->withSum(['recursiveJevTransactions as total_jev_credit' => fn ($query) => $query->whereMonth('transaction_date', $this->data['month'])->whereYear('transaction_date', $this->data['year'])], 'credit')
+                ->withCount(['children' => fn ($q) => $q->whereNull('member_id')])
+                ->withSum(['recursiveCrjTransactions as total_crj_debit' => fn ($query) => $query->whereMonth('transaction_date', 2)->whereYear('transaction_date', 2024)], 'debit')
+                ->withSum(['recursiveCrjTransactions as total_crj_credit' => fn ($query) => $query->whereMonth('transaction_date', 2)->whereYear('transaction_date', 2024)], 'credit')
+                ->withSum(['recursiveCdjTransactions as total_cdj_debit' => fn ($query) => $query->whereMonth('transaction_date', 2)->whereYear('transaction_date', 2024)], 'debit')
+                ->withSum(['recursiveCdjTransactions as total_cdj_credit' => fn ($query) => $query->whereMonth('transaction_date', 2)->whereYear('transaction_date', 2024)], 'credit')
+                ->withSum(['recursiveJevTransactions as total_jev_debit' => fn ($query) => $query->whereMonth('transaction_date', 2)->whereYear('transaction_date', 2024)], 'debit')
+                ->withSum(['recursiveJevTransactions as total_jev_credit' => fn ($query) => $query->whereMonth('transaction_date', 2)->whereYear('transaction_date', 2024)], 'credit')
                 ->whereNull('accounts.member_id');
         }, function () {
-            return Account::tree()->get();
+            $joinSub = BalanceForwardedEntry::whereHas('balance_forwarded_summary', fn ($q) => $q->whereMonth('generated_date', 2)->whereYear('generated_date', 2024));
+            return Account::tree()
+                ->leftJoinSub($joinSub, 'balance_forwarded_entries', function ($join) {
+                    $join->on('laravel_cte.id', '=', 'balance_forwarded_entries.account_id');
+                })
+                ->join('account_types', 'account_type_id', 'account_types.id')
+                ->addSelect(DB::raw(
+                    'balance_forwarded_entries.balance_forwarded_summary_id as balance_forwarded_summary_id,
+                     balance_forwarded_entries.debit as balance_forwarded_debit, 
+                     balance_forwarded_entries.credit as balance_forwarded_credit, 
+                     laravel_cte.*, 
+                     account_types.debit_operator, 
+                     account_types.credit_operator, 
+                    (
+                        coalesce( balance_forwarded_entries.debit, 0) + 
+                        coalesce(total_crj_debit, 0) + 
+                        coalesce(total_cdj_debit, 0) + 
+                        coalesce(total_jev_debit, 0)
+                    ) as total_debit, 
+                    (
+                        coalesce(balance_forwarded_entries.credit, 0) +
+                        coalesce(total_crj_credit, 0) +
+                        coalesce(total_cdj_credit, 0) + 
+                        coalesce(total_jev_credit, 0)
+                    ) as total_credit, 
+                        (
+                            (
+                                coalesce( balance_forwarded_entries.debit, 0) + 
+                                coalesce(total_crj_debit, 0) + 
+                                coalesce(total_cdj_debit, 0) + 
+                                coalesce(total_jev_debit, 0)
+                            ) * debit_operator +
+                            (
+                                coalesce(balance_forwarded_entries.credit, 0) +
+                                coalesce(total_crj_credit, 0) +
+                                coalesce(total_cdj_credit, 0) + 
+                                coalesce(total_jev_credit, 0)
+                            ) * credit_operator
+                        ) as ending_balance'
+                ))->get();
         })->toTree();
     }
 

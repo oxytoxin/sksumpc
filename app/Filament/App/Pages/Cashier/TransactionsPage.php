@@ -3,6 +3,7 @@
 namespace App\Filament\App\Pages\Cashier;
 
 use App\Actions\CapitalSubscription\PayCapitalSubscription;
+use App\Actions\CashCollections\PayCashCollectible;
 use App\Actions\Imprests\DepositToImprestAccount;
 use App\Actions\Imprests\WithdrawFromImprestAccount;
 use App\Actions\Loans\PayLoan;
@@ -16,6 +17,7 @@ use App\Models\SavingsAccount;
 use App\Models\TimeDeposit;
 use App\Models\TransactionType;
 use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionPaymentData;
+use App\Oxytoxin\DTO\CashCollectibles\CashCollectiblePaymentData;
 use App\Oxytoxin\DTO\Loan\LoanPaymentData;
 use App\Oxytoxin\DTO\MSO\ImprestData;
 use App\Oxytoxin\DTO\MSO\SavingsData;
@@ -330,10 +332,15 @@ class TransactionsPage extends Page
 
             ])
             ->action(function ($data) {
-                $record = CashCollectible::find($data['cash_collectible_id']);
-                unset($data['cash_collectible_id']);
-                $record->payments()->create($data);
-                Notification::make()->title('Payment made for ' . $record->name . '!')->success()->send();
+                $cashCollectible = CashCollectible::find($data['cash_collectible_id']);
+                app(PayCashCollectible::class)->handle($cashCollectible, new CashCollectiblePaymentData(
+                    member_id: $data['member_id'],
+                    payee: $data['payee'],
+                    payment_type_id: $data['payment_type_id'],
+                    reference_number: $data['reference_number'],
+                    amount: $data['amount']
+                ), TransactionType::firstWhere('name', 'CRJ'));
+                Notification::make()->title('Payment made for ' . $cashCollectible->name . '!')->success()->send();
             });
     }
 }
