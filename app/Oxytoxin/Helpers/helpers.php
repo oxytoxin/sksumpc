@@ -1,6 +1,32 @@
 <?php
 
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
+
+function sum_recursive(Collection $items, string $key): float
+{
+    $sum = $items->sum($key);
+
+    foreach ($items as $item) {
+        $sum += sum_recursive($item->children ?? collect(), $key);
+    }
+
+    return $sum;
+}
+
+function sum_no_children_recursive(Collection $items, string $key): float
+{
+    $sum = 0;
+    foreach ($items as $item) {
+        if ($item->children_count == 0) {
+            $sum += $item[$key];
+        } else {
+            $sum += sum_no_children_recursive($item->children ?? collect(), $key);
+        }
+    }
+
+    return $sum;
+}
 
 function oxy_get_month_range(): array
 {

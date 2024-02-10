@@ -47,34 +47,34 @@
                         TOTAL
                     </td>
                     <td class="border border-black px-2 uppercase text-xs text-right whitespace-nowrap">
-                        {{ renumber_format($this->accounts->sum('balance_forwarded_debit')) }}
+                        {{ renumber_format(sum_no_children_recursive($this->accounts, 'balance_forwarded_debit')) }}
                     </td>
                     <td class="border border-black px-2 uppercase text-xs text-right whitespace-nowrap">
-                        {{ renumber_format($this->accounts->sum('balance_forwarded_credit')) }}
+                        {{ renumber_format(sum_no_children_recursive($this->accounts, 'balance_forwarded_credit')) }}
                     </td>
                     <td class="border border-black px-2 uppercase text-xs text-right whitespace-nowrap">
-                        {{ renumber_format($this->accounts->sum('total_crj_debit')) }}
+                        {{ renumber_format(sum_no_children_recursive($this->accounts, 'total_crj_debit')) }}
                     </td>
                     <td class="border border-black px-2 uppercase text-xs text-right whitespace-nowrap">
-                        {{ renumber_format($this->accounts->sum('total_crj_credit')) }}
+                        {{ renumber_format(sum_no_children_recursive($this->accounts, 'total_crj_credit')) }}
                     </td>
                     <td class="border border-black px-2 uppercase text-xs text-right whitespace-nowrap">
-                        {{ renumber_format($this->accounts->sum('total_cdj_debit')) }}
+                        {{ renumber_format(sum_no_children_recursive($this->accounts, 'total_cdj_debit')) }}
                     </td>
                     <td class="border border-black px-2 uppercase text-xs text-right whitespace-nowrap">
-                        {{ renumber_format($this->accounts->sum('total_cdj_credit')) }}
+                        {{ renumber_format(sum_no_children_recursive($this->accounts, 'total_cdj_credit')) }}
                     </td>
                     <td class="border border-black px-2 uppercase text-xs text-right whitespace-nowrap">
-                        {{ renumber_format($this->accounts->sum('total_jev_debit')) }}
+                        {{ renumber_format(sum_no_children_recursive($this->accounts, 'total_jev_debit')) }}
                     </td>
                     <td class="border border-black px-2 uppercase text-xs text-right whitespace-nowrap">
-                        {{ renumber_format($this->accounts->sum('total_jev_credit')) }}
+                        {{ renumber_format(sum_no_children_recursive($this->accounts, 'total_jev_credit')) }}
                     </td>
                     <td class="border border-black px-2 uppercase text-xs text-right whitespace-nowrap">
-                        {{ renumber_format($this->accounts->sum('total_debit')) }}
+                        {{ renumber_format(sum_no_children_recursive($this->accounts, 'total_debit')) }}
                     </td>
                     <td class="border border-black px-2 uppercase text-xs text-right whitespace-nowrap">
-                        {{ renumber_format($this->accounts->sum('total_credit')) }}
+                        {{ renumber_format(sum_no_children_recursive($this->accounts, 'total_credit')) }}
                     </td>
                     <td class="border border-black px-2 uppercase text-xs text-right whitespace-nowrap">
                         {{ renumber_format($this->accounts->where('debit_operator', 1)->sum('ending_balance')) }}

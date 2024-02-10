@@ -29,7 +29,7 @@ class BalanceForwardedEntriesRelationManager extends RelationManager
                     ->columnSpanFull()
                     ->searchable()
                     ->preload()
-                    ->options(Account::withCode()->whereNull('member_id')->pluck('code', 'id')),
+                    ->options(Account::withCode()->whereDoesntHave('children', fn ($q) => $q->whereNull('member_id'))->whereNull('member_id')->pluck('code', 'id')),
                 TextInput::make('debit')
                     ->moneymask(),
                 TextInput::make('credit')

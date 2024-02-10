@@ -3,7 +3,7 @@
         'border border-black px-2 uppercase text-xs whitespace-nowrap',
         'font-bold' => $account->children->isNotEmpty() || !$account->depth,
     ]) style="padding-left: {{ $account->depth + 1 }}rem;">
-        {{ $account->fullname }}
+        {{ $account->fullname }} {{ $account->children_count }}
     </td>
     @if ($account->children_count > 0)
         @for ($i = 0; $i < 12; $i++)
