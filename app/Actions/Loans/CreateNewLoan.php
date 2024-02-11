@@ -28,7 +28,7 @@ class CreateNewLoan
             'number' => $loanData->account_number,
             'account_type_id' => $loans_payable_account->account_type_id,
             'member_id' => $loanData->member_id,
-            'tag' => 'loan',
+            'tag' => 'member_loan',
         ], $loans_payable_account);
         $loan = Loan::create([
             'loan_account_id' => $account->id,

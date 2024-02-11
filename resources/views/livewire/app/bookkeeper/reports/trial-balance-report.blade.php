@@ -4,10 +4,11 @@
         <x-heroicon-o-arrow-path wire:loading class="w-6 h-6 animate-spin" />
     </div>
     <div class="flex-1 overflow-auto">
-        <table>
-            <thead>
+        <table class="border-separate w-full border-spacing-0 border border-black">
+            <thead class="sticky top-0 bg-white">
                 <tr>
-                    <th class="border border-black px-2 whitespace-nowrap" rowspan="2">TRIAL BALANCE</th>
+                    <th class="border border-black px-2 whitespace-nowrap" rowspan="2">TRIAL BALANCE
+                    </th>
                     <th class="border border-black px-2 whitespace-nowrap uppercase" colspan="2">
                         BALANCE FORWARDED
                     </th>
@@ -41,49 +42,7 @@
                     @include('partials.trial-balance-row-data', ['account' => $account])
                 @endforeach
             </tbody>
-            <tfoot>
-                <tr>
-                    <td class="border border-black px-2 uppercase text-lg font-bold whitespace-nowrap">
-                        TOTAL
-                    </td>
-                    <td class="border border-black px-2 uppercase text-xs text-right whitespace-nowrap">
-                        {{ renumber_format(sum_no_children_recursive($this->accounts, 'balance_forwarded_debit')) }}
-                    </td>
-                    <td class="border border-black px-2 uppercase text-xs text-right whitespace-nowrap">
-                        {{ renumber_format(sum_no_children_recursive($this->accounts, 'balance_forwarded_credit')) }}
-                    </td>
-                    <td class="border border-black px-2 uppercase text-xs text-right whitespace-nowrap">
-                        {{ renumber_format(sum_no_children_recursive($this->accounts, 'total_crj_debit')) }}
-                    </td>
-                    <td class="border border-black px-2 uppercase text-xs text-right whitespace-nowrap">
-                        {{ renumber_format(sum_no_children_recursive($this->accounts, 'total_crj_credit')) }}
-                    </td>
-                    <td class="border border-black px-2 uppercase text-xs text-right whitespace-nowrap">
-                        {{ renumber_format(sum_no_children_recursive($this->accounts, 'total_cdj_debit')) }}
-                    </td>
-                    <td class="border border-black px-2 uppercase text-xs text-right whitespace-nowrap">
-                        {{ renumber_format(sum_no_children_recursive($this->accounts, 'total_cdj_credit')) }}
-                    </td>
-                    <td class="border border-black px-2 uppercase text-xs text-right whitespace-nowrap">
-                        {{ renumber_format(sum_no_children_recursive($this->accounts, 'total_jev_debit')) }}
-                    </td>
-                    <td class="border border-black px-2 uppercase text-xs text-right whitespace-nowrap">
-                        {{ renumber_format(sum_no_children_recursive($this->accounts, 'total_jev_credit')) }}
-                    </td>
-                    <td class="border border-black px-2 uppercase text-xs text-right whitespace-nowrap">
-                        {{ renumber_format(sum_no_children_recursive($this->accounts, 'total_debit')) }}
-                    </td>
-                    <td class="border border-black px-2 uppercase text-xs text-right whitespace-nowrap">
-                        {{ renumber_format(sum_no_children_recursive($this->accounts, 'total_credit')) }}
-                    </td>
-                    <td class="border border-black px-2 uppercase text-xs text-right whitespace-nowrap">
-                        {{ renumber_format($this->accounts->where('debit_operator', 1)->sum('ending_balance')) }}
-                    </td>
-                    <td class="border border-black px-2 uppercase text-xs text-right whitespace-nowrap">
-                        {{ renumber_format($this->accounts->where('credit_operator', 1)->sum('ending_balance')) }}
-                    </td>
-                </tr>
-            </tfoot>
+            @include('partials.trial-balance-row-footer')
         </table>
     </div>
 </div>

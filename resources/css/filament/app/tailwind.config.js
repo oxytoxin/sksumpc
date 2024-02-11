@@ -8,6 +8,7 @@ export default {
         './app/Livewire/App/**/*.php',
         './resources/views/filament/app/**/*.blade.php',
         './resources/views/infolists/**/*.blade.php',
+        './resources/views/partials/**/*.blade.php',
         './resources/views/components/app/**/*.blade.php',
         './resources/views/livewire/app/**/*.blade.php',
         './resources/views/filament/app/resources/loan-application-resource/pages/loan-application-form.blade.php',

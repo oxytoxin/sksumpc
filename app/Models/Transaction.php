@@ -13,4 +13,14 @@ class Transaction extends Model
         'credit' => 'decimal:4',
         'debit' => 'decimal:4',
     ];
+
+    public function account()
+    {
+        return $this->belongsTo(Account::class);
+    }
+
+    public function transaction_type()
+    {
+        return $this->belongsTo(TransactionType::class);
+    }
 }

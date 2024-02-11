@@ -17,13 +17,13 @@
             </x-filament::tabs.item>
         </x-filament::tabs>
         <div x-show="activeTab === 'trial_balance'" class="mt-4">
-            @livewire('app.bookkeeper.reports.trial-balance-report', ['data' => $data], $data['month'] . '-' . $data['year'])
+            @include('livewire.app.bookkeeper.reports.trial-balance-report')
         </div>
         <div x-show="activeTab === 'financial_condition'" class="mt-4">
-            @livewire('app.bookkeeper.reports.financial_condition-report', ['data' => $data], $data['month'] . '-' . $data['year'])
+            @include('livewire.app.bookkeeper.reports.financial-condition-report')
         </div>
         <div x-show="activeTab === 'financial_operation'" class="mt-4">
-            @livewire('app.bookkeeper.reports.financial_operation-report', ['data' => $data], $data['month'] . '-' . $data['year'])
+            @include('livewire.app.bookkeeper.reports.financial-operation-report')
         </div>
     </div>
 

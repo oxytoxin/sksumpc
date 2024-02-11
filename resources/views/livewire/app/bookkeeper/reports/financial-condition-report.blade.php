@@ -3,7 +3,7 @@
     <div class="overflow-x-auto">
         <table class="w-full my-2 text-xs">
             <tbody>
-                @foreach ($this->items as $item)
+                @foreach (collect() as $item)
                     @switch($item['type'] ?? '')
                         @case('title')
                             @foreach ($item['data'] as $column)

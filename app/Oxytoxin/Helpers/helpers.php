@@ -3,6 +3,12 @@
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
+
+function format_account_name_from_depth(string $name, int $depth): string
+{
+    return str($name)->explode(':')[$depth] ?? $name;
+}
+
 function sum_recursive(Collection $items, string $key): float
 {
     $sum = $items->sum($key);

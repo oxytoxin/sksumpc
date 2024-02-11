@@ -49,7 +49,7 @@ class AssetAccountsSeeder extends Seeder
 
         Account::create(["account_type_id" => 1, "name" => "PROPERTY AND EQUIPMENT", "number" => "14000", "children" => [
             ["account_type_id" => 1, "name" => "LAND", "number" => "14100"],
-            ["account_type_id" => 1, "name" => "LAND IMPROVEMENTS'", "number" => "14110"],
+            ["account_type_id" => 1, "name" => "LAND IMPROVEMENTS", "number" => "14110"],
             ["account_type_id" => 1, "name" => "ACCU. DEPRECIATION-LAND IMPROVEMENTS", "number" => "14111"],
             ["account_type_id" => 1, "name" => "BUILDING", "number" => "14120"],
             ["account_type_id" => 1, "name" => "ACCU. DEPRECIATION-BUILDING", "number" => "14121"],
