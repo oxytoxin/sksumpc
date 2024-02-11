@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * @mixin IdeHelperLoanAccount
+ */
 class LoanAccount extends Account
 {
     use HasFactory;

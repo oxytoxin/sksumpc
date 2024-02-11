@@ -2,11 +2,13 @@
 
 namespace App\Actions\Savings;
 
+use App\Actions\Transactions\CreateTransaction;
 use App\Models\Member;
 use App\Models\Saving;
 use App\Models\SavingsAccount;
 use App\Models\TransactionType;
 use App\Oxytoxin\DTO\MSO\SavingsData;
+use App\Oxytoxin\DTO\Transactions\TransactionData;
 use App\Oxytoxin\Providers\SavingsProvider;
 use DB;
 use Filament\Notifications\Notification;
@@ -37,11 +39,14 @@ class WithdrawFromSavingsAccount
             'member_id' => $member->id,
             'transaction_date' => $data->transaction_date,
         ]);
-        $savings_account->transactions()->create([
-            'transaction_type_id' => $transactionType->id,
-            'reference_number' => $savings->reference_number,
-            'debit' => $savings->amount,
-        ]);
+        app(CreateTransaction::class)->handle(new TransactionData(
+            account_id: $savings_account->id,
+            transactionType: $transactionType,
+            reference_number: $savings->reference_number,
+            debit: $savings->amount,
+            member_id: $member->id,
+            remarks: 'Member Withdraw from Savings'
+        ));
         DB::commit();
 
         return $savings;

@@ -20,7 +20,7 @@ return new class extends Migration
             FOR EACH ROW
             BEGIN
                 UPDATE capital_subscriptions
-                SET outstanding_balance = (SELECT amount_subscribed FROM capital_subscriptions WHERE id = NEW.capital_subscription_id) - (SELECT COALESCE(SUM(amount),0) FROM capital_subscription_payments WHERE capital_subscription_id = NEW.capital_subscription_id)
+                SET outstanding_balance = (SELECT amount_subscribed FROM (SELECT amount_subscribed FROM capital_subscriptions WHERE id = NEW.capital_subscription_id) as a) - (SELECT COALESCE(SUM(amount),0) FROM capital_subscription_payments WHERE capital_subscription_id = NEW.capital_subscription_id)
                 WHERE id = NEW.capital_subscription_id;
             END;
 
@@ -29,7 +29,7 @@ return new class extends Migration
             FOR EACH ROW
             BEGIN
                 UPDATE capital_subscriptions
-                SET outstanding_balance = (SELECT amount_subscribed FROM capital_subscriptions WHERE id = OLD.capital_subscription_id) - (SELECT COALESCE(SUM(amount),0) FROM capital_subscription_payments WHERE capital_subscription_id = OLD.capital_subscription_id)
+                SET outstanding_balance = (SELECT amount_subscribed FROM (SELECT amount_subscribed FROM capital_subscriptions WHERE id = OLD.capital_subscription_id) as a) - (SELECT COALESCE(SUM(amount),0) FROM capital_subscription_payments WHERE capital_subscription_id = OLD.capital_subscription_id)
                 WHERE id = OLD.capital_subscription_id;
             END;
         ');

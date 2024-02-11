@@ -2,10 +2,12 @@
 
 namespace App\Actions\Loans;
 
+use App\Actions\CapitalSubscription\PayCapitalSubscription;
 use App\Actions\Imprests\DepositToImprestAccount;
 use App\Models\Loan;
 use App\Models\LoanApplication;
 use App\Models\TransactionType;
+use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionPaymentData;
 use App\Oxytoxin\DTO\Loan\LoanPaymentData;
 use App\Oxytoxin\DTO\MSO\ImprestData;
 use App\Oxytoxin\Providers\LoansProvider;
@@ -36,12 +38,11 @@ class RunLoanProcessesAfterPosting
             'code' => Str::random(12),
             'transaction_date' => today(),
         ]);
-        $cbu->payments()->create([
-            'payment_type_id' => 2,
-            'reference_number' => $loan->reference_number,
-            'amount' => $cbu_amount,
-            'transaction_date' => today(),
-        ]);
+        app(PayCapitalSubscription::class)->handle($cbu, new CapitalSubscriptionPaymentData(
+            payment_type_id: 2,
+            reference_number: $loan->reference_number,
+            amount: $cbu_amount
+        ), TransactionType::firstWhere('name', 'CDJ'));
         app(DepositToImprestAccount::class)->handle($member, new ImprestData(
             payment_type_id: 1,
             reference_number: $loan->reference_number,
@@ -54,7 +55,7 @@ class RunLoanProcessesAfterPosting
                 payment_type_id: 2,
                 reference_number: $loan->reference_number,
                 amount: $loan->loan_buyout_principal + $loan->loan_buyout_interest,
-            ));
+            ), transactionType: TransactionType::firstWhere('name', 'CDJ'));
         }
         DB::commit();
     }

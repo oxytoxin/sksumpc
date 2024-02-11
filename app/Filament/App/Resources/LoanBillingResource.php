@@ -6,6 +6,7 @@ use App\Actions\Loans\PayLoan;
 use App\Filament\App\Resources\LoanBillingResource\Pages;
 use App\Models\LoanBilling;
 use App\Models\LoanBillingPayment;
+use App\Models\TransactionType;
 use App\Oxytoxin\DTO\Loan\LoanPaymentData;
 use DB;
 use Filament\Forms\Components\DatePicker;
@@ -102,7 +103,7 @@ class LoanBillingResource extends Resource
                                 payment_type_id: $record->payment_type_id,
                                 reference_number: $record->reference_number,
                                 amount: $lp->amount_paid,
-                            ));
+                            ), TransactionType::firstWhere('name', 'CRJ'));
                             $lp->update([
                                 'posted' => true,
                             ]);

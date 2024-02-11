@@ -5,6 +5,7 @@ namespace App\Filament\App\Pages\Bookkeeper;
 use App\Models\LoanType;
 use App\Models\TransactionType;
 use App\Oxytoxin\Providers\FinancialStatementProvider;
+use Carbon\CarbonImmutable;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
@@ -49,11 +50,6 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
             ->statePath('data');
     }
 
-    public function updated($name, $value)
-    {
-        $this->dispatch('dateChanged', $this->data);
-    }
-
     public function mount()
     {
         $this->form->fill();
@@ -63,6 +59,12 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
     public function Accounts()
     {
         return FinancialStatementProvider::getAccountsSummary($this->data['month'], $this->data['year']);
+    }
+
+    #[Computed]
+    public function BalanceForwardedDate()
+    {
+        return CarbonImmutable::create(month: $this->data['month'], year: $this->data['year'])->subMonthNoOverflow();
     }
 
     #[Computed]

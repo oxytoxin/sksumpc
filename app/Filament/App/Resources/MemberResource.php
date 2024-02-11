@@ -44,6 +44,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 
 class MemberResource extends Resource
 {
@@ -336,6 +337,9 @@ class MemberResource extends Resource
                     ->date('m/d/Y')
                     ->sortable(),
                 TextColumn::make('patronage_status.name'),
+                TextColumn::make('created_at')
+                    ->label('Membership Date')
+                    ->date('F d, Y'),
             ])
             ->filters([
                 SelectFilter::make('member_type')
@@ -355,6 +359,8 @@ class MemberResource extends Resource
                             ->when($state['value'] == 1, fn ($q) => $q->whereNull('terminated_at'))
                             ->when($state['value'] == 2, fn ($q) => $q->whereNotNull('terminated_at'))
                     ),
+                DateRangeFilter::make('created_at')
+                    ->label('Date of Membership'),
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
             ->persistFiltersInSession()

@@ -2,10 +2,12 @@
 
 namespace App\Actions\Imprests;
 
+use App\Actions\Transactions\CreateTransaction;
 use App\Models\Imprest;
 use App\Models\Member;
 use App\Models\TransactionType;
 use App\Oxytoxin\DTO\MSO\ImprestData;
+use App\Oxytoxin\DTO\Transactions\TransactionData;
 use App\Oxytoxin\Providers\ImprestsProvider;
 use DB;
 use Lorisleiva\Actions\Concerns\AsAction;
@@ -26,11 +28,14 @@ class DepositToImprestAccount
             'member_id' => $member->id,
             'transaction_date' => $data->transaction_date,
         ]);
-        $imprest_account->transactions()->create([
-            'transaction_type_id' => $transactionType->id,
-            'reference_number' => $imprest->reference_number,
-            'credit' => $imprest->amount,
-        ]);
+        app(CreateTransaction::class)->handle(new TransactionData(
+            account_id: $imprest_account->id,
+            transactionType: $transactionType,
+            reference_number: $imprest->reference_number,
+            credit: $imprest->amount,
+            member_id: $member->id,
+            remarks: 'Member Deposit to Imprest'
+        ));
         DB::commit();
 
         return $imprest;

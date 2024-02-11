@@ -10,8 +10,8 @@
         'total_jev_credit' => sum_no_children_recursive($this->accounts, 'total_jev_credit'),
         'total_debit' => sum_no_children_recursive($this->accounts, 'total_debit'),
         'total_credit' => sum_no_children_recursive($this->accounts, 'total_credit'),
-        'debit_ending_balance' => $this->accounts->where('debit_operator', 1)->sum('ending_balance'),
-        'credit_ending_balance' => $this->accounts->where('credit_operator', 1)->sum('ending_balance'),
+        'debit_ending_balance' => sum_no_children_recursive($this->accounts->where('debit_operator', 1), 'ending_balance'),
+        'credit_ending_balance' => sum_no_children_recursive($this->accounts->where('credit_operator', 1), 'ending_balance'),
     ];
 @endphp
 <tfoot>

@@ -29,7 +29,7 @@
             <tr class="border-b-2 border-x-2 border-black">
                 <td class="border-black border-r border-t px-2 w-1/6">ADDRESS:</td>
                 <td colspan="2" class="border-t border-black px-2">{{ $disbursement_voucher->address }}</td>
-                <td class="border-black border-x border-t px-2 w-1/6"> JEV#:</td>
+                <td class="border-black border-x border-t px-2 w-1/6"> DV#:</td>
                 <td colspan="2" class="border-t border-black px-2">{{ $disbursement_voucher->reference_number }}
                 </td>
             </tr>
@@ -54,21 +54,18 @@
                 <td class="border border-black text-center">CREDIT</td>
             </tr>
             @php
-                $disbursement_voucher_items = $disbursement_voucher
-                    ->disbursement_voucher_items()
-                    ->with('trial_balance_entry')
-                    ->get();
+                $disbursement_voucher_items = $disbursement_voucher->disbursement_voucher_items()->with('account')->get();
             @endphp
             @foreach ($disbursement_voucher_items as $item)
                 <tr>
-                    <td colspan="2" class="border border-black uppercase text-center">
-                        {{ $item->trial_balance_entry->name }}</td>
-                    <td colspan="2" class="border border-black text-center">{{ $item->trial_balance_entry->code }}
+                    <td colspan="2" class="border border-black uppercase text-center w-1/2">
+                        {{ $item->account->fullname }}</td>
+                    <td colspan="2" class="border border-black text-center w-1/6">{{ $item->account->number }}
                     </td>
-                    <td class="border border-black text-right">
+                    <td class="border border-black text-right w-1/6">
                         {{ $item->debit ? number_format($item->debit, 2) : '' }}
                     </td>
-                    <td class="border border-black text-right">
+                    <td class="border border-black text-right w-1/6">
                         {{ $item->credit ? number_format($item->credit, 2) : '' }}
                     </td>
                 </tr>

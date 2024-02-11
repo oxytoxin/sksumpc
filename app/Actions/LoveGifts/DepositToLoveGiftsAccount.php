@@ -2,10 +2,12 @@
 
 namespace App\Actions\LoveGifts;
 
+use App\Actions\Transactions\CreateTransaction;
 use App\Models\LoveGift;
 use App\Models\Member;
 use App\Models\TransactionType;
 use App\Oxytoxin\DTO\MSO\LoveGiftData;
+use App\Oxytoxin\DTO\Transactions\TransactionData;
 use App\Oxytoxin\Providers\LoveGiftProvider;
 use DB;
 use Lorisleiva\Actions\Concerns\AsAction;
@@ -26,11 +28,14 @@ class DepositToLoveGiftsAccount
             'member_id' => $member->id,
             'transaction_date' => $data->transaction_date,
         ]);
-        $love_gift_account->transactions()->create([
-            'transaction_type_id' => $transactionType->id,
-            'reference_number' => $love_gift->reference_number,
-            'credit' => $love_gift->amount,
-        ]);
+        app(CreateTransaction::class)->handle(new TransactionData(
+            account_id: $love_gift_account->id,
+            transactionType: $transactionType,
+            reference_number: $love_gift->reference_number,
+            credit: $love_gift->amount,
+            member_id: $member->id,
+            remarks: 'Member Deposit to Love Gifts'
+        ));
         DB::commit();
 
         return $love_gift;

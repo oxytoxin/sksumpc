@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string('reference_number');
             $table->text('description');
             $table->date('transaction_date')->default(DB::raw('(CURRENT_DATE)'));
-            $table->integer('cdj_column')->index();
             $table->foreignIdFor(User::class, 'bookkeeper_id');
             $table->timestamps();
         });

@@ -3,20 +3,19 @@
 namespace App\Filament\App\Resources;
 
 use App\Filament\App\Resources\DisbursementVoucherResource\Pages;
+use App\Models\Account;
 use App\Models\DisbursementVoucher;
-use App\Models\TrialBalanceEntry;
+use App\Models\Member;
+use App\Rules\BalancedJev;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
-use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
-use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class DisbursementVoucherResource extends Resource
@@ -34,30 +33,25 @@ class DisbursementVoucherResource extends Resource
     {
         return $form
             ->schema([
-                Select::make('cdj_column')
-                    ->label('Type')
-                    ->options([
-                        1 => 'CDJ-LOANS',
-                        2 => 'CDJ-OTHERS',
-                        3 => 'CDJ-MSO',
-                        4 => 'CDJ-RICE',
-                    ])
-                    ->required(),
                 TextInput::make('name')->required(),
-                DatePicker::make('transaction_date')->required()->default(today())->native(false),
                 TextInput::make('address')->required(),
                 TextInput::make('reference_number')->required(),
                 Textarea::make('description')->columnSpanFull()->required(),
                 TableRepeater::make('disbursement_voucher_items')
                     ->hideLabels()
-                    ->relationship()
                     ->columnSpanFull()
-                    ->columnWidths(['trial_balance_entry_id' => '20rem'])
+                    ->columnWidths(['account_id' => '13rem', 'member_id' => '13rem'])
+                    ->rule(new BalancedJev)
                     ->schema([
-                        Select::make('trial_balance_entry_id')
+                        Select::make('member_id')
+                            ->options(Member::pluck('full_name', 'id'))
+                            ->label('Member')
+                            ->searchable()
+                            ->reactive()
+                            ->preload(),
+                        Select::make('account_id')
                             ->options(
-                                TrialBalanceEntry::whereNotNull('code')
-                                    ->pluck('codename', 'id')
+                                fn ($get) => Account::withCode()->whereDoesntHave('children', fn ($q) => $q->whereNull('member_id'))->where('member_id', $get('member_id') ?? null)->pluck('code', 'id')
                             )
                             ->searchable()
                             ->required()
@@ -82,10 +76,6 @@ class DisbursementVoucherResource extends Resource
             ->filters([
                 Filter::make('transaction_date')
                     ->dateRange('transaction_date'),
-                SelectFilter::make('trial_balance_entry_id')
-                    ->label('Account')
-                    ->options(TrialBalanceEntry::whereNotNull('code')->pluck('codename', 'id'))
-                    ->query(fn ($query, $data) => $query->when($data['value'], fn ($q) => $q->whereRelation('disbursement_voucher_items', 'trial_balance_entry_id', $data['value']))),
             ])
             ->actions([
                 Action::make('view')
@@ -96,14 +86,9 @@ class DisbursementVoucherResource extends Resource
                     ->modalCancelAction(false)
                     ->modalSubmitAction(false)
                     ->modalContent(fn ($record) => view('components.app.bookkeeper.reports.disbursement-voucher-preview', ['disbursement_voucher' => $record])),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+            ->bulkActions([]);
     }
 
     public static function getPages(): array

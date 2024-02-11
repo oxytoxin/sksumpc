@@ -3,6 +3,7 @@
 namespace App\Actions\Savings;
 
 use App\Models\Member;
+use App\Models\TransactionType;
 use App\Oxytoxin\DTO\MSO\SavingsData;
 use App\Oxytoxin\Providers\SavingsProvider;
 use App\Oxytoxin\Services\InterestCalculator;
@@ -36,7 +37,7 @@ class GenerateSavingsInterestForMember
                 reference_number: '#INTEREST',
                 amount: $total_interest,
                 savings_account_id: $account->id,
-            ));
+            ), TransactionType::firstWhere('name', 'CDJ'));
             $account->savings_unaccrued()->update([
                 'accrued' => true,
             ]);

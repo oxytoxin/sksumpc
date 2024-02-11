@@ -9,6 +9,7 @@ use App\Models\Loan;
 use App\Models\LoanApplication;
 use App\Models\LoanType;
 use App\Models\Member;
+use App\Models\TransactionType;
 use App\Oxytoxin\DTO\Loan\LoanData;
 use App\Oxytoxin\DTO\Loan\LoanPaymentData;
 use App\Oxytoxin\Providers\LoansProvider;
@@ -200,7 +201,7 @@ class LoansTable extends Component implements HasForms, HasTable
                             reference_number: $data['reference_number'],
                             amount: $data['amount'],
                             remarks: $data['remarks'],
-                        ));
+                        ), TransactionType::firstWhere('name', 'CRJ'));
                         Notification::make()->title('Payment made for loan!')->success()->send();
                     })
                     ->visible(fn ($record) => $record->outstanding_balance > 0 && $record->posted && auth()->user()->can('manage payments')),

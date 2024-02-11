@@ -1,6 +1,7 @@
 <?php
 
 // @formatter:off
+// phpcs:ignoreFile
 /**
  * A helper file for your Eloquent Models
  * Copy the phpDocs from this file to the correct Model,
@@ -25,20 +26,61 @@ namespace App\Models{
  * @property int|null $accountable_id
  * @property \Carbon\CarbonImmutable|null $created_at
  * @property \Carbon\CarbonImmutable|null $updated_at
- * @method static \Illuminate\Database\Eloquent\Builder|Account newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Account newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Account query()
- * @method static \Illuminate\Database\Eloquent\Builder|Account whereAccountTypeId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Account whereAccountableId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Account whereAccountableType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Account whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Account whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Account whereMemberId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Account whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Account whereNumber($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Account whereParentId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Account whereTag($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Account whereUpdatedAt($value)
+ * @property-read \App\Models\AccountType $account_type
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\Account[] $children
+ * @property-read int|null $children_count
+ * @property-read \App\Models\Account|null $parent
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Transaction> $transactions
+ * @property-read int|null $transactions_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\Account[] $ancestors The model's recursive parents.
+ * @property-read int|null $ancestors_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\Account[] $ancestorsAndSelf The model's recursive parents and itself.
+ * @property-read int|null $ancestors_and_self_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\Account[] $bloodline The model's ancestors, descendants and itself.
+ * @property-read int|null $bloodline_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\Account[] $childrenAndSelf The model's direct children and itself.
+ * @property-read int|null $children_and_self_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\Account[] $descendants The model's recursive children.
+ * @property-read int|null $descendants_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\Account[] $descendantsAndSelf The model's recursive children and itself.
+ * @property-read int|null $descendants_and_self_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\Account[] $parentAndSelf The model's direct parent and itself.
+ * @property-read int|null $parent_and_self_count
+ * @property-read \App\Models\Account|null $rootAncestor The model's topmost parent.
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\Account[] $siblings The parent's other children.
+ * @property-read int|null $siblings_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\Account[] $siblingsAndSelf All the parent's children.
+ * @property-read int|null $siblings_and_self_count
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, static> all($columns = ['*'])
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account breadthFirst()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account depthFirst()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account doesntHaveChildren()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, static> get($columns = ['*'])
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account getExpressionGrammar()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account hasChildren()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account hasParent()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account isLeaf()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account isRoot()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account newModelQuery()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account newQuery()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account query()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account tree($maxDepth = null)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account treeOf(\Illuminate\Database\Eloquent\Model|callable $constraint, $maxDepth = null)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account whereAccountTypeId($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account whereAccountableId($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account whereAccountableType($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account whereCreatedAt($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account whereDepth($operator, $value = null)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account whereId($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account whereMemberId($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account whereName($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account whereNumber($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account whereParentId($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account whereTag($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account whereUpdatedAt($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account withCode()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account withGlobalScopes(array $scopes)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account withRelationshipExpression($direction, callable $constraint, $initialDepth, $from = null, $maxDepth = null)
  * @mixin \Eloquent
  */
 	class IdeHelperAccount {}
@@ -54,6 +96,8 @@ namespace App\Models{
  * @property int $credit_operator
  * @property \Carbon\CarbonImmutable|null $created_at
  * @property \Carbon\CarbonImmutable|null $updated_at
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, \App\Models\Account> $accounts
+ * @property-read int|null $accounts_count
  * @method static \Illuminate\Database\Eloquent\Builder|AccountType newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AccountType newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AccountType query()
@@ -74,22 +118,22 @@ namespace App\Models{
  *
  * @property int $id
  * @property int $balance_forwarded_summary_id
- * @property int $trial_balance_entry_id
+ * @property int $account_id
  * @property string|null $credit
  * @property string|null $debit
  * @property \Carbon\CarbonImmutable|null $created_at
  * @property \Carbon\CarbonImmutable|null $updated_at
- * @property-read \App\Models\BalanceForwardedSummary|null $balance_forwarded
- * @property-read \App\Models\TrialBalanceEntry $trial_balance_entry
+ * @property-read \App\Models\Account $account
+ * @property-read \App\Models\BalanceForwardedSummary $balance_forwarded_summary
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceForwardedEntry newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceForwardedEntry newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceForwardedEntry query()
+ * @method static \Illuminate\Database\Eloquent\Builder|BalanceForwardedEntry whereAccountId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceForwardedEntry whereBalanceForwardedSummaryId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceForwardedEntry whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceForwardedEntry whereCredit($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceForwardedEntry whereDebit($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceForwardedEntry whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|BalanceForwardedEntry whereTrialBalanceEntryId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BalanceForwardedEntry whereUpdatedAt($value)
  * @mixin \Eloquent
  */
@@ -356,6 +400,7 @@ namespace App\Models{
  * @property int $id
  * @property int $cash_collectible_category_id
  * @property string $name
+ * @property bool $has_inventory
  * @property \Carbon\CarbonImmutable|null $created_at
  * @property \Carbon\CarbonImmutable|null $updated_at
  * @property-read \App\Models\CashCollectibleCategory $cash_collectible_category
@@ -366,6 +411,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|CashCollectible query()
  * @method static \Illuminate\Database\Eloquent\Builder|CashCollectible whereCashCollectibleCategoryId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashCollectible whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CashCollectible whereHasInventory($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashCollectible whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashCollectible whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashCollectible whereUpdatedAt($value)
@@ -483,7 +529,6 @@ namespace App\Models{
  * @property string $reference_number
  * @property string $description
  * @property \Carbon\CarbonImmutable $transaction_date
- * @property int $cdj_column
  * @property int $bookkeeper_id
  * @property \Carbon\CarbonImmutable|null $created_at
  * @property \Carbon\CarbonImmutable|null $updated_at
@@ -494,7 +539,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|DisbursementVoucher query()
  * @method static \Illuminate\Database\Eloquent\Builder|DisbursementVoucher whereAddress($value)
  * @method static \Illuminate\Database\Eloquent\Builder|DisbursementVoucher whereBookkeeperId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|DisbursementVoucher whereCdjColumn($value)
  * @method static \Illuminate\Database\Eloquent\Builder|DisbursementVoucher whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|DisbursementVoucher whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|DisbursementVoucher whereId($value)
@@ -513,22 +557,22 @@ namespace App\Models{
  *
  * @property int $id
  * @property int $disbursement_voucher_id
- * @property int $trial_balance_entry_id
+ * @property int $account_id
  * @property string|null $credit
  * @property string|null $debit
  * @property \Carbon\CarbonImmutable|null $created_at
  * @property \Carbon\CarbonImmutable|null $updated_at
+ * @property-read \App\Models\Account $account
  * @property-read \App\Models\DisbursementVoucher $disbursement_voucher
- * @property-read \App\Models\TrialBalanceEntry $trial_balance_entry
  * @method static \Illuminate\Database\Eloquent\Builder|DisbursementVoucherItem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|DisbursementVoucherItem newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|DisbursementVoucherItem query()
+ * @method static \Illuminate\Database\Eloquent\Builder|DisbursementVoucherItem whereAccountId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|DisbursementVoucherItem whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|DisbursementVoucherItem whereCredit($value)
  * @method static \Illuminate\Database\Eloquent\Builder|DisbursementVoucherItem whereDebit($value)
  * @method static \Illuminate\Database\Eloquent\Builder|DisbursementVoucherItem whereDisbursementVoucherId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|DisbursementVoucherItem whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|DisbursementVoucherItem whereTrialBalanceEntryId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|DisbursementVoucherItem whereUpdatedAt($value)
  * @mixin \Eloquent
  */
@@ -628,19 +672,72 @@ namespace App\Models{
  * App\Models\ImprestAccount
  *
  * @property int $id
- * @property int $member_id
+ * @property int $account_type_id
+ * @property int|null $member_id
+ * @property int|null $parent_id
+ * @property string $name
  * @property string $number
+ * @property string|null $tag
+ * @property string|null $accountable_type
+ * @property int|null $accountable_id
  * @property \Carbon\CarbonImmutable|null $created_at
  * @property \Carbon\CarbonImmutable|null $updated_at
- * @property-read \App\Models\Member $member
- * @method static \Illuminate\Database\Eloquent\Builder|ImprestAccount newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ImprestAccount newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ImprestAccount query()
- * @method static \Illuminate\Database\Eloquent\Builder|ImprestAccount whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ImprestAccount whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ImprestAccount whereMemberId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ImprestAccount whereNumber($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ImprestAccount whereUpdatedAt($value)
+ * @property-read \App\Models\AccountType $account_type
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\ImprestAccount[] $children
+ * @property-read int|null $children_count
+ * @property-read \App\Models\Member|null $member
+ * @property-read \App\Models\ImprestAccount|null $parent
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Transaction> $transactions
+ * @property-read int|null $transactions_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\ImprestAccount[] $ancestors The model's recursive parents.
+ * @property-read int|null $ancestors_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\ImprestAccount[] $ancestorsAndSelf The model's recursive parents and itself.
+ * @property-read int|null $ancestors_and_self_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\ImprestAccount[] $bloodline The model's ancestors, descendants and itself.
+ * @property-read int|null $bloodline_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\ImprestAccount[] $childrenAndSelf The model's direct children and itself.
+ * @property-read int|null $children_and_self_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\ImprestAccount[] $descendants The model's recursive children.
+ * @property-read int|null $descendants_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\ImprestAccount[] $descendantsAndSelf The model's recursive children and itself.
+ * @property-read int|null $descendants_and_self_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\ImprestAccount[] $parentAndSelf The model's direct parent and itself.
+ * @property-read int|null $parent_and_self_count
+ * @property-read \App\Models\ImprestAccount|null $rootAncestor The model's topmost parent.
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\ImprestAccount[] $siblings The parent's other children.
+ * @property-read int|null $siblings_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\ImprestAccount[] $siblingsAndSelf All the parent's children.
+ * @property-read int|null $siblings_and_self_count
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, static> all($columns = ['*'])
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account breadthFirst()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account depthFirst()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account doesntHaveChildren()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, static> get($columns = ['*'])
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|ImprestAccount getExpressionGrammar()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account hasChildren()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account hasParent()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account isLeaf()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account isRoot()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|ImprestAccount newModelQuery()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|ImprestAccount newQuery()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|ImprestAccount query()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account tree($maxDepth = null)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account treeOf(\Illuminate\Database\Eloquent\Model|callable $constraint, $maxDepth = null)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|ImprestAccount whereAccountTypeId($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|ImprestAccount whereAccountableId($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|ImprestAccount whereAccountableType($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|ImprestAccount whereCreatedAt($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account whereDepth($operator, $value = null)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|ImprestAccount whereId($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|ImprestAccount whereMemberId($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|ImprestAccount whereName($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|ImprestAccount whereNumber($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|ImprestAccount whereParentId($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|ImprestAccount whereTag($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|ImprestAccount whereUpdatedAt($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account withCode()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|ImprestAccount withGlobalScopes(array $scopes)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account withRelationshipExpression($direction, callable $constraint, $initialDepth, $from = null, $maxDepth = null)
  * @mixin \Eloquent
  */
 	class IdeHelperImprestAccount {}
@@ -684,22 +781,22 @@ namespace App\Models{
  *
  * @property int $id
  * @property int $journal_entry_voucher_id
- * @property int $trial_balance_entry_id
+ * @property int $account_id
  * @property string|null $credit
  * @property string|null $debit
  * @property \Carbon\CarbonImmutable|null $created_at
  * @property \Carbon\CarbonImmutable|null $updated_at
+ * @property-read \App\Models\Account $account
  * @property-read \App\Models\JournalEntryVoucher $journal_entry_voucher
- * @property-read \App\Models\TrialBalanceEntry $trial_balance_entry
  * @method static \Illuminate\Database\Eloquent\Builder|JournalEntryVoucherItem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|JournalEntryVoucherItem newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|JournalEntryVoucherItem query()
+ * @method static \Illuminate\Database\Eloquent\Builder|JournalEntryVoucherItem whereAccountId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|JournalEntryVoucherItem whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|JournalEntryVoucherItem whereCredit($value)
  * @method static \Illuminate\Database\Eloquent\Builder|JournalEntryVoucherItem whereDebit($value)
  * @method static \Illuminate\Database\Eloquent\Builder|JournalEntryVoucherItem whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|JournalEntryVoucherItem whereJournalEntryVoucherId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|JournalEntryVoucherItem whereTrialBalanceEntryId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|JournalEntryVoucherItem whereUpdatedAt($value)
  * @mixin \Eloquent
  */
@@ -711,7 +808,8 @@ namespace App\Models{
  * App\Models\Loan
  *
  * @property int $id
- * @property string $account_number
+ * @property int $loan_account_id
+ * @property int|null $loan_buyout_id
  * @property int $member_id
  * @property int $loan_application_id
  * @property int $loan_type_id
@@ -742,6 +840,7 @@ namespace App\Models{
  * @property-read mixed $deductions_list
  * @property-read mixed $maturity_date
  * @property-read \App\Models\LoanPayment|null $last_payment
+ * @property-read \App\Models\LoanAccount $loan_account
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\LoanAmortization> $loan_amortizations
  * @property-read int|null $loan_amortizations_count
  * @property-read \App\Models\LoanApplication $loan_application
@@ -757,7 +856,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Loan pending()
  * @method static \Illuminate\Database\Eloquent\Builder|Loan posted()
  * @method static \Illuminate\Database\Eloquent\Builder|Loan query()
- * @method static \Illuminate\Database\Eloquent\Builder|Loan whereAccountNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Loan whereCbuAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Loan whereCheckNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Loan whereCreatedAt($value)
@@ -769,7 +867,9 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Loan whereInsuranceAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Loan whereInterest($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Loan whereInterestRate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Loan whereLoanAccountId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Loan whereLoanApplicationId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Loan whereLoanBuyoutId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Loan whereLoanBuyoutInterest($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Loan whereLoanBuyoutPrincipal($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Loan whereLoanTypeId($value)
@@ -788,6 +888,81 @@ namespace App\Models{
  * @mixin \Eloquent
  */
 	class IdeHelperLoan {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\LoanAccount
+ *
+ * @property int $id
+ * @property int $account_type_id
+ * @property int|null $member_id
+ * @property int|null $parent_id
+ * @property string $name
+ * @property string $number
+ * @property string|null $tag
+ * @property string|null $accountable_type
+ * @property int|null $accountable_id
+ * @property \Carbon\CarbonImmutable|null $created_at
+ * @property \Carbon\CarbonImmutable|null $updated_at
+ * @property-read \App\Models\AccountType $account_type
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\LoanAccount[] $children
+ * @property-read int|null $children_count
+ * @property-read \App\Models\LoanAccount|null $parent
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Transaction> $transactions
+ * @property-read int|null $transactions_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\LoanAccount[] $ancestors The model's recursive parents.
+ * @property-read int|null $ancestors_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\LoanAccount[] $ancestorsAndSelf The model's recursive parents and itself.
+ * @property-read int|null $ancestors_and_self_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\LoanAccount[] $bloodline The model's ancestors, descendants and itself.
+ * @property-read int|null $bloodline_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\LoanAccount[] $childrenAndSelf The model's direct children and itself.
+ * @property-read int|null $children_and_self_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\LoanAccount[] $descendants The model's recursive children.
+ * @property-read int|null $descendants_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\LoanAccount[] $descendantsAndSelf The model's recursive children and itself.
+ * @property-read int|null $descendants_and_self_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\LoanAccount[] $parentAndSelf The model's direct parent and itself.
+ * @property-read int|null $parent_and_self_count
+ * @property-read \App\Models\LoanAccount|null $rootAncestor The model's topmost parent.
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\LoanAccount[] $siblings The parent's other children.
+ * @property-read int|null $siblings_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\LoanAccount[] $siblingsAndSelf All the parent's children.
+ * @property-read int|null $siblings_and_self_count
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, static> all($columns = ['*'])
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account breadthFirst()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account depthFirst()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account doesntHaveChildren()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, static> get($columns = ['*'])
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|LoanAccount getExpressionGrammar()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account hasChildren()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account hasParent()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account isLeaf()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account isRoot()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|LoanAccount newModelQuery()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|LoanAccount newQuery()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|LoanAccount query()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account tree($maxDepth = null)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account treeOf(\Illuminate\Database\Eloquent\Model|callable $constraint, $maxDepth = null)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|LoanAccount whereAccountTypeId($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|LoanAccount whereAccountableId($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|LoanAccount whereAccountableType($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|LoanAccount whereCreatedAt($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account whereDepth($operator, $value = null)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|LoanAccount whereId($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|LoanAccount whereMemberId($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|LoanAccount whereName($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|LoanAccount whereNumber($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|LoanAccount whereParentId($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|LoanAccount whereTag($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|LoanAccount whereUpdatedAt($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account withCode()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|LoanAccount withGlobalScopes(array $scopes)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account withRelationshipExpression($direction, callable $constraint, $initialDepth, $from = null, $maxDepth = null)
+ * @mixin \Eloquent
+ */
+	class IdeHelperLoanAccount {}
 }
 
 namespace App\Models{
@@ -1085,19 +1260,72 @@ namespace App\Models{
  * App\Models\LoveGiftAccount
  *
  * @property int $id
- * @property int $member_id
+ * @property int $account_type_id
+ * @property int|null $member_id
+ * @property int|null $parent_id
+ * @property string $name
  * @property string $number
+ * @property string|null $tag
+ * @property string|null $accountable_type
+ * @property int|null $accountable_id
  * @property \Carbon\CarbonImmutable|null $created_at
  * @property \Carbon\CarbonImmutable|null $updated_at
- * @property-read \App\Models\Member $member
- * @method static \Illuminate\Database\Eloquent\Builder|LoveGiftAccount newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|LoveGiftAccount newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|LoveGiftAccount query()
- * @method static \Illuminate\Database\Eloquent\Builder|LoveGiftAccount whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LoveGiftAccount whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LoveGiftAccount whereMemberId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LoveGiftAccount whereNumber($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LoveGiftAccount whereUpdatedAt($value)
+ * @property-read \App\Models\AccountType $account_type
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\LoveGiftAccount[] $children
+ * @property-read int|null $children_count
+ * @property-read \App\Models\Member|null $member
+ * @property-read \App\Models\LoveGiftAccount|null $parent
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Transaction> $transactions
+ * @property-read int|null $transactions_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\LoveGiftAccount[] $ancestors The model's recursive parents.
+ * @property-read int|null $ancestors_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\LoveGiftAccount[] $ancestorsAndSelf The model's recursive parents and itself.
+ * @property-read int|null $ancestors_and_self_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\LoveGiftAccount[] $bloodline The model's ancestors, descendants and itself.
+ * @property-read int|null $bloodline_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\LoveGiftAccount[] $childrenAndSelf The model's direct children and itself.
+ * @property-read int|null $children_and_self_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\LoveGiftAccount[] $descendants The model's recursive children.
+ * @property-read int|null $descendants_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\LoveGiftAccount[] $descendantsAndSelf The model's recursive children and itself.
+ * @property-read int|null $descendants_and_self_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\LoveGiftAccount[] $parentAndSelf The model's direct parent and itself.
+ * @property-read int|null $parent_and_self_count
+ * @property-read \App\Models\LoveGiftAccount|null $rootAncestor The model's topmost parent.
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\LoveGiftAccount[] $siblings The parent's other children.
+ * @property-read int|null $siblings_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\LoveGiftAccount[] $siblingsAndSelf All the parent's children.
+ * @property-read int|null $siblings_and_self_count
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, static> all($columns = ['*'])
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account breadthFirst()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account depthFirst()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account doesntHaveChildren()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, static> get($columns = ['*'])
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|LoveGiftAccount getExpressionGrammar()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account hasChildren()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account hasParent()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account isLeaf()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account isRoot()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|LoveGiftAccount newModelQuery()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|LoveGiftAccount newQuery()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|LoveGiftAccount query()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account tree($maxDepth = null)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account treeOf(\Illuminate\Database\Eloquent\Model|callable $constraint, $maxDepth = null)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|LoveGiftAccount whereAccountTypeId($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|LoveGiftAccount whereAccountableId($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|LoveGiftAccount whereAccountableType($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|LoveGiftAccount whereCreatedAt($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account whereDepth($operator, $value = null)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|LoveGiftAccount whereId($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|LoveGiftAccount whereMemberId($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|LoveGiftAccount whereName($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|LoveGiftAccount whereNumber($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|LoveGiftAccount whereParentId($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|LoveGiftAccount whereTag($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|LoveGiftAccount whereUpdatedAt($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account withCode()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|LoveGiftAccount withGlobalScopes(array $scopes)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account withRelationshipExpression($direction, callable $constraint, $initialDepth, $from = null, $maxDepth = null)
  * @mixin \Eloquent
  */
 	class IdeHelperLoveGiftAccount {}
@@ -1123,7 +1351,6 @@ namespace App\Models{
  * @property int $patronage_status_id
  * @property \Carbon\CarbonImmutable|null $dob
  * @property string|null $place_of_birth
- * @property int|null $age
  * @property string|null $address
  * @property int|null $occupation_id
  * @property string|null $present_employer
@@ -1140,7 +1367,10 @@ namespace App\Models{
  * @property string|null $terminated_at
  * @property \Carbon\CarbonImmutable|null $created_at
  * @property \Carbon\CarbonImmutable|null $updated_at
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, \App\Models\Account> $accounts
+ * @property-read int|null $accounts_count
  * @property-read \App\Models\Barangay|null $barangay
+ * @property-read \App\Models\Account|null $capital_subscription_account
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CapitalSubscriptionPayment> $capital_subscription_payments
  * @property-read int|null $capital_subscription_payments_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CapitalSubscription> $capital_subscriptions
@@ -1181,7 +1411,7 @@ namespace App\Models{
  * @property-read \App\Models\Religion|null $religion
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Saving> $savings
  * @property-read int|null $savings_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SavingsAccount> $savings_accounts
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, \App\Models\SavingsAccount> $savings_accounts
  * @property-read int|null $savings_accounts_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Saving> $savings_no_interest
  * @property-read int|null $savings_no_interest_count
@@ -1191,7 +1421,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Member newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Member query()
  * @method static \Illuminate\Database\Eloquent\Builder|Member whereAddress($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Member whereAge($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Member whereAltFullName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Member whereAnnualIncome($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Member whereBarangayId($value)
@@ -1226,6 +1455,81 @@ namespace App\Models{
  * @mixin \Eloquent
  */
 	class IdeHelperMember {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\MemberAccount
+ *
+ * @property int $id
+ * @property int $account_type_id
+ * @property int|null $member_id
+ * @property int|null $parent_id
+ * @property string $name
+ * @property string $number
+ * @property string|null $tag
+ * @property string|null $accountable_type
+ * @property int|null $accountable_id
+ * @property \Carbon\CarbonImmutable|null $created_at
+ * @property \Carbon\CarbonImmutable|null $updated_at
+ * @property-read \App\Models\AccountType $account_type
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\MemberAccount[] $children
+ * @property-read int|null $children_count
+ * @property-read \App\Models\MemberAccount|null $parent
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Transaction> $transactions
+ * @property-read int|null $transactions_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\MemberAccount[] $ancestors The model's recursive parents.
+ * @property-read int|null $ancestors_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\MemberAccount[] $ancestorsAndSelf The model's recursive parents and itself.
+ * @property-read int|null $ancestors_and_self_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\MemberAccount[] $bloodline The model's ancestors, descendants and itself.
+ * @property-read int|null $bloodline_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\MemberAccount[] $childrenAndSelf The model's direct children and itself.
+ * @property-read int|null $children_and_self_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\MemberAccount[] $descendants The model's recursive children.
+ * @property-read int|null $descendants_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\MemberAccount[] $descendantsAndSelf The model's recursive children and itself.
+ * @property-read int|null $descendants_and_self_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\MemberAccount[] $parentAndSelf The model's direct parent and itself.
+ * @property-read int|null $parent_and_self_count
+ * @property-read \App\Models\MemberAccount|null $rootAncestor The model's topmost parent.
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\MemberAccount[] $siblings The parent's other children.
+ * @property-read int|null $siblings_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\MemberAccount[] $siblingsAndSelf All the parent's children.
+ * @property-read int|null $siblings_and_self_count
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, static> all($columns = ['*'])
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account breadthFirst()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account depthFirst()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account doesntHaveChildren()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, static> get($columns = ['*'])
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|MemberAccount getExpressionGrammar()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account hasChildren()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account hasParent()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account isLeaf()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account isRoot()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|MemberAccount newModelQuery()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|MemberAccount newQuery()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|MemberAccount query()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account tree($maxDepth = null)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account treeOf(\Illuminate\Database\Eloquent\Model|callable $constraint, $maxDepth = null)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|MemberAccount whereAccountTypeId($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|MemberAccount whereAccountableId($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|MemberAccount whereAccountableType($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|MemberAccount whereCreatedAt($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account whereDepth($operator, $value = null)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|MemberAccount whereId($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|MemberAccount whereMemberId($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|MemberAccount whereName($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|MemberAccount whereNumber($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|MemberAccount whereParentId($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|MemberAccount whereTag($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|MemberAccount whereUpdatedAt($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account withCode()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|MemberAccount withGlobalScopes(array $scopes)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account withRelationshipExpression($direction, callable $constraint, $initialDepth, $from = null, $maxDepth = null)
+ * @mixin \Eloquent
+ */
+	class IdeHelperMemberAccount {}
 }
 
 namespace App\Models{
@@ -1503,27 +1807,78 @@ namespace App\Models{
  * App\Models\SavingsAccount
  *
  * @property int $id
- * @property int $member_id
- * @property string $number
+ * @property int $account_type_id
+ * @property int|null $member_id
+ * @property int|null $parent_id
  * @property string $name
+ * @property string $number
+ * @property string|null $tag
+ * @property string|null $accountable_type
+ * @property int|null $accountable_id
  * @property \Carbon\CarbonImmutable|null $created_at
  * @property \Carbon\CarbonImmutable|null $updated_at
- * @property-read \App\Models\Member $member
+ * @property-read \App\Models\AccountType $account_type
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\SavingsAccount[] $children
+ * @property-read int|null $children_count
+ * @property-read \App\Models\Member|null $member
+ * @property-read \App\Models\SavingsAccount|null $parent
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Saving> $savings
  * @property-read int|null $savings_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Saving> $savings_no_interest
  * @property-read int|null $savings_no_interest_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Saving> $savings_unaccrued
  * @property-read int|null $savings_unaccrued_count
- * @method static \Illuminate\Database\Eloquent\Builder|SavingsAccount newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|SavingsAccount newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|SavingsAccount query()
- * @method static \Illuminate\Database\Eloquent\Builder|SavingsAccount whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SavingsAccount whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SavingsAccount whereMemberId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SavingsAccount whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SavingsAccount whereNumber($value)
- * @method static \Illuminate\Database\Eloquent\Builder|SavingsAccount whereUpdatedAt($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Transaction> $transactions
+ * @property-read int|null $transactions_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\SavingsAccount[] $ancestors The model's recursive parents.
+ * @property-read int|null $ancestors_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\SavingsAccount[] $ancestorsAndSelf The model's recursive parents and itself.
+ * @property-read int|null $ancestors_and_self_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\SavingsAccount[] $bloodline The model's ancestors, descendants and itself.
+ * @property-read int|null $bloodline_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\SavingsAccount[] $childrenAndSelf The model's direct children and itself.
+ * @property-read int|null $children_and_self_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\SavingsAccount[] $descendants The model's recursive children.
+ * @property-read int|null $descendants_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\SavingsAccount[] $descendantsAndSelf The model's recursive children and itself.
+ * @property-read int|null $descendants_and_self_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\SavingsAccount[] $parentAndSelf The model's direct parent and itself.
+ * @property-read int|null $parent_and_self_count
+ * @property-read \App\Models\SavingsAccount|null $rootAncestor The model's topmost parent.
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\SavingsAccount[] $siblings The parent's other children.
+ * @property-read int|null $siblings_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\SavingsAccount[] $siblingsAndSelf All the parent's children.
+ * @property-read int|null $siblings_and_self_count
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, static> all($columns = ['*'])
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account breadthFirst()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account depthFirst()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account doesntHaveChildren()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, static> get($columns = ['*'])
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|SavingsAccount getExpressionGrammar()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account hasChildren()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account hasParent()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account isLeaf()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account isRoot()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|SavingsAccount newModelQuery()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|SavingsAccount newQuery()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|SavingsAccount query()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account tree($maxDepth = null)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account treeOf(\Illuminate\Database\Eloquent\Model|callable $constraint, $maxDepth = null)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|SavingsAccount whereAccountTypeId($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|SavingsAccount whereAccountableId($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|SavingsAccount whereAccountableType($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|SavingsAccount whereCreatedAt($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account whereDepth($operator, $value = null)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|SavingsAccount whereId($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|SavingsAccount whereMemberId($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|SavingsAccount whereName($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|SavingsAccount whereNumber($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|SavingsAccount whereParentId($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|SavingsAccount whereTag($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|SavingsAccount whereUpdatedAt($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account withCode()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|SavingsAccount withGlobalScopes(array $scopes)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder|Account withRelationshipExpression($direction, callable $constraint, $initialDepth, $from = null, $maxDepth = null)
  * @mixin \Eloquent
  */
 	class IdeHelperSavingsAccount {}
@@ -1603,87 +1958,58 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * App\Models\TrialBalanceEntry
+ * App\Models\Transaction
+ *
+ * @property int $id
+ * @property int $transaction_type_id
+ * @property int $account_id
+ * @property int|null $member_id
+ * @property string $reference_number
+ * @property string|null $remarks
+ * @property string|null $credit
+ * @property string|null $debit
+ * @property string $transaction_date
+ * @property \Carbon\CarbonImmutable|null $created_at
+ * @property \Carbon\CarbonImmutable|null $updated_at
+ * @property-read \App\Models\Account $account
+ * @property-read \App\Models\TransactionType $transaction_type
+ * @method static \Illuminate\Database\Eloquent\Builder|Transaction newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Transaction newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Transaction query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Transaction whereAccountId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Transaction whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Transaction whereCredit($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Transaction whereDebit($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Transaction whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Transaction whereMemberId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Transaction whereReferenceNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Transaction whereRemarks($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Transaction whereTransactionDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Transaction whereTransactionTypeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Transaction whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	class IdeHelperTransaction {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\TransactionType
  *
  * @property int $id
  * @property string $name
- * @property string|null $category
- * @property string|null $code
- * @property int $operator
- * @property string|null $codename
- * @property string|null $auditable_type
- * @property int|null $auditable_id
- * @property int $_lft
- * @property int $_rgt
- * @property int|null $parent_id
  * @property \Carbon\CarbonImmutable|null $created_at
  * @property \Carbon\CarbonImmutable|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $auditable
- * @property-read \Kalnoy\Nestedset\Collection<int, TrialBalanceEntry> $children
- * @property-read int|null $children_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\JournalEntryVoucherItem> $journal_entry_voucher_items
- * @property-read int|null $journal_entry_voucher_items_count
- * @property-read TrialBalanceEntry|null $parent
- * @method static \Kalnoy\Nestedset\Collection<int, static> all($columns = ['*'])
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry ancestorsAndSelf($id, array $columns = [])
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry ancestorsOf($id, array $columns = [])
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry applyNestedSetScope(?string $table = null)
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry countErrors()
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry d()
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry defaultOrder(string $dir = 'asc')
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry descendantsAndSelf($id, array $columns = [])
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry descendantsOf($id, array $columns = [], $andSelf = false)
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry fixSubtree($root)
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry fixTree($root = null)
- * @method static \Kalnoy\Nestedset\Collection<int, static> get($columns = ['*'])
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry getNodeData($id, $required = false)
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry getPlainNodeData($id, $required = false)
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry getTotalErrors()
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry hasChildren()
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry hasParent()
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry isBroken()
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry leaves(array $columns = [])
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry makeGap(int $cut, int $height)
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry moveNode($key, $position)
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry newModelQuery()
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry newQuery()
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry orWhereAncestorOf(bool $id, bool $andSelf = false)
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry orWhereDescendantOf($id)
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry orWhereNodeBetween($values)
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry orWhereNotDescendantOf($id)
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry query()
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry rebuildSubtree($root, array $data, $delete = false)
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry rebuildTree(array $data, $delete = false, $root = null)
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry reversed()
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry root(array $columns = [])
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry whereAncestorOf($id, $andSelf = false, $boolean = 'and')
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry whereAncestorOrSelf($id)
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry whereAuditableId($value)
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry whereAuditableType($value)
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry whereCategory($value)
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry whereCode($value)
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry whereCodename($value)
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry whereCreatedAt($value)
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry whereDescendantOf($id, $boolean = 'and', $not = false, $andSelf = false)
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry whereDescendantOrSelf(string $id, string $boolean = 'and', string $not = false)
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry whereId($value)
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry whereIsAfter($id, $boolean = 'and')
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry whereIsBefore($id, $boolean = 'and')
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry whereIsLeaf()
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry whereIsRoot()
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry whereLft($value)
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry whereName($value)
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry whereNodeBetween($values, $boolean = 'and', $not = false, $query = null)
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry whereNotDescendantOf($id)
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry whereOperator($value)
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry whereParentId($value)
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry whereRgt($value)
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry whereUpdatedAt($value)
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry withDepth(string $as = 'depth')
- * @method static \Kalnoy\Nestedset\QueryBuilder|TrialBalanceEntry withoutRoot()
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionType newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionType newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionType query()
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionType whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionType whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionType whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TransactionType whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	class IdeHelperTrialBalanceEntry {}
+	class IdeHelperTransactionType {}
 }
 
 namespace App\Models{

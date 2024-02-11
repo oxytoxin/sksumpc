@@ -295,7 +295,7 @@ class TransactionsPage extends Page
                     reference_number: $data['reference_number'],
                     amount: $data['amount'],
                     remarks: $data['remarks'],
-                ));
+                ), TransactionType::firstWhere('name', 'CRJ'));
                 Notification::make()->title('Payment made for loan!')->success()->send();
             });
     }

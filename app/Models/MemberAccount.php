@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+/**
+ * @mixin IdeHelperMemberAccount
+ */
 class MemberAccount extends Account
 {
     protected static function boot()

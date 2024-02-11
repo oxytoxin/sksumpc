@@ -2,11 +2,13 @@
 
 namespace App\Actions\Savings;
 
+use App\Actions\Transactions\CreateTransaction;
 use App\Models\Member;
 use App\Models\Saving;
 use App\Models\SavingsAccount;
 use App\Models\TransactionType;
 use App\Oxytoxin\DTO\MSO\SavingsData;
+use App\Oxytoxin\DTO\Transactions\TransactionData;
 use App\Oxytoxin\Providers\SavingsProvider;
 use DB;
 use Lorisleiva\Actions\Concerns\AsAction;
@@ -28,11 +30,14 @@ class DepositToSavingsAccount
             'member_id' => $member->id,
             'transaction_date' => $data->transaction_date,
         ]);
-        $savings_account->transactions()->create([
-            'transaction_type_id' => $transactionType->id,
-            'reference_number' => $savings->reference_number,
-            'credit' => $savings->amount,
-        ]);
+        app(CreateTransaction::class)->handle(new TransactionData(
+            account_id: $savings_account->id,
+            transactionType: $transactionType,
+            reference_number: $savings->reference_number,
+            credit: $savings->amount,
+            member_id: $member->id,
+            remarks: 'Member Deposit to Savings'
+        ));
         DB::commit();
 
         return $savings;

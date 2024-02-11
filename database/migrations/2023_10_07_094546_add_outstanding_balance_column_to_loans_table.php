@@ -20,7 +20,7 @@ return new class extends Migration
             FOR EACH ROW
             BEGIN
                 UPDATE loans
-                SET outstanding_balance = (SELECT outstanding_balance FROM loans WHERE id = NEW.loan_id) - NEW.principal_payment
+                SET outstanding_balance = (SELECT outstanding_balance FROM (SELECT outstanding_balance FROM loans WHERE id = NEW.loan_id) as l) - NEW.principal_payment
                 WHERE id = NEW.loan_id;
             END;
             CREATE TRIGGER update_loan_outstanding_balance_on_revert_payment
@@ -28,7 +28,7 @@ return new class extends Migration
             FOR EACH ROW
             BEGIN
                 UPDATE loans
-                SET outstanding_balance = (SELECT outstanding_balance FROM loans WHERE id = OLD.loan_id) + OLD.principal_payment
+                SET outstanding_balance = (SELECT outstanding_balance FROM (SELECT outstanding_balance FROM loans WHERE id = OLD.loan_id) as l) + OLD.principal_payment
                 WHERE id = OLD.loan_id;
             END;
         ');
