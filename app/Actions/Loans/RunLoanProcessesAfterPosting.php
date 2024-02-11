@@ -42,12 +42,12 @@ class RunLoanProcessesAfterPosting
             payment_type_id: 2,
             reference_number: $loan->reference_number,
             amount: $cbu_amount
-        ), TransactionType::firstWhere('name', 'CDJ'));
+        ), TransactionType::firstWhere('name', 'CDJ'), false);
         app(DepositToImprestAccount::class)->handle($member, new ImprestData(
             payment_type_id: 1,
             reference_number: $loan->reference_number,
             amount: $loan->imprest_amount,
-        ), TransactionType::firstWhere('name', 'CDJ'));
+        ), TransactionType::firstWhere('name', 'CDJ'), false);
         if ($loan->loan_buyout_id) {
             $existing = $member->loans()->find($loan->loan_buyout_id);
             app(PayLoan::class)->handle(loan: $existing, loanPaymentData: new LoanPaymentData(

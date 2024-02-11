@@ -16,7 +16,7 @@ class DepositToImprestAccount
 {
     use AsAction;
 
-    public function handle(Member $member, ImprestData $data, TransactionType $transactionType)
+    public function handle(Member $member, ImprestData $data, TransactionType $transactionType, $transact = true)
     {
         DB::beginTransaction();
         $imprest_account = $member->imprest_account;
@@ -28,14 +28,16 @@ class DepositToImprestAccount
             'member_id' => $member->id,
             'transaction_date' => $data->transaction_date,
         ]);
-        app(CreateTransaction::class)->handle(new TransactionData(
-            account_id: $imprest_account->id,
-            transactionType: $transactionType,
-            reference_number: $imprest->reference_number,
-            credit: $imprest->amount,
-            member_id: $member->id,
-            remarks: 'Member Deposit to Imprest'
-        ));
+        if ($transact) {
+            app(CreateTransaction::class)->handle(new TransactionData(
+                account_id: $imprest_account->id,
+                transactionType: $transactionType,
+                reference_number: $imprest->reference_number,
+                credit: $imprest->amount,
+                member_id: $member->id,
+                remarks: 'Member Deposit to Imprest'
+            ));
+        }
         DB::commit();
 
         return $imprest;

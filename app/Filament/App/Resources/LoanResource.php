@@ -2,22 +2,36 @@
 
 namespace App\Filament\App\Resources;
 
-use App\Actions\Loans\ApproveLoanPosting;
-use App\Filament\App\Resources\LoanResource\Pages;
-use App\Livewire\App\Loans\Traits\HasViewLoanDetailsActionGroup;
 use App\Models\Loan;
+use App\Models\Member;
+use App\Models\Account;
 use App\Models\LoanType;
-use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Form;
+use App\Rules\BalancedJev;
+use Filament\Tables\Table;
+use App\Models\TransactionType;
 use Filament\Resources\Resource;
+use Illuminate\Support\Facades\DB;
+use App\Models\DisbursementVoucher;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Filters\Filter;
+use Filament\Support\Enums\MaxWidth;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
 use Filament\Tables\Enums\FiltersLayout;
-use Filament\Tables\Filters\Filter;
+use App\Actions\Loans\ApproveLoanPosting;
+use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use App\Actions\Transactions\CreateTransaction;
+use App\Filament\App\Resources\LoanResource\Pages;
+use App\Oxytoxin\DTO\Transactions\TransactionData;
+use Awcodes\FilamentTableRepeater\Components\TableRepeater;
+use App\Filament\App\Resources\LoanResource\Pages\ListLoans;
+use App\Livewire\App\Loans\Traits\HasViewLoanDetailsActionGroup;
 
 class LoanResource extends Resource
 {
@@ -88,10 +102,94 @@ class LoanResource extends Resource
                     ->label('DV')
                     ->action(fn (Loan $record) => app(ApproveLoanPosting::class)->handle($record))
                     ->hidden(fn ($record) => $record->posted)
+                    ->modalWidth(MaxWidth::SixExtraLarge)
                     ->button()
+                    ->fillForm(fn ($record) => [
+                        'name' => $record->member->full_name,
+                        'reference_number' => $record->reference_number,
+                        'disbursement_voucher_items' => [
+                            [
+                                'member_id' => $record->member_id,
+                                'account_id' => $record->loan_account_id,
+                                'debit' => $record->gross_amount,
+                            ],
+                            [
+                                'member_id' => $record->member_id,
+                                'account_id' => $record->member->capital_subscription_account->id,
+                                'credit' => $record->cbu_amount,
+                            ],
+                            [
+                                'member_id' => $record->member_id,
+                                'account_id' => $record->member->imprest_account->id,
+                                'credit' => $record->imprest_amount,
+                            ],
+                            [
+                                'account_id' => 71,
+                                'credit' => $record->service_fee,
+                            ],
+                            [
+                                'account_id' => 123,
+                                'credit' => $record->insurance_amount,
+                            ],
+                            [
+                                'account_id' => 3,
+                                'credit' => $record->net_amount,
+                            ],
+                        ]
+                    ])
+                    ->form([
+                        TextInput::make('name')->required(),
+                        TextInput::make('address')->required(),
+                        TextInput::make('reference_number')->required(),
+                        Textarea::make('description')->columnSpanFull()->required(),
+                        TableRepeater::make('disbursement_voucher_items')
+                            ->hideLabels()
+                            ->columnSpanFull()
+                            ->columnWidths(['account_id' => '20rem', 'member_id' => '20rem'])
+                            ->rule(new BalancedJev)
+                            ->schema([
+                                Select::make('member_id')
+                                    ->options(Member::pluck('full_name', 'id'))
+                                    ->label('Member')
+                                    ->searchable()
+                                    ->reactive()
+                                    ->preload(),
+                                Select::make('account_id')
+                                    ->options(
+                                        fn ($get) => Account::withCode()->whereDoesntHave('children', fn ($q) => $q->whereNull('member_id'))->where('member_id', $get('member_id') ?? null)->pluck('code', 'id')
+                                    )
+                                    ->searchable()
+                                    ->required()
+                                    ->label('Account'),
+                                TextInput::make('debit')
+                                    ->moneymask(),
+                                TextInput::make('credit')
+                                    ->moneymask(),
+                            ]),
+                    ])
+                    ->action(function ($data, $record) {
+                        DB::beginTransaction();
+                        $transactionType = TransactionType::firstWhere('name', 'CDJ');
+                        $items = $data['disbursement_voucher_items'];
+                        unset($data['disbursement_voucher_items'], $data['member_id']);
+                        $dv = DisbursementVoucher::create($data);
+                        foreach ($items as $item) {
+                            app(CreateTransaction::class)->handle(new TransactionData(
+                                member_id: $item['member_id'],
+                                account_id: $item['account_id'],
+                                transactionType: $transactionType,
+                                reference_number: $dv->reference_number,
+                                debit: $item['debit'],
+                                credit: $item['credit'],
+                            ));
+                            unset($item['member_id']);
+                            $dv->disbursement_voucher_items()->create($item);
+                        }
+                        app(ApproveLoanPosting::class)->handle($record);
+                        DB::commit();
+                    })
                     ->color('success')
-                    ->icon('heroicon-o-shield-check')
-                    ->requiresConfirmation(),
+                    ->icon('heroicon-o-shield-check'),
                 static::getStaticViewLoanDetailsActionGroup(),
                 Action::make('print')
                     ->icon('heroicon-o-printer')
