@@ -3,7 +3,6 @@
 namespace App\Actions\CapitalSubscription;
 
 use App\Models\Account;
-use App\Models\Member;
 use App\Oxytoxin\DTO\MSO\Accounts\CapitalSubscriptionAccountData;
 use Lorisleiva\Actions\Concerns\AsAction;
 

@@ -2,32 +2,22 @@
 
 namespace App\Filament\App\Resources;
 
-use Filament\Forms;
-use Filament\Tables;
-use Filament\Forms\Form;
-use App\Rules\BalancedJev;
-use Filament\Tables\Table;
-use Filament\Resources\Resource;
-use App\Models\TrialBalanceEntry;
+use App\Filament\App\Resources\DisbursementVoucherResource\Pages;
 use App\Models\DisbursementVoucher;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Filters\Filter;
+use App\Models\TrialBalanceEntry;
+use Awcodes\FilamentTableRepeater\Components\TableRepeater;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\DatePicker;
-use Filament\Tables\Actions\DeleteAction;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
-use Illuminate\Database\Eloquent\Builder;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Awcodes\FilamentTableRepeater\Components\TableRepeater;
-use App\Filament\App\Resources\DisbursementVoucherResource\Pages;
-use App\Filament\App\Resources\DisbursementVoucherResource\RelationManagers;
-use App\Filament\App\Resources\DisbursementVoucherResource\Pages\ManageDisbursementVouchers;
+use Filament\Tables\Table;
 
 class DisbursementVoucherResource extends Resource
 {
@@ -76,7 +66,7 @@ class DisbursementVoucherResource extends Resource
                             ->moneymask(),
                         TextInput::make('credit')
                             ->moneymask(),
-                    ])
+                    ]),
             ]);
     }
 
@@ -95,14 +85,14 @@ class DisbursementVoucherResource extends Resource
                 SelectFilter::make('trial_balance_entry_id')
                     ->label('Account')
                     ->options(TrialBalanceEntry::whereNotNull('code')->pluck('codename', 'id'))
-                    ->query(fn ($query, $data) => $query->when($data['value'], fn ($q) => $q->whereRelation('disbursement_voucher_items', 'trial_balance_entry_id', $data['value'])))
+                    ->query(fn ($query, $data) => $query->when($data['value'], fn ($q) => $q->whereRelation('disbursement_voucher_items', 'trial_balance_entry_id', $data['value']))),
             ])
             ->actions([
                 Action::make('view')
                     ->button()
                     ->color('success')
                     ->outlined()
-                    ->modalHeading("Disbursement Voucher Preview")
+                    ->modalHeading('Disbursement Voucher Preview')
                     ->modalCancelAction(false)
                     ->modalSubmitAction(false)
                     ->modalContent(fn ($record) => view('components.app.bookkeeper.reports.disbursement-voucher-preview', ['disbursement_voucher' => $record])),

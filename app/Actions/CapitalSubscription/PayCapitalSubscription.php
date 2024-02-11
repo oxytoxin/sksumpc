@@ -3,7 +3,6 @@
 namespace App\Actions\CapitalSubscription;
 
 use App\Models\CapitalSubscription;
-use App\Models\Transaction;
 use App\Models\TransactionType;
 use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionPaymentData;
 use DB;

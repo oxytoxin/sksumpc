@@ -8,7 +8,6 @@ use Spatie\LaravelData\Data;
 
 class LoanPaymentData extends Data
 {
-
     public function __construct(
         public int $payment_type_id,
         public string $reference_number,

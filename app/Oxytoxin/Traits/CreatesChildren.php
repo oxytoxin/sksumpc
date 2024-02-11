@@ -11,10 +11,8 @@ trait CreatesChildren
      * {@inheritdoc}
      *
      * Use `children` key on `$attributes` to create child nodes.
-     *
-     * @param self $parent
      */
-    public static function create(array $attributes = [], self $parent = null)
+    public static function create(array $attributes = [], ?self $parent = null)
     {
         $children = Arr::pull($attributes, 'children');
 
@@ -29,7 +27,7 @@ trait CreatesChildren
         // Now create children
         $relation = new Collection;
 
-        foreach ((array)$children as $child) {
+        foreach ((array) $children as $child) {
             $relation->add($child = static::create($child, $instance));
 
             $child->setRelation('parent', $instance);

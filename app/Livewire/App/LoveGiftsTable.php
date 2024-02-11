@@ -2,29 +2,28 @@
 
 namespace App\Livewire\App;
 
-use App\Models\Member;
-use Livewire\Component;
-use App\Models\LoveGift;
-use Filament\Tables\Table;
-use Livewire\Attributes\On;
-use App\Models\TransactionType;
-use Filament\Support\Colors\Color;
-use Illuminate\Support\Facades\DB;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Select;
-use App\Oxytoxin\DTO\MSO\LoveGiftData;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Tables\Actions\ViewAction;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Contracts\HasTable;
-use Filament\Forms\Components\TextInput;
-use Filament\Tables\Actions\CreateAction;
-use App\Oxytoxin\Providers\LoveGiftProvider;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Tables\Concerns\InteractsWithTable;
 use App\Actions\LoveGifts\DepositToLoveGiftsAccount;
 use App\Actions\LoveGifts\WithdrawFromLoveGiftsAccount;
+use App\Models\LoveGift;
+use App\Models\Member;
+use App\Models\TransactionType;
+use App\Oxytoxin\DTO\MSO\LoveGiftData;
+use App\Oxytoxin\Providers\LoveGiftProvider;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Support\Colors\Color;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Table;
+use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\On;
+use Livewire\Component;
 
 class LoveGiftsTable extends Component implements HasForms, HasTable
 {

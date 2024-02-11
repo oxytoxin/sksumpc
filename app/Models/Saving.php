@@ -50,7 +50,7 @@ class Saving extends Model
         static::addGlobalScope(function (Builder $q) {
             return $q->addSelect(DB::raw("
                 *, 
-                DATEDIFF(COALESCE(LEAD(transaction_date) OVER (ORDER BY transaction_date), '" . today()->format('Y-m-d') . "'), transaction_date) as days_till_next_transaction,
+                DATEDIFF(COALESCE(LEAD(transaction_date) OVER (ORDER BY transaction_date), '".today()->format('Y-m-d')."'), transaction_date) as days_till_next_transaction,
                 DATEDIFF(transaction_date, COALESCE(LAG(transaction_date) OVER (ORDER BY transaction_date), transaction_date)) as days_since_last_transaction
             "));
         });
@@ -68,7 +68,7 @@ class Saving extends Model
             };
 
             if ($prefix) {
-                $saving->reference_number = str($prefix)->append(today()->format('Y') . '-')->append(str_pad($saving->id, 6, '0', STR_PAD_LEFT));
+                $saving->reference_number = str($prefix)->append(today()->format('Y').'-')->append(str_pad($saving->id, 6, '0', STR_PAD_LEFT));
             }
 
             $saving->save();

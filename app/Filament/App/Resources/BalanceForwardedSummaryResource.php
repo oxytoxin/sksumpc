@@ -5,7 +5,6 @@ namespace App\Filament\App\Resources;
 use App\Filament\App\Resources\BalanceForwardedSummaryResource\Pages;
 use App\Filament\App\Resources\BalanceForwardedSummaryResource\RelationManagers\BalanceForwardedEntriesRelationManager;
 use App\Models\BalanceForwardedSummary;
-use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,8 +12,6 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class BalanceForwardedSummaryResource extends Resource
 {
@@ -52,7 +49,7 @@ class BalanceForwardedSummaryResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('generated_date')
-                    ->date('F Y')
+                    ->date('F Y'),
             ])
             ->filters([
                 //
@@ -70,7 +67,7 @@ class BalanceForwardedSummaryResource extends Resource
     public static function getRelations(): array
     {
         return [
-            BalanceForwardedEntriesRelationManager::class
+            BalanceForwardedEntriesRelationManager::class,
         ];
     }
 

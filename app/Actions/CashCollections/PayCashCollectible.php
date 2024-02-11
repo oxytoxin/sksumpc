@@ -30,6 +30,7 @@ class PayCashCollectible
             'transaction_type_id' => $transactionType->id,
         ]);
         DB::commit();
+
         return $payment;
     }
 }

@@ -2,12 +2,12 @@
 
 namespace App\Filament\App\Resources\MemberResource\Pages;
 
-use DB;
-use App\Models\MemberType;
-use Illuminate\Database\Eloquent\Model;
-use Filament\Resources\Pages\CreateRecord;
-use App\Filament\App\Resources\MemberResource;
 use App\Actions\Memberships\CreateMemberInitialAccounts;
+use App\Filament\App\Resources\MemberResource;
+use App\Models\MemberType;
+use DB;
+use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Database\Eloquent\Model;
 
 class CreateMember extends CreateRecord
 {
@@ -38,6 +38,7 @@ class CreateMember extends CreateRecord
         ]);
         app(CreateMemberInitialAccounts::class)->handle($member);
         DB::commit();
+
         return $member;
     }
 }

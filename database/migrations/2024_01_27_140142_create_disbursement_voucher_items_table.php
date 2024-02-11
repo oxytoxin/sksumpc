@@ -2,11 +2,9 @@
 
 use App\Models\Account;
 use App\Models\DisbursementVoucher;
-use App\Models\TrialBalanceEntry;
-use App\Models\JournalEntryVoucher;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {

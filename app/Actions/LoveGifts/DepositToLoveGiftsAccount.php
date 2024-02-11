@@ -29,9 +29,10 @@ class DepositToLoveGiftsAccount
         $love_gift_account->transactions()->create([
             'transaction_type_id' => $transactionType->id,
             'reference_number' => $love_gift->reference_number,
-            'credit' => $love_gift->amount
+            'credit' => $love_gift->amount,
         ]);
         DB::commit();
+
         return $love_gift;
     }
 }

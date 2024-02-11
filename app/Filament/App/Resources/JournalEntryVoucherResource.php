@@ -3,12 +3,10 @@
 namespace App\Filament\App\Resources;
 
 use App\Filament\App\Resources\JournalEntryVoucherResource\Pages;
-use App\Filament\App\Resources\JournalEntryVoucherResource\RelationManagers;
 use App\Models\JournalEntryVoucher;
 use App\Models\TrialBalanceEntry;
 use App\Rules\BalancedJev;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
-use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -17,13 +15,10 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class JournalEntryVoucherResource extends Resource
 {
@@ -63,7 +58,7 @@ class JournalEntryVoucherResource extends Resource
                             ->moneymask(),
                         TextInput::make('credit')
                             ->moneymask(),
-                    ])
+                    ]),
             ]);
     }
 
@@ -82,14 +77,14 @@ class JournalEntryVoucherResource extends Resource
                 SelectFilter::make('trial_balance_entry_id')
                     ->label('Account')
                     ->options(TrialBalanceEntry::whereNotNull('code')->pluck('codename', 'id'))
-                    ->query(fn ($query, $data) => $query->when($data['value'], fn ($q) => $q->whereRelation('journal_entry_voucher_items', 'trial_balance_entry_id', $data['value'])))
+                    ->query(fn ($query, $data) => $query->when($data['value'], fn ($q) => $q->whereRelation('journal_entry_voucher_items', 'trial_balance_entry_id', $data['value']))),
             ])
             ->actions([
                 Action::make('view')
                     ->button()
                     ->color('success')
                     ->outlined()
-                    ->modalHeading("JEV Preview")
+                    ->modalHeading('JEV Preview')
                     ->modalCancelAction(false)
                     ->modalSubmitAction(false)
                     ->modalContent(fn ($record) => view('components.app.bookkeeper.reports.journal-entry-voucher-preview', ['journal_entry_voucher' => $record])),

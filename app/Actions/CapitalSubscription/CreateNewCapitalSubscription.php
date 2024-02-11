@@ -2,11 +2,11 @@
 
 namespace App\Actions\CapitalSubscription;
 
-use App\Models\Member;
-use Illuminate\Support\Facades\DB;
 use App\Models\CapitalSubscription;
-use Lorisleiva\Actions\Concerns\AsAction;
+use App\Models\Member;
 use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionData;
+use Illuminate\Support\Facades\DB;
+use Lorisleiva\Actions\Concerns\AsAction;
 
 class CreateNewCapitalSubscription
 {
@@ -20,6 +20,7 @@ class CreateNewCapitalSubscription
         ]);
         $cbu = $member->capital_subscriptions()->create($data->toArray());
         DB::commit();
+
         return $cbu;
     }
 }

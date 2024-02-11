@@ -2,7 +2,6 @@
 
 namespace App\Oxytoxin\DTO\CashCollectibles;
 
-use App\Models\TransactionType;
 use Spatie\LaravelData\Data;
 
 class CashCollectiblePaymentData extends Data

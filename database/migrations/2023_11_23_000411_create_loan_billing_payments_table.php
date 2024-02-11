@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Loan;
-use App\Models\LoanAmortization;
 use App\Models\LoanBilling;
 use App\Models\Member;
 use Illuminate\Database\Migrations\Migration;

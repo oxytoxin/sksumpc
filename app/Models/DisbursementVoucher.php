@@ -13,7 +13,7 @@ class DisbursementVoucher extends Model
     use HasFactory;
 
     protected $casts = [
-        'transaction_date' => 'immutable_date'
+        'transaction_date' => 'immutable_date',
     ];
 
     public function disbursement_voucher_items()

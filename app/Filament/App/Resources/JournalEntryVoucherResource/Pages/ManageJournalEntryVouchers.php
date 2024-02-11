@@ -4,8 +4,6 @@ namespace App\Filament\App\Resources\JournalEntryVoucherResource\Pages;
 
 use App\Actions\JournalEntryVouchers\JevFromImprestsToLoan;
 use App\Actions\JournalEntryVouchers\JevFromSavingsToLoan;
-use App\Actions\Loans\PayLoan;
-use App\Actions\Savings\WithdrawFromSavingsAccount;
 use App\Filament\App\Resources\JournalEntryVoucherResource;
 use App\Models\ImprestAccount;
 use App\Models\Loan;
@@ -81,6 +79,7 @@ class ManageJournalEntryVouchers extends ManageRecords
                                 if ($savings_account) {
                                     return Loan::whereMemberId($savings_account->member_id)->payable()->pluck('account_number', 'id');
                                 }
+
                                 return [];
                             })
                             ->searchable()
@@ -119,12 +118,13 @@ class ManageJournalEntryVouchers extends ManageRecords
                                 if ($imprest_account) {
                                     return Loan::whereMemberId($imprest_account->member_id)->payable()->pluck('account_number', 'id');
                                 }
+
                                 return [];
                             })
                             ->searchable()
                             ->required(),
                     ]),
-                ])
+                ]),
         ];
     }
 }

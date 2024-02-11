@@ -31,7 +31,7 @@ class SeedMembers extends Command
      */
     public function handle()
     {
-        if (!Member::count()) {
+        if (! Member::count()) {
             DB::beginTransaction();
             $rows = SimpleExcelReader::create(storage_path('csv/PROFILING.xlsx'))->getRows();
             $rows->each(function (array $memberData) {

@@ -2,15 +2,15 @@
 
 namespace App\Actions\Imprests;
 
-use App\Models\Member;
 use App\Models\Imprest;
+use App\Models\Member;
 use App\Models\TransactionType;
-use Illuminate\Support\Facades\DB;
 use App\Oxytoxin\DTO\MSO\ImprestData;
-use Filament\Notifications\Notification;
-use Lorisleiva\Actions\Concerns\AsAction;
 use App\Oxytoxin\Providers\ImprestsProvider;
+use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use Lorisleiva\Actions\Concerns\AsAction;
 
 class WithdrawFromImprestAccount
 {
@@ -40,6 +40,7 @@ class WithdrawFromImprestAccount
             'debit' => $imprest->amount,
         ]);
         DB::commit();
+
         return $imprest;
     }
 }

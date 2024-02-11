@@ -13,7 +13,7 @@ class JournalEntryVoucher extends Model
     use HasFactory;
 
     protected $casts = [
-        'transaction_date' => 'immutable_date'
+        'transaction_date' => 'immutable_date',
     ];
 
     public function journal_entry_voucher_items()

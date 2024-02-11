@@ -41,12 +41,13 @@ class LoansProvider
     public static function computeAccruedInterest(Loan $loan, $outstanding_balance, $days)
     {
         bcscale(10);
+
         return bcmul($loan->interest_rate, bcmul($outstanding_balance, bcdiv($days, LoansProvider::DAYS_IN_MONTH)));
     }
 
     public static function computeInterest($amount, ?LoanType $loanType, $number_of_terms, $transaction_date = null)
     {
-        if (!$loanType || !$amount || !$number_of_terms) {
+        if (! $loanType || ! $amount || ! $number_of_terms) {
             return 0;
         }
         $loan = Loan::make([
@@ -63,7 +64,7 @@ class LoansProvider
 
     public static function computeMonthlyPayment($amount, ?LoanType $loanType, $number_of_terms, $transaction_date = null)
     {
-        if (!$loanType || !$amount || !$number_of_terms) {
+        if (! $loanType || ! $amount || ! $number_of_terms) {
             return 0;
         }
 
@@ -94,7 +95,7 @@ class LoansProvider
 
     public static function computeDeductions(?LoanType $loanType, $gross_amount, ?Member $member, $existing_loan_id = null): array
     {
-        if (!$loanType) {
+        if (! $loanType) {
             return [];
         }
         $deductions = [
@@ -161,7 +162,7 @@ class LoansProvider
             if ($start->day <= 10) {
                 if ($i == 1) {
                     $days = LoansProvider::DAYS_IN_MONTH - $start->day;
-                } else if ($i == $loan->number_of_terms) {
+                } elseif ($i == $loan->number_of_terms) {
                     $days = LoansProvider::DAYS_IN_MONTH + $start->day;
                 } else {
                     $days = LoansProvider::DAYS_IN_MONTH;
@@ -170,7 +171,7 @@ class LoansProvider
             } else {
                 if ($i == 1) {
                     $days = (LoansProvider::DAYS_IN_MONTH * 2) - $start->day;
-                } else if ($i == $loan->number_of_terms) {
+                } elseif ($i == $loan->number_of_terms) {
                     $days = $start->day;
                 } else {
                     $days = LoansProvider::DAYS_IN_MONTH;
@@ -198,6 +199,7 @@ class LoansProvider
 
             $outstanding_balance = round(bcsub($outstanding_balance, $principal), 4);
         }
+
         return $schedule;
     }
 }

@@ -12,8 +12,8 @@ class ImprestAccountData extends Data
         public string $name,
         public ?string $number = null
     ) {
-        if (!$this->number) {
-            $this->number =  str('21110-1014-')->append(str_pad((Account::latest('id')->first()?->id ?? 0) + 1, 6, '0', STR_PAD_LEFT));
+        if (! $this->number) {
+            $this->number = str('21110-1014-')->append(str_pad((Account::latest('id')->first()?->id ?? 0) + 1, 6, '0', STR_PAD_LEFT));
         }
     }
 }

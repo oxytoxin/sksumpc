@@ -3,7 +3,6 @@
 namespace App\Filament\App\Resources;
 
 use App\Actions\Loans\ApproveLoanPosting;
-use App\Actions\Loans\CreateLoanDisbursementVoucher;
 use App\Filament\App\Resources\LoanResource\Pages;
 use App\Livewire\App\Loans\Traits\HasViewLoanDetailsActionGroup;
 use App\Models\Loan;

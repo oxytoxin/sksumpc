@@ -7,7 +7,6 @@ use Spatie\LaravelData\Data;
 
 class LoanData extends Data
 {
-
     public function __construct(
         public int $member_id,
         public int $loan_application_id,
@@ -25,8 +24,8 @@ class LoanData extends Data
         public ?string $check_number = null,
         public ?string $account_number = null,
     ) {
-        if (!$this->account_number) {
-            $this->account_number =  str('21230-')
+        if (! $this->account_number) {
+            $this->account_number = str('21230-')
                 ->append(str_pad($loan_type_id, 4, '0', STR_PAD_LEFT))
                 ->append('-')
                 ->append(str_pad((Loan::latest('id')->first()?->id ?? 0) + 1, 6, '0', STR_PAD_LEFT));

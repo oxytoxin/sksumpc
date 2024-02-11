@@ -6,9 +6,8 @@ use App\Models\Account;
 use App\Models\Loan;
 use App\Models\LoanApplication;
 use App\Models\LoanType;
-use Illuminate\Support\Facades\DB;
 use App\Oxytoxin\DTO\Loan\LoanData;
-use App\Oxytoxin\Providers\LoansProvider;
+use Illuminate\Support\Facades\DB;
 use Lorisleiva\Actions\Concerns\AsAction;
 
 class CreateNewLoan
@@ -47,6 +46,7 @@ class CreateNewLoan
             'monthly_payment' => $loanData->monthly_payment,
         ]);
         DB::commit();
+
         return $loan;
     }
 }

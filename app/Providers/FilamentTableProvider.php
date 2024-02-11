@@ -39,6 +39,7 @@ class FilamentTableProvider extends ServiceProvider
         });
         Collection::macro('ksort', function () {
             ksort($this->items);
+
             return $this;
         });
     }

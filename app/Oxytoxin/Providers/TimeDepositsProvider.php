@@ -32,6 +32,7 @@ class TimeDepositsProvider
     public static function getMaturityAmount(?float $amount, $interest_rate = null): float
     {
         $interest_rate ??= static::getInterestRate($amount);
+
         return $amount ? round($amount * (1 + $interest_rate * static::NUMBER_OF_DAYS / static::DAYS_ANNUALLY), 2) : 0;
     }
 

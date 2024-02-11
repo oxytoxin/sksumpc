@@ -6,7 +6,6 @@ use Spatie\LaravelData\Data;
 
 class TimeDepositData extends Data
 {
-
     public function __construct(
         public int $member_id,
         public string $withdrawal_date,

@@ -2,14 +2,14 @@
 
 namespace App\Actions\JournalEntryVouchers;
 
+use App\Actions\Savings\WithdrawFromSavingsAccount;
 use App\Models\Loan;
 use App\Models\SavingsAccount;
 use App\Models\TrialBalanceEntry;
-use Illuminate\Support\Facades\DB;
-use App\Oxytoxin\DTO\MSO\SavingsData;
-use Lorisleiva\Actions\Concerns\AsAction;
-use App\Actions\Savings\WithdrawFromSavingsAccount;
 use App\Oxytoxin\DTO\JournalEntryVoucher\JournalEntryVoucherData;
+use App\Oxytoxin\DTO\MSO\SavingsData;
+use Illuminate\Support\Facades\DB;
+use Lorisleiva\Actions\Concerns\AsAction;
 
 class JevFromSavingsToLoan
 {

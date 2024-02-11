@@ -73,7 +73,7 @@ class LoanBillingResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->visible(fn ($record) => !$record->posted)
+                    ->visible(fn ($record) => ! $record->posted)
                     ->form([
                         Select::make('payment_type_id')
                             ->paymenttype()
@@ -82,7 +82,7 @@ class LoanBillingResource extends Resource
                         TextInput::make('reference_number'),
                     ]),
                 Tables\Actions\DeleteAction::make()
-                    ->visible(fn ($record) => !$record->posted)
+                    ->visible(fn ($record) => ! $record->posted)
                     ->action(function (LoanBilling $record) {
                         $record->loan_billing_payments()->delete();
                         $record->delete();
@@ -90,10 +90,10 @@ class LoanBillingResource extends Resource
                 Action::make('post_payments')
                     ->button()
                     ->color('success')
-                    ->visible(fn ($record) => !$record->posted)
+                    ->visible(fn ($record) => ! $record->posted)
                     ->requiresConfirmation()
                     ->action(function (LoanBilling $record) {
-                        if (!$record->reference_number || !$record->payment_type_id) {
+                        if (! $record->reference_number || ! $record->payment_type_id) {
                             return Notification::make()->title('Billing reference number and payment type is missing!')->danger()->send();
                         }
                         DB::beginTransaction();
@@ -104,7 +104,7 @@ class LoanBillingResource extends Resource
                                 amount: $lp->amount_paid,
                             ));
                             $lp->update([
-                                'posted' => true
+                                'posted' => true,
                             ]);
                         });
                         $record->update([

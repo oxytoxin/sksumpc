@@ -43,6 +43,7 @@ class WithdrawFromSavingsAccount
             'debit' => $savings->amount,
         ]);
         DB::commit();
+
         return $savings;
     }
 }

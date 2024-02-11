@@ -32,6 +32,7 @@ class DepositToImprestAccount
             'credit' => $imprest->amount,
         ]);
         DB::commit();
+
         return $imprest;
     }
 }

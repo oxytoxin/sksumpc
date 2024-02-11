@@ -340,7 +340,7 @@ class TransactionsPage extends Page
                     reference_number: $data['reference_number'],
                     amount: $data['amount']
                 ), TransactionType::firstWhere('name', 'CRJ'));
-                Notification::make()->title('Payment made for ' . $cashCollectible->name . '!')->success()->send();
+                Notification::make()->title('Payment made for '.$cashCollectible->name.'!')->success()->send();
             });
     }
 }

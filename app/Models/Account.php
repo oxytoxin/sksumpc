@@ -14,7 +14,7 @@ use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
  */
 class Account extends Model
 {
-    use HasFactory, CreatesChildren, HasRecursiveRelationships;
+    use CreatesChildren, HasFactory, HasRecursiveRelationships;
 
     protected $table = 'accounts';
 
@@ -48,10 +48,12 @@ class Account extends Model
     {
         return $this->hasManyOfDescendantsAndSelf(Transaction::class)->where('transaction_type_id', 1);
     }
+
     public function recursiveCdjTransactions()
     {
         return $this->hasManyOfDescendantsAndSelf(Transaction::class)->where('transaction_type_id', 2);
     }
+
     public function recursiveJevTransactions()
     {
         return $this->hasManyOfDescendantsAndSelf(Transaction::class)->where('transaction_type_id', 3);

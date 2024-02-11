@@ -6,7 +6,6 @@ use App\Actions\CapitalSubscription\CreateNewCapitalSubscriptionAccount;
 use App\Actions\Imprests\CreateNewImprestsAccount;
 use App\Actions\LoveGifts\CreateNewLoveGiftsAccount;
 use App\Actions\Savings\CreateNewSavingsAccount;
-use App\Models\Account;
 use App\Models\Member;
 use App\Oxytoxin\DTO\MSO\Accounts\CapitalSubscriptionAccountData;
 use App\Oxytoxin\DTO\MSO\Accounts\ImprestAccountData;

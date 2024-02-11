@@ -2,19 +2,13 @@
 
 namespace App\Filament\App\Resources\BalanceForwardedSummaryResource\RelationManagers;
 
-use Filament\Forms;
-use Filament\Tables;
 use App\Models\Account;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Illuminate\Support\Facades\DB;
-use App\Models\BalanceForwardedEntry;
 use Filament\Forms\Components\Select;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables;
+use Filament\Tables\Table;
 
 class BalanceForwardedEntriesRelationManager extends RelationManager
 {

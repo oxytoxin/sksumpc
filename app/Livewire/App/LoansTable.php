@@ -150,6 +150,7 @@ class LoansTable extends Component implements HasForms, HasTable
                                 Placeholder::make('deductions_amount')
                                     ->content(fn ($get) => format_money(collect($get('deductions'))->map(function ($d) {
                                         $d['amount'] = str_replace(',', '', filled($d['amount']) ? $d['amount'] : 0);
+
                                         return $d;
                                     })->sum('amount'), 'PHP')),
                                 Placeholder::make('net_amount')
@@ -162,7 +163,7 @@ class LoansTable extends Component implements HasForms, HasTable
                         DatePicker::make('release_date')->required()->native(false),
                     ])
                     ->action(function ($data, $record) {
-                        if (!OverrideProvider::promptManagerPasskey($data['passkey'])) {
+                        if (! OverrideProvider::promptManagerPasskey($data['passkey'])) {
                             return;
                         }
                         unset($data['passkey']);

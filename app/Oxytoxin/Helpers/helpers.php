@@ -3,7 +3,6 @@
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
-
 function format_account_name_from_depth(string $name, int $depth): string
 {
     return str($name)->explode(':')[$depth] ?? $name;
@@ -46,12 +45,14 @@ function oxy_get_year_range(): array
 
 function renumber_format($number, $decimals = 0)
 {
-    if (!$number || !floatval($number))
+    if (! $number || ! floatval($number)) {
         return '';
+    }
     if ($number < 0) {
         $result = str('(')->append(number_format(abs($number), 2))->append(')');
     } else {
         $result = number_format($number, $decimals);
     }
+
     return $result;
 }

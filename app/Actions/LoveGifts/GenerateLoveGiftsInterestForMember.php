@@ -2,14 +2,13 @@
 
 namespace App\Actions\LoveGifts;
 
-use DB;
 use App\Models\Member;
 use App\Models\TransactionType;
 use App\Oxytoxin\DTO\MSO\LoveGiftData;
-use Lorisleiva\Actions\Concerns\AsAction;
 use App\Oxytoxin\Providers\LoveGiftProvider;
 use App\Oxytoxin\Services\InterestCalculator;
-use App\Actions\LoveGifts\DepositToLoveGiftsAccount;
+use DB;
+use Lorisleiva\Actions\Concerns\AsAction;
 
 class GenerateLoveGiftsInterestForMember
 {

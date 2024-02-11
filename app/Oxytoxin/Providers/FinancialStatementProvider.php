@@ -2,68 +2,71 @@
 
 namespace App\Oxytoxin\Providers;
 
-use Illuminate\Support\Collection;
+use App\Models\Account;
+use App\Models\BalanceForwardedEntry;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class FinancialStatementProvider
 {
-
-    public static function getEntries(Collection $summary, Collection $ids, $total_name, $lessids = null, $net_name = null, $debit = true)
+    public static function getAccountsSummary($month, $year)
     {
-        $entries = $summary->filter(fn ($tbe) => !in_array($tbe['DETAILS']['TRIAL BALANCE ID'] ?? null, $lessids?->toArray() ?? []) && in_array($tbe['DETAILS']['TRIAL BALANCE ID'] ?? null, $ids->toArray()))->map(function ($tbe) use ($debit) {
-            $current = $debit ?  $tbe['DATA']['ENDING BALANCE DEBIT']['AMOUNT'] : $tbe['DATA']['ENDING BALANCE CREDIT']['AMOUNT'];
-            $previous = $debit ?  $tbe['DATA']['BALANCE FORWARDED DEBIT']['AMOUNT'] : $tbe['DATA']['BALANCE FORWARDED CREDIT']['AMOUNT'];
-            $incdec = $previous > 0 ? round($current / $previous * 100, 2) : '';
-            return [
-                'data' => [
-                    'name' => strtoupper($tbe['DETAILS']['TRIAL BALANCE NAME']),
-                    'current' => $current,
-                    'previous' => $previous,
-                    'incdec' => $incdec
-                ]
-            ];
-        });
-        if ($lessids) {
-            $less = $summary->filter(fn ($tbe) => in_array($tbe['DETAILS']['TRIAL BALANCE ID'] ?? null, $lessids->toArray()))->map(function ($tbe) use ($debit) {
-                $current = $debit ?  $tbe['DATA']['ENDING BALANCE DEBIT']['AMOUNT'] : $tbe['DATA']['ENDING BALANCE CREDIT']['AMOUNT'];
-                $previous = $debit ?  $tbe['DATA']['BALANCE FORWARDED DEBIT']['AMOUNT'] : $tbe['DATA']['BALANCE FORWARDED CREDIT']['AMOUNT'];
-                $incdec = $previous > 0 ? round($current / $previous * 100, 2) : '';
-                return [
-                    'data' => [
-                        'name' => strtoupper("LESS:" . $tbe['DETAILS']['TRIAL BALANCE NAME']),
-                        'current' => $current,
-                        'previous' => $previous,
-                        'incdec' => $incdec
-                    ]
-                ];
-            });
-            $entries->push([
-                'data' => [
-                    'name' => strtoupper($total_name),
-                    'current' => $entries->sum('data.current'),
-                    'previous' => $entries->sum('data.previous'),
-                    'incdec' => $entries->sum('data.previous') > 0 ? round($entries->sum('data.current') / $entries->sum('data.previous') * 100, 2) : ''
-                ]
-            ]);
-            $entries->push(...$less);
-            $entries->push([
-                'data' => [
-                    'name' => strtoupper($net_name),
-                    'current' => $entries->sum('data.current') - $less->sum('data.current'),
-                    'previous' => $entries->sum('data.previous') - $less->sum('data.previous'),
-                    'incdec' => ($entries->sum('data.previous') - $less->sum('data.previous')) > 0 ? round(($entries->sum('data.current') - $less->sum('data.current')) / ($entries->sum('data.previous') - $less->sum('data.previous')) * 100, 2) : ''
-                ]
-            ]);
-        } else {
-            $entries->push([
-                'data' => [
-                    'name' => strtoupper($total_name),
-                    'current' => $entries->sum('data.current'),
-                    'previous' => $entries->sum('data.previous'),
-                    'incdec' => $entries->sum('data.previous') > 0 ? round($entries->sum('data.current') / $entries->sum('data.previous') * 100, 2) : ''
-                ]
-            ]);
-        }
+        return Account::withQueryConstraint(function ($query) use ($month, $year) {
+            $query
+                ->withCount(['children' => fn ($q) => $q->whereNull('member_id')])
+                ->withSum(['recursiveCrjTransactions as total_crj_debit' => fn ($query) => $query->whereMonth('transaction_date', $month)->whereYear('transaction_date', $year)], 'debit')
+                ->withSum(['recursiveCrjTransactions as total_crj_credit' => fn ($query) => $query->whereMonth('transaction_date', $month)->whereYear('transaction_date', $year)], 'credit')
+                ->withSum(['recursiveCdjTransactions as total_cdj_debit' => fn ($query) => $query->whereMonth('transaction_date', $month)->whereYear('transaction_date', $year)], 'debit')
+                ->withSum(['recursiveCdjTransactions as total_cdj_credit' => fn ($query) => $query->whereMonth('transaction_date', $month)->whereYear('transaction_date', $year)], 'credit')
+                ->withSum(['recursiveJevTransactions as total_jev_debit' => fn ($query) => $query->whereMonth('transaction_date', $month)->whereYear('transaction_date', $year)], 'debit')
+                ->withSum(['recursiveJevTransactions as total_jev_credit' => fn ($query) => $query->whereMonth('transaction_date', $month)->whereYear('transaction_date', $year)], 'credit')
+                ->whereNull('accounts.member_id');
+        }, function () use ($month, $year) {
+            $balance_forwarded_date = Carbon::create(year: $year, month: $month)->subMonthNoOverflow();
+            $joinSub = BalanceForwardedEntry::whereHas(
+                'balance_forwarded_summary',
+                fn ($q) => $q
+                    ->whereMonth('generated_date', $balance_forwarded_date->month)
+                    ->whereYear('generated_date', $balance_forwarded_date->year)
+            )->groupByRaw('account_id, balance_forwarded_summary_id')->selectRaw('balance_forwarded_entries.balance_forwarded_summary_id, balance_forwarded_entries.account_id, sum(debit) as debit, sum(credit) as credit');
 
-        return $entries;
+            return Account::tree()
+                ->leftJoinSub($joinSub, 'balance_forwarded_entries', function ($join) {
+                    $join->on('laravel_cte.id', '=', 'balance_forwarded_entries.account_id');
+                })
+                ->join('account_types', 'account_type_id', 'account_types.id')
+                ->addSelect(DB::raw(
+                    'balance_forwarded_entries.balance_forwarded_summary_id as balance_forwarded_summary_id,
+                     balance_forwarded_entries.debit as balance_forwarded_debit, 
+                     balance_forwarded_entries.credit as balance_forwarded_credit, 
+                     laravel_cte.*, 
+                     account_types.debit_operator, 
+                     account_types.credit_operator, 
+                    (
+                        coalesce(total_crj_debit, 0) + 
+                        coalesce(total_cdj_debit, 0) + 
+                        coalesce(total_jev_debit, 0)
+                    ) as total_debit, 
+                    (
+                        coalesce(total_crj_credit, 0) +
+                        coalesce(total_cdj_credit, 0) + 
+                        coalesce(total_jev_credit, 0)
+                    ) as total_credit, 
+                        (
+                            (
+                                coalesce( balance_forwarded_entries.debit, 0) + 
+                                coalesce(total_crj_debit, 0) + 
+                                coalesce(total_cdj_debit, 0) + 
+                                coalesce(total_jev_debit, 0)
+                            ) * debit_operator +
+                            (
+                                coalesce(balance_forwarded_entries.credit, 0) +
+                                coalesce(total_crj_credit, 0) +
+                                coalesce(total_cdj_credit, 0) + 
+                                coalesce(total_jev_credit, 0)
+                            ) * credit_operator
+                        ) as ending_balance'
+                ))->get();
+        })->toTree();
     }
 }

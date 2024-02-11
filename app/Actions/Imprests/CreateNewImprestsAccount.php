@@ -3,8 +3,8 @@
 namespace App\Actions\Imprests;
 
 use App\Models\Account;
-use Lorisleiva\Actions\Concerns\AsAction;
 use App\Oxytoxin\DTO\MSO\Accounts\ImprestAccountData;
+use Lorisleiva\Actions\Concerns\AsAction;
 
 class CreateNewImprestsAccount
 {

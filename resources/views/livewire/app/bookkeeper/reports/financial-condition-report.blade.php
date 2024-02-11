@@ -2,6 +2,7 @@
     <h1 class="text-center font-bold text-xl my-2">STATEMENT OF FINANCIAL CONDITION</h1>
     <div class="overflow-x-auto">
         <table class="w-full my-2 text-xs">
+            <thead>Assets</thead>
             <tbody>
                 @foreach (collect() as $item)
                     @switch($item['type'] ?? '')

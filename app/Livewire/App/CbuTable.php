@@ -115,7 +115,7 @@ class CbuTable extends Component implements HasForms, HasTable
             ])
             ->headerActions([
                 CreateAction::make()
-                    ->visible(fn () => !$this->member->capital_subscriptions()->where('outstanding_balance', '>', 0)->exists() && auth()->user()->can('manage cbu'))
+                    ->visible(fn () => ! $this->member->capital_subscriptions()->where('outstanding_balance', '>', 0)->exists() && auth()->user()->can('manage cbu'))
                     ->createAnother(false)
                     ->form([
                         Placeholder::make('number_of_terms')->content($this->member->member_type->additional_number_of_terms),

@@ -6,7 +6,6 @@ use App\Models\Loan;
 use App\Models\LoanPayment;
 use App\Oxytoxin\DTO\Loan\LoanPaymentData;
 use App\Oxytoxin\Providers\LoansProvider;
-use Carbon\Carbon;
 use Lorisleiva\Actions\Concerns\AsAction;
 
 class PayLoan
@@ -21,6 +20,7 @@ class PayLoan
         $interest_due = LoansProvider::computeAccruedInterest($loan, $loan->outstanding_balance, $total_days);
         $interest_payment = min($loanPaymentData->amount, $interest_due);
         $principal_payment = $loanPaymentData->amount - $interest_payment;
+
         return $loan->payments()->create([
             'buy_out' => $loanPaymentData->buy_out,
             'payment_type_id' => $loanPaymentData->payment_type_id,
@@ -29,7 +29,7 @@ class PayLoan
             'principal_payment' => $principal_payment,
             'reference_number' => $loanPaymentData->reference_number,
             'remarks' => $loanPaymentData->remarks,
-            'transaction_date' => $loanPaymentData->transaction_date
+            'transaction_date' => $loanPaymentData->transaction_date,
         ]);
     }
 }

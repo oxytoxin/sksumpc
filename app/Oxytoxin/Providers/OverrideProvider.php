@@ -17,7 +17,7 @@ class OverrideProvider
                 $passed = true;
             }
         }
-        if (!$passed) {
+        if (! $passed) {
             Notification::make()->title('Incorrect password.')->danger()->send();
 
             return false;

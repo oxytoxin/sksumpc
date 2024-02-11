@@ -4,7 +4,6 @@ namespace App\Filament\App\Pages\Bookkeeper;
 
 use App\Models\Account;
 use App\Models\Transaction;
-use App\Models\TransactionType;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
@@ -14,9 +13,9 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Livewire\Attributes\Computed;
 
-class TransactionsList extends Page implements HasTable, HasForms
+class TransactionsList extends Page implements HasForms, HasTable
 {
-    use InteractsWithTable, InteractsWithForms;
+    use InteractsWithForms, InteractsWithTable;
 
     protected static ?string $navigationGroup = 'Bookkeeping';
 
@@ -28,9 +27,13 @@ class TransactionsList extends Page implements HasTable, HasForms
     protected static string $view = 'filament.app.pages.bookkeeper.transactions-list';
 
     public ?int $transaction_type;
+
     public ?int $account_id;
+
     public ?int $payment_mode;
+
     public ?int $month;
+
     public ?int $year;
 
     #[Computed]

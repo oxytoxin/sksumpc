@@ -40,6 +40,7 @@ class WithdrawFromLoveGiftsAccount
             'debit' => $love_gift->amount,
         ]);
         DB::commit();
+
         return $love_gift;
     }
 }

@@ -34,6 +34,7 @@ class DepositToSavingsAccount
             'credit' => $savings->amount,
         ]);
         DB::commit();
+
         return $savings;
     }
 }

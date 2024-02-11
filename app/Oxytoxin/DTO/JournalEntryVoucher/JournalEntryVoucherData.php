@@ -2,9 +2,7 @@
 
 namespace App\Oxytoxin\DTO\JournalEntryVoucher;
 
-use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Data;
-use Spatie\LaravelData\DataCollection;
 
 class JournalEntryVoucherData extends Data
 {
