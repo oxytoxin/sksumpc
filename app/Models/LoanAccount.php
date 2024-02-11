@@ -15,7 +15,7 @@ class LoanAccount extends Account
     {
         parent::boot();
         static::addGlobalScope('member_loan', function ($query) {
-            $query->whereNotNull('member_id')->whereTag('loan');
+            $query->whereNotNull('member_id')->whereTag('member_loan');
         });
     }
 }

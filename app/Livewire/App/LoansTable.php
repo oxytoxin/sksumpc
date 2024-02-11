@@ -52,7 +52,7 @@ class LoansTable extends Component implements HasForms, HasTable
         return $table
             ->query(Loan::whereMemberId($this->member->id))
             ->columns([
-                TextColumn::make('account_number'),
+                TextColumn::make('loan_account.number'),
                 TextColumn::make('reference_number'),
                 TextColumn::make('loan_type.code'),
                 // TextColumn::make('deductions_list')
@@ -164,7 +164,7 @@ class LoansTable extends Component implements HasForms, HasTable
                         DatePicker::make('release_date')->required()->native(false),
                     ])
                     ->action(function ($data, $record) {
-                        if (! OverrideProvider::promptManagerPasskey($data['passkey'])) {
+                        if (!OverrideProvider::promptManagerPasskey($data['passkey'])) {
                             return;
                         }
                         unset($data['passkey']);
