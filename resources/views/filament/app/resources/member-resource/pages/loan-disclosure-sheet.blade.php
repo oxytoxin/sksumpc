@@ -7,9 +7,10 @@
         <h4 class="text-2xl text-center mt-4 font-bold">DISCLOSURE SHEET</h4>
         <div class="my-4 flex">
             <div class="w-2/3">
+                <h4>ACCOUNT NUMBER: <strong>{{ $loan->loan_account->number }}</strong></h4>
                 <h4>NAME: <strong>{{ $loan->member->full_name }}</strong></h4>
                 <h4>LOAN TYPE: <strong>{{ $loan->loan_type->name }}</strong></h4>
-                <p>Priority Number:</p>
+                <p>PRIORITY NUMBER: {{ $loan->priority_number }}</p>
             </div>
             <div class="w-1/3 font-bold flex justify-between">
                 <p>DATE:</p>
