@@ -16,33 +16,21 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <th colspan="5" class="border border-black text-left px-4 whitespace-nowrap">ASSETS</th>
-                </tr>
-                @foreach ($this->accounts->where('account_type_id', 1) as $account)
-                    @include('partials.financial-condition-operation-row-data', ['account' => $account])
+                @foreach ($this->account_types->whereIn('id', [1, 2, 4]) as $account_type)
+                    <tr>
+                        <th colspan="5" class="border border-black text-left px-4 whitespace-nowrap">
+                            {{ $account_type->name }}</th>
+                    </tr>
+                    @foreach ($this->accounts->where('account_type_id', $account_type->id) as $account)
+                        @include('partials.financial-condition-operation-row-data', [
+                            'account' => $account,
+                        ])
+                    @endforeach
+                    @include('partials.financial-condition-operation-row-footer', [
+                        'accounts' => $this->accounts->where('account_type_id', $account_type->id),
+                        'account_type' => $account_type->name,
+                    ])
                 @endforeach
-                <tr class="hover:bg-green-100">
-                    <td
-                        class="border hover:bg-green-300 border-black px-2 uppercase text-lg font-bold whitespace-nowrap">
-                        TOTAL ASSETS
-                    </td>
-                    <td
-                        class="border hover:bg-green-300 border-black px-2 uppercase text-xs text-right whitespace-nowrap">
-                        {{ renumber_format(sum_no_children_recursive($this->accounts->where('account_type_id', 1), 'ending_balance')) }}
-                    </td>
-                    <td
-                        class="border hover:bg-green-300 border-black px-2 uppercase text-xs text-right whitespace-nowrap">
-                        {{ renumber_format(sum_no_children_recursive($this->accounts->where('account_type_id', 1), 'balance_forwarded_debit')) }}
-                    </td>
-                    <td
-                        class="border hover:bg-green-300 border-black px-2 uppercase text-xs text-right whitespace-nowrap">
-                        {{ format_percentage(sum_no_children_recursive($this->accounts->where('account_type_id', 1), 'ending_balance'), sum_no_children_recursive($this->accounts->where('account_type_id', 1), 'balance_forwarded_debit')) }}
-                    </td>
-                    <td
-                        class="border hover:bg-green-300 border-black px-2 uppercase text-xs text-right whitespace-nowrap">
-                    </td>
-                </tr>
             </tbody>
         </table>
     </div>

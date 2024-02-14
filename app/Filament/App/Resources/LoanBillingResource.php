@@ -3,11 +3,14 @@
 namespace App\Filament\App\Resources;
 
 use App\Actions\Loans\PayLoan;
+use App\Actions\Transactions\CreateTransaction;
 use App\Filament\App\Resources\LoanBillingResource\Pages;
+use App\Models\Account;
 use App\Models\LoanBilling;
 use App\Models\LoanBillingPayment;
 use App\Models\TransactionType;
 use App\Oxytoxin\DTO\Loan\LoanPaymentData;
+use App\Oxytoxin\DTO\Transactions\TransactionData;
 use DB;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
@@ -74,7 +77,7 @@ class LoanBillingResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->visible(fn ($record) => ! $record->posted)
+                    ->visible(fn ($record) => !$record->posted)
                     ->form([
                         Select::make('payment_type_id')
                             ->paymenttype()
@@ -83,7 +86,7 @@ class LoanBillingResource extends Resource
                         TextInput::make('reference_number'),
                     ]),
                 Tables\Actions\DeleteAction::make()
-                    ->visible(fn ($record) => ! $record->posted)
+                    ->visible(fn ($record) => !$record->posted)
                     ->action(function (LoanBilling $record) {
                         $record->loan_billing_payments()->delete();
                         $record->delete();
@@ -91,10 +94,10 @@ class LoanBillingResource extends Resource
                 Action::make('post_payments')
                     ->button()
                     ->color('success')
-                    ->visible(fn ($record) => ! $record->posted)
+                    ->visible(fn ($record) => !$record->posted)
                     ->requiresConfirmation()
                     ->action(function (LoanBilling $record) {
-                        if (! $record->reference_number || ! $record->payment_type_id) {
+                        if (!$record->reference_number || !$record->payment_type_id) {
                             return Notification::make()->title('Billing reference number and payment type is missing!')->danger()->send();
                         }
                         DB::beginTransaction();
@@ -108,6 +111,13 @@ class LoanBillingResource extends Resource
                                 'posted' => true,
                             ]);
                         });
+                        app(CreateTransaction::class)->handle(new TransactionData(
+                            account_id: Account::getCashInBankGF()->id,
+                            transactionType: TransactionType::firstWhere('name', 'CDJ'),
+                            reference_number: $record->reference_number,
+                            debit: $record->loan_billing_payments()->sum('amount_paid'),
+                            remarks: 'Loan Billing Payment'
+                        ));
                         $record->update([
                             'posted' => true,
                         ]);

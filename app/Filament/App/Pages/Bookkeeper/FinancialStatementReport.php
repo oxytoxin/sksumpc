@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Pages\Bookkeeper;
 
+use App\Models\AccountType;
 use App\Models\LoanType;
 use App\Models\TransactionType;
 use App\Oxytoxin\Providers\FinancialStatementProvider;
@@ -73,6 +74,12 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
         return TransactionType::get();
     }
 
+    #[Computed]
+    public function AccountTypes()
+    {
+        return AccountType::get();
+    }
+
     public function downloadTrialBalance()
     {
         return Action::make('downloadTrialBalance')
@@ -83,7 +90,7 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
                 $spreadsheet = IOFactory::load(storage_path('templates/trial_balance.xlsx'));
                 $worksheet = $spreadsheet->getActiveSheet();
 
-                $path = storage_path('app/livewire-tmp/trial_balance-'.today()->year.'.xlsx');
+                $path = storage_path('app/livewire-tmp/trial_balance-' . today()->year . '.xlsx');
                 $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
                 $writer->save($path);
 

@@ -1,5 +1,5 @@
 @props(['title', 'signatories'])
-<div x-data class="max-w-6xl mx-auto">
+<div x-data class="max-w-7xl mx-auto">
     <div class="p-4" x-ref="print">
         <x-app.cashier.reports.report-heading />
         @isset($title)
@@ -18,7 +18,7 @@
         @isset($buttons)
             {{ $buttons }}
         @else
-            <x-filament::button color="success" tag="a" href="{{ back()->getTargetUrl() }}">
+            <x-filament::button wire:ignore color="success" tag="a" href="{{ back()->getTargetUrl() }}">
                 Previous Page
             </x-filament::button>
             <x-filament::button icon="heroicon-o-printer" @click="printOut($refs.print.outerHTML, '')">

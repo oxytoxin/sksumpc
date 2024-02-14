@@ -29,6 +29,11 @@ class Account extends Model
         ];
     }
 
+    public static function getCashInBankGF()
+    {
+        return Account::find(3);
+    }
+
     public function scopeWithCode(Builder $query)
     {
         return $query->tree()->orderBy('id')->addSelect(DB::raw("*,concat(number,' - ', fullname) as code"));
