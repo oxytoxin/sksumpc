@@ -115,7 +115,7 @@ use function Filament\Support\format_money;
                             @forelse ($loan_application->member->loans()->with('loan_type')->get() as $loan)
                             <tr>
                                 <td class="border border-black px-2">{{ $loan->transaction_date->format('m/d/Y') }}</td>
-                                <td class="border border-black px-2">{{ format_money(collect($loan->deductions)->firstWhere('code', 'cbu_common')['amount'], 'PHP') }}</td>
+                                <td class="border border-black px-2">{{ format_money($loan->cbu_amount, 'PHP') }}</td>
                                 <td class="border border-black px-2">{{ $loan->loan_type->name }}</td>
                                 <td class="border border-black px-2">{{ $loan->release_date?->format('m/d/Y') }}</td>
                                 <td class="border border-black px-2">{{ format_money($loan->gross_amount, 'PHP') }}</td>
