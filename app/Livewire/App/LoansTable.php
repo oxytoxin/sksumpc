@@ -184,27 +184,6 @@ class LoansTable extends Component implements HasForms, HasTable
                     }),
                 DeleteAction::make()
                     ->hidden(fn ($record) => $record->posted),
-                Action::make('Pay')
-                    ->icon('heroicon-o-banknotes')
-                    ->form([
-                        Select::make('payment_type_id')
-                            ->paymenttype()
-                            ->required(),
-                        TextInput::make('reference_number')->required()
-                            ->unique('loan_payments'),
-                        TextInput::make('amount')->required()->numeric()->minValue(1)->prefix('P')->default(fn ($record) => $record->monthly_payment),
-                        TextInput::make('remarks'),
-                    ])
-                    ->action(function (Loan $record, $data) {
-                        app(PayLoan::class)->handle($record, new LoanPaymentData(
-                            payment_type_id: $data['payment_type_id'],
-                            reference_number: $data['reference_number'],
-                            amount: $data['amount'],
-                            remarks: $data['remarks'],
-                        ), TransactionType::firstWhere('name', 'CRJ'));
-                        Notification::make()->title('Payment made for loan!')->success()->send();
-                    })
-                    ->visible(fn ($record) => $record->outstanding_balance > 0 && $record->posted && auth()->user()->can('manage payments')),
                 $this->getViewLoanDetailsActionGroup(),
             ])
             ->headerActions([

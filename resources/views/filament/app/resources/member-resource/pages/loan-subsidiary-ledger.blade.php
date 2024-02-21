@@ -10,6 +10,7 @@
         <h2 class="text-center font-bold my-4">SUBSIDIARY LEDGER FOR LOAN</h2>
         <div class="grid grid-cols-2">
             <div class="leading-4">
+                <p>Account Number: <strong>{{ $loan->loan_account->number }}</strong></p>
                 <p>Name: <strong>{{ $loan->member->alt_full_name }}</strong></p>
                 <p>Date Granted: {{ $loan->release_date?->format('F d, Y') }}</p>
                 <p>Due Date: {{ $loan->maturity_date?->format('F d, Y') }}</p>

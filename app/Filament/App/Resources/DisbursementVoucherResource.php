@@ -68,9 +68,12 @@ class DisbursementVoucherResource extends Resource
     {
         return $table
             ->columns([
+                TextColumn::make('transaction_date')->date('F d, Y'),
+                TextColumn::make('disbursement_voucher_items.account.number')
+                    ->label('Account Numbers')
+                    ->listWithLineBreaks(),
                 TextColumn::make('name'),
                 TextColumn::make('reference_number'),
-                TextColumn::make('transaction_date')->date('F d, Y'),
                 TextColumn::make('description'),
             ])
             ->filters([
