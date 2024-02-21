@@ -16,7 +16,7 @@ return new class extends Migration
     {
         Schema::create('loan_billing_payments', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(LoanBilling::class)->constrained();
+            $table->foreignIdFor(LoanBilling::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(Member::class)->constrained();
             $table->foreignIdFor(Loan::class)->constrained();
             $table->decimal('amount_due', 18, 4);

@@ -35,17 +35,18 @@ class LoanBillingPayments extends ListRecords
     {
         return [
             Action::make('Import')
+                ->visible(auth()->user()->can('manage loans'))
                 ->form([
                     FileUpload::make('billing')
                         ->storeFiles(false)
-                        ->acceptedFileTypes(['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']),
+                        ->acceptedFileTypes(['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/octet-stream']),
                 ])
                 ->disabled(fn () => $this->loan_billing->posted)
                 ->action(function ($data) {
                     $payments = $this->loan_billing->loan_billing_payments()->join('members', 'loan_billing_payments.member_id', 'members.id')
                         ->selectRaw('loan_billing_payments.*, members.mpc_code as member_code')
                         ->get();
-                    $rows = SimpleExcelReader::create($data['billing']->getRealPath())
+                    $rows = SimpleExcelReader::create($data['billing']->getRealPath(), type: 'xlsx')
                         ->headerOnRow(1)
                         ->getRows()
                         ->collect();
@@ -63,6 +64,7 @@ class LoanBillingPayments extends ListRecords
                 })
                 ->color('success'),
             Action::make('Export')
+                ->visible(auth()->user()->can('manage loans'))
                 ->action(function () {
                     $title = str('SKSU MPC - ')->append($this->loan_billing->loan_type->name)->append(' - as of ')->append($this->loan_billing->date->format('F Y'))->upper();
                     $filename = $title->append('.xlsx');
@@ -76,13 +78,15 @@ class LoanBillingPayments extends ListRecords
                     $worksheet->setCellValue('A1', $title);
                     $worksheet->insertNewRowBefore(3, $loan_billing_payments->count());
                     foreach ($loan_billing_payments as $key => $payment) {
-                        $worksheet->setCellValue('A'.$key + 3, $key + 1);
-                        $worksheet->setCellValue('B'.$key + 3, $payment->member_code);
-                        $worksheet->setCellValue('C'.$key + 3, $payment->member_name);
-                        $worksheet->setCellValue('D'.$key + 3, $payment->amount_due);
-                        $worksheet->setCellValue('E'.$key + 3, $payment->amount_paid);
+                        $worksheet->setCellValue('A' . $key + 3, $key + 1);
+                        $worksheet->setCellValue('B' . $key + 3, $payment->member_code);
+                        $worksheet->setCellValue('C' . $key + 3, $payment->member_name);
+                        $worksheet->setCellValue('D' . $key + 3, $payment->amount_due);
+                        $worksheet->setCellValue('E' . $key + 3, $payment->amount_paid);
                     }
-                    $path = storage_path('app/livewire-tmp/'.$filename);
+                    $worksheet->getProtection()->setSheet(true)->setInsertRows(true)->setInsertColumns(true);
+                    $worksheet->protectCells('E3:E' . ($loan_billing_payments->count() + 2), auth()->user()->getAuthPassword(), true);
+                    $path = storage_path('app/livewire-tmp/' . $filename);
                     $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
                     $writer->save($path);
 
@@ -116,9 +120,9 @@ class LoanBillingPayments extends ListRecords
                             ->default(fn ($record) => $record->amount_paid)
                             ->moneymask(),
                     ])
-                    ->visible(fn ($record) => ! $record->posted),
+                    ->visible(fn ($record) => !$record->posted && auth()->user()->can('manage loans')),
                 DeleteAction::make()
-                    ->visible(fn ($record) => ! $record->posted),
+                    ->visible(fn ($record) => !$record->posted && auth()->user()->can('manage loans')),
             ]);
     }
 }

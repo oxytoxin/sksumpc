@@ -24,6 +24,8 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
 
     protected static string $view = 'filament.app.pages.bookkeeper.financial-statement-report';
 
+    protected static ?int $navigationSort = 2;
+
     protected static ?string $navigationGroup = 'Bookkeeping';
 
     public static function shouldRegisterNavigation(): bool

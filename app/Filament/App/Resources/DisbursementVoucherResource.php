@@ -22,6 +22,8 @@ class DisbursementVoucherResource extends Resource
 {
     protected static ?string $model = DisbursementVoucher::class;
 
+    protected static ?int $navigationSort = 5;
+
     protected static ?string $navigationGroup = 'Bookkeeping';
 
     public static function shouldRegisterNavigation(): bool

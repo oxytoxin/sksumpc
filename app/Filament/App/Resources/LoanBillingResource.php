@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Resources;
 
+use App\Actions\LoanBilling\PostLoanBillingPayments;
 use App\Actions\Loans\PayLoan;
 use App\Actions\Transactions\CreateTransaction;
 use App\Filament\App\Resources\LoanBillingResource\Pages;
@@ -13,6 +14,7 @@ use App\Oxytoxin\DTO\Loan\LoanPaymentData;
 use App\Oxytoxin\DTO\Transactions\TransactionData;
 use DB;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -23,6 +25,7 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Livewire\Attributes\Computed;
 
 class LoanBillingResource extends Resource
 {
@@ -34,7 +37,7 @@ class LoanBillingResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return auth()->user()->can('manage loans');
+        return auth()->user()->can('manage loans') || auth()->user()->can('manage payments');
     }
 
     public static function form(Form $form): Form
@@ -48,8 +51,6 @@ class LoanBillingResource extends Resource
                     ->paymenttype()
                     ->default(null)
                     ->selectablePlaceholder(true),
-                TextInput::make('reference_number')
-                    ->unique('loan_billings'),
                 DatePicker::make('date')
                     ->date()
                     ->afterOrEqual(today())
@@ -69,6 +70,9 @@ class LoanBillingResource extends Resource
                 TextColumn::make('billable_date'),
                 TextColumn::make('created_at')->date('m/d/Y')->label('Date Generated'),
                 TextColumn::make('reference_number'),
+                IconColumn::make('or_approved')
+                    ->label('OR Approved')
+                    ->boolean(),
                 IconColumn::make('posted')
                     ->boolean(),
             ])
@@ -77,7 +81,7 @@ class LoanBillingResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->visible(fn ($record) => !$record->posted)
+                    ->visible(fn ($record, $livewire) => !$record->posted && !$record->or_approved && $livewire->user_is_loan_officer)
                     ->form([
                         Select::make('payment_type_id')
                             ->paymenttype()
@@ -86,42 +90,39 @@ class LoanBillingResource extends Resource
                         TextInput::make('reference_number'),
                     ]),
                 Tables\Actions\DeleteAction::make()
-                    ->visible(fn ($record) => !$record->posted)
+                    ->visible(fn ($record, $livewire) => !$record->posted && !$record->or_approved && $livewire->user_is_loan_officer)
                     ->action(function (LoanBilling $record) {
                         $record->loan_billing_payments()->delete();
                         $record->delete();
                     }),
+                Action::make('approve_or')
+                    ->button()
+                    ->color('success')
+                    ->visible(fn ($record, $livewire) => !$record->posted && !$record->or_approved && $livewire->user_is_cashier)
+                    ->label('Approve OR')
+                    ->requiresConfirmation()
+                    ->form([
+                        Placeholder::make('reference_number')->content(fn ($record) => $record->reference_number)->inlineLabel(),
+                        Placeholder::make('amount')->content(fn ($record) => $record->loan_billing_payments()->sum('amount_paid'))->inlineLabel(),
+                        Placeholder::make('payment_type')->content(fn ($record) => $record->payment_type->name)->inlineLabel(),
+                        TextInput::make('name')->required(),
+                        TextInput::make('or_number')->required()->label('OR #'),
+                    ])
+                    ->action(function (LoanBilling $record, $data) {
+                        $record->update([
+                            'name' => $data['name'],
+                            'or_number' => $data['or_number'],
+                            'or_approved' => true,
+                        ]);
+                        Notification::make()->title('OR Approved for loan billing!')->success()->send();
+                    }),
                 Action::make('post_payments')
                     ->button()
                     ->color('success')
-                    ->visible(fn ($record) => !$record->posted)
+                    ->visible(fn ($record, $livewire) => !$record->posted && $record->or_approved && $livewire->user_is_loan_officer)
                     ->requiresConfirmation()
                     ->action(function (LoanBilling $record) {
-                        if (!$record->reference_number || !$record->payment_type_id) {
-                            return Notification::make()->title('Billing reference number and payment type is missing!')->danger()->send();
-                        }
-                        DB::beginTransaction();
-                        $record->loan_billing_payments()->each(function (LoanBillingPayment $lp) use ($record) {
-                            app(PayLoan::class)->handle($lp->loan, new LoanPaymentData(
-                                payment_type_id: $record->payment_type_id,
-                                reference_number: $record->reference_number,
-                                amount: $lp->amount_paid,
-                            ), TransactionType::firstWhere('name', 'CRJ'));
-                            $lp->update([
-                                'posted' => true,
-                            ]);
-                        });
-                        app(CreateTransaction::class)->handle(new TransactionData(
-                            account_id: Account::getCashInBankGF()->id,
-                            transactionType: TransactionType::firstWhere('name', 'CDJ'),
-                            reference_number: $record->reference_number,
-                            debit: $record->loan_billing_payments()->sum('amount_paid'),
-                            remarks: 'Loan Billing Payment'
-                        ));
-                        $record->update([
-                            'posted' => true,
-                        ]);
-                        DB::commit();
+                        app(PostLoanBillingPayments::class)->handle(loanBilling: $record);
                         Notification::make()->title('Payments posted!')->success()->send();
                     }),
                 Action::make('billing_receivables')

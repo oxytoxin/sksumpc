@@ -23,6 +23,8 @@ class JournalEntryVoucherResource extends Resource
 {
     protected static ?string $model = JournalEntryVoucher::class;
 
+    protected static ?int $navigationSort = 6;
+
     protected static ?string $navigationGroup = 'Bookkeeping';
 
     public static function shouldRegisterNavigation(): bool

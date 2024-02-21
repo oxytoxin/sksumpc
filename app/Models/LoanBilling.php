@@ -23,6 +23,11 @@ class LoanBilling extends Model
         return $this->hasMany(LoanBillingPayment::class);
     }
 
+    public function payment_type()
+    {
+        return $this->belongsTo(PaymentType::class);
+    }
+
     public function loan_type()
     {
         return $this->belongsTo(LoanType::class);
@@ -37,6 +42,7 @@ class LoanBilling extends Model
     {
         static::created(function (LoanBilling $loanBilling) {
             DB::beginTransaction();
+            $loanBilling->reference_number = $loanBilling->loan_type->code . '-' . today()->format('Y-m-') . str_pad($loanBilling->id, 6, '0', STR_PAD_LEFT);
             Loan::wherePosted(true)->where('outstanding_balance', '>', 0)->whereLoanTypeId($loanBilling->loan_type_id)->each(function ($loan) use ($loanBilling) {
                 LoanBillingPayment::firstOrCreate([
                     'member_id' => $loan->member_id,

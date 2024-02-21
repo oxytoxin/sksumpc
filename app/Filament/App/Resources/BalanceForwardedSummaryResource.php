@@ -17,6 +17,8 @@ class BalanceForwardedSummaryResource extends Resource
 {
     protected static ?string $model = BalanceForwardedSummary::class;
 
+    protected static ?int $navigationSort = 4;
+
     protected static ?string $navigationGroup = 'Bookkeeping';
 
     public function getHeading(): string|Htmlable

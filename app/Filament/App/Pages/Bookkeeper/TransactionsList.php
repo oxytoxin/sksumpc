@@ -18,6 +18,8 @@ class TransactionsList extends Page implements HasForms, HasTable
 {
     use InteractsWithForms, InteractsWithTable;
 
+    protected static ?int $navigationSort = 3;
+
     protected static ?string $navigationGroup = 'Bookkeeping';
 
     public static function shouldRegisterNavigation(): bool
