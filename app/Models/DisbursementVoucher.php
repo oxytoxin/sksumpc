@@ -16,6 +16,11 @@ class DisbursementVoucher extends Model
         'transaction_date' => 'immutable_date',
     ];
 
+    public function voucher_type()
+    {
+        return $this->belongsTo(VoucherType::class);
+    }
+
     public function disbursement_voucher_items()
     {
         return $this->hasMany(DisbursementVoucherItem::class);

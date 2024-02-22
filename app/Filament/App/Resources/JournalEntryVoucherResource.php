@@ -6,7 +6,8 @@ use App\Filament\App\Resources\JournalEntryVoucherResource\Pages;
 use App\Models\Account;
 use App\Models\JournalEntryVoucher;
 use App\Models\Member;
-use App\Rules\BalancedJev;
+use App\Models\VoucherType;
+use App\Rules\BalancedBookkeepingEntries;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -36,13 +37,16 @@ class JournalEntryVoucherResource extends Resource
     {
         return $form
             ->schema([
+                Select::make('voucher_type_id')
+                    ->label('Voucher Type')
+                    ->options(VoucherType::pluck('name', 'id')),
                 TextInput::make('name')->required(),
                 TextInput::make('address')->required(),
                 TextInput::make('reference_number')->required(),
                 Textarea::make('description')->columnSpanFull()->required(),
                 TableRepeater::make('journal_entry_voucher_items')
                     ->hideLabels()
-                    ->rule(new BalancedJev)
+                    ->rule(new BalancedBookkeepingEntries)
                     ->columnSpanFull()
                     ->columnWidths(['account_id' => '13rem', 'member_id' => '13rem'])
                     ->schema([
@@ -71,9 +75,13 @@ class JournalEntryVoucherResource extends Resource
     {
         return $table
             ->columns([
+                TextColumn::make('transaction_date')->date('F d, Y'),
+                TextColumn::make('voucher_type.name'),
+                TextColumn::make('journal_entry_voucher_items.account.number')
+                    ->label('Account Numbers')
+                    ->listWithLineBreaks(),
                 TextColumn::make('name'),
                 TextColumn::make('reference_number'),
-                TextColumn::make('transaction_date')->date('F d, Y'),
                 TextColumn::make('description'),
             ])
             ->filters([

@@ -6,7 +6,8 @@ use App\Filament\App\Resources\DisbursementVoucherResource\Pages;
 use App\Models\Account;
 use App\Models\DisbursementVoucher;
 use App\Models\Member;
-use App\Rules\BalancedJev;
+use App\Models\VoucherType;
+use App\Rules\BalancedBookkeepingEntries;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -35,6 +36,9 @@ class DisbursementVoucherResource extends Resource
     {
         return $form
             ->schema([
+                Select::make('voucher_type_id')
+                    ->label('Voucher Type')
+                    ->options(VoucherType::pluck('name', 'id')),
                 TextInput::make('name')->required(),
                 TextInput::make('address')->required(),
                 TextInput::make('reference_number')->required(),
@@ -43,7 +47,7 @@ class DisbursementVoucherResource extends Resource
                     ->hideLabels()
                     ->columnSpanFull()
                     ->columnWidths(['account_id' => '13rem', 'member_id' => '13rem'])
-                    ->rule(new BalancedJev)
+                    ->rule(new BalancedBookkeepingEntries)
                     ->schema([
                         Select::make('member_id')
                             ->options(Member::pluck('full_name', 'id'))
@@ -71,6 +75,7 @@ class DisbursementVoucherResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('transaction_date')->date('F d, Y'),
+                TextColumn::make('voucher_type.name'),
                 TextColumn::make('disbursement_voucher_items.account.number')
                     ->label('Account Numbers')
                     ->listWithLineBreaks(),

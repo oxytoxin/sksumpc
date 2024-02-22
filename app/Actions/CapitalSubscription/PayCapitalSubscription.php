@@ -25,7 +25,7 @@ class PayCapitalSubscription
                 reference_number: $payment->reference_number,
                 credit: $payment->amount,
                 member_id: $cbu->member->id,
-                remarks: 'Member Deposit to Imprest'
+                remarks: 'Member CBU Payment'
             ));
         }
         DB::commit();

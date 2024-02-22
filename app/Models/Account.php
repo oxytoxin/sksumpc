@@ -34,6 +34,21 @@ class Account extends Model
         return Account::find(3);
     }
 
+    public static function getLoanReceivable(LoanType $loanType)
+    {
+        return Account::whereAccountableType(LoanType::class)->whereAccountableId($loanType->id)->whereTag('loan_receivables')->first();
+    }
+
+    public static function getServiceFeeLoans()
+    {
+        return Account::find(75);
+    }
+
+    public static function getLoanInsurance()
+    {
+        return Account::find(65);
+    }
+
     public function scopeWithCode(Builder $query)
     {
         return $query->tree()->orderBy('id')->addSelect(DB::raw("*,concat(number,' - ', fullname) as code"));

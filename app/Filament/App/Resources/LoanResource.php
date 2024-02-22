@@ -7,7 +7,7 @@ use App\Models\Member;
 use App\Models\Account;
 use App\Models\LoanType;
 use Filament\Forms\Form;
-use App\Rules\BalancedJev;
+use App\Rules\BalancedBookkeepingEntries;
 use Filament\Tables\Table;
 use App\Models\TransactionType;
 use Filament\Resources\Resource;
@@ -102,40 +102,12 @@ class LoanResource extends Resource
                     ->label('DV')
                     ->action(fn (Loan $record) => app(ApproveLoanPosting::class)->handle($record))
                     ->hidden(fn ($record) => $record->posted)
-                    ->modalWidth(MaxWidth::SixExtraLarge)
+                    ->modalWidth(MaxWidth::ScreenExtraLarge)
                     ->button()
                     ->fillForm(fn ($record) => [
                         'name' => $record->member->full_name,
                         'reference_number' => $record->reference_number,
-                        'disbursement_voucher_items' => [
-                            [
-                                'member_id' => $record->member_id,
-                                'account_id' => $record->loan_account_id,
-                                'debit' => $record->gross_amount,
-                            ],
-                            [
-                                'member_id' => $record->member_id,
-                                'account_id' => $record->member->capital_subscription_account->id,
-                                'credit' => $record->cbu_amount,
-                            ],
-                            [
-                                'member_id' => $record->member_id,
-                                'account_id' => $record->member->imprest_account->id,
-                                'credit' => $record->imprest_amount,
-                            ],
-                            [
-                                'account_id' => 71,
-                                'credit' => $record->service_fee,
-                            ],
-                            [
-                                'account_id' => 123,
-                                'credit' => $record->insurance_amount,
-                            ],
-                            [
-                                'account_id' => 3,
-                                'credit' => $record->net_amount,
-                            ],
-                        ]
+                        'disbursement_voucher_items' => $record->disclosure_sheet_items
                     ])
                     ->form([
                         TextInput::make('name')->required(),
@@ -146,7 +118,7 @@ class LoanResource extends Resource
                             ->hideLabels()
                             ->columnSpanFull()
                             ->columnWidths(['account_id' => '20rem', 'member_id' => '20rem'])
-                            ->rule(new BalancedJev)
+                            ->rule(new BalancedBookkeepingEntries)
                             ->schema([
                                 Select::make('member_id')
                                     ->options(Member::pluck('full_name', 'id'))
@@ -172,19 +144,31 @@ class LoanResource extends Resource
                         $transactionType = TransactionType::firstWhere('name', 'CDJ');
                         $items = $data['disbursement_voucher_items'];
                         unset($data['disbursement_voucher_items'], $data['member_id']);
+                        $data['voucher_type_id'] = 1;
                         $dv = DisbursementVoucher::create($data);
+                        $new_disclosure_sheet_items = [];
                         foreach ($items as $item) {
+                            $account = Account::withCode()->find($item['account_id']);
+                            $item['name'] = $account->code;
+                            $new_disclosure_sheet_items[] = $item;
                             app(CreateTransaction::class)->handle(new TransactionData(
                                 member_id: $item['member_id'],
-                                account_id: $item['account_id'],
+                                account_id: $account->id,
                                 transactionType: $transactionType,
                                 reference_number: $dv->reference_number,
                                 debit: $item['debit'],
                                 credit: $item['credit'],
                             ));
                             unset($item['member_id']);
+                            unset($item['code']);
+                            unset($item['name']);
+                            unset($item['readonly']);
+                            unset($item['loan_id']);
                             $dv->disbursement_voucher_items()->create($item);
                         }
+                        $record->update([
+                            'disclosure_sheet_items' => $new_disclosure_sheet_items
+                        ]);
                         app(ApproveLoanPosting::class)->handle($record);
                         DB::commit();
                     })

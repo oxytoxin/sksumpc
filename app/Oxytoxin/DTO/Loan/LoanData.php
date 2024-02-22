@@ -20,11 +20,11 @@ class LoanData extends Data
         public string $monthly_payment,
         public $release_date,
         public $transaction_date = null,
-        public array $deductions = [],
+        public array $disclosure_sheet_items = [],
         public ?string $check_number = null,
         public ?string $account_number = null,
     ) {
-        if (! $this->account_number) {
+        if (!$this->account_number) {
             $this->account_number = str(str_pad($loan_type_id, 4, '0', STR_PAD_LEFT))
                 ->append('-')
                 ->append(str_pad((Loan::latest('id')->first()?->id ?? 0) + 1, 6, '0', STR_PAD_LEFT));

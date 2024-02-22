@@ -44,7 +44,7 @@ class CreateNewLoan
             'release_date' => $loanData->release_date,
             'gross_amount' => $loanData->gross_amount,
             'number_of_terms' => $loanData->number_of_terms,
-            'deductions' => $loanData->deductions,
+            'disclosure_sheet_items' => $loanData->disclosure_sheet_items,
             'loan_application_id' => $loanData->loan_application_id,
             'reference_number' => $loanData->reference_number,
             'loan_type_id' => $loanData->loan_type_id,

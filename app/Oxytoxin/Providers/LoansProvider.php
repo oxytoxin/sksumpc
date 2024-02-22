@@ -2,6 +2,7 @@
 
 namespace App\Oxytoxin\Providers;
 
+use App\Models\Account;
 use App\Models\Loan;
 use App\Models\LoanType;
 use App\Models\Member;
@@ -47,7 +48,7 @@ class LoansProvider
 
     public static function computeInterest($amount, ?LoanType $loanType, $number_of_terms, $transaction_date = null)
     {
-        if (! $loanType || ! $amount || ! $number_of_terms) {
+        if (!$loanType || !$amount || !$number_of_terms) {
             return 0;
         }
         $loan = Loan::make([
@@ -64,7 +65,7 @@ class LoansProvider
 
     public static function computeMonthlyPayment($amount, ?LoanType $loanType, $number_of_terms, $transaction_date = null)
     {
-        if (! $loanType || ! $amount || ! $number_of_terms) {
+        if (!$loanType || !$amount || !$number_of_terms) {
             return 0;
         }
 
@@ -93,9 +94,96 @@ class LoansProvider
         return round($t, 4);
     }
 
+    public static function getDisclosureSheetItems(?LoanType $loanType, $gross_amount, ?Member $member, $existing_loan_id = null): array
+    {
+        if (!$loanType) {
+            return [];
+        }
+        $items = [];
+
+        $items[] = [
+            'member_id' => null,
+            'account_id' => Account::getServiceFeeLoans()->id,
+            'credit' => round($loanType->service_fee * $gross_amount, 4),
+            'debit' => null,
+            'readonly' => true,
+            'code' => 'service_fee',
+        ];
+        $items[] = [
+            'member_id' => $member->id,
+            'account_id' => $member->capital_subscription_account->id,
+            'credit' => round($loanType->cbu_common * $gross_amount, 4),
+            'debit' => null,
+            'readonly' => true,
+            'code' => 'cbu_amount',
+        ];
+        $items[] = [
+            'member_id' => $member->id,
+            'account_id' => $member->imprest_account->id,
+            'credit' => round($loanType->imprest * $gross_amount, 4),
+            'debit' => null,
+            'readonly' => true,
+            'code' => 'imprest_amount',
+        ];
+        $items[] = [
+            'member_id' => null,
+            'account_id' => Account::getLoanInsurance()->id,
+            'credit' => round($loanType->insurance * $gross_amount, 4),
+            'debit' => null,
+            'readonly' => true,
+            'code' => 'insurance_amount',
+        ];
+        $existing = $member?->loans()->wherePosted(true)->where('loan_type_id', $loanType->id)->where('outstanding_balance', '>', 0)->whereNot('id', $existing_loan_id)->first();
+        if ($existing) {
+            $start = $existing->last_payment?->transaction_date ?? $existing->transaction_date;
+            $end = today();
+            $total_days = LoansProvider::getAccruableDays($start, $end);
+            $interest_remaining = LoansProvider::computeAccruedInterest($existing, $existing->outstanding_balance, $total_days);
+            $loan_receivables_account = Account::whereAccountableType(LoanType::class)->whereAccountableId($existing->loan_type_id)->whereTag('loan_receivables')->first();
+            $loan_interests_account = Account::whereAccountableType(LoanType::class)->whereAccountableId($existing->loan_type_id)->whereTag('loan_interests')->first();
+            if ($interest_remaining > 0) {
+                $items[] = [
+                    'member_id' => null,
+                    'account_id' => $loan_interests_account->id,
+                    'credit' => $interest_remaining,
+                    'debit' => null,
+                    'readonly' => true,
+                    'code' => 'loan_buyout_interest',
+                ];
+            }
+            $items[] = [
+                'member_id' => null,
+                'account_id' => $loan_receivables_account->id,
+                'credit' => $existing->outstanding_balance,
+                'debit' => null,
+                'readonly' => true,
+                'code' => 'loan_buyout_principal',
+                'loan_id' => $existing->id
+            ];
+        }
+        $items[] = [
+            'member_id' => null,
+            'account_id' => Account::getCashInBankGF()->id,
+            'credit' => round($gross_amount - collect($items)->sum('credit'), 4),
+            'debit' => null,
+            'readonly' => true,
+            'code' => 'net_amount',
+        ];
+
+        $items[] = [
+            'member_id' => null,
+            'account_id' => Account::getLoanReceivable($loanType)->id,
+            'credit' => null,
+            'debit' => $gross_amount,
+            'readonly' => true,
+            'code' => 'gross_amount',
+        ];
+        return $items;
+    }
+
     public static function computeDeductions(?LoanType $loanType, $gross_amount, ?Member $member, $existing_loan_id = null): array
     {
-        if (! $loanType) {
+        if (!$loanType) {
             return [];
         }
         $deductions = [

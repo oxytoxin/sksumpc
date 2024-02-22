@@ -26,15 +26,16 @@
                                 {{ $member->dob?->format('m/d/Y') }}
                             </td>
                             <td class="border border-black whitespace-nowrap px-2">{{ $member->age }}</td>
-                            <td class="border border-black whitespace-nowrap px-2">{{ $member->civil_status_name }}
+                            <td class="border border-black whitespace-nowrap px-2">{{ $member->civil_status?->name }}
                             </td>
-                            <td class="border border-black whitespace-nowrap px-2">{{ $member->gender_name }}</td>
+                            <td class="border border-black whitespace-nowrap px-2">{{ $member->gender?->name }}</td>
                             <td class="border border-black whitespace-nowrap px-2">{{ $member->tin }}</td>
-                            <td class="border border-black whitespace-nowrap px-2">{{ $member->member_type_name }}</td>
+                            <td class="border border-black whitespace-nowrap px-2">{{ $member->member_type?->name }}
+                            </td>
                             <td class="border border-black whitespace-nowrap px-2">
                                 {{ $member->terminated_at?->format('m/d/Y') }}</td>
                             <td class="border border-black whitespace-nowrap px-2">
-                                {{ $member->patronage_status_name }}
+                                {{ $member->patronage_status?->name }}
                             </td>
                             <td class="border border-black whitespace-nowrap px-2">
                                 {{ $member->created_at?->format('m/d/Y') }}</td>

@@ -25,7 +25,7 @@ class Loan extends Model
         'gross_amount' => 'decimal:4',
         'deductions_amount' => 'decimal:4',
         'net_amount' => 'decimal:4',
-        'deductions' => 'array',
+        'disclosure_sheet_items' => 'array',
         'number_of_terms' => 'integer',
         'interest' => 'decimal:4',
         'service_fee' => 'decimal:4',

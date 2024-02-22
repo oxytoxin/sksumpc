@@ -5,7 +5,7 @@ namespace App\Rules;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 
-class BalancedJev implements ValidationRule
+class BalancedBookkeepingEntries implements ValidationRule
 {
     /**
      * Run the validation rule.

@@ -21,18 +21,31 @@
             <strong>AMOUNT GRANTED</strong>
             <p class="font-bold">{{ format_money($loan->gross_amount, 'PHP') }}</p>
         </div>
-        <div class="px-16">
-            <strong>LESS:</strong>
-            <div class="px-16">
-                @foreach ($loan->deductions as $deduction)
-                    <div class="flex justify-between">
-                        <p>{{ $deduction['name'] }}</p>
-                        <p class="font-bold">{{ format_money($deduction['amount'], 'PHP') }}</p>
-                    </div>
-                @endforeach
-            </div>
+        <div class="my-4">
+            <table class="w-full">
+                <thead>
+                    <tr>
+                        <th class="border border-black">NAME</th>
+                        <th class="border border-black">DEBIT</th>
+                        <th class="border border-black">CREDIT</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($loan->disclosure_sheet_items as $disclosure_sheet_item)
+                        <tr>
+                            <td class="border border-black px-4">{{ $disclosure_sheet_item['name'] ?? '' }}</td>
+                            <td class="border border-black text-right px-4 w-1/6">
+                                {{ renumber_format($disclosure_sheet_item['debit']) }}
+                            </td>
+                            <td class="border border-black text-right px-4 w-1/6">
+                                {{ renumber_format($disclosure_sheet_item['credit']) }}
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
-        <div class="flex pl-32 justify-between">
+        <div class="flex justify-between">
             <p class="font-bold">TOTAL DEDUCTIONS</p>
             <p class="font-bold">{{ format_money($loan->deductions_amount, 'PHP') }}</p>
         </div>
@@ -46,7 +59,9 @@
 
     </div>
     <div class="p-4 flex justify-end space-x-2">
-        <x-filament::button wire:ignore href="{{ back()->getTargetUrl() }}" outlined tag="a">Back</x-filament::button>
-        <x-filament::button icon="heroicon-o-printer" @click="printOut($refs.print.outerHTML, 'CBU Subsidiary Ledger')">Print</x-filament::button>
+        <x-filament::button wire:ignore href="{{ back()->getTargetUrl() }}" outlined
+            tag="a">Back</x-filament::button>
+        <x-filament::button icon="heroicon-o-printer"
+            @click="printOut($refs.print.outerHTML, 'CBU Subsidiary Ledger')">Print</x-filament::button>
     </div>
 </div>

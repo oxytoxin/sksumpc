@@ -22,7 +22,7 @@ class Member extends Model implements HasMedia
 
     protected $casts = [
         'dob' => 'immutable_date',
-        'dependents' => DataCollection::class.':'.MemberDependent::class,
+        'dependents' => DataCollection::class . ':' . MemberDependent::class,
         'other_income_sources' => 'array',
         'annual_income' => 'decimal:4',
     ];
@@ -30,7 +30,8 @@ class Member extends Model implements HasMedia
     protected static function booted(): void
     {
         static::created(function (Member $member) {
-            $member->mpc_code = 'MPCSKSU'.$member->id;
+            if (!$member->mpc_code)
+                $member->mpc_code = str("SKSUMPC-0000-")->append(str_pad($member->id, 6, '0', STR_PAD_LEFT));
             $member->save();
         });
     }
@@ -119,7 +120,7 @@ class Member extends Model implements HasMedia
 
     public function initial_capital_subscription(): HasOne
     {
-        return $this->hasOne(CapitalSubscription::class)->where('code', 'ICS-%');
+        return $this->hasOne(CapitalSubscription::class)->latestOfMany();
     }
 
     public function savings_accounts()

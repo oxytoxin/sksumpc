@@ -16,6 +16,11 @@ class JournalEntryVoucher extends Model
         'transaction_date' => 'immutable_date',
     ];
 
+    public function voucher_type()
+    {
+        return $this->belongsTo(VoucherType::class);
+    }
+
     public function journal_entry_voucher_items()
     {
         return $this->hasMany(JournalEntryVoucherItem::class);

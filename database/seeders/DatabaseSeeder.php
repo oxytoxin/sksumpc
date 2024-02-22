@@ -33,6 +33,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call(CashCollectiblesSeeder::class);
         $this->call(LoanTypeSeeder::class);
+        $this->call(VoucherTypesSeeder::class);
 
         $this->command->info("Seeding members...\n");
         Artisan::call('app:seed-members');

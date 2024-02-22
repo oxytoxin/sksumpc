@@ -28,11 +28,10 @@ class RunLoanProcessesAfterPosting
         $member = $loan->member;
         $amortization_schedule = LoansProvider::generateAmortizationSchedule($loan);
         $loan->loan_amortizations()->createMany($amortization_schedule);
-        $cbu_amount = collect($loan->deductions)->firstWhere('code', 'cbu_amount')['amount'];
         $cbu = $member->capital_subscriptions()->create([
             'number_of_terms' => 0,
-            'number_of_shares' => $cbu_amount / $member->member_type->par_value,
-            'amount_subscribed' => $cbu_amount,
+            'number_of_shares' => $loan->cbu_amount / $member->member_type->par_value,
+            'amount_subscribed' => $loan->cbu_amount,
             'par_value' => $member->member_type->par_value,
             'is_common' => false,
             'code' => Str::random(12),
@@ -41,7 +40,7 @@ class RunLoanProcessesAfterPosting
         app(PayCapitalSubscription::class)->handle($cbu, new CapitalSubscriptionPaymentData(
             payment_type_id: 2,
             reference_number: $loan->reference_number,
-            amount: $cbu_amount
+            amount: $loan->cbu_amount
         ), TransactionType::firstWhere('name', 'CDJ'), false);
         app(DepositToImprestAccount::class)->handle($member, new ImprestData(
             payment_type_id: 1,

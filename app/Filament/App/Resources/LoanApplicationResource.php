@@ -7,9 +7,12 @@ use App\Actions\LoanApplications\DisapproveLoanApplication;
 use App\Actions\Loans\CreateNewLoan;
 use App\Filament\App\Resources\LoanApplicationResource\Pages;
 use App\Livewire\App\Loans\Traits\HasViewLoanDetailsActionGroup;
+use App\Models\Account;
 use App\Models\LoanApplication;
+use App\Models\Member;
 use App\Oxytoxin\DTO\Loan\LoanData;
 use App\Oxytoxin\Providers\LoansProvider;
+use App\Rules\BalancedBookkeepingEntries;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
@@ -24,6 +27,7 @@ use Filament\Infolists\Components\ViewEntry;
 use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
@@ -155,17 +159,18 @@ class LoanApplicationResource extends Resource
                     ->color('danger')
                     ->visible(fn ($record) => $record->status == LoanApplication::STATUS_PROCESSING),
                 Action::make('new_loan')
-                    ->visible(fn ($record) => auth()->user()->can('manage loans') && ! $record->loan && $record->status == LoanApplication::STATUS_APPROVED)
+                    ->visible(fn ($record) => auth()->user()->can('manage loans') && !$record->loan && $record->status == LoanApplication::STATUS_APPROVED)
+                    ->modalWidth(MaxWidth::ScreenExtraLarge)
                     ->fillForm(function ($record) {
                         $deductions = LoansProvider::computeDeductions($record->loan_type, $record->desired_amount, $record->member);
-
+                        $disclosure_sheet_items = LoansProvider::getDisclosureSheetItems($record->loan_type, $record->desired_amount, $record->member);
                         return [
                             'gross_amount' => $record->desired_amount,
                             'number_of_terms' => $record->number_of_terms,
                             'priority_number' => $record->priority_number,
                             'transaction_date' => today(),
                             'release_date' => today(),
-                            'deductions' => $deductions,
+                            'disclosure_sheet_items' => $disclosure_sheet_items,
                         ];
                     })
                     ->form(fn ($record) => [
@@ -184,24 +189,38 @@ class LoanApplicationResource extends Resource
                                 Placeholder::make('monthly_payment')
                                     ->content(fn ($get) => format_money(LoansProvider::computeMonthlyPayment($get('gross_amount') ?? 0, $record->loan_type, $get('number_of_terms'), $get('transaction_date')), 'PHP')),
                             ]),
-                        TableRepeater::make('deductions')
+                        TableRepeater::make('disclosure_sheet_items')
+                            ->hideLabels()
+                            ->columnSpanFull()
+                            ->reactive()
+                            ->columnWidths(['account_id' => '40%', 'member_id' => '13rem'])
+                            ->rule(new BalancedBookkeepingEntries)
                             ->schema([
-                                TextInput::make('name')->readOnly(fn ($get) => boolval($get('readonly'))),
-                                TextInput::make('amount')
-                                    ->moneymask()
-                                    ->readOnly(fn ($get) => boolval($get('readonly'))),
-                                Hidden::make('readonly')->default(false),
-                            ])
-                            ->live(true)
-                            ->orderColumn(false)
-                            ->hideLabels(),
-                        Grid::make(2)
-                            ->schema([
-                                Placeholder::make('deductions_amount')
-                                    ->content(fn ($get) => format_money(collect($get('deductions'))->sum('amount'), 'PHP')),
-                                Placeholder::make('net_amount')
-                                    ->content(fn ($get) => format_money(floatval(str_replace(',', '', $get('gross_amount') ?? 0)) - collect($get('deductions'))->sum('amount'), 'PHP')),
+                                Select::make('member_id')
+                                    ->options(Member::pluck('full_name', 'id'))
+                                    ->label('Member')
+                                    ->searchable()
+                                    ->reactive()
+                                    ->preload(),
+                                Select::make('account_id')
+                                    ->options(
+                                        fn ($get) => Account::withCode()->whereDoesntHave('children', fn ($q) => $q->whereNull('member_id'))->where('member_id', $get('member_id') ?? null)->pluck('code', 'id')
+                                    )
+                                    ->searchable()
+                                    ->required()
+                                    ->label('Account'),
+                                TextInput::make('debit')
+                                    ->moneymask(),
+                                TextInput::make('credit')
+                                    ->moneymask(),
                             ]),
+                        // Grid::make(2)
+                        //     ->schema([
+                        //         Placeholder::make('deductions_amount')
+                        //             ->content(fn ($get) => format_money(collect($get('deductions'))->sum('amount'), 'PHP')),
+                        //         Placeholder::make('net_amount')
+                        //             ->content(fn ($get) => format_money(floatval(str_replace(',', '', $get('gross_amount') ?? 0)) - collect($get('deductions'))->sum('amount'), 'PHP')),
+                        //     ]),
                         DatePicker::make('release_date')->required()->native(false),
                     ])
                     ->action(function (LoanApplication $record, $data) {
@@ -212,9 +231,9 @@ class LoanApplicationResource extends Resource
                             loan_type_id: $loanType->id,
                             reference_number: $record->reference_number,
                             interest_rate: $loanType->interest_rate,
+                            disclosure_sheet_items: $data['disclosure_sheet_items'],
                             priority_number: $data['priority_number'],
                             gross_amount: $data['gross_amount'],
-                            deductions: $data['deductions'],
                             number_of_terms: $data['number_of_terms'],
                             interest: LoansProvider::computeInterest(
                                 amount: $data['gross_amount'],

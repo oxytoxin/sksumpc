@@ -28,7 +28,7 @@ return new class extends Migration
             $table->string('priority_number');
             $table->decimal('gross_amount', 18, 4);
             $table->decimal('net_amount', 18, 4)->virtualAs('gross_amount - deductions_amount');
-            $table->json('deductions')->default(DB::raw('(JSON_ARRAY())'));
+            $table->json('disclosure_sheet_items')->default(DB::raw('(JSON_ARRAY())'));
             $table->integer('number_of_terms');
             $table->decimal('interest_rate', 7, 4);
             $table->decimal('interest', 18, 4);
