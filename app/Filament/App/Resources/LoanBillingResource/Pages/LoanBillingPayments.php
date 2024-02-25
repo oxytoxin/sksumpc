@@ -78,15 +78,15 @@ class LoanBillingPayments extends ListRecords
                     $worksheet->setCellValue('A1', $title);
                     $worksheet->insertNewRowBefore(3, $loan_billing_payments->count());
                     foreach ($loan_billing_payments as $key => $payment) {
-                        $worksheet->setCellValue('A' . $key + 3, $key + 1);
-                        $worksheet->setCellValue('B' . $key + 3, $payment->member_code);
-                        $worksheet->setCellValue('C' . $key + 3, $payment->member_name);
-                        $worksheet->setCellValue('D' . $key + 3, $payment->amount_due);
-                        $worksheet->setCellValue('E' . $key + 3, $payment->amount_paid);
+                        $worksheet->setCellValue('A'.$key + 3, $key + 1);
+                        $worksheet->setCellValue('B'.$key + 3, $payment->member_code);
+                        $worksheet->setCellValue('C'.$key + 3, $payment->member_name);
+                        $worksheet->setCellValue('D'.$key + 3, $payment->amount_due);
+                        $worksheet->setCellValue('E'.$key + 3, $payment->amount_paid);
                     }
                     $worksheet->getProtection()->setSheet(true)->setInsertRows(true)->setInsertColumns(true);
-                    $worksheet->protectCells('E3:E' . ($loan_billing_payments->count() + 2), auth()->user()->getAuthPassword(), true);
-                    $path = storage_path('app/livewire-tmp/' . $filename);
+                    $worksheet->protectCells('E3:E'.($loan_billing_payments->count() + 2), auth()->user()->getAuthPassword(), true);
+                    $path = storage_path('app/livewire-tmp/'.$filename);
                     $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
                     $writer->save($path);
 
@@ -120,9 +120,9 @@ class LoanBillingPayments extends ListRecords
                             ->default(fn ($record) => $record->amount_paid)
                             ->moneymask(),
                     ])
-                    ->visible(fn ($record) => !$record->posted && auth()->user()->can('manage loans')),
+                    ->visible(fn ($record) => ! $record->posted && auth()->user()->can('manage loans')),
                 DeleteAction::make()
-                    ->visible(fn ($record) => !$record->posted && auth()->user()->can('manage loans')),
+                    ->visible(fn ($record) => ! $record->posted && auth()->user()->can('manage loans')),
             ]);
     }
 }

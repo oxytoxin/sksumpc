@@ -16,12 +16,13 @@
                 <td class="border-2 border-black">{{ $payment->reference_number }}</td>
                 <td class="border-2 border-black"></td>
                 <td class="border-2 border-black">{{ Filament\Support\format_money($payment->amount, 'PHP') }}</td>
-                <td class="border-2 border-black">{{ Filament\Support\format_money($payment->running_balance, 'PHP') }}</td>
+                <td class="border-2 border-black">{{ Filament\Support\format_money($payment->running_balance, 'PHP') }}
+                </td>
                 <td class="border-2 border-black">{{ $payment->remarks }}</td>
             </tr>
         @empty
             <tr>
-                <td colspan="6">No payments made.</td>
+                <td class="border-2 border-black" colspan="6">No payments made.</td>
             </tr>
         @endforelse
     </tbody>

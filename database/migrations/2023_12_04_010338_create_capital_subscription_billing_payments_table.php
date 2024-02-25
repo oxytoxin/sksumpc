@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\CapitalSubscriptionAmortization;
+use App\Models\CapitalSubscription;
 use App\Models\CapitalSubscriptionBilling;
 use App\Models\Member;
 use Illuminate\Database\Migrations\Migration;
@@ -17,8 +17,8 @@ return new class extends Migration
         Schema::create('capital_subscription_billing_payments', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(CapitalSubscriptionBilling::class)->constrained(indexName: 'capital_subscription_billing_foreign');
+            $table->foreignIdFor(CapitalSubscription::class)->constrained(indexName: 'capital_subscription_foreign');
             $table->foreignIdFor(Member::class)->constrained();
-            $table->foreignIdFor(CapitalSubscriptionAmortization::class)->constrained(indexName: 'capital_subscription_amortization_foreign');
             $table->decimal('amount_due', 18, 4);
             $table->decimal('amount_paid', 18, 4);
             $table->boolean('posted')->default(false);

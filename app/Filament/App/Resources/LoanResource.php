@@ -2,36 +2,36 @@
 
 namespace App\Filament\App\Resources;
 
-use App\Models\Loan;
-use App\Models\Member;
+use App\Actions\Loans\ApproveLoanPosting;
+use App\Actions\Transactions\CreateTransaction;
+use App\Filament\App\Resources\LoanResource\Actions\ViewLoanDetailsActionGroup;
+use App\Filament\App\Resources\LoanResource\Pages;
+use App\Livewire\App\Loans\Traits\HasViewLoanDetailsActionGroup;
 use App\Models\Account;
-use App\Models\LoanType;
-use Filament\Forms\Form;
-use App\Rules\BalancedBookkeepingEntries;
-use Filament\Tables\Table;
-use App\Models\TransactionType;
-use Filament\Resources\Resource;
-use Illuminate\Support\Facades\DB;
 use App\Models\DisbursementVoucher;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Filters\Filter;
-use Filament\Support\Enums\MaxWidth;
+use App\Models\Loan;
+use App\Models\LoanType;
+use App\Models\Member;
+use App\Models\TransactionType;
+use App\Oxytoxin\DTO\Transactions\TransactionData;
+use App\Rules\BalancedBookkeepingEntries;
+use Awcodes\FilamentTableRepeater\Components\TableRepeater;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Support\Enums\MaxWidth;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
 use Filament\Tables\Enums\FiltersLayout;
-use App\Actions\Loans\ApproveLoanPosting;
-use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use App\Actions\Transactions\CreateTransaction;
-use App\Filament\App\Resources\LoanResource\Pages;
-use App\Oxytoxin\DTO\Transactions\TransactionData;
-use Awcodes\FilamentTableRepeater\Components\TableRepeater;
-use App\Filament\App\Resources\LoanResource\Pages\ListLoans;
-use App\Livewire\App\Loans\Traits\HasViewLoanDetailsActionGroup;
+use Illuminate\Support\Facades\DB;
 
 class LoanResource extends Resource
 {
@@ -107,7 +107,7 @@ class LoanResource extends Resource
                     ->fillForm(fn ($record) => [
                         'name' => $record->member->full_name,
                         'reference_number' => $record->reference_number,
-                        'disbursement_voucher_items' => $record->disclosure_sheet_items
+                        'disbursement_voucher_items' => $record->disclosure_sheet_items,
                     ])
                     ->form([
                         TextInput::make('name')->required(),
@@ -147,8 +147,9 @@ class LoanResource extends Resource
                         $data['voucher_type_id'] = 1;
                         $dv = DisbursementVoucher::create($data);
                         $new_disclosure_sheet_items = [];
+                        $accounts = Account::withCode()->find(collect($items)->pluck('account_id'));
                         foreach ($items as $item) {
-                            $account = Account::withCode()->find($item['account_id']);
+                            $account = $accounts->find($item['account_id']);
                             $item['name'] = $account->code;
                             $new_disclosure_sheet_items[] = $item;
                             app(CreateTransaction::class)->handle(new TransactionData(
@@ -159,22 +160,18 @@ class LoanResource extends Resource
                                 debit: $item['debit'],
                                 credit: $item['credit'],
                             ));
-                            unset($item['member_id']);
-                            unset($item['code']);
-                            unset($item['name']);
-                            unset($item['readonly']);
-                            unset($item['loan_id']);
+                            unset($item['member_id'], $item['code'], $item['name'], $item['readonly'], $item['loan_id']);
                             $dv->disbursement_voucher_items()->create($item);
                         }
                         $record->update([
-                            'disclosure_sheet_items' => $new_disclosure_sheet_items
+                            'disclosure_sheet_items' => $new_disclosure_sheet_items,
                         ]);
                         app(ApproveLoanPosting::class)->handle($record);
                         DB::commit();
                     })
                     ->color('success')
                     ->icon('heroicon-o-shield-check'),
-                static::getStaticViewLoanDetailsActionGroup(),
+                ViewLoanDetailsActionGroup::getActions(),
                 Action::make('print')
                     ->icon('heroicon-o-printer')
                     ->url(fn ($record) => route('filament.app.resources.loan-applications.application-form', ['loan_application' => $record->loan_application]), true),

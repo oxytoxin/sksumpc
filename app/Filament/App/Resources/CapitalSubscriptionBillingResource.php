@@ -2,11 +2,11 @@
 
 namespace App\Filament\App\Resources;
 
+use App\Actions\CapitalSubscriptionBilling\PostCapitalSubscriptionBillingPayments;
 use App\Filament\App\Resources\CapitalSubscriptionBillingResource\Pages;
 use App\Models\CapitalSubscriptionBilling;
-use App\Models\CapitalSubscriptionBillingPayment;
-use DB;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -28,7 +28,7 @@ class CapitalSubscriptionBillingResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return auth()->user()->can('manage cbu');
+        return auth()->user()->can('manage cbu') || auth()->user()->can('manage payments');
     }
 
     public static function form(Form $form): Form
@@ -39,10 +39,12 @@ class CapitalSubscriptionBillingResource extends Resource
                     ->paymenttype()
                     ->default(null)
                     ->selectablePlaceholder(true),
-                TextInput::make('reference_number')
-                    ->unique('loan_billings'),
                 DatePicker::make('date')
                     ->date()
+                    ->afterOrEqual(today())
+                    ->validationMessages([
+                        'after_or_equal' => 'The date must be after or equal to today.',
+                    ])
                     ->required()
                     ->native(false),
             ]);
@@ -77,39 +79,34 @@ class CapitalSubscriptionBillingResource extends Resource
                         $record->capital_subscription_billing_payments()->delete();
                         $record->delete();
                     }),
+                Action::make('approve_or')
+                    ->button()
+                    ->color('success')
+                    ->visible(fn ($record, $livewire) => ! $record->posted && ! $record->or_approved && $livewire->user_is_cashier)
+                    ->label('Approve OR')
+                    ->requiresConfirmation()
+                    ->form([
+                        Placeholder::make('reference_number')->content(fn ($record) => $record->reference_number)->inlineLabel(),
+                        Placeholder::make('amount')->content(fn ($record) => $record->capital_subscription_billing_payments()->sum('amount_paid'))->inlineLabel(),
+                        Placeholder::make('payment_type')->content(fn ($record) => $record->payment_type->name)->inlineLabel(),
+                        TextInput::make('name')->required(),
+                        TextInput::make('or_number')->required()->label('OR #'),
+                    ])
+                    ->action(function (CapitalSubscriptionBilling $record, $data) {
+                        $record->update([
+                            'name' => $data['name'],
+                            'or_number' => $data['or_number'],
+                            'or_approved' => true,
+                        ]);
+                        Notification::make()->title('OR Approved for loan billing!')->success()->send();
+                    }),
                 Action::make('post_payments')
                     ->button()
                     ->color('success')
-                    ->visible(fn ($record) => ! $record->posted)
+                    ->visible(fn ($record, $livewire) => ! $record->posted && $record->or_approved && $livewire->user_is_cbu_officer)
                     ->requiresConfirmation()
                     ->action(function (CapitalSubscriptionBilling $record) {
-                        if (! $record->reference_number || ! $record->payment_type_id) {
-                            return Notification::make()->title('Billing reference number and payment type is missing!')->danger()->send();
-                        }
-                        DB::beginTransaction();
-                        $record->capital_subscription_billing_payments()->each(function (CapitalSubscriptionBillingPayment $cp) use ($record) {
-                            $cbu = $cp->capital_subscription_amortization->capital_subscription;
-                            $amortization = $cp->capital_subscription_amortization;
-                            $amortization->update([
-                                'amount_paid' => $cp->amount_paid,
-                            ]);
-                            $cbu->payments()->createQuietly([
-                                'cashier_id' => auth()->id(),
-                                'running_balance' => $cbu->outstanding_balance - $cp->amount_paid,
-                                'payment_type_id' => $record->payment_type_id,
-                                'reference_number' => $record->reference_number,
-                                'amount' => $amortization->amount_paid,
-                                'transaction_date' => today(),
-                            ]);
-                            $cp->update([
-                                'posted' => true,
-                            ]);
-                        });
-                        $record->update([
-                            'posted' => true,
-                        ]);
-                        DB::commit();
-                        Notification::make()->title('Payments posted!')->success()->send();
+                        app(PostCapitalSubscriptionBillingPayments::class)->handle(cbuBilling: $record);
                     }),
                 Action::make('billing_receivables')
                     ->url(fn ($record) => route('filament.app.resources.capital-subscription-billings.billing-payments', ['capital_subscription_billing' => $record]))

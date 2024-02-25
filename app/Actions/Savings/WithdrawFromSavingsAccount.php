@@ -3,6 +3,7 @@
 namespace App\Actions\Savings;
 
 use App\Actions\Transactions\CreateTransaction;
+use App\Models\Account;
 use App\Models\Member;
 use App\Models\Saving;
 use App\Models\SavingsAccount;
@@ -39,13 +40,33 @@ class WithdrawFromSavingsAccount
             'member_id' => $member->id,
             'transaction_date' => $data->transaction_date,
         ]);
+        if ($data->payment_type_id == 1) {
+            app(CreateTransaction::class)->handle(new TransactionData(
+                account_id: Account::getCashOnHand()->id,
+                transactionType: $transactionType,
+                reference_number: $savings->reference_number,
+                credit: $savings->amount,
+                member_id: $savings->member_id,
+                remarks: 'Member Withdrawal from Savings',
+            ));
+        }
+        if ($data->payment_type_id == 4) {
+            app(CreateTransaction::class)->handle(new TransactionData(
+                account_id: Account::getCashInBankMSO()->id,
+                transactionType: $transactionType,
+                reference_number: $savings->reference_number,
+                credit: $savings->amount,
+                member_id: $savings->member_id,
+                remarks: 'Member Withdrawal from Savings',
+            ));
+        }
         app(CreateTransaction::class)->handle(new TransactionData(
             account_id: $savings_account->id,
             transactionType: $transactionType,
             reference_number: $savings->reference_number,
             debit: $savings->amount,
             member_id: $member->id,
-            remarks: 'Member Withdraw from Savings'
+            remarks: 'Member Withdrawal from Savings'
         ));
         DB::commit();
 

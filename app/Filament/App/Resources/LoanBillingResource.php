@@ -3,16 +3,8 @@
 namespace App\Filament\App\Resources;
 
 use App\Actions\LoanBilling\PostLoanBillingPayments;
-use App\Actions\Loans\PayLoan;
-use App\Actions\Transactions\CreateTransaction;
 use App\Filament\App\Resources\LoanBillingResource\Pages;
-use App\Models\Account;
 use App\Models\LoanBilling;
-use App\Models\LoanBillingPayment;
-use App\Models\TransactionType;
-use App\Oxytoxin\DTO\Loan\LoanPaymentData;
-use App\Oxytoxin\DTO\Transactions\TransactionData;
-use DB;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
@@ -25,7 +17,6 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Livewire\Attributes\Computed;
 
 class LoanBillingResource extends Resource
 {
@@ -81,7 +72,7 @@ class LoanBillingResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->visible(fn ($record, $livewire) => !$record->posted && !$record->or_approved && $livewire->user_is_loan_officer)
+                    ->visible(fn ($record, $livewire) => ! $record->posted && ! $record->or_approved && $livewire->user_is_loan_officer)
                     ->form([
                         Select::make('payment_type_id')
                             ->paymenttype()
@@ -90,7 +81,7 @@ class LoanBillingResource extends Resource
                         TextInput::make('reference_number'),
                     ]),
                 Tables\Actions\DeleteAction::make()
-                    ->visible(fn ($record, $livewire) => !$record->posted && !$record->or_approved && $livewire->user_is_loan_officer)
+                    ->visible(fn ($record, $livewire) => ! $record->posted && ! $record->or_approved && $livewire->user_is_loan_officer)
                     ->action(function (LoanBilling $record) {
                         $record->loan_billing_payments()->delete();
                         $record->delete();
@@ -98,7 +89,7 @@ class LoanBillingResource extends Resource
                 Action::make('approve_or')
                     ->button()
                     ->color('success')
-                    ->visible(fn ($record, $livewire) => !$record->posted && !$record->or_approved && $livewire->user_is_cashier)
+                    ->visible(fn ($record, $livewire) => ! $record->posted && ! $record->or_approved && $livewire->user_is_cashier)
                     ->label('Approve OR')
                     ->requiresConfirmation()
                     ->form([
@@ -119,7 +110,7 @@ class LoanBillingResource extends Resource
                 Action::make('post_payments')
                     ->button()
                     ->color('success')
-                    ->visible(fn ($record, $livewire) => !$record->posted && $record->or_approved && $livewire->user_is_loan_officer)
+                    ->visible(fn ($record, $livewire) => ! $record->posted && $record->or_approved && $livewire->user_is_loan_officer)
                     ->requiresConfirmation()
                     ->action(function (LoanBilling $record) {
                         app(PostLoanBillingPayments::class)->handle(loanBilling: $record);

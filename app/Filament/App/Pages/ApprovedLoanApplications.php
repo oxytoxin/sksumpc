@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Pages;
 
+use App\Filament\App\Resources\LoanResource\Actions\ViewLoanDetailsActionGroup;
 use App\Livewire\App\Loans\Traits\HasViewLoanDetailsActionGroup;
 use App\Models\LoanApplication;
 use Filament\Pages\Page;
@@ -10,13 +11,11 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 
-class NewLoanFromApplication extends Page implements HasTable
+class ApprovedLoanApplications extends Page implements HasTable
 {
     use HasViewLoanDetailsActionGroup, InteractsWithTable;
 
-    protected static string $view = 'filament.app.pages.new-loan-from-application';
-
-    protected static ?string $navigationLabel = 'Approved Loan Applications';
+    protected static string $view = 'filament.app.pages.approved-loan-applications';
 
     protected static ?string $navigationGroup = 'Loan';
 
@@ -44,7 +43,7 @@ class NewLoanFromApplication extends Page implements HasTable
             ])
             ->defaultLoanApplicationFilters(type: LoanApplication::STATUS_APPROVED)
             ->actions([
-                self::getViewLoanApplicationLoanDetailsActionGroup(),
+                ViewLoanDetailsActionGroup::getActions(),
             ]);
     }
 }

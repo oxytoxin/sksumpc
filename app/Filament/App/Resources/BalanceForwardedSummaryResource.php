@@ -11,7 +11,6 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Contracts\Support\Htmlable;
 
 class BalanceForwardedSummaryResource extends Resource
 {
@@ -20,11 +19,6 @@ class BalanceForwardedSummaryResource extends Resource
     protected static ?int $navigationSort = 4;
 
     protected static ?string $navigationGroup = 'Bookkeeping';
-
-    public function getHeading(): string|Htmlable
-    {
-        return 'Loans Posting';
-    }
 
     public static function shouldRegisterNavigation(): bool
     {
@@ -37,7 +31,7 @@ class BalanceForwardedSummaryResource extends Resource
             ->schema([
                 Select::make('month')
                     ->options(oxy_get_month_range())
-                    ->default(today()->month)
+                    ->default(today()->subMonthNoOverflow()->month)
                     ->required(),
                 Select::make('year')
                     ->options(oxy_get_year_range())

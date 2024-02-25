@@ -7,6 +7,7 @@ use App\Actions\Savings\DepositToSavingsAccount;
 use App\Models\Member;
 use App\Models\SavingsAccount;
 use App\Models\TimeDeposit;
+use App\Models\TransactionType;
 use App\Oxytoxin\DTO\MSO\ImprestData;
 use App\Oxytoxin\DTO\MSO\SavingsData;
 use App\Oxytoxin\Providers\SavingsProvider;
@@ -155,12 +156,12 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                             $record->update([
                                 'withdrawal_date' => today(),
                             ]);
-                            app(DepositToSavingsAccount::class)->handle(Member::find($this->member_id), (new SavingsData(
+                            app(DepositToSavingsAccount::class)->handle(Member::find($this->member_id), new SavingsData(
                                 payment_type_id: 1,
                                 reference_number: TimeDepositsProvider::FROM_TRANSFER_CODE,
                                 amount: $record->maturity_amount,
                                 savings_account_id: $data['savings_account_id']
-                            )));
+                            ), TransactionType::firstWhere('name', 'CDJ'));
                             Notification::make()->title('Time deposit claimed.')->success()->send();
                         })
                         ->visible(fn (TimeDeposit $record) => $record->maturity_date->isBefore(today()) && is_null($record->withdrawal_date))
@@ -175,7 +176,7 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                                 payment_type_id: 1,
                                 reference_number: TimeDepositsProvider::FROM_TRANSFER_CODE,
                                 amount: $record->maturity_amount
-                            ));
+                            ), TransactionType::firstWhere('name', 'CDJ'));
                             Notification::make()->title('Time deposit claimed.')->success()->send();
                         })
                         ->visible(fn (TimeDeposit $record) => $record->maturity_date->isBefore(today()) && is_null($record->withdrawal_date))

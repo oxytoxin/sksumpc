@@ -3,11 +3,8 @@
 namespace App\Filament\App\Resources;
 
 use App\Filament\App\Resources\AccountResource\Pages;
-use App\Filament\App\Resources\AccountResource\RelationManagers;
 use App\Models\Account;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
-use Filament\Forms;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -15,8 +12,6 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class AccountResource extends Resource
 {
@@ -47,7 +42,7 @@ class AccountResource extends Resource
                     ])
                     ->columnSpanFull()
                     ->hideLabels()
-                    ->relationship()
+                    ->relationship(),
             ]);
     }
 

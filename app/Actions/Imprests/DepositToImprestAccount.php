@@ -3,6 +3,7 @@
 namespace App\Actions\Imprests;
 
 use App\Actions\Transactions\CreateTransaction;
+use App\Models\Account;
 use App\Models\Imprest;
 use App\Models\Member;
 use App\Models\TransactionType;
@@ -29,6 +30,26 @@ class DepositToImprestAccount
             'transaction_date' => $data->transaction_date,
         ]);
         if ($transact) {
+            if ($data->payment_type_id == 1) {
+                app(CreateTransaction::class)->handle(new TransactionData(
+                    account_id: Account::getCashOnHand()->id,
+                    transactionType: $transactionType,
+                    reference_number: $imprest->reference_number,
+                    debit: $imprest->amount,
+                    member_id: $imprest->member_id,
+                    remarks: 'Member Deposit to Imprest',
+                ));
+            }
+            if ($data->payment_type_id == 4) {
+                app(CreateTransaction::class)->handle(new TransactionData(
+                    account_id: Account::getCashInBankMSO()->id,
+                    transactionType: $transactionType,
+                    reference_number: $imprest->reference_number,
+                    debit: $imprest->amount,
+                    member_id: $imprest->member_id,
+                    remarks: 'Member Deposit to Imprest',
+                ));
+            }
             app(CreateTransaction::class)->handle(new TransactionData(
                 account_id: $imprest_account->id,
                 transactionType: $transactionType,

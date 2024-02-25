@@ -29,6 +29,8 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Actions;
+use Filament\Infolists\Components\Actions\Action;
 use Filament\Infolists\Components\Section as InfolistSection;
 use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
 use Filament\Infolists\Components\Tabs;
@@ -110,6 +112,10 @@ class MemberResource extends Resource
                             TextEntry::make('initial_capital_subscription.number_of_shares')->label('# of Shares Subscribed')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                             TextEntry::make('initial_capital_subscription.amount_subscribed')->label('Amount Subscribed')->money('PHP')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                         ]),
+                    Actions::make([
+                        Action::make('print')
+                            ->url(fn ($livewire) => route('filament.app.resources.members.print', ['member' => $livewire->record])),
+                    ])->alignEnd(),
                 ]),
         ];
         if (auth()->user()->canany(['manage payments', 'manage cbu'])) {
@@ -217,14 +223,14 @@ class MemberResource extends Resource
                                     ->relationship('region', 'description'),
                                 Select::make('province_id')
                                     ->live()
-                                    ->disabled(fn ($get) => !$get('region_id'))
+                                    ->disabled(fn ($get) => ! $get('region_id'))
                                     ->relationship('province', 'name', fn ($query, $get) => $query->whereRegionId($get('region_id'))),
                                 Select::make('municipality_id')
                                     ->live()
-                                    ->disabled(fn ($get) => !$get('province_id'))
+                                    ->disabled(fn ($get) => ! $get('province_id'))
                                     ->relationship('municipality', 'name', fn ($query, $get) => $query->whereProvinceId($get('province_id'))),
                                 Select::make('barangay_id')
-                                    ->disabled(fn ($get) => !$get('municipality_id'))
+                                    ->disabled(fn ($get) => ! $get('municipality_id'))
                                     ->relationship('barangay', 'name', fn ($query, $get) => $query->whereMunicipalityId($get('municipality_id'))),
                             ])->columns(2),
                     ]),
@@ -384,7 +390,7 @@ class MemberResource extends Resource
                             ->password(),
                     ])
                     ->action(function (Member $record, $data) {
-                        if (!OverrideProvider::promptManagerPasskey($data['passkey'])) {
+                        if (! OverrideProvider::promptManagerPasskey($data['passkey'])) {
                             return;
                         }
                         DB::beginTransaction();
@@ -425,6 +431,7 @@ class MemberResource extends Resource
             'create' => Pages\CreateMember::route('/create'),
             'report' => Pages\MembersReport::route('/reports'),
             'view' => Pages\ViewMember::route('/{record}'),
+            'print' => Pages\PrintMemberProfile::route('/{member}/print'),
             'edit' => Pages\EditMember::route('/{record}/edit'),
             'loan.edit' => Pages\EditMemberLoan::route('/{record}/{loan}/edit'),
             'cbu-subsidiary-ledger' => CbuSubsidiaryLedger::route('cbu-subsidiary-ledger/{member}'),

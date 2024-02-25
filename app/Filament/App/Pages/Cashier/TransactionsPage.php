@@ -7,6 +7,8 @@ use App\Actions\CashCollections\PayCashCollectible;
 use App\Actions\Imprests\DepositToImprestAccount;
 use App\Actions\Imprests\WithdrawFromImprestAccount;
 use App\Actions\Loans\PayLoan;
+use App\Actions\LoveGifts\DepositToLoveGiftsAccount;
+use App\Actions\LoveGifts\WithdrawFromLoveGiftsAccount;
 use App\Actions\Savings\DepositToSavingsAccount;
 use App\Actions\Savings\WithdrawFromSavingsAccount;
 use App\Models\CapitalSubscription;
@@ -20,6 +22,7 @@ use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionPaymentData;
 use App\Oxytoxin\DTO\CashCollectibles\CashCollectiblePaymentData;
 use App\Oxytoxin\DTO\Loan\LoanPaymentData;
 use App\Oxytoxin\DTO\MSO\ImprestData;
+use App\Oxytoxin\DTO\MSO\LoveGiftData;
 use App\Oxytoxin\DTO\MSO\SavingsData;
 use App\Oxytoxin\Providers\ImprestsProvider;
 use App\Oxytoxin\Providers\SavingsProvider;
@@ -77,15 +80,34 @@ class TransactionsPage extends Page
                     ->content(fn ($get) => Member::find($get('member_id'))?->member_type->name),
                 Select::make('capital_subscription_id')
                     ->label('Capital Subscription')
+                    ->reactive()
                     ->options(fn ($get) => CapitalSubscription::whereMemberId($get('member_id'))->where('outstanding_balance', '>', 0)->pluck('code', 'id'))
+                    ->afterStateUpdated(function ($state, $set) {
+                        $cbu = CapitalSubscription::find($state);
+                        if ($cbu) {
+                            if ($cbu->payments()->exists()) {
+                                $set('amount', $cbu->monthly_payment);
+                            } else {
+                                $set('amount', $cbu->initial_amount_paid);
+                            }
+                        }
+                    })
                     ->required(),
                 Select::make('payment_type_id')
                     ->paymenttype()
                     ->required(),
                 TextInput::make('reference_number')->required()
                     ->unique('capital_subscription_payments'),
-                TextInput::make('amount')->required()
+                TextInput::make('amount')
+                    ->required()
+                    ->default(function ($get) {
+                    })
                     ->moneymask(),
+                Placeholder::make('monthly_payment_required')->content(function ($get) {
+                    $cbu = CapitalSubscription::find($get('capital_subscription_id'));
+
+                    return $cbu?->monthly_payment ?? 0;
+                }),
                 TextInput::make('remarks'),
                 DatePicker::make('transaction_date')->default(today())->native(false)->label('Date'),
             ])
@@ -155,6 +177,65 @@ class TransactionsPage extends Page
                     ), TransactionType::firstWhere('name', 'CRJ'));
                 }
                 Notification::make()->title('Savings transaction completed!')->success()->send();
+            });
+    }
+
+    public function payLoveGift()
+    {
+        return Action::make('payLoveGift')
+            ->closeModalByClickingAway(false)
+            ->modalCloseButton(false)
+            ->slideOver(true)
+            ->form([
+                Select::make('member_id')
+                    ->label('Member')
+                    ->options(Member::pluck('full_name', 'id'))
+                    ->searchable()
+                    ->selectablePlaceholder(false)
+                    ->live()
+                    ->required()
+                    ->preload(),
+                Select::make('savings_account_id')
+                    ->options(fn ($get) => SavingsAccount::whereMemberId($get('member_id'))->pluck('name', 'id'))
+                    ->label('Account')
+                    ->required(),
+                Placeholder::make('member_type')
+                    ->content(fn ($get) => Member::find($get('member_id'))?->member_type->name),
+                Select::make('action')
+                    ->options([
+                        '-1' => 'Withdraw',
+                        '1' => 'Deposit',
+                    ])
+                    ->live()
+                    ->default('1')
+                    ->required(),
+                Select::make('payment_type_id')
+                    ->paymenttype()
+                    ->required(),
+                TextInput::make('reference_number')->required()
+                    ->visible(fn ($get) => $get('action') == '1')
+                    ->unique('love_gifts'),
+                TextInput::make('amount')
+                    ->required()
+                    ->moneymask(),
+            ])
+            ->action(function ($data) {
+                $isDeposit = $data['action'] == 1;
+                $member = Member::find($data['member_id']);
+                if ($isDeposit) {
+                    app(DepositToLoveGiftsAccount::class)->handle($member, new LoveGiftData(
+                        payment_type_id: $data['payment_type_id'],
+                        reference_number: $data['reference_number'],
+                        amount: $data['amount'],
+                    ), TransactionType::firstWhere('name', 'CRJ'));
+                } else {
+                    app(WithdrawFromLoveGiftsAccount::class)->handle($member, new LoveGiftData(
+                        payment_type_id: $data['payment_type_id'],
+                        reference_number: SavingsProvider::WITHDRAWAL_TRANSFER_CODE,
+                        amount: $data['amount'],
+                    ), TransactionType::firstWhere('name', 'CRJ'));
+                }
+                Notification::make()->title('Love Gift transaction completed!')->success()->send();
             });
     }
 

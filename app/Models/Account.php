@@ -29,9 +29,19 @@ class Account extends Model
         ];
     }
 
+    public static function getCashOnHand()
+    {
+        return Account::find(1);
+    }
+
     public static function getCashInBankGF()
     {
         return Account::find(3);
+    }
+
+    public static function getCashInBankMSO()
+    {
+        return Account::find(4);
     }
 
     public static function getLoanReceivable(LoanType $loanType)
@@ -62,6 +72,11 @@ class Account extends Model
     public function transactions()
     {
         return $this->hasMany(Transaction::class, 'account_id', 'id');
+    }
+
+    public function recursiveTransactions()
+    {
+        return $this->hasManyOfDescendantsAndSelf(Transaction::class);
     }
 
     public function recursiveCrjTransactions()

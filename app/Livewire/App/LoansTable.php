@@ -2,16 +2,11 @@
 
 namespace App\Livewire\App;
 
-use App\Actions\Loans\CreateNewLoan;
-use App\Actions\Loans\PayLoan;
+use App\Filament\App\Resources\LoanResource\Actions\ViewLoanDetailsActionGroup;
 use App\Livewire\App\Loans\Traits\HasViewLoanDetailsActionGroup;
 use App\Models\Loan;
-use App\Models\LoanApplication;
 use App\Models\LoanType;
 use App\Models\Member;
-use App\Models\TransactionType;
-use App\Oxytoxin\DTO\Loan\LoanData;
-use App\Oxytoxin\DTO\Loan\LoanPaymentData;
 use App\Oxytoxin\Providers\LoansProvider;
 use App\Oxytoxin\Providers\OverrideProvider;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
@@ -25,8 +20,6 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Filament\Tables;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
@@ -164,7 +157,7 @@ class LoansTable extends Component implements HasForms, HasTable
                         DatePicker::make('release_date')->required()->native(false),
                     ])
                     ->action(function ($data, $record) {
-                        if (!OverrideProvider::promptManagerPasskey($data['passkey'])) {
+                        if (! OverrideProvider::promptManagerPasskey($data['passkey'])) {
                             return;
                         }
                         unset($data['passkey']);
@@ -184,95 +177,9 @@ class LoansTable extends Component implements HasForms, HasTable
                     }),
                 DeleteAction::make()
                     ->hidden(fn ($record) => $record->posted),
-                $this->getViewLoanDetailsActionGroup(),
+                ViewLoanDetailsActionGroup::getActions(),
             ])
-            ->headerActions([
-                CreateAction::make()
-                    ->visible(auth()->user()->can('manage loans'))
-                    ->fillForm(function () {
-                        return [
-                            'transaction_date' => today(),
-                            'release_date' => today(),
-                        ];
-                    })
-                    ->form([
-                        Select::make('loan_application_id')
-                            ->label('Loan Application')
-                            ->options(LoanApplication::whereMemberId($this->member->id)->whereStatus(LoanApplication::STATUS_APPROVED)->doesntHave('loan')->pluck('reference_number', 'id'))
-                            ->required()
-                            ->live()
-                            ->afterStateUpdated(function ($state, $set, $get) {
-                                $la = LoanApplication::find($state);
-                                if ($la) {
-                                    $set('gross_amount', $la->desired_amount);
-                                    $set('number_of_terms', $la->number_of_terms);
-                                    $set('priority_number', $la->priority_number);
-                                    if ($loanType = $la->loan_type) {
-                                        $deductions = LoansProvider::computeDeductions($loanType, $la->desired_amount, $this->member);
-                                        $set('deductions', $deductions);
-                                    }
-                                }
-                            }),
-                        TextInput::make('priority_number')->required(),
-                        DatePicker::make('transaction_date')->required()->native(false),
-                        TextInput::make('gross_amount')->required()
-                            ->readOnly()
-                            ->moneymask(),
-                        TextInput::make('number_of_terms')
-                            ->readOnly(),
-                        Grid::make(3)
-                            ->schema([
-                                Placeholder::make('interest_rate')
-                                    ->content(fn ($get) => str(LoanApplication::find($get('loan_application_id'))?->loan_type?->interest_rate * 100 ?? 0)->append('%')->toString()),
-                                Placeholder::make('interest')
-                                    ->content(fn ($get) => format_money(LoansProvider::computeInterest($get('gross_amount') ?? 0, LoanApplication::find($get('loan_application_id'))?->loan_type, $get('number_of_terms'), $get('transaction_date')), 'PHP')),
-                                Placeholder::make('monthly_payment')
-                                    ->content(fn ($get) => format_money(LoansProvider::computeMonthlyPayment($get('gross_amount') ?? 0, LoanApplication::find($get('loan_application_id'))?->loan_type, $get('number_of_terms'), $get('transaction_date')), 'PHP')),
-                            ]),
-                        TableRepeater::make('deductions')
-                            ->schema([
-                                TextInput::make('name')->readOnly(fn ($get) => boolval($get('readonly'))),
-                                TextInput::make('amount')
-                                    ->moneymask()
-                                    ->readOnly(fn ($get) => boolval($get('readonly'))),
-                                Hidden::make('readonly')->default(false),
-                            ])
-                            ->live(true)
-                            ->orderColumn(false)
-                            ->hideLabels(),
-                        Grid::make(2)
-                            ->schema([
-                                Placeholder::make('deductions_amount')
-                                    ->content(fn ($get) => format_money(collect($get('deductions'))->sum('amount'), 'PHP')),
-                                Placeholder::make('net_amount')
-                                    ->content(fn ($get) => format_money(floatval(str_replace(',', '', $get('gross_amount') ?? 0)) - collect($get('deductions'))->sum('amount'), 'PHP')),
-                            ]),
-                        DatePicker::make('release_date')->required()->native(false),
-                    ])
-                    ->action(function ($data) {
-                        $loanApplication = LoanApplication::find($data['loan_application_id']);
-                        $loanType = $loanApplication->loan_type;
-                        $loanData = new LoanData(
-                            member_id: $loanApplication->member_id,
-                            loan_application_id: $loanApplication->id,
-                            loan_type_id: $loanType->id,
-                            reference_number: $loanApplication->reference_number,
-                            interest_rate: $loanType->interest_rate,
-                            priority_number: $data['priority_number'],
-                            gross_amount: $data['gross_amount'],
-                            deductions: $data['deductions'],
-                            number_of_terms: $data['number_of_terms'],
-                            interest: LoansProvider::computeInterest($data['gross_amount'], $loanType, $data['number_of_terms'], $data['transaction_date']),
-                            monthly_payment: LoansProvider::computeMonthlyPayment($data['gross_amount'], $loanType, $data['number_of_terms'], $data['transaction_date']),
-                            release_date: today(),
-                            transaction_date: today(),
-                        );
-                        app(CreateNewLoan::class)->handle($loanApplication, $loanData);
-                        $this->dispatch('refresh');
-                        Notification::make()->title('New loan created.')->success()->send();
-                    })
-                    ->createAnother(false),
-            ])
+            ->headerActions([])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     //

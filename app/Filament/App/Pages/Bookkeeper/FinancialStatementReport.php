@@ -92,7 +92,7 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
                 $spreadsheet = IOFactory::load(storage_path('templates/trial_balance.xlsx'));
                 $worksheet = $spreadsheet->getActiveSheet();
 
-                $path = storage_path('app/livewire-tmp/trial_balance-' . today()->year . '.xlsx');
+                $path = storage_path('app/livewire-tmp/trial_balance-'.today()->year.'.xlsx');
                 $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
                 $writer->save($path);
 

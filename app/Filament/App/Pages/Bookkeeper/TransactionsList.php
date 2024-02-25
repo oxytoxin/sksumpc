@@ -59,7 +59,7 @@ class TransactionsList extends Page implements HasForms, HasTable
         return $table
             ->query(
                 Transaction::query()
-                    ->when($this->account_id, fn ($q) => $q->where('account_id', $this->account_id))
+                    ->when($this->account_id, fn ($q) => $q->whereIn('account_id', Account::find($this->account_id)->descendantsAndSelf()->pluck('id')))
                     ->when($this->transaction_type, fn ($q) => $q->where('transaction_type_id', $this->transaction_type))
                     ->when($this->payment_mode == 1, fn ($q) => $q->whereNotNull('debit'))
                     ->when($this->payment_mode == -1, fn ($q) => $q->whereNotNull('credit'))

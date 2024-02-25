@@ -2,10 +2,12 @@
 
 namespace App\Actions\CashCollections;
 
+use App\Actions\Transactions\CreateTransaction;
 use App\Models\Account;
 use App\Models\CashCollectible;
 use App\Models\TransactionType;
 use App\Oxytoxin\DTO\CashCollectibles\CashCollectiblePaymentData;
+use App\Oxytoxin\DTO\Transactions\TransactionData;
 use DB;
 use Lorisleiva\Actions\Concerns\AsAction;
 
@@ -24,11 +26,36 @@ class PayCashCollectible
             'member_id' => $cashCollectiblePaymentData->member_id,
         ]);
         $accounts_receivables_account = Account::whereTag('account_receivables')->whereAccountableType(CashCollectible::class)->whereAccountableId($cashCollectible->id)->first();
-        $accounts_receivables_account->transactions()->create([
-            'reference_number' => $payment->reference_number,
-            'credit' => $payment->amount,
-            'transaction_type_id' => $transactionType->id,
-        ]);
+
+        if ($cashCollectiblePaymentData->payment_type_id == 1) {
+            app(CreateTransaction::class)->handle(new TransactionData(
+                account_id: Account::getCashOnHand()->id,
+                transactionType: $transactionType,
+                reference_number: $payment->reference_number,
+                debit: $payment->amount,
+                member_id: $payment->member_id,
+                remarks: 'Member Payment for '.strtoupper($cashCollectible->name),
+            ));
+        }
+        if ($cashCollectiblePaymentData->payment_type_id == 4) {
+            app(CreateTransaction::class)->handle(new TransactionData(
+                account_id: Account::getCashInBankGF()->id,
+                transactionType: $transactionType,
+                reference_number: $payment->reference_number,
+                debit: $payment->amount,
+                member_id: $payment->member_id,
+                remarks: 'Member Payment for '.strtoupper($cashCollectible->name),
+            ));
+        }
+
+        app(CreateTransaction::class)->handle(new TransactionData(
+            account_id: $accounts_receivables_account->id,
+            transactionType: $transactionType,
+            reference_number: $payment->reference_number,
+            credit: $payment->amount,
+            member_id: $payment->member_id,
+            remarks: 'Member Payment for '.strtoupper($cashCollectible->name),
+        ));
         DB::commit();
 
         return $payment;

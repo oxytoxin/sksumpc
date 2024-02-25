@@ -3,14 +3,10 @@
 namespace App\Livewire\App;
 
 use App\Actions\CapitalSubscription\CreateNewCapitalSubscription;
-use App\Actions\CapitalSubscription\PayCapitalSubscription;
 use App\Models\CapitalSubscription;
 use App\Models\Member;
-use App\Models\TransactionType;
 use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionData;
-use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionPaymentData;
 use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -78,34 +74,10 @@ class CbuTable extends Component implements HasForms, HasTable
                     }),
             ], layout: FiltersLayout::AboveContent)
             ->actions([
-                Action::make('pay')
-                    ->label(fn ($record) => $record->payments()->exists() ? 'Pay' : 'Initial Payment')
-                    ->icon('heroicon-o-banknotes')
-                    ->form([
-                        Select::make('payment_type_id')
-                            ->paymenttype()
-                            ->required(),
-                        TextInput::make('reference_number')->required()
-                            ->unique('capital_subscription_payments'),
-                        TextInput::make('amount')
-                            ->required()
-                            ->default(fn ($record) => $record->payments()->exists() ? $record->monthly_payment : $record->initial_amount_paid)
-                            ->moneymask(),
-                        Placeholder::make('monthly_payment_required')->content(fn ($record) => $record->monthly_payment),
-                        TextInput::make('remarks'),
-                    ])
-                    ->action(function ($record, $data) {
-                        app(PayCapitalSubscription::class)->handle($record, new CapitalSubscriptionPaymentData(
-                            payment_type_id: $data['payment_type_id'],
-                            reference_number: $data['reference_number'],
-                            amount: $data['amount']
-                        ), TransactionType::firstWhere('name', 'CRJ'));
-                        Notification::make()->title('Payment made for capital subscription!')->success()->send();
-                    })
-                    ->visible(fn ($record) => $record->outstanding_balance > 0),
                 ActionGroup::make([
-                    ViewAction::make()
+                    Action::make('payments')
                         ->label('Payments')
+                        ->icon('heroicon-s-eye')
                         ->modalContent(fn ($record) => view('filament.app.views.cbu-payments', ['cbu' => $record])),
                     ViewAction::make()
                         ->label('Amortization Schedule')

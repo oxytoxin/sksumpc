@@ -12,8 +12,13 @@ class CapitalSubscriptionBillingPayment extends Model
 {
     use HasFactory;
 
-    public function capital_subscription_amortization()
+    public function capital_subscription()
     {
-        return $this->belongsTo(CapitalSubscriptionAmortization::class);
+        return $this->belongsTo(CapitalSubscription::class);
+    }
+
+    public function member()
+    {
+        return $this->belongsTo(Member::class);
     }
 }

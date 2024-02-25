@@ -6,6 +6,7 @@ use App\Actions\LoanApplications\ApproveLoanApplication;
 use App\Actions\LoanApplications\DisapproveLoanApplication;
 use App\Actions\Loans\CreateNewLoan;
 use App\Filament\App\Resources\LoanApplicationResource\Pages;
+use App\Filament\App\Resources\LoanResource\Actions\ViewLoanDetailsActionGroup;
 use App\Livewire\App\Loans\Traits\HasViewLoanDetailsActionGroup;
 use App\Models\Account;
 use App\Models\LoanApplication;
@@ -16,7 +17,6 @@ use App\Rules\BalancedBookkeepingEntries;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -159,11 +159,12 @@ class LoanApplicationResource extends Resource
                     ->color('danger')
                     ->visible(fn ($record) => $record->status == LoanApplication::STATUS_PROCESSING),
                 Action::make('new_loan')
-                    ->visible(fn ($record) => auth()->user()->can('manage loans') && !$record->loan && $record->status == LoanApplication::STATUS_APPROVED)
+                    ->visible(fn ($record) => auth()->user()->can('manage loans') && ! $record->loan && $record->status == LoanApplication::STATUS_APPROVED)
                     ->modalWidth(MaxWidth::ScreenExtraLarge)
                     ->fillForm(function ($record) {
                         $deductions = LoansProvider::computeDeductions($record->loan_type, $record->desired_amount, $record->member);
                         $disclosure_sheet_items = LoansProvider::getDisclosureSheetItems($record->loan_type, $record->desired_amount, $record->member);
+
                         return [
                             'gross_amount' => $record->desired_amount,
                             'number_of_terms' => $record->number_of_terms,
@@ -225,13 +226,19 @@ class LoanApplicationResource extends Resource
                     ])
                     ->action(function (LoanApplication $record, $data) {
                         $loanType = $record->loan_type;
+                        $accounts = Account::withCode()->find(collect($data['disclosure_sheet_items'])->pluck('account_id'));
+                        $items = collect($data['disclosure_sheet_items'])->map(function ($item) use ($accounts) {
+                            $item['name'] = $accounts->find($item['account_id'])->code;
+
+                            return $item;
+                        })->toArray();
                         $loanData = new LoanData(
                             member_id: $record->member_id,
                             loan_application_id: $record->id,
                             loan_type_id: $loanType->id,
                             reference_number: $record->reference_number,
                             interest_rate: $loanType->interest_rate,
-                            disclosure_sheet_items: $data['disclosure_sheet_items'],
+                            disclosure_sheet_items: $items,
                             priority_number: $data['priority_number'],
                             gross_amount: $data['gross_amount'],
                             number_of_terms: $data['number_of_terms'],
@@ -254,7 +261,7 @@ class LoanApplicationResource extends Resource
                 Action::make('print')
                     ->icon('heroicon-o-printer')
                     ->url(fn ($record) => route('filament.app.resources.loan-applications.application-form', ['loan_application' => $record]), true),
-                self::getViewLoanApplicationLoanDetailsActionGroup(),
+                ViewLoanDetailsActionGroup::getActions(),
 
             ])
             ->bulkActions([]);

@@ -7,15 +7,15 @@ use App\Models\MemberType;
 use Filament\Pages\Page;
 use Livewire\Attributes\Computed;
 
-class ShareCapitalScheduleSummaryReport extends Page
+class ShareCapitalGeneralLedger extends Page
 {
     protected static ?string $navigationGroup = 'Share Capital';
 
-    protected static ?string $navigationLabel = 'Schedule Summary';
+    protected static ?string $navigationLabel = 'General Ledger';
 
     protected static ?int $navigationSort = 3;
 
-    protected static string $view = 'filament.app.pages.share-capital-schedule-summary-report';
+    protected static string $view = 'filament.app.pages.share-capital-general-ledger';
 
     public static function shouldRegisterNavigation(): bool
     {

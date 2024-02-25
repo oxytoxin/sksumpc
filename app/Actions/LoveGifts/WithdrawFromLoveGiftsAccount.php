@@ -3,6 +3,7 @@
 namespace App\Actions\LoveGifts;
 
 use App\Actions\Transactions\CreateTransaction;
+use App\Models\Account;
 use App\Models\LoveGift;
 use App\Models\Member;
 use App\Models\TransactionType;
@@ -36,13 +37,35 @@ class WithdrawFromLoveGiftsAccount
             'member_id' => $member->id,
             'transaction_date' => $data->transaction_date,
         ]);
+
+        if ($data->payment_type_id == 1) {
+            app(CreateTransaction::class)->handle(new TransactionData(
+                account_id: Account::getCashOnHand()->id,
+                transactionType: $transactionType,
+                reference_number: $love_gift->reference_number,
+                credit: $love_gift->amount,
+                member_id: $love_gift->member_id,
+                remarks: 'Member Withdrawal from Love Gift',
+            ));
+        }
+        if ($data->payment_type_id == 4) {
+            app(CreateTransaction::class)->handle(new TransactionData(
+                account_id: Account::getCashInBankMSO()->id,
+                transactionType: $transactionType,
+                reference_number: $love_gift->reference_number,
+                credit: $love_gift->amount,
+                member_id: $love_gift->member_id,
+                remarks: 'Member Withdrawal from Love Gift',
+            ));
+        }
+
         app(CreateTransaction::class)->handle(new TransactionData(
             account_id: $love_gift_account->id,
             transactionType: $transactionType,
             reference_number: $love_gift->reference_number,
             debit: $love_gift->amount,
             member_id: $member->id,
-            remarks: 'Member Withdraw from Love Gifts'
+            remarks: 'Member Withdrawal from Love Gift'
         ));
         DB::commit();
 

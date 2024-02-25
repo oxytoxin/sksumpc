@@ -6,7 +6,6 @@ use App\Filament\App\Resources\MemberResource;
 use App\Models\Member;
 use Carbon\Carbon;
 use Filament\Resources\Pages\Page;
-use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Computed;
 
 class MembersReport extends Page

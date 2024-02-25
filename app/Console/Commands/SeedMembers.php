@@ -94,7 +94,6 @@ class SeedMembers extends Command
             DB::commit();
             foreach (Member::all() as $key => $member) {
                 app(CreateMemberInitialAccounts::class)->handle($member);
-                $this->info('account created.');
             }
         }
         // DB::beginTransaction();

@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('balance_forwarded_entries', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(BalanceForwardedSummary::class)->constrained();
+            $table->foreignIdFor(BalanceForwardedSummary::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(Account::class)->constrained();
             $table->decimal('credit', 18, 4)->nullable();
             $table->decimal('debit', 18, 4)->nullable();
