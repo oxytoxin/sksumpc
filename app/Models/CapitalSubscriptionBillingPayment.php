@@ -17,6 +17,11 @@ class CapitalSubscriptionBillingPayment extends Model
         return $this->belongsTo(CapitalSubscription::class);
     }
 
+    public function capital_subscription_billing()
+    {
+        return $this->belongsTo(CapitalSubscriptionBilling::class);
+    }
+
     public function member()
     {
         return $this->belongsTo(Member::class);
