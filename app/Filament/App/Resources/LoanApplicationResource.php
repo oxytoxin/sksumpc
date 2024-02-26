@@ -66,7 +66,7 @@ class LoanApplicationResource extends Resource
                 ->schema([
                     TextEntry::make('loan.gross_amount')->money('PHP')->label('Gross Amount'),
                     ViewEntry::make('loan.deductions')
-                        ->view('infolists.components.loan-deductions-entry', ['deductions' => $record->loan?->deductions]),
+                        ->view('infolists.components.loan-deductions-entry', ['deductions' => $record instanceof LoanApplication ? $record->loan?->deductions : $record->deductions]),
                     TextEntry::make('loan.deductions_amount')->money('PHP')->label('Deductions Amount'),
                     TextEntry::make('loan.net_amount')->money('PHP')->label('Net Amount'),
                     TextEntry::make('loan.interest_rate')->formatStateUsing(fn ($state) => str($state * 100)->append('%'))->label('Interest Rate'),
