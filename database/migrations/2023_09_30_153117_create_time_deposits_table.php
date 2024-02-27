@@ -26,7 +26,7 @@ return new class extends Migration
             $table->decimal('interest', 18, 4)->virtualAs('maturity_amount - amount');
             $table->date('transaction_date')->default(DB::raw('(CURRENT_DATE)'));
             $table->string('tdc_number')->unique();
-            $table->string('account_number')->index()->unique();
+            $table->string('time_deposit_account_id')->index()->unique();
             $table->foreignId('cashier_id')->nullable()->constrained('users', 'id')->nullOnDelete();
             $table->timestamps();
         });

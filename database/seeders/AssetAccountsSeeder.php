@@ -12,15 +12,15 @@ class AssetAccountsSeeder extends Seeder
      */
     public function run(): void
     {
-        Account::create(['account_type_id' => 1, 'name' => 'CASH ON HAND', 'number' => '11110', 'tag' => 'cash_and_cash_equivalents']);
-        Account::create(['account_type_id' => 1, 'name' => 'CASH IN BANK', 'number' => '11130', 'tag' => 'cash_and_cash_equivalents', 'children' => [
-            ['account_type_id' => 1, 'name' => 'DBP (GENERAL FUND)', 'number' => '11130-0001', 'tag' => 'cash_and_cash_equivalents'],
-            ['account_type_id' => 1, 'name' => 'DBP (MSO FUND)', 'number' => '11130-0002', 'tag' => 'cash_and_cash_equivalents'],
-            ['account_type_id' => 1, 'name' => 'LBP', 'number' => '11130-0003', 'tag' => 'cash_and_cash_equivalents'],
+        Account::create(['account_type_id' => 1, 'name' => 'CASH ON HAND', 'number' => '11110', 'tag' => 'cash_on_hand']);
+        Account::create(['account_type_id' => 1, 'name' => 'CASH IN BANK', 'number' => '11130', 'tag' => 'cash_in_bank', 'children' => [
+            ['account_type_id' => 1, 'name' => 'DBP (GENERAL FUND)', 'number' => '11130-0001', 'tag' => 'cash_in_bank_dbp_gf'],
+            ['account_type_id' => 1, 'name' => 'DBP (MSO FUND)', 'number' => '11130-0002', 'tag' => 'cash_in_bank_dbp_mso'],
+            ['account_type_id' => 1, 'name' => 'LBP', 'number' => '11130-0003', 'tag' => 'cash_in_bank_lbp'],
         ]]);
         Account::create(['account_type_id' => 1, 'name' => 'CASH IN COOPERATIVE FEDERATION', 'number' => '11140']);
-        Account::create(['account_type_id' => 1, 'name' => 'PETTY CASH FUND', 'number' => '11150', 'tag' => 'cash_and_cash_equivalents']);
-        Account::create(['account_type_id' => 1, 'name' => 'REVOLVING FUND', 'number' => '11160', 'tag' => 'cash_and_cash_equivalents']);
+        Account::create(['account_type_id' => 1, 'name' => 'PETTY CASH FUND', 'number' => '11150', 'tag' => 'petty_cash_fund']);
+        Account::create(['account_type_id' => 1, 'name' => 'REVOLVING FUND', 'number' => '11160', 'tag' => 'revolving_fund']);
         Account::create(['account_type_id' => 1, 'name' => 'ADVANCES TO OFFICERS, EMPLOYEES AND MEMBERS', 'number' => '11360']);
         Account::create(['account_type_id' => 1, 'name' => 'CHANGE FUND', 'number' => '11170']);
         Account::create(['account_type_id' => 1, 'name' => 'ATM FUND', 'number' => '11180']);

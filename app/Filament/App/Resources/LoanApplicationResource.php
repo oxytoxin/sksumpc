@@ -65,8 +65,6 @@ class LoanApplicationResource extends Resource
                 ->visible(fn ($record) => $record->loan)
                 ->schema([
                     TextEntry::make('loan.gross_amount')->money('PHP')->label('Gross Amount'),
-                    ViewEntry::make('loan.deductions')
-                        ->view('infolists.components.loan-deductions-entry', ['deductions' => $record instanceof LoanApplication ? $record->loan?->deductions : $record->deductions]),
                     TextEntry::make('loan.deductions_amount')->money('PHP')->label('Deductions Amount'),
                     TextEntry::make('loan.net_amount')->money('PHP')->label('Net Amount'),
                     TextEntry::make('loan.interest_rate')->formatStateUsing(fn ($state) => str($state * 100)->append('%'))->label('Interest Rate'),
@@ -227,7 +225,6 @@ class LoanApplicationResource extends Resource
                         $accounts = Account::withCode()->find(collect($data['disclosure_sheet_items'])->pluck('account_id'));
                         $items = collect($data['disclosure_sheet_items'])->map(function ($item) use ($accounts) {
                             $item['name'] = $accounts->find($item['account_id'])->code;
-
                             return $item;
                         })->toArray();
                         $loanData = new LoanData(

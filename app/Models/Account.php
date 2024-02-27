@@ -31,17 +31,22 @@ class Account extends Model
 
     public static function getCashOnHand()
     {
-        return Account::find(1);
+        return Account::firstWhere('tag', 'cash_on_hand');
     }
 
     public static function getCashInBankGF()
     {
-        return Account::find(3);
+        return Account::firstWhere('tag', 'cash_in_bank_dbp_gf');
     }
 
     public static function getCashInBankMSO()
     {
-        return Account::find(4);
+        return Account::firstWhere('tag', 'cash_in_bank_dbp_mso');
+    }
+
+    public static function getMemberTimeDeposits()
+    {
+        return Account::firstWhere('tag', 'member_time_deposits');
     }
 
     public static function getLoanReceivable(LoanType $loanType)

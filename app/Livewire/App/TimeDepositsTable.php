@@ -4,12 +4,16 @@ namespace App\Livewire\App;
 
 use App\Actions\Imprests\DepositToImprestAccount;
 use App\Actions\Savings\DepositToSavingsAccount;
+use App\Actions\TimeDeposits\ClaimTimeDeposit;
+use App\Actions\TimeDeposits\CreateTimeDeposit;
+use App\Actions\TimeDeposits\TerminateTimeDeposit;
 use App\Models\Member;
 use App\Models\SavingsAccount;
 use App\Models\TimeDeposit;
 use App\Models\TransactionType;
 use App\Oxytoxin\DTO\MSO\ImprestData;
 use App\Oxytoxin\DTO\MSO\SavingsData;
+use App\Oxytoxin\DTO\MSO\TimeDepositData;
 use App\Oxytoxin\Providers\SavingsProvider;
 use App\Oxytoxin\Providers\TimeDepositsProvider;
 use DB;
@@ -83,11 +87,8 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                             ->default(today()),
                     ])
                     ->action(function (TimeDeposit $record, $data) {
-                        $record->update([
-                            'maturity_amount' => TimeDepositsProvider::getMaturityAmount($record->amount, SavingsProvider::INTEREST_RATE),
-                            'withdrawal_date' => $data['withdrawal_date'],
-                        ]);
-                        Notification::make()->title('Time deposite claimed.')->success()->send();
+                        app(TerminateTimeDeposit::class)->handle(timeDeposit: $record, withdrawal_date: $data['withdrawal_date']);
+                        Notification::make()->title('Time deposit claimed.')->success()->send();
                     })
                     ->color(Color::Red)
                     ->visible(fn (TimeDeposit $record) => $record->transaction_date->isAfter(today()->subMonths(6)) && is_null($record->withdrawal_date))
@@ -100,10 +101,8 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                             ->default(today()),
                     ])
                     ->action(function ($record, $data) {
-                        $record->update([
-                            'withdrawal_date' => $data['withdrawal_date'],
-                        ]);
-                        Notification::make()->title('Time deposite claimed.')->success()->send();
+                        app(ClaimTimeDeposit::class)->handle(timeDeposit: $record, withdrawal_date: $data['withdrawal_date']);
+                        Notification::make()->title('Time deposit claimed.')->success()->send();
                     })
                     ->visible(fn (TimeDeposit $record) => $record->maturity_date->isBefore(today()) && is_null($record->withdrawal_date))
                     ->icon('heroicon-o-banknotes')
@@ -115,7 +114,7 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                             ->native(false)
                             ->default(today()),
                         DatePicker::make('transaction_date')->label('Roll-over date')->required()->default(today())->native(false)->live()->afterStateUpdated(fn (Set $set, $state) => $set('maturity_date', TimeDepositsProvider::getMaturityDate($state))),
-                        DatePicker::make('maturity_date')->required()->readOnly()->default(TimeDepositsProvider::getMaturityDate(today()))->native(false),
+                        Placeholder::make('maturity_date')->content(TimeDepositsProvider::getMaturityDate(today())->format('F d, Y')),
                         Select::make('payment_type_id')
                             ->paymenttype()
                             ->required(),
@@ -124,13 +123,10 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                         Placeholder::make('amount')->content(fn () => format_money($record->maturity_amount, 'PHP')),
                         Placeholder::make('number_of_days')->content(TimeDepositsProvider::NUMBER_OF_DAYS),
                         Placeholder::make('maturity_amount')->content(fn () => format_money(TimeDepositsProvider::getMaturityAmount($record->maturity_amount), 'PHP')),
-                        TextInput::make('tdc_number')->label('TDC Number')->required()->unique('time_deposits', 'tdc_number')->validationAttribute('TDC Number'),
                     ])
                     ->action(function ($record, $data) {
                         DB::beginTransaction();
-                        $record->update([
-                            'withdrawal_date' => $data['withdrawal_date'],
-                        ]);
+                        app(ClaimTimeDeposit::class)->handle(timeDeposit: $record, withdrawal_date: $data['withdrawal_date']);
                         unset($data['withdrawal_date']);
                         TimeDeposit::create([
                             ...$data,
@@ -153,9 +149,7 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                                 ->label('Account'),
                         ])
                         ->action(function ($record, $data) {
-                            $record->update([
-                                'withdrawal_date' => today(),
-                            ]);
+                            app(ClaimTimeDeposit::class)->handle(timeDeposit: $record, withdrawal_date: today());
                             app(DepositToSavingsAccount::class)->handle(Member::find($this->member_id), new SavingsData(
                                 payment_type_id: 1,
                                 reference_number: TimeDepositsProvider::FROM_TRANSFER_CODE,
@@ -169,9 +163,7 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                     Action::make('to_imprests')
                         ->requiresConfirmation()
                         ->action(function ($record) {
-                            $record->update([
-                                'withdrawal_date' => today(),
-                            ]);
+                            app(ClaimTimeDeposit::class)->handle(timeDeposit: $record, withdrawal_date: today());
                             app(DepositToImprestAccount::class)->handle(Member::find($this->member_id), new ImprestData(
                                 payment_type_id: 1,
                                 reference_number: TimeDepositsProvider::FROM_TRANSFER_CODE,
@@ -190,7 +182,7 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                 CreateAction::make()
                     ->form([
                         DatePicker::make('transaction_date')->required()->default(today())->native(false)->live()->afterStateUpdated(fn (Set $set, $state) => $set('maturity_date', TimeDepositsProvider::getMaturityDate($state))),
-                        DatePicker::make('maturity_date')->required()->readOnly()->default(TimeDepositsProvider::getMaturityDate(today()))->native(false),
+                        Placeholder::make('maturity_date')->content(TimeDepositsProvider::getMaturityDate(today())->format('F d, Y')),
                         Select::make('payment_type_id')
                             ->paymenttype()
                             ->required(),
@@ -203,13 +195,17 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                             ->minValue(TimeDepositsProvider::MINIMUM_DEPOSIT)->default(TimeDepositsProvider::MINIMUM_DEPOSIT),
                         Placeholder::make('number_of_days')->content(TimeDepositsProvider::NUMBER_OF_DAYS),
                         Placeholder::make('maturity_amount')->content(fn (Get $get) => format_money(TimeDepositsProvider::getMaturityAmount(floatval($get('amount'))), 'PHP')),
-                        TextInput::make('tdc_number')->label('TDC Number')->required()->unique('time_deposits', 'tdc_number')->validationAttribute('TDC Number'),
                     ])
                     ->action(function ($data) {
-                        TimeDeposit::create([
-                            ...$data,
-                            'member_id' => $this->member_id,
-                        ]);
+                        app(CreateTimeDeposit::class)->handle(timeDepositData: new TimeDepositData(
+                            member_id: $this->member_id,
+                            maturity_date: TimeDepositsProvider::getMaturityDate(today()),
+                            reference_number: $data['reference_number'],
+                            payment_type_id: $data['payment_type_id'],
+                            amount: $data['amount'],
+                            maturity_amount: TimeDepositsProvider::getMaturityAmount(floatval($data['amount'])),
+                        ), transactionType: TransactionType::firstWhere('name', 'CRJ'));
+                        Notification::make()->title('Time deposit created.')->success()->send();
                     })
                     ->createAnother(false),
             ])
