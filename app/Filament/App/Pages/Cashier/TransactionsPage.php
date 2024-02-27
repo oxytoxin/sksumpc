@@ -2,49 +2,53 @@
 
 namespace App\Filament\App\Pages\Cashier;
 
-use App\Actions\CapitalSubscription\PayCapitalSubscription;
-use App\Actions\CashCollections\PayCashCollectible;
-use App\Actions\Imprests\DepositToImprestAccount;
-use App\Actions\Imprests\WithdrawFromImprestAccount;
-use App\Actions\Loans\PayLoan;
-use App\Actions\LoveGifts\DepositToLoveGiftsAccount;
-use App\Actions\LoveGifts\WithdrawFromLoveGiftsAccount;
-use App\Actions\Savings\DepositToSavingsAccount;
-use App\Actions\Savings\WithdrawFromSavingsAccount;
-use App\Actions\TimeDeposits\CreateTimeDeposit;
-use App\Models\CapitalSubscription;
-use App\Models\CashCollectible;
-use App\Models\Loan;
-use App\Models\LoanAccount;
-use App\Models\LoveGiftAccount;
-use App\Models\Member;
-use App\Models\SavingsAccount;
-use App\Models\TimeDeposit;
-use App\Models\TransactionType;
-use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionPaymentData;
-use App\Oxytoxin\DTO\CashCollectibles\CashCollectiblePaymentData;
-use App\Oxytoxin\DTO\Loan\LoanPaymentData;
-use App\Oxytoxin\DTO\MSO\ImprestData;
-use App\Oxytoxin\DTO\MSO\LoveGiftData;
-use App\Oxytoxin\DTO\MSO\SavingsData;
-use App\Oxytoxin\DTO\MSO\TimeDepositData;
-use App\Oxytoxin\Providers\ImprestsProvider;
-use App\Oxytoxin\Providers\LoveGiftProvider;
-use App\Oxytoxin\Providers\SavingsProvider;
-use App\Oxytoxin\Providers\TimeDepositsProvider;
 use DB;
-use Filament\Actions\Action;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
+use App\Models\Loan;
+use App\Models\Member;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use App\Models\LoanAccount;
+use App\Models\TimeDeposit;
+use Filament\Actions\Action;
+use App\Actions\Loans\PayLoan;
+use App\Models\SavingsAccount;
+use App\Models\CashCollectible;
+use App\Models\LoveGiftAccount;
+use App\Models\TransactionType;
+use Filament\Support\Colors\Color;
+use App\Models\CapitalSubscription;
+use App\Oxytoxin\DTO\MSO\ImprestData;
+use App\Oxytoxin\DTO\MSO\SavingsData;
+use Filament\Forms\Components\Select;
+use App\Oxytoxin\DTO\MSO\LoveGiftData;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
+use App\Oxytoxin\DTO\MSO\TimeDepositData;
+use Filament\Forms\Components\DatePicker;
+use App\Oxytoxin\DTO\Loan\LoanPaymentData;
+use Filament\Forms\Components\Placeholder;
 use Illuminate\Contracts\Support\Htmlable;
-
+use App\Oxytoxin\Providers\SavingsProvider;
 use function Filament\Support\format_money;
+use App\Oxytoxin\Providers\ImprestsProvider;
+use App\Oxytoxin\Providers\LoveGiftProvider;
+use App\Actions\TimeDeposits\CreateTimeDeposit;
+use App\Actions\Savings\CreateNewSavingsAccount;
+use App\Actions\Savings\DepositToSavingsAccount;
+use App\Oxytoxin\Providers\TimeDepositsProvider;
+use App\Actions\Imprests\DepositToImprestAccount;
+use App\Actions\CashCollections\PayCashCollectible;
+use App\Actions\Savings\WithdrawFromSavingsAccount;
+use App\Actions\Imprests\WithdrawFromImprestAccount;
+use App\Actions\LoveGifts\DepositToLoveGiftsAccount;
+use App\Oxytoxin\DTO\MSO\Accounts\SavingsAccountData;
+use App\Actions\LoveGifts\WithdrawFromLoveGiftsAccount;
+
+use App\Actions\CapitalSubscription\PayCapitalSubscription;
+use Filament\Forms\Components\Actions\Action as FormAction;
+use App\Oxytoxin\DTO\CashCollectibles\CashCollectiblePaymentData;
+use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionPaymentData;
 
 class TransactionsPage extends Page
 {
@@ -142,7 +146,27 @@ class TransactionsPage extends Page
                 Select::make('savings_account_id')
                     ->options(fn ($get) => SavingsAccount::whereMemberId($get('member_id'))->pluck('name', 'id'))
                     ->label('Account')
-                    ->required(),
+                    ->required()
+                    ->suffixAction(
+                        fn ($get) =>
+                        FormAction::make('NewAccount')
+                            ->label('New Account')
+                            ->modalHeading('New Savings Account')
+                            ->form([
+                                TextInput::make('name')
+                                    ->required(),
+                            ])
+                            ->visible(fn ($get) => $get('member_id'))
+                            ->action(function ($data, $get) {
+                                app(CreateNewSavingsAccount::class)->handle(new SavingsAccountData(
+                                    member_id: $get('member_id'),
+                                    name: $data['name'],
+                                ));
+                                Notification::make()->title('Savings account created!')->success()->send();
+                            })
+                            ->icon('heroicon-m-plus')
+                            ->color(Color::Emerald),
+                    ),
                 Placeholder::make('member_type')
                     ->content(fn ($get) => Member::find($get('member_id'))?->member_type->name),
                 Select::make('action')
