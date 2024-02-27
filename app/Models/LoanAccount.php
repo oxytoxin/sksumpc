@@ -18,4 +18,9 @@ class LoanAccount extends Account
             $query->whereNotNull('member_id')->whereTag('member_loan');
         });
     }
+
+    public function loan()
+    {
+        return $this->hasOne(Loan::class);
+    }
 }

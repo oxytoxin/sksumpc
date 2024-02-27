@@ -159,12 +159,10 @@ class LoanApplicationResource extends Resource
                     ->color('danger')
                     ->visible(fn ($record) => $record->status == LoanApplication::STATUS_PROCESSING),
                 Action::make('new_loan')
-                    ->visible(fn ($record) => auth()->user()->can('manage loans') && ! $record->loan && $record->status == LoanApplication::STATUS_APPROVED)
+                    ->visible(fn ($record) => auth()->user()->can('manage loans') && !$record->loan && $record->status == LoanApplication::STATUS_APPROVED)
                     ->modalWidth(MaxWidth::ScreenExtraLarge)
                     ->fillForm(function ($record) {
-                        $deductions = LoansProvider::computeDeductions($record->loan_type, $record->desired_amount, $record->member);
                         $disclosure_sheet_items = LoansProvider::getDisclosureSheetItems($record->loan_type, $record->desired_amount, $record->member);
-
                         return [
                             'gross_amount' => $record->desired_amount,
                             'number_of_terms' => $record->number_of_terms,

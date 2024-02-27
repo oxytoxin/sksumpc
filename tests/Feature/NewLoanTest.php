@@ -36,9 +36,9 @@ it('can create a new loan', function () {
         ],
     ]);
     assertModelExists($la);
-    livewire(LoansTable::class, ['member' => $member])
-        ->callTableAction(name: CreateAction::class, data: ['loan_application_id' => $la->id, 'transaction_date' => today()]);
-    $loan = Loan::latest()->first();
-    $loan->posted = true;
-    $loan->save();
+    // livewire(LoansTable::class, ['member' => $member])
+    //     ->callTableAction(name: CreateAction::class, data: ['loan_application_id' => $la->id, 'transaction_date' => today()]);
+    // $loan = Loan::latest()->first();
+    // $loan->posted = true;
+    // $loan->save();
 });

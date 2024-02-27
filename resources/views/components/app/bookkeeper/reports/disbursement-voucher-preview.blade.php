@@ -71,16 +71,6 @@
                 </tr>
             @endforeach
             <tr>
-                <td colspan="2" class="border border-black uppercase"></td>
-                <td colspan="2" class="border border-black font-bold px-2">TOTAL:</td>
-                <td class="border border-black text-right">
-                    {{ $disbursement_voucher_items->sum('debit') ? number_format($disbursement_voucher_items->sum('debit'), 2) : '' }}
-                </td>
-                <td class="border border-black text-right">
-                    {{ $disbursement_voucher_items->sum('credit') ? number_format($disbursement_voucher_items->sum('credit'), 2) : '' }}
-                </td>
-            </tr>
-            <tr>
                 <td class="border-b border-black" colspan="6">&nbsp</td>
             </tr>
             <tr>

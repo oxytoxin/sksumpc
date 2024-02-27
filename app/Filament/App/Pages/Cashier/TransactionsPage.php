@@ -14,6 +14,8 @@ use App\Actions\Savings\WithdrawFromSavingsAccount;
 use App\Models\CapitalSubscription;
 use App\Models\CashCollectible;
 use App\Models\Loan;
+use App\Models\LoanAccount;
+use App\Models\LoveGiftAccount;
 use App\Models\Member;
 use App\Models\SavingsAccount;
 use App\Models\TimeDeposit;
@@ -25,6 +27,7 @@ use App\Oxytoxin\DTO\MSO\ImprestData;
 use App\Oxytoxin\DTO\MSO\LoveGiftData;
 use App\Oxytoxin\DTO\MSO\SavingsData;
 use App\Oxytoxin\Providers\ImprestsProvider;
+use App\Oxytoxin\Providers\LoveGiftProvider;
 use App\Oxytoxin\Providers\SavingsProvider;
 use App\Oxytoxin\Providers\TimeDepositsProvider;
 use DB;
@@ -195,10 +198,6 @@ class TransactionsPage extends Page
                     ->live()
                     ->required()
                     ->preload(),
-                Select::make('savings_account_id')
-                    ->options(fn ($get) => SavingsAccount::whereMemberId($get('member_id'))->pluck('name', 'id'))
-                    ->label('Account')
-                    ->required(),
                 Placeholder::make('member_type')
                     ->content(fn ($get) => Member::find($get('member_id'))?->member_type->name),
                 Select::make('action')
@@ -231,7 +230,7 @@ class TransactionsPage extends Page
                 } else {
                     app(WithdrawFromLoveGiftsAccount::class)->handle($member, new LoveGiftData(
                         payment_type_id: $data['payment_type_id'],
-                        reference_number: SavingsProvider::WITHDRAWAL_TRANSFER_CODE,
+                        reference_number: LoveGiftProvider::WITHDRAWAL_TRANSFER_CODE,
                         amount: $data['amount'],
                     ), TransactionType::firstWhere('name', 'CRJ'));
                 }
@@ -353,10 +352,10 @@ class TransactionsPage extends Page
                     ->content(fn ($get) => Member::find($get('member_id'))?->member_type->name),
                 Select::make('loan_id')
                     ->label('Loan')
-                    ->options(fn ($get) => Loan::whereMemberId($get('member_id'))->where('posted', true)->where('outstanding_balance', '>', 0)->pluck('reference_number', 'id'))
+                    ->options(fn ($get) => LoanAccount::whereMemberId($get('member_id'))->whereHas('loan', fn ($q) => $q->where('posted', true)->where('outstanding_balance', '>', 0))->pluck('number', 'id'))
                     ->searchable()
                     ->live()
-                    ->afterStateUpdated(fn ($set, $state) => $set('amount', Loan::find($state)->monthly_payment))
+                    ->afterStateUpdated(fn ($set, $state) => $set('amount', LoanAccount::find($state)?->loan->monthly_payment))
                     ->required()
                     ->preload(),
                 Select::make('payment_type_id')
@@ -421,7 +420,7 @@ class TransactionsPage extends Page
                     reference_number: $data['reference_number'],
                     amount: $data['amount']
                 ), TransactionType::firstWhere('name', 'CRJ'));
-                Notification::make()->title('Payment made for '.$cashCollectible->name.'!')->success()->send();
+                Notification::make()->title('Payment made for ' . $cashCollectible->name . '!')->success()->send();
             });
     }
 }
