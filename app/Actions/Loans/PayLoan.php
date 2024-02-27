@@ -27,6 +27,28 @@ class PayLoan
         $principal_payment = $loanPaymentData->amount - $interest_payment;
         $loan_receivables_account = Account::whereAccountableType(LoanType::class)->whereAccountableId($loan->loan_type_id)->whereTag('loan_receivables')->first();
         $loan_interests_account = Account::whereAccountableType(LoanType::class)->whereAccountableId($loan->loan_type_id)->whereTag('loan_interests')->first();
+        
+        if ($loanPaymentData->payment_type_id == 1) {
+            app(CreateTransaction::class)->handle(new TransactionData(
+                account_id: Account::getCashOnHand()->id,
+                transactionType: $transactionType,
+                reference_number: $loanPaymentData->reference_number,
+                debit: $loanPaymentData->amount,
+                member_id: $loan->member_id,
+                remarks: 'Member Loan Payment'
+            ));
+        }
+        if ($loanPaymentData->payment_type_id == 4) {
+            app(CreateTransaction::class)->handle(new TransactionData(
+                account_id: Account::getCashInBankGF()->id,
+                transactionType: $transactionType,
+                reference_number: $loanPaymentData->reference_number,
+                debit: $loanPaymentData->amount,
+                member_id: $loan->member_id,
+                remarks: 'Member Loan Payment'
+            ));
+        }
+
         app(CreateTransaction::class)->handle(new TransactionData(
             account_id: $loan_receivables_account->id,
             transactionType: $transactionType,
