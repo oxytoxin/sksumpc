@@ -27,6 +27,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
@@ -79,6 +80,13 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                     }),
             ], layout: FiltersLayout::AboveContent)
             ->actions([
+                Action::make('certificate')
+                    ->outlined()
+                    ->button()
+                    ->modalWidth(MaxWidth::SixExtraLarge)
+                    ->modalSubmitAction(false)
+                    ->modalCancelAction(false)
+                    ->modalContent(fn ($record) => view('filament.app.views.time-deposit-certificate', ['time_deposit' => $record])),
                 Action::make('Terminate')
                     ->form([
                         Placeholder::make('note')->content(fn ($record) => 'Pretermination will accrue only 1% interest.'),

@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use App\Oxytoxin\Providers\TimeDepositsProvider;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use NumberFormatter;
 
 /**
  * @mixin IdeHelperTimeDeposit
@@ -36,6 +38,11 @@ class TimeDeposit extends Model
     public function time_deposit_account()
     {
         return $this->belongsTo(TimeDepositAccount::class);
+    }
+
+    public function amountInWords(): Attribute
+    {
+        return Attribute::make(get: fn () => (new NumberFormatter("en", NumberFormatter::SPELLOUT))->format($this->amount));
     }
 
     protected static function booted()
