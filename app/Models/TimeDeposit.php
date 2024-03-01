@@ -45,6 +45,15 @@ class TimeDeposit extends Model
         return Attribute::make(get: fn () => (new NumberFormatter("en", NumberFormatter::SPELLOUT))->format($this->amount));
     }
 
+    public function daysInWords(): Attribute
+    {
+        return Attribute::make(get: fn () => (new NumberFormatter("en", NumberFormatter::SPELLOUT))->format($this->number_of_days));
+    }
+    public function interestRateInWords(): Attribute
+    {
+        return Attribute::make(get: fn () => (new NumberFormatter("en", NumberFormatter::SPELLOUT))->format($this->interest_rate * 100));
+    }
+
     protected static function booted()
     {
         static::creating(function (TimeDeposit $td) {
