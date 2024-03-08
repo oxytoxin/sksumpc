@@ -56,7 +56,7 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
         return $table
             ->query(TimeDeposit::whereMemberId($this->member_id))
             ->columns([
-                TextColumn::make('account_number'),
+                TextColumn::make('time_deposit_account.number')->label('Account Number'),
                 TextColumn::make('tdc_number')->label('TDC Number'),
                 TextColumn::make('amount')->money('PHP')->label('Principal'),
                 TextColumn::make('interest')->money('PHP'),

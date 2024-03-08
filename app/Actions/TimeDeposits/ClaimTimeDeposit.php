@@ -33,7 +33,8 @@ class ClaimTimeDeposit
             reference_number: $timeDeposit->reference_number,
             debit: $timeDeposit->maturity_amount,
             member_id: $timeDeposit->member_id,
-            remarks: 'Member Time Deposit Claim'
+            remarks: 'Member Time Deposit Claim',
+            tag: 'member_time_deposit',
         ));
     }
 }

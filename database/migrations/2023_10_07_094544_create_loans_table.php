@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\DisbursementVoucher;
 use App\Models\Loan;
 use App\Models\LoanAccount;
 use App\Models\LoanApplication;
@@ -23,6 +24,7 @@ return new class extends Migration
             $table->foreignIdFor(Member::class)->constrained();
             $table->foreignIdFor(LoanApplication::class)->constrained();
             $table->foreignIdFor(LoanType::class)->constrained();
+            $table->foreignIdFor(DisbursementVoucher::class)->nullable()->constrained();
             $table->string('reference_number');
             $table->string('check_number')->nullable();
             $table->string('priority_number');

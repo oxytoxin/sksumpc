@@ -67,7 +67,7 @@ class TransactionsList extends Page implements HasForms, HasTable
                     ->when($this->year, fn ($q) => $q->whereYear('transaction_date', $this->year))
             )
             ->columns([
-                TextColumn::make('Number')->state(
+                TextColumn::make('#')->state(
                     static function (HasTable $livewire, stdClass $rowLoop): string {
                         return (string) (
                             $rowLoop->iteration +
@@ -79,6 +79,7 @@ class TransactionsList extends Page implements HasForms, HasTable
                 ),
                 TextColumn::make('transaction_date')->date('F d, Y'),
                 TextColumn::make('reference_number'),
+                TextColumn::make('member.full_name')->label('Member'),
                 TextColumn::make('account.name')->label('Account Name'),
                 TextColumn::make('account.number')->label('Account Number'),
                 TextColumn::make('debit'),

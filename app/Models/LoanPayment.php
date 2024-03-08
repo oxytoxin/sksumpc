@@ -25,6 +25,11 @@ class LoanPayment extends Model
         return $this->belongsTo(Loan::class);
     }
 
+    public function member()
+    {
+        return $this->belongsTo(Member::class);
+    }
+
     public function cashier()
     {
         return $this->belongsTo(User::class, 'cashier_id');

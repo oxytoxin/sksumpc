@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->boolean('buy_out')->default(false);
             $table->foreignId('loan_id')->constrained();
+            $table->foreignId('member_id')->constrained();
             $table->decimal('amount', 18, 4);
             $table->decimal('interest_payment', 18, 4)->default(0);
             $table->decimal('principal_payment', 18, 4)->default(0);

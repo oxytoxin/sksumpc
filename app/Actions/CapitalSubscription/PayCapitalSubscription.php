@@ -5,6 +5,7 @@ namespace App\Actions\CapitalSubscription;
 use App\Actions\Transactions\CreateTransaction;
 use App\Models\Account;
 use App\Models\CapitalSubscription;
+use App\Models\CapitalSubscriptionPayment;
 use App\Models\TransactionType;
 use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionPaymentData;
 use App\Oxytoxin\DTO\Transactions\TransactionData;
@@ -18,7 +19,13 @@ class PayCapitalSubscription
     public function handle(CapitalSubscription $cbu, CapitalSubscriptionPaymentData $data, TransactionType $transactionType, $transact = true)
     {
         DB::beginTransaction();
-        $payment = $cbu->payments()->create($data->toArray());
+        $payment = CapitalSubscriptionPayment::create([
+            'capital_subscription_id' => $cbu->id,
+            'member_id' => $cbu->member_id,
+            'payment_type_id' => $data->payment_type_id,
+            'reference_number' => $data->reference_number,
+            'amount' => $data->amount,
+        ]);
         if ($transact) {
             if ($data->payment_type_id == 1) {
                 app(CreateTransaction::class)->handle(new TransactionData(

@@ -37,8 +37,7 @@ return new class extends Migration
             $table->foreignId('occupation_id')->nullable()->constrained();
             $table->string('present_employer')->nullable();
             $table->string('highest_educational_attainment')->nullable();
-            // $table->json('dependents')->default('(JSON_ARRAY())');
-            $table->json('dependents')->nullable();
+            $table->json('dependents')->default(DB::raw('(JSON_ARRAY())'));
             $table->integer('dependents_count')->virtualAs('JSON_LENGTH(dependents)');
             $table->foreignId('religion_id')->nullable()->constrained();
             $table->decimal('annual_income', 18, 4, true)->nullable();

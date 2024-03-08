@@ -2,16 +2,25 @@
 
 namespace App\Models;
 
-use App\Actions\Loans\RunLoanProcessesAfterPosting;
-use App\Actions\Loans\UpdateLoanDeductionsData;
-use Illuminate\Contracts\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use NumberFormatter;
+use App\Models\Member;
+use App\Models\LoanType;
+use App\Models\LoanAccount;
+use App\Models\LoanPayment;
+use App\Models\LoanApplication;
+use App\Models\LoanAmortization;
+use App\Models\DisbursementVoucher;
 
+use Illuminate\Database\Eloquent\Model;
 use function Filament\Support\format_money;
+use App\Actions\Loans\UpdateLoanDeductionsData;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use App\Actions\Loans\RunLoanProcessesAfterPosting;
+use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * @mixin IdeHelperLoan
@@ -41,6 +50,16 @@ class Loan extends Model
         'posted' => 'boolean',
     ];
 
+    public function netAmountInWords(): Attribute
+    {
+        return Attribute::make(get: fn () => (new NumberFormatter("en", NumberFormatter::SPELLOUT))->format($this->net_amount));
+    }
+
+    public function disbursement_voucher()
+    {
+        return $this->belongsTo(DisbursementVoucher::class);
+    }
+
     public function loan_account()
     {
         return $this->belongsTo(LoanAccount::class);
@@ -53,7 +72,7 @@ class Loan extends Model
 
     public function getDeductionsListAttribute()
     {
-        return collect($this->deductions)->map(fn ($d) => $d['name'].': '.format_money($d['amount'], 'PHP'))->toArray();
+        return collect($this->deductions)->map(fn ($d) => $d['name'] . ': ' . format_money($d['amount'], 'PHP'))->toArray();
     }
 
     public function getMaturityDateAttribute()

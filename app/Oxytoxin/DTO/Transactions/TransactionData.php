@@ -15,6 +15,7 @@ class TransactionData extends Data
         public ?string $credit = null,
         public ?int $member_id = null,
         public ?string $remarks = null,
+        public ?string $tag = null,
     ) {
     }
 }

@@ -20,6 +20,7 @@ class CreateNewLoanApplication
             'desired_amount' => $loanApplicationData->desired_amount,
             'monthly_payment' => $loanApplicationData->monthly_payment,
             'purpose' => $loanApplicationData->purpose,
+            'comakers' => $loanApplicationData->comakers,
         ]);
     }
 }

@@ -29,7 +29,8 @@ class LoanApplication extends Model
         'transaction_date' => 'immutable_date',
         'disapproval_date' => 'immutable_date',
         'status' => 'integer',
-        'approvals' => DataCollection::class.':'.LoanApproval::class,
+        'approvals' => DataCollection::class . ':' . LoanApproval::class,
+        'comakers' => 'array',
     ];
 
     public function getStatusNameAttribute()
@@ -97,7 +98,7 @@ class LoanApplication extends Model
         });
 
         static::created(function (LoanApplication $loanApplication) {
-            $loanApplication->reference_number = $loanApplication->loan_type->code.'-'.today()->format('Y-').str_pad($loanApplication->id, 6, '0', STR_PAD_LEFT);
+            $loanApplication->reference_number = $loanApplication->loan_type->code . '-' . today()->format('Y-') . str_pad($loanApplication->id, 6, '0', STR_PAD_LEFT);
             $loanApplication->save();
         });
     }

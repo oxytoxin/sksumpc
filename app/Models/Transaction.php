@@ -15,7 +15,13 @@ class Transaction extends Model
     protected $casts = [
         'credit' => 'decimal:4',
         'debit' => 'decimal:4',
+        'transaction_date' => 'immutable_datetime'
     ];
+
+    public function member()
+    {
+        return $this->belongsTo(Member::class);
+    }
 
     public function account()
     {

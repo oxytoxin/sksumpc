@@ -67,7 +67,8 @@ class CreateTimeDeposit
             reference_number: $td->reference_number,
             credit: $td->amount,
             member_id: $td->member_id,
-            remarks: 'Member Time Deposit'
+            remarks: 'Member Time Deposit',
+            tag: 'member_time_deposit'
         ));
         DB::commit();
         return $td;

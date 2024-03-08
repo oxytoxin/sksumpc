@@ -164,6 +164,7 @@ class LoanResource extends Resource
                             $dv->disbursement_voucher_items()->create($item);
                         }
                         $record->update([
+                            'disbursement_voucher_id' => $dv->id,
                             'disclosure_sheet_items' => $new_disclosure_sheet_items,
                         ]);
                         app(ApproveLoanPosting::class)->handle($record);

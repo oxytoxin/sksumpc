@@ -6,7 +6,7 @@
             </div>
             <div class="text-center my-8">
                 <h1 class="text-4xl font-bold text-green-600">CERTIFICATE OF TIME DEPOSIT</h1>
-                <p>NO. <span class="underline">{{ $time_deposit->tdc_number }}</span></p>
+                <p>NO. <span class="underline">{{ $time_deposit->time_deposit_account->number }}</span></p>
             </div>
             <div class="text-center flex flex-col items-center">
                 <p>This certifies that:</p>

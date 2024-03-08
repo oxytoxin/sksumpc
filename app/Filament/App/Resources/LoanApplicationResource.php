@@ -19,6 +19,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Section;
@@ -95,6 +96,7 @@ class LoanApplicationResource extends Resource
                 TextInput::make('priority_number'),
                 TextInput::make('desired_amount')->moneymask()->required(),
                 TextInput::make('purpose'),
+                TagsInput::make('comakers')->placeholder('Add co-maker'),
             ]);
     }
 
@@ -156,7 +158,7 @@ class LoanApplicationResource extends Resource
                     ->button()
                     ->color('danger')
                     ->visible(fn ($record) => $record->status == LoanApplication::STATUS_PROCESSING),
-                Action::make('new_loan')
+                Action::make('disclosure')
                     ->visible(fn ($record) => auth()->user()->can('manage loans') && !$record->loan && $record->status == LoanApplication::STATUS_APPROVED)
                     ->modalWidth(MaxWidth::ScreenExtraLarge)
                     ->fillForm(function ($record) {
@@ -211,13 +213,6 @@ class LoanApplicationResource extends Resource
                                 TextInput::make('credit')
                                     ->moneymask(),
                             ]),
-                        // Grid::make(2)
-                        //     ->schema([
-                        //         Placeholder::make('deductions_amount')
-                        //             ->content(fn ($get) => format_money(collect($get('deductions'))->sum('amount'), 'PHP')),
-                        //         Placeholder::make('net_amount')
-                        //             ->content(fn ($get) => format_money(floatval(str_replace(',', '', $get('gross_amount') ?? 0)) - collect($get('deductions'))->sum('amount'), 'PHP')),
-                        //     ]),
                         DatePicker::make('release_date')->required()->native(false),
                     ])
                     ->action(function (LoanApplication $record, $data) {

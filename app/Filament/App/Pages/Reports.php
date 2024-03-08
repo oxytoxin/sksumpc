@@ -2,8 +2,16 @@
 
 namespace App\Filament\App\Pages;
 
+use App\Filament\App\Pages\Cashier\Reports\CashCollectiblesReport;
+use App\Filament\App\Pages\Cashier\Reports\ImprestsReport;
+use App\Filament\App\Pages\Cashier\Reports\LoanPaymentsReport;
+use App\Filament\App\Pages\Cashier\Reports\LoveGiftsReport;
+use App\Filament\App\Pages\Cashier\Reports\SavingsReport;
+use App\Filament\App\Pages\Cashier\Reports\ShareCapitalPaymentsReport;
+use App\Filament\App\Pages\Cashier\Reports\TimeDepositsReport;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Livewire;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\View;
@@ -31,56 +39,35 @@ class Reports extends Page implements HasForms
     {
         return $form->schema([
             Tabs::make()
+                ->activeTab(1)
                 ->schema([
-                    Tab::make('Daily Summaries')
+                    Tab::make('Share Capital')
                         ->schema([
-                            Actions::make([
-                                Action::make('daily_summary_capital_subscriptions')
-                                    ->label('Daily Summary for CBU')
-                                    ->url(route('filament.app.pages.daily-summary-capital-subscriptions')),
-                                Action::make('daily_summary_savings')
-                                    ->label('Daily Summary for Savings')
-                                    ->url(route('filament.app.pages.daily-summary-savings')),
-                                Action::make('daily_summary_imprests')
-                                    ->label('Daily Summary for Imprests')
-                                    ->url(route('filament.app.pages.daily-summary-imprests')),
-                                Action::make('daily_summary_time_deposits')
-                                    ->label('Daily Summary for Time Deposits')
-                                    ->url(route('filament.app.pages.daily-summary-time-deposits')),
-                                Action::make('daily_summary_cash_collectibles')
-                                    ->label('Daily Summary for Cash Collectibles')
-                                    ->url(route('filament.app.pages.daily-summary-cash-collectibles')),
-                            ]),
-                            Actions::make([
-                                Action::make('daily_collection_report_mso_and_time_deposits')
-                                    ->label('Daily Collection Report of MSO and Time Deposits')
-                                    ->url(route('filament.app.pages.daily-collection-report-m-s-o-and-time-deposits')),
-                                Action::make('daily_collection_report_ladies_dormitory')
-                                    ->label('Daily Collection Report of Ladies Dormitory')
-                                    ->url(route('filament.app.pages.daily-collection-report-ladies-dormitory')),
-                                Action::make('daily_collection_report_rice_and_groceries')
-                                    ->label('Daily Collection Report of Rice and Groceries')
-                                    ->url(route('filament.app.pages.daily-collection-report-rice-and-groceries')),
-                                Action::make('daily_collection_report_loan')
-                                    ->label('Daily Collection Report of Loan')
-                                    ->url(route('filament.app.pages.daily-collection-report-loan')),
-                            ]),
+                            Livewire::make(ShareCapitalPaymentsReport::class, ['report_title' => "REPORT ON MEMBERS' CBU"])
                         ]),
-                    Tab::make('Monthly Summaries')
+                    Tab::make('Savings')
                         ->schema([
-                            Actions::make([
-                                Action::make('monthly_summary_savings')
-                                    ->label('Monthly Summary for Savings')
-                                    ->url(route('filament.app.pages.monthly-summary-savings')),
-                            ]),
+                            Livewire::make(SavingsReport::class, ['report_title' => "REPORT ON MEMBERS' SAVINGS"])
                         ]),
-                    Tab::make('Cash Beginnings')
+                    Tab::make('Imprests')
                         ->schema([
-                            View::make('filament.app.views.cash-beginnings-table'),
+                            Livewire::make(ImprestsReport::class, ['report_title' => "REPORT ON MEMBERS' IMPRESTS"])
                         ]),
-                    Tab::make('Cash Floating')
+                    Tab::make('Love Gift')
                         ->schema([
-                            View::make('filament.app.views.cash-floating'),
+                            Livewire::make(LoveGiftsReport::class, ['report_title' => "REPORT ON MEMBERS' LOVE GIFT"])
+                        ]),
+                    Tab::make('Time Deposits')
+                        ->schema([
+                            Livewire::make(TimeDepositsReport::class, ['report_title' => "REPORT ON MEMBERS' TIME DEPOSITS"])
+                        ]),
+                    Tab::make('Cash Collectibles')
+                        ->schema([
+                            Livewire::make(CashCollectiblesReport::class, ['report_title' => "REPORT ON MEMBERS' CASH COLLECTIONS"])
+                        ]),
+                    Tab::make('Loan')
+                        ->schema([
+                            Livewire::make(LoanPaymentsReport::class, ['report_title' => "REPORT ON MEMBERS' LOAN PAYMENTS"])
                         ]),
                 ]),
         ]);

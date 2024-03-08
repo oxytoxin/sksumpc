@@ -24,6 +24,7 @@ return new class extends Migration
             $table->decimal('credit', 18, 4)->nullable();
             $table->decimal('debit', 18, 4)->nullable();
             $table->date('transaction_date')->default(DB::raw('(CURRENT_DATE)'));
+            $table->string('tag')->nullable()->index();
             $table->timestamps();
         });
     }

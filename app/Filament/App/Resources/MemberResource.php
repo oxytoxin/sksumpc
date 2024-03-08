@@ -223,14 +223,14 @@ class MemberResource extends Resource
                                     ->relationship('region', 'description'),
                                 Select::make('province_id')
                                     ->live()
-                                    ->disabled(fn ($get) => ! $get('region_id'))
+                                    ->disabled(fn ($get) => !$get('region_id'))
                                     ->relationship('province', 'name', fn ($query, $get) => $query->whereRegionId($get('region_id'))),
                                 Select::make('municipality_id')
                                     ->live()
-                                    ->disabled(fn ($get) => ! $get('province_id'))
+                                    ->disabled(fn ($get) => !$get('province_id'))
                                     ->relationship('municipality', 'name', fn ($query, $get) => $query->whereProvinceId($get('province_id'))),
                                 Select::make('barangay_id')
-                                    ->disabled(fn ($get) => ! $get('municipality_id'))
+                                    ->disabled(fn ($get) => !$get('municipality_id'))
                                     ->relationship('barangay', 'name', fn ($query, $get) => $query->whereMunicipalityId($get('municipality_id'))),
                             ])->columns(2),
                     ]),
@@ -366,6 +366,7 @@ class MemberResource extends Resource
                             ->when($state['value'] == 2, fn ($q) => $q->whereNotNull('terminated_at'))
                     ),
                 DateRangeFilter::make('created_at')
+                    ->displayFormat('MM/DD/YYYY')
                     ->label('Date of Membership'),
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
@@ -390,7 +391,7 @@ class MemberResource extends Resource
                             ->password(),
                     ])
                     ->action(function (Member $record, $data) {
-                        if (! OverrideProvider::promptManagerPasskey($data['passkey'])) {
+                        if (!OverrideProvider::promptManagerPasskey($data['passkey'])) {
                             return;
                         }
                         DB::beginTransaction();

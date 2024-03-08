@@ -27,7 +27,7 @@ class TerminateTimeDeposit
             reference_number: $timeDeposit->reference_number,
             credit: $timeDeposit->maturity_amount,
             member_id: $timeDeposit->member_id,
-            remarks: 'Member Time Deposit Claim'
+            remarks: 'Member Time Deposit Termination'
         ));
 
         app(CreateTransaction::class)->handle(new TransactionData(
@@ -36,7 +36,8 @@ class TerminateTimeDeposit
             reference_number: $timeDeposit->reference_number,
             debit: $timeDeposit->maturity_amount,
             member_id: $timeDeposit->member_id,
-            remarks: 'Member Time Deposit Termination'
+            remarks: 'Member Time Deposit Termination',
+            tag: 'member_time_deposit',
         ));
     }
 }

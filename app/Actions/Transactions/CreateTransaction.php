@@ -20,6 +20,7 @@ class CreateTransaction
             'credit' => $transactionData->credit,
             'transaction_type_id' => $transactionData->transactionType->id,
             'remarks' => $transactionData->remarks,
+            'tag' => $transactionData->tag,
         ]);
     }
 }

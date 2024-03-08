@@ -35,6 +35,14 @@ class ViewLoanDetailsActionGroup
                 ->icon('heroicon-o-document')
                 ->visible(fn ($record) => $record instanceof Loan ? $record : $record->loan)
                 ->url(fn ($record) => route('filament.app.resources.members.loan-disclosure-sheet', ['loan' => $record instanceof Loan ? $record : $record->loan])),
+            Action::make('dv_view')
+                ->visible(fn ($record) => $record instanceof Loan ? $record->disbursement_voucher : $record->loan?->disbursement_voucher)
+                ->label('Disbursement Voucher')
+                ->icon('heroicon-o-document')
+                ->modalHeading('Disbursement Voucher Preview')
+                ->modalCancelAction(false)
+                ->modalSubmitAction(false)
+                ->modalContent(fn ($record) => view('components.app.bookkeeper.reports.disbursement-voucher-preview', ['disbursement_voucher' => $record->disbursement_voucher])),
         ])
             ->button()
             ->outlined()
