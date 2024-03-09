@@ -24,7 +24,7 @@ it('can create a new loan', function () {
     actingAs(User::find(1));
     $la = LoanApplication::create([
         'member_id' => $member->id,
-        'loan_type_id' => 1,
+        'loan_type_id' => 2,
         'number_of_terms' => 12,
         'priority_number' => '0000001',
         'desired_amount' => LoanApplication::count() * 10000 + 15000,

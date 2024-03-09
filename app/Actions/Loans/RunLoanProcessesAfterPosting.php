@@ -28,25 +28,33 @@ class RunLoanProcessesAfterPosting
         $member = $loan->member;
         $amortization_schedule = LoansProvider::generateAmortizationSchedule($loan);
         $loan->loan_amortizations()->createMany($amortization_schedule);
-        $cbu = $member->capital_subscriptions()->create([
-            'number_of_terms' => 0,
-            'number_of_shares' => $loan->cbu_amount / $member->member_type->par_value,
-            'amount_subscribed' => $loan->cbu_amount,
-            'par_value' => $member->member_type->par_value,
-            'is_common' => false,
-            'code' => Str::random(12),
-            'transaction_date' => today(),
-        ]);
-        app(PayCapitalSubscription::class)->handle($cbu, new CapitalSubscriptionPaymentData(
-            payment_type_id: 2,
-            reference_number: $loan->reference_number,
-            amount: $loan->cbu_amount
-        ), TransactionType::firstWhere('name', 'CDJ'), false);
-        app(DepositToImprestAccount::class)->handle($member, new ImprestData(
-            payment_type_id: 1,
-            reference_number: $loan->reference_number,
-            amount: $loan->imprest_amount,
-        ), TransactionType::firstWhere('name', 'CDJ'), false);
+        if ($loan->cbu_amount) {
+            $cbu = $member->capital_subscriptions_common;
+            if (!$cbu) {
+                $cbu = $member->capital_subscriptions()->create([
+                    'number_of_terms' => 0,
+                    'number_of_shares' => $loan->cbu_amount / $member->member_type->par_value,
+                    'amount_subscribed' => $loan->cbu_amount,
+                    'par_value' => $member->member_type->par_value,
+                    'is_common' => false,
+                    'code' => Str::random(12),
+                    'transaction_date' => today(),
+                ]);
+            }
+            app(PayCapitalSubscription::class)->handle($cbu, new CapitalSubscriptionPaymentData(
+                payment_type_id: 2,
+                reference_number: $loan->reference_number,
+                amount: $loan->cbu_amount
+            ), TransactionType::firstWhere('name', 'CDJ'), false);
+        }
+
+        if ($loan->imprest_amount) {
+            app(DepositToImprestAccount::class)->handle($member, new ImprestData(
+                payment_type_id: 1,
+                reference_number: $loan->reference_number,
+                amount: $loan->imprest_amount,
+            ), TransactionType::firstWhere('name', 'CDJ'), false);
+        }
         if ($loan->loan_buyout_id) {
             $existing = $member->loans()->find($loan->loan_buyout_id);
             app(PayLoan::class)->handle(loan: $existing, loanPaymentData: new LoanPaymentData(

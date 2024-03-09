@@ -118,22 +118,24 @@ class LoansProvider
             'readonly' => true,
             'code' => 'service_fee',
         ];
-        $items[] = [
-            'member_id' => $member->id,
-            'account_id' => $member->capital_subscription_account->id,
-            'credit' => round($loanType->cbu_common * $gross_amount, 4),
-            'debit' => null,
-            'readonly' => true,
-            'code' => 'cbu_amount',
-        ];
-        $items[] = [
-            'member_id' => $member->id,
-            'account_id' => $member->imprest_account->id,
-            'credit' => round($loanType->imprest * $gross_amount, 4),
-            'debit' => null,
-            'readonly' => true,
-            'code' => 'imprest_amount',
-        ];
+        if ($loanType->id != 2) {
+            $items[] = [
+                'member_id' => $member->id,
+                'account_id' => $member->capital_subscription_account->id,
+                'credit' => round($loanType->cbu_common * $gross_amount, 4),
+                'debit' => null,
+                'readonly' => true,
+                'code' => 'cbu_amount',
+            ];
+            $items[] = [
+                'member_id' => $member->id,
+                'account_id' => $member->imprest_account->id,
+                'credit' => round($loanType->imprest * $gross_amount, 4),
+                'debit' => null,
+                'readonly' => true,
+                'code' => 'imprest_amount',
+            ];
+        }
         $items[] = [
             'member_id' => null,
             'account_id' => Account::getLoanInsurance()->id,

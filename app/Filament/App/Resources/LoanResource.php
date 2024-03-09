@@ -134,8 +134,26 @@ class LoanResource extends Resource
                                     ->required()
                                     ->label('Account'),
                                 TextInput::make('debit')
+                                    ->reactive()
+                                    ->afterStateUpdated(function ($get, $set, $state) {
+                                        $items = collect($get('../../disbursement_voucher_items'));
+                                        $net_amount = $items->firstWhere('code', 'net_amount');
+                                        $items = $items->filter(fn ($i) => $i['code'] != 'net_amount');
+                                        $net_amount['credit'] = $items->sum('debit') - $items->sum('credit');
+                                        $items->push($net_amount);
+                                        $set('../../disbursement_voucher_items', $items->toArray());
+                                    })
                                     ->moneymask(),
                                 TextInput::make('credit')
+                                    ->reactive()
+                                    ->afterStateUpdated(function ($get, $set) {
+                                        $items = collect($get('../../disbursement_voucher_items'));
+                                        $net_amount = $items->firstWhere('code', 'net_amount');
+                                        $items = $items->filter(fn ($i) => $i['code'] != 'net_amount');
+                                        $net_amount['credit'] = $items->sum('debit') - $items->sum('credit');
+                                        $items->push($net_amount);
+                                        $set('../../disbursement_voucher_items', $items->toArray());
+                                    })
                                     ->moneymask(),
                             ]),
                     ])
