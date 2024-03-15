@@ -23,6 +23,7 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable()->constrained();
             $table->string('first_name');
             $table->string('last_name');
+            $table->string('middle_name')->nullable();
             $table->string('middle_initial')->nullable();
             $table->string('full_name')->virtualAs("CONCAT(first_name, ' ', IFNULL(CONCAT(middle_initial, '. '), ''), last_name)");
             $table->string('alt_full_name')->virtualAs("CONCAT(last_name, ', ', first_name, IFNULL(CONCAT(' ', middle_initial, '.'), ''))");

@@ -36,11 +36,6 @@ class ImprestsTable extends Component implements HasForms, HasTable
 
     public $member_id;
 
-    #[On('refresh')]
-    public function loanCreated()
-    {
-    }
-
     public function table(Table $table): Table
     {
         return $table
@@ -59,79 +54,6 @@ class ImprestsTable extends Component implements HasForms, HasTable
                 //
             ])
             ->headerActions([
-                CreateAction::make('Deposit')
-                    ->label('Deposit')
-                    ->modalHeading('Deposit Imprest')
-                    ->form([
-                        Select::make('payment_type_id')
-                            ->paymenttype()
-                            ->required(),
-                        TextInput::make('reference_number')->required()
-                            ->unique('imprests'),
-                        TextInput::make('amount')
-                            ->required()
-                            ->numeric()
-                            ->minValue(1),
-                    ])
-                    ->action(function ($data) {
-                        DB::beginTransaction();
-                        $member = Member::find($this->member_id);
-                        app(DepositToImprestAccount::class)->handle($member, new ImprestData(
-                            payment_type_id: $data['payment_type_id'],
-                            reference_number: $data['reference_number'],
-                            amount: $data['amount']
-                        ), TransactionType::firstWhere('name', 'CRJ'));
-                        DB::commit();
-                    })
-                    ->createAnother(false),
-                CreateAction::make('Withdraw')
-                    ->label('Withdraw')
-                    ->modalHeading('Withdraw Imprest')
-                    ->color(Color::Red)
-                    ->form([
-                        Select::make('payment_type_id')
-                            ->paymenttype()
-                            ->required(),
-                        TextInput::make('amount')
-                            ->required()
-                            ->moneymask(),
-                    ])
-                    ->action(function ($data) {
-                        $member = Member::find($this->member_id);
-                        $data['reference_number'] = ImprestsProvider::WITHDRAWAL_TRANSFER_CODE;
-                        app(WithdrawFromImprestAccount::class)->handle($member, ImprestData::from($data), TransactionType::firstWhere('name', 'CRJ'));
-                    })
-                    ->createAnother(false),
-                CreateAction::make('to_savings')
-                    ->label('Transfer to Savings')
-                    ->modalHeading('Transfer to Savings')
-                    ->color(Color::Amber)
-                    ->form([
-                        Select::make('savings_account_id')
-                            ->options(SavingsAccount::whereMemberId($this->member_id)->pluck('number', 'id'))
-                            ->required()
-                            ->label('Account'),
-                        TextInput::make('amount')
-                            ->required()
-                            ->moneymask(),
-                    ])
-                    ->action(function ($data) {
-                        DB::beginTransaction();
-                        $member = Member::find($this->member_id);
-                        $im = app(WithdrawFromImprestAccount::class)->handle($member, new ImprestData(
-                            payment_type_id: 1,
-                            reference_number: ImprestsProvider::FROM_TRANSFER_CODE,
-                            amount: $data['amount']
-                        ), TransactionType::firstWhere('name', 'CRJ'));
-                        app(DepositToSavingsAccount::class)->handle($member, new SavingsData(
-                            payment_type_id: 1,
-                            reference_number: $im->reference_number,
-                            amount: $data['amount'],
-                            savings_account_id: $data['savings_account_id']
-                        ), TransactionType::firstWhere('name', 'CRJ'));
-                        DB::commit();
-                    })
-                    ->createAnother(false),
                 ViewAction::make('subsidiary_ledger')
                     ->icon('heroicon-o-clipboard-document-list')
                     ->label('Subsidiary Ledger')

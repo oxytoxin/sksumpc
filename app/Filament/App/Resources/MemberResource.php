@@ -12,6 +12,9 @@ use App\Filament\App\Resources\MemberResource\Pages\LoanSubsidiaryLedger;
 use App\Filament\App\Resources\MemberResource\Pages\LoveGiftsSubsidiaryLedger;
 use App\Filament\App\Resources\MemberResource\Pages\SavingsSubsidiaryLedger;
 use App\Infolists\Components\DependentsEntry;
+use App\Livewire\App\CbuTable;
+use App\Livewire\App\LoansTable;
+use App\Livewire\App\MsoTable;
 use App\Models\Member;
 use App\Models\MembershipStatus;
 use App\Models\MemberType;
@@ -31,6 +34,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Actions;
 use Filament\Infolists\Components\Actions\Action;
+use Filament\Infolists\Components\Livewire;
 use Filament\Infolists\Components\Section as InfolistSection;
 use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
 use Filament\Infolists\Components\Tabs;
@@ -58,6 +62,11 @@ class MemberResource extends Resource
 
     protected static ?int $navigationSort = 4;
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()->roles()->count() > 1 || !auth()->user()->hasRole('member');
+    }
+
     public static function infolist(Infolist $infolist): Infolist
     {
         $tabs = self::getInfoTabs();
@@ -70,7 +79,7 @@ class MemberResource extends Resource
             ->columns(1);
     }
 
-    private static function getInfoTabs(): array
+    public static function getInfoTabs(): array
     {
         $tabs = [
             Tab::make('Profile')
@@ -118,28 +127,19 @@ class MemberResource extends Resource
                     ])->alignEnd(),
                 ]),
         ];
-        if (auth()->user()->canany(['manage payments', 'manage cbu'])) {
-            $tabs[] = Tab::make('CBU')
-                ->schema([
-                    ViewEntry::make('cbu')
-                        ->view('livewire-placeholder', ['component' => 'app.cbu-table']),
-                ]);
-        }
-        if (auth()->user()->canany(['manage payments', 'manage mso'])) {
-            $tabs[] = Tab::make('MSO')
-                ->schema([
-                    ViewEntry::make('mso')
-                        ->view('livewire-placeholder', ['component' => 'app.mso-table']),
-                ]);
-        }
 
-        if (auth()->user()->canany(['manage payments', 'manage loans'])) {
-            $tabs[] = Tab::make('Loan')
-                ->schema([
-                    ViewEntry::make('loan')
-                        ->view('livewire-placeholder', ['component' => 'app.loans-table']),
-                ]);
-        }
+        $tabs[] = Tab::make('CBU')
+            ->schema(fn ($record) => [
+                Livewire::make(CbuTable::class, ['member' => $record]),
+            ]);
+        $tabs[] = Tab::make('MSO')
+            ->schema(fn ($record) => [
+                Livewire::make(MsoTable::class, ['member' => $record]),
+            ]);
+        $tabs[] = Tab::make('Loan')
+            ->schema(fn ($record) => [
+                Livewire::make(LoansTable::class, ['member' => $record]),
+            ]);
 
         return $tabs;
     }

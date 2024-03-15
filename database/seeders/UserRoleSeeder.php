@@ -24,6 +24,12 @@ class UserRoleSeeder extends Seeder
             'email' => 'sksumpcadmin@gmail.com',
             'password' => Hash::make('password'),
         ]);
+
+        $permission = Permission::create([
+            'name' => 'manage all',
+        ]);
+        $role->givePermissionTo($permission);
+
         $user->assignRole($role);
 
         // Cashier
@@ -119,5 +125,13 @@ class UserRoleSeeder extends Seeder
         ]);
         $role->givePermissionTo($permission);
         $user->assignRole($role);
+
+        $role = Role::create([
+            'name' => 'member',
+        ]);
+        $permission = Permission::create([
+            'name' => 'view own member profile',
+        ]);
+        $role->givePermissionTo($permission);
     }
 }

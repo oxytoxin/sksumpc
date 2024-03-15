@@ -5,6 +5,7 @@ namespace App\Livewire\App;
 use App\Actions\Imprests\DepositToImprestAccount;
 use App\Actions\Savings\CreateNewSavingsAccount;
 use App\Actions\Savings\DepositToSavingsAccount;
+use App\Actions\Savings\GenerateAccountNumber;
 use App\Actions\Savings\WithdrawFromSavingsAccount;
 use App\Models\Member;
 use App\Models\Saving;
@@ -73,6 +74,10 @@ class SavingsTable extends Component implements HasForms, HasTable
                     ->modalHeading('New Savings Account')
                     ->form([
                         TextInput::make('name')
+                            ->default(Member::find($this->member_id)->full_name)
+                            ->required(),
+                        TextInput::make('number')
+                            ->default(app(GenerateAccountNumber::class)->handle(member_type_id: Member::find($this->member_id)->member_type_id))
                             ->required(),
                     ])
                     ->action(function ($data) {
@@ -82,82 +87,9 @@ class SavingsTable extends Component implements HasForms, HasTable
                         ));
                         Notification::make()->title('Savings account created!')->success()->send();
                     })
+                    ->visible(auth()->user()->can('manage mso'))
                     ->color(Color::Emerald)
                     ->createAnother(false),
-                ActionGroup::make([
-                    CreateAction::make('Deposit')
-                        ->label('Deposit')
-                        ->modalHeading('Deposit Savings')
-                        ->form([
-                            Select::make('payment_type_id')
-                                ->paymenttype()
-                                ->required(),
-                            TextInput::make('reference_number')->required()
-                                ->unique('savings'),
-                            TextInput::make('amount')
-                                ->required()
-                                ->moneymask(),
-                        ])
-                        ->action(function ($data) {
-                            $member = Member::find($this->member_id);
-                            app(DepositToSavingsAccount::class)->handle($member, new SavingsData(
-                                payment_type_id: $data['payment_type_id'],
-                                reference_number: $data['reference_number'],
-                                amount: $data['amount'],
-                                savings_account_id: $this->tableFilters['savings_account_id']['value']
-                            ), TransactionType::firstWhere('name', 'CRJ'));
-                        })
-                        ->createAnother(false),
-                    CreateAction::make('Withdraw')
-                        ->label('Withdraw')
-                        ->modalHeading('Withdraw Savings')
-                        ->color(Color::Red)
-                        ->form([
-                            Select::make('payment_type_id')
-                                ->paymenttype()
-                                ->required(),
-                            TextInput::make('amount')
-                                ->required()
-                                ->moneymask(),
-                        ])
-                        ->action(function ($data) {
-                            $member = Member::find($this->member_id);
-                            $data['reference_number'] = SavingsProvider::WITHDRAWAL_TRANSFER_CODE;
-                            $data['savings_account_id'] = $this->tableFilters['savings_account_id']['value'];
-                            app(WithdrawFromSavingsAccount::class)->handle($member, SavingsData::from($data), TransactionType::firstWhere('name', 'CRJ'));
-                        })
-                        ->createAnother(false),
-                    CreateAction::make('to_imprests')
-                        ->label('Transfer to Imprests')
-                        ->modalHeading('Transfer to Imprests')
-                        ->color(Color::Amber)
-                        ->form([
-                            TextInput::make('amount')
-                                ->required()
-                                ->moneymask(),
-                        ])
-                        ->action(function ($data) {
-                            DB::beginTransaction();
-                            $member = Member::find($this->member_id);
-                            $st = app(WithdrawFromSavingsAccount::class)->handle($member, new SavingsData(
-                                payment_type_id: 1,
-                                reference_number: SavingsProvider::FROM_TRANSFER_CODE,
-                                amount: $data['amount'],
-                                savings_account_id: $this->tableFilters['savings_account_id']['value'],
-                            ), TransactionType::firstWhere('name', 'CRJ'));
-                            app(DepositToImprestAccount::class)->handle($member, new ImprestData(
-                                payment_type_id: 1,
-                                reference_number: $st->reference_number,
-                                amount: $data['amount']
-                            ), TransactionType::firstWhere('name', 'CRJ'));
-                            DB::commit();
-                        })
-                        ->createAnother(false),
-                ])
-                    ->button()
-                    ->label('Transaction')
-                    ->icon('heroicon-o-banknotes')
-                    ->visible(fn () => filled($this->tableFilters['savings_account_id']['value'])),
                 ViewAction::make('subsidiary_ledger')
                     ->icon('heroicon-o-clipboard-document-list')
                     ->label('Subsidiary Ledger')

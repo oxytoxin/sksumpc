@@ -50,6 +50,11 @@ class User extends Authenticatable implements FilamentUser
         'password' => 'hashed',
     ];
 
+    public function member()
+    {
+        return $this->belongsTo(Member::class);
+    }
+
     public function canAccessPanel(Panel $panel): bool
     {
         return true;

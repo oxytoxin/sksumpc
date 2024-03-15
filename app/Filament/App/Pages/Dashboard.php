@@ -18,6 +18,11 @@ class Dashboard extends Page
 
     protected ?string $heading = '';
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()->cannot('view own member profile');
+    }
+
     protected function getHeaderWidgets(): array
     {
         return [

@@ -157,7 +157,7 @@ class LoansTable extends Component implements HasForms, HasTable
                         DatePicker::make('release_date')->required()->native(false),
                     ])
                     ->action(function ($data, $record) {
-                        if (! OverrideProvider::promptManagerPasskey($data['passkey'])) {
+                        if (!OverrideProvider::promptManagerPasskey($data['passkey'])) {
                             return;
                         }
                         unset($data['passkey']);
@@ -174,9 +174,9 @@ class LoansTable extends Component implements HasForms, HasTable
                         ]);
                         $this->dispatch('refresh');
                         Notification::make()->title('Loan updated.')->success()->send();
-                    }),
+                    })->visible(auth()->user()->can('manage loans')),
                 DeleteAction::make()
-                    ->hidden(fn ($record) => $record->posted),
+                    ->hidden(fn ($record) => $record->posted)->visible(auth()->user()->can('manage loans')),
                 ViewLoanDetailsActionGroup::getActions(),
             ])
             ->headerActions([])

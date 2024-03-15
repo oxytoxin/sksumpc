@@ -19,6 +19,11 @@ class DisapprovalReasonResource extends Resource
 
     protected static ?int $navigationSort = 16;
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()->can('manage all');
+    }
+
     public static function form(Form $form): Form
     {
         return $form

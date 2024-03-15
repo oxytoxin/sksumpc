@@ -36,7 +36,8 @@ class DatabaseSeeder extends Seeder
         $this->call(VoucherTypesSeeder::class);
 
         $this->command->info("Seeding members...\n");
-        Artisan::call('app:seed-members');
+        // Artisan::call('app:seed-members');
+        Artisan::call('app:import-members');
         $this->command->info("Seeded members...\n");
 
         if (App::environment('local')) {
