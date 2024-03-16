@@ -12,6 +12,8 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -49,8 +51,19 @@ class UserResource extends Resource
                 TextColumn::make('email'),
                 TextColumn::make('roles.name')
             ])
+            ->filtersLayout(FiltersLayout::AboveContent)
             ->filters([
-                //
+                SelectFilter::make('role')
+                    ->options([
+                        'staff' => 'Staff',
+                        'member' => 'Member'
+                    ])
+                    ->default('staff')
+                    ->query(
+                        fn ($query, $state) => $query
+                            ->when($state['value'] == 'member', fn ($q) => $q->whereRelation('roles', 'name', 'member'))
+                            ->when($state['value'] == 'staff', fn ($q) => $q->whereRelation('roles', 'name', '!=', 'member'))
+                    )
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
