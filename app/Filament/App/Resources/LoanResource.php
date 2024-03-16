@@ -113,12 +113,22 @@ class LoanResource extends Resource
                         TextInput::make('name')->required(),
                         TextInput::make('address')->required(),
                         TextInput::make('reference_number')->required(),
+                        TextInput::make('voucher_number')->required(),
                         Textarea::make('description')->columnSpanFull()->required(),
                         TableRepeater::make('disbursement_voucher_items')
                             ->hideLabels()
                             ->columnSpanFull()
                             ->columnWidths(['account_id' => '20rem', 'member_id' => '20rem'])
                             ->rule(new BalancedBookkeepingEntries)
+                            ->reactive()
+                            ->afterStateUpdated(function ($get, $set, $state) {
+                                $items = collect($state);
+                                $net_amount = $items->firstWhere('code', 'net_amount');
+                                $items = $items->filter(fn ($i) => $i['code'] != 'net_amount');
+                                $net_amount['credit'] = $items->sum('debit') - $items->sum('credit');
+                                $items->push($net_amount);
+                                $set('disbursement_voucher_items', $items->toArray());
+                            })
                             ->schema([
                                 Select::make('member_id')
                                     ->options(Member::pluck('full_name', 'id'))
@@ -134,26 +144,8 @@ class LoanResource extends Resource
                                     ->required()
                                     ->label('Account'),
                                 TextInput::make('debit')
-                                    ->reactive()
-                                    ->afterStateUpdated(function ($get, $set, $state) {
-                                        $items = collect($get('../../disbursement_voucher_items'));
-                                        $net_amount = $items->firstWhere('code', 'net_amount');
-                                        $items = $items->filter(fn ($i) => $i['code'] != 'net_amount');
-                                        $net_amount['credit'] = $items->sum('debit') - $items->sum('credit');
-                                        $items->push($net_amount);
-                                        $set('../../disbursement_voucher_items', $items->toArray());
-                                    })
                                     ->moneymask(),
                                 TextInput::make('credit')
-                                    ->reactive()
-                                    ->afterStateUpdated(function ($get, $set) {
-                                        $items = collect($get('../../disbursement_voucher_items'));
-                                        $net_amount = $items->firstWhere('code', 'net_amount');
-                                        $items = $items->filter(fn ($i) => $i['code'] != 'net_amount');
-                                        $net_amount['credit'] = $items->sum('debit') - $items->sum('credit');
-                                        $items->push($net_amount);
-                                        $set('../../disbursement_voucher_items', $items->toArray());
-                                    })
                                     ->moneymask(),
                             ]),
                     ])

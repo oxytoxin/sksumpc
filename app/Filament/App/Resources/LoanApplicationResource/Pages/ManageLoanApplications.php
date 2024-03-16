@@ -5,9 +5,11 @@ namespace App\Filament\App\Resources\LoanApplicationResource\Pages;
 use App\Actions\LoanApplications\CreateNewLoanApplication;
 use App\Filament\App\Resources\LoanApplicationResource;
 use App\Models\LoanType;
+use App\Models\Member;
 use App\Oxytoxin\DTO\Loan\LoanApplicationData;
 use App\Oxytoxin\Providers\LoansProvider;
 use Filament\Actions\CreateAction;
+use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ManageRecords;
 

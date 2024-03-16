@@ -30,7 +30,7 @@
                 <td class="border-black border-r border-t px-2 w-1/6">ADDRESS:</td>
                 <td colspan="2" class="border-t border-black px-2">{{ $disbursement_voucher->address }}</td>
                 <td class="border-black border-x border-t px-2 w-1/6"> DV#:</td>
-                <td colspan="2" class="border-t border-black px-2">{{ $disbursement_voucher->reference_number }}
+                <td colspan="2" class="border-t border-black px-2">{{ $disbursement_voucher->voucher_number }}
                 </td>
             </tr>
             <tr>
@@ -54,7 +54,10 @@
                 <td class="border border-black text-center">CREDIT</td>
             </tr>
             @php
-                $disbursement_voucher_items = $disbursement_voucher->disbursement_voucher_items()->with('account')->get();
+                $disbursement_voucher_items = $disbursement_voucher
+                    ->disbursement_voucher_items()
+                    ->with('account')
+                    ->get();
             @endphp
             @foreach ($disbursement_voucher_items as $item)
                 <tr>

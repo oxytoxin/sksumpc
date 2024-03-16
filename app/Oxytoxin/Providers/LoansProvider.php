@@ -12,7 +12,9 @@ use Carbon\CarbonImmutable;
 class LoansProvider
 {
     const LOAN_TERMS = [
-        12 => 12,
+        1 => 1,
+        3 => 3,
+        6 => 6,
         24 => 24,
         36 => 36,
         48 => 48,

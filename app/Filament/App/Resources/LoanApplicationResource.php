@@ -92,6 +92,7 @@ class LoanApplicationResource extends Resource
                 Select::make('number_of_terms')
                     ->options(LoansProvider::LOAN_TERMS)
                     ->default(12)
+                    ->required()
                     ->live(),
                 TextInput::make('priority_number'),
                 TextInput::make('desired_amount')->moneymask()->required(),
@@ -192,6 +193,14 @@ class LoanApplicationResource extends Resource
                             ->hideLabels()
                             ->columnSpanFull()
                             ->reactive()
+                            ->afterStateUpdated(function ($get, $set, $state) {
+                                $items = collect($state);
+                                $net_amount = $items->firstWhere('code', 'net_amount');
+                                $items = $items->filter(fn ($i) => $i['code'] != 'net_amount');
+                                $net_amount['credit'] = $items->sum('debit') - $items->sum('credit');
+                                $items->push($net_amount);
+                                $set('disclosure_sheet_items', $items->toArray());
+                            })
                             ->columnWidths(['account_id' => '40%', 'member_id' => '13rem'])
                             ->rule(new BalancedBookkeepingEntries)
                             ->schema([

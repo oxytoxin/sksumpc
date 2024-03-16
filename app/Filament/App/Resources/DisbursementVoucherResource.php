@@ -42,6 +42,7 @@ class DisbursementVoucherResource extends Resource
                 TextInput::make('name')->required(),
                 TextInput::make('address')->required(),
                 TextInput::make('reference_number')->required(),
+                TextInput::make('voucher_number')->required(),
                 Textarea::make('description')->columnSpanFull()->required(),
                 TableRepeater::make('disbursement_voucher_items')
                     ->hideLabels()
@@ -81,6 +82,7 @@ class DisbursementVoucherResource extends Resource
                     ->listWithLineBreaks(),
                 TextColumn::make('name'),
                 TextColumn::make('reference_number'),
+                TextColumn::make('voucher_number'),
                 TextColumn::make('description'),
             ])
             ->filters([
