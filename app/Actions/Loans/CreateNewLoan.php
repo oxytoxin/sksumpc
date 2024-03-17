@@ -25,17 +25,19 @@ class CreateNewLoan
         $loans_receivable_account = Account::whereNull('member_id')->whereTag('loan_receivables')->whereAccountableType(LoanType::class)->whereAccountableId($loanType->id)->first();
         $account = Account::create([
             'name' => strtoupper($loanType->name),
-            'number' => str($loans_payable_account->number)->append('-')->append($loanData->account_number),
+            'number' => str($loans_payable_account->number)->append('-')->append(str_pad($loanType->id, 4, '0', STR_PAD_LEFT))
+                ->append('-')
+                ->append($loanData->account_number),
             'account_type_id' => $loans_payable_account->account_type_id,
             'member_id' => $loanData->member_id,
-            'tag' => 'member_loan',
+            'tag' => 'member_loans_payable',
         ], $loans_payable_account);
         $account = Account::create([
             'name' => strtoupper($loanType->name),
             'number' => str($loans_receivable_account->number)->append('-')->append($loanData->account_number),
             'account_type_id' => $loans_receivable_account->account_type_id,
             'member_id' => $loanData->member_id,
-            'tag' => 'member_loan',
+            'tag' => 'member_loans_receivable',
         ], $loans_receivable_account);
         $loan = Loan::create([
             'loan_account_id' => $account->id,

@@ -21,6 +21,7 @@ class CreateTransaction
             'transaction_type_id' => $transactionData->transactionType->id,
             'remarks' => $transactionData->remarks,
             'tag' => $transactionData->tag,
+            'transaction_date' => $transactionData->transaction_date,
         ]);
     }
 }

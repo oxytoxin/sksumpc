@@ -144,7 +144,7 @@ class TransactionsPage extends Page
                     ->required()
                     ->preload(),
                 Select::make('savings_account_id')
-                    ->options(fn ($get) => SavingsAccount::whereMemberId($get('member_id'))->pluck('name', 'id'))
+                    ->options(fn ($get) => SavingsAccount::whereMemberId($get('member_id'))->pluck('number', 'id'))
                     ->label('Account')
                     ->required()
                     ->suffixAction(

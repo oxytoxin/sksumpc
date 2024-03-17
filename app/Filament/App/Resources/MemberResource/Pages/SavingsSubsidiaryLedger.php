@@ -6,6 +6,8 @@ use App\Filament\App\Pages\Cashier\Reports\HasSignatories;
 use App\Filament\App\Resources\MemberResource;
 use App\Models\Member;
 use App\Models\Saving;
+use App\Models\SavingsAccount;
+use App\Models\Transaction;
 use App\Models\User;
 use Filament\Resources\Pages\Page;
 use Filament\Tables\Actions\Action;
@@ -15,6 +17,7 @@ use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
+use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 
 class SavingsSubsidiaryLedger extends Page implements HasTable
 {
@@ -24,7 +27,7 @@ class SavingsSubsidiaryLedger extends Page implements HasTable
 
     protected static string $view = 'filament.app.resources.member-resource.pages.savings-subsidiary-ledger';
 
-    public Member $member;
+    public SavingsAccount $savings_account;
 
     public function getHeading(): string|Htmlable
     {
@@ -51,17 +54,20 @@ class SavingsSubsidiaryLedger extends Page implements HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->query(Saving::query()->where('member_id', $this->member->id))
-            ->content(fn () => view('filament.app.views.savings-sl', ['member' => $this->member, 'signatories' => $this->signatories]))
+            ->query(Transaction::whereBelongsTo($this->savings_account, 'account'))
+            ->content(fn () => view('filament.app.views.savings-sl', ['savings_account' => $this->savings_account, 'signatories' => $this->signatories]))
             ->filters([
-                Filter::dateRange('transaction_date'),
+                DateRangeFilter::make('transaction_date')
+                    ->format('m/d/Y')
+                    ->defaultToday()
+                    ->displayFormat('MM/DD/YYYY'),
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
             ->headerActions([
                 Action::make('back')
                     ->extraAttributes(['wire:ignore' => true])
                     ->label('Back to Savings')
-                    ->url(route('filament.app.resources.members.view', ['record' => $this->member, 'tab' => '-mso-tab', 'mso_type' => 1])),
+                    ->url(route('filament.app.resources.members.view', ['record' => $this->savings_account->member, 'tab' => '-mso-tab', 'mso_type' => 1])),
             ])
             ->paginated(['all']);
     }

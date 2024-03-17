@@ -15,6 +15,7 @@ use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
+use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 
 class LoveGiftsSubsidiaryLedger extends Page implements HasTable
 {
@@ -54,7 +55,10 @@ class LoveGiftsSubsidiaryLedger extends Page implements HasTable
             ->query(LoveGift::query()->where('member_id', $this->member->id))
             ->content(fn () => view('filament.app.views.love-gifts-sl', ['member' => $this->member, 'signatories' => $this->signatories]))
             ->filters([
-                Filter::dateRange('transaction_date'),
+                DateRangeFilter::make('transaction_date')
+                    ->format('m/d/Y')
+                    ->defaultToday()
+                    ->displayFormat('MM/DD/YYYY'),
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
             ->headerActions([

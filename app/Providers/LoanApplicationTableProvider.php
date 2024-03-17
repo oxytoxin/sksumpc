@@ -11,6 +11,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\ServiceProvider;
+use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 
 class LoanApplicationTableProvider extends ServiceProvider
 {
@@ -55,40 +56,15 @@ class LoanApplicationTableProvider extends ServiceProvider
                         LoanApplication::STATUS_POSTED => 'Posted',
                     ]);
             }
-            $filters[] = Filter::make('date_applied')
-                ->form([
-                    DatePicker::make('applied_from')->native(false),
-                    DatePicker::make('applied_until')->native(false),
-                ])
-                ->query(function (Builder $query, array $data): Builder {
-                    return $query
-                        ->when(
-                            $data['applied_from'],
-                            fn (Builder $query, $date): Builder => $query->whereDate('transaction_date', '>=', $date),
-                        )
-                        ->when(
-                            $data['applied_until'],
-                            fn (Builder $query, $date): Builder => $query->whereDate('transaction_date', '<=', $date),
-                        );
-                });
+            $filters[] = DateRangeFilter::make('transaction_date')
+                ->format('m/d/Y')
+                ->defaultToday()
+                ->displayFormat('MM/DD/YYYY');
 
-            if (! $type || $type == LoanApplication::STATUS_DISAPPROVED) {
-                $filters[] = Filter::make('date_disapproved')
-                    ->form([
-                        DatePicker::make('disapproved_from')->native(false),
-                        DatePicker::make('disapproved_until')->native(false),
-                    ])
-                    ->query(function (Builder $query, array $data): Builder {
-                        return $query
-                            ->when(
-                                $data['disapproved_from'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('disapproval_date', '>=', $date),
-                            )
-                            ->when(
-                                $data['disapproved_until'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('disapproval_date', '<=', $date),
-                            );
-                    });
+            if (!$type || $type == LoanApplication::STATUS_DISAPPROVED) {
+                $filters[] = DateRangeFilter::make('disapproval_date')
+                    ->format('m/d/Y')
+                    ->displayFormat('MM/DD/YYYY');
             }
 
             return static::filters($filters)

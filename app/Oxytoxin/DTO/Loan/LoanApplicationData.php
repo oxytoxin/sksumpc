@@ -15,6 +15,7 @@ class LoanApplicationData extends Data
         public string $monthly_payment,
         public $transaction_date = null,
         public ?string $purpose = null,
+        public ?string $reference_number = null,
         public array $comakers = [],
     ) {
         $this->transaction_date ??= today();

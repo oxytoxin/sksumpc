@@ -437,7 +437,7 @@ class MemberResource extends Resource
             'loan.edit' => Pages\EditMemberLoan::route('/{record}/{loan}/edit'),
             'cbu-subsidiary-ledger' => CbuSubsidiaryLedger::route('cbu-subsidiary-ledger/{member}'),
             'cbu-amortization-schedule' => CbuAmortizationSchedule::route('cbu-amortization-schedule/{cbu}'),
-            'savings-subsidiary-ledger' => SavingsSubsidiaryLedger::route('savings-subsidiary-ledger/{member}'),
+            'savings-subsidiary-ledger' => SavingsSubsidiaryLedger::route('savings-subsidiary-ledger/{savings_account}'),
             'imprest-subsidiary-ledger' => ImprestSubsidiaryLedger::route('imprest-subsidiary-ledger/{member}'),
             'love-gifts-subsidiary-ledger' => LoveGiftsSubsidiaryLedger::route('love-gifts-subsidiary-ledger/{member}'),
             'loan-subsidiary-ledger' => LoanSubsidiaryLedger::route('loan-subsidiary-ledger/{loan}'),

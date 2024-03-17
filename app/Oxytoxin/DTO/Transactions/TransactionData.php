@@ -16,6 +16,8 @@ class TransactionData extends Data
         public ?int $member_id = null,
         public ?string $remarks = null,
         public ?string $tag = null,
+        public $transaction_date = null
     ) {
+        $this->transaction_date ??= today();
     }
 }

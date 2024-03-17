@@ -14,8 +14,8 @@ class LoanAccount extends Account
     protected static function boot()
     {
         parent::boot();
-        static::addGlobalScope('member_loan', function ($query) {
-            $query->whereNotNull('member_id')->whereTag('member_loan');
+        static::addGlobalScope('member_loans_receivable', function ($query) {
+            $query->whereNotNull('member_id')->whereTag('member_loans_receivable');
         });
     }
 

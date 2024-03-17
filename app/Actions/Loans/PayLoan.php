@@ -25,7 +25,7 @@ class PayLoan
         $interest_due = LoansProvider::computeAccruedInterest($loan, $loan->outstanding_balance, $total_days);
         $interest_payment = min($loanPaymentData->amount, $interest_due);
         $principal_payment = $loanPaymentData->amount - $interest_payment;
-        $loan_receivables_account = Account::whereAccountableType(LoanType::class)->whereAccountableId($loan->loan_type_id)->whereTag('loan_receivables')->first();
+        $loan_receivables_account = $loan->loan_account;
         $loan_interests_account = Account::whereAccountableType(LoanType::class)->whereAccountableId($loan->loan_type_id)->whereTag('loan_interests')->first();
 
         if ($loanPaymentData->payment_type_id == 1) {

@@ -17,10 +17,12 @@ class CreateNewLoanApplication
             'loan_type_id' => $loanApplicationData->loan_type_id,
             'number_of_terms' => $loanApplicationData->number_of_terms,
             'priority_number' => $loanApplicationData->priority_number,
+            'reference_number' => $loanApplicationData->reference_number,
             'desired_amount' => $loanApplicationData->desired_amount,
             'monthly_payment' => $loanApplicationData->monthly_payment,
             'purpose' => $loanApplicationData->purpose,
             'comakers' => $loanApplicationData->comakers,
+            'transaction_date' => $loanApplicationData->transaction_date,
         ]);
     }
 }
