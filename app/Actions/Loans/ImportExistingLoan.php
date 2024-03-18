@@ -81,8 +81,8 @@ class ImportExistingLoan
                 loanType: $loanType,
                 number_of_terms: $loan_application->number_of_terms,
             ),
-            release_date: today(),
-            transaction_date: today(),
+            release_date: $application_date,
+            transaction_date: $application_date,
         );
         $loan = app(CreateNewLoan::class)->handle($loan_application, $loanData);
         $loan->posted = true;
