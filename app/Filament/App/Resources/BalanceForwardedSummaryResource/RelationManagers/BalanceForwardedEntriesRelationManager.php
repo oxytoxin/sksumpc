@@ -40,9 +40,7 @@ class BalanceForwardedEntriesRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(function ($query) {
-                return $query->join('accounts', 'balance_forwarded_entries.account_id', 'accounts.id');
-            })
+            ->modifyQueryUsing(fn ($query) => $query->join('accounts', 'balance_forwarded_entries.account_id', 'accounts.id'))
             ->columns([
                 Tables\Columns\TextColumn::make('account.number')->label('Account Number'),
                 Tables\Columns\TextColumn::make('account.fullname')->label('Account Name'),
@@ -54,13 +52,18 @@ class BalanceForwardedEntriesRelationManager extends RelationManager
                     ->form([
                         TextInput::make('account_number'),
                         TextInput::make('account_name'),
+                        Select::make('parent_account')
+                            ->searchable()
+                            ->preload()
+                            ->options(Account::tree(0)->has('children')->pluck('name', 'id')),
                     ])
-                    ->columns(2)
+                    ->columns(3)
                     ->columnSpanFull()
                     ->query(function ($query, $state) {
                         $query
-                            ->orWhere('accounts.name', 'like', "%{$state['account_name']}%")
-                            ->where('accounts.number', 'like',  "%{$state['account_number']}%");
+                            ->when($state['account_number'], fn ($q, $v) => $q->where('number', 'like', "%{$v}%"))
+                            ->when($state['parent_account'], fn ($q, $v) => $q->where('parent_id', $v))
+                            ->when($state['account_name'], fn ($q, $v) => $q->where('name', 'like', "%{$v}%"));
                     })
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
