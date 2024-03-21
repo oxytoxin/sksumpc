@@ -5,7 +5,7 @@ use Illuminate\Support\Collection;
 
 function format_percentage($new, $old): string
 {
-    if ($old) {
+    if ($old != 0) {
         $percentage = ($new - $old) / $old * 100;
 
         return str($percentage)->append('%');
@@ -56,7 +56,7 @@ function oxy_get_year_range(): array
 
 function renumber_format($number, $decimals = 2)
 {
-    if (! $number || ! floatval($number)) {
+    if (!$number || !floatval($number)) {
         return '';
     }
     if ($number < 0) {
