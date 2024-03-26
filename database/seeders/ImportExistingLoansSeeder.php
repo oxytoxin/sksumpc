@@ -26,6 +26,8 @@ class ImportExistingLoansSeeder extends Seeder
         $this->importLoansFromFile('SPECIAL-LOAN.xlsx', LoanType::find(6));
         $this->importLoansFromFile('FLY-NOW-PAY-LATER-LOAN.xlsx', LoanType::find(7));
         $this->importLoansFromFile('RES-REGULAR-LOAN.xlsx', LoanType::find(11));
+        $this->importLoansFromFile('LBP-REGULAR-LOAN.xlsx', LoanType::find(10));
+        $this->importLoansFromFile('RES-LBP-COMMODITY-LOAN.xlsx', LoanType::find(15));
         DB::commit();
     }
 

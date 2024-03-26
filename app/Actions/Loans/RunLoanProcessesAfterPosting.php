@@ -28,7 +28,8 @@ class RunLoanProcessesAfterPosting
         $member = $loan->member;
         $amortization_schedule = LoansProvider::generateAmortizationSchedule($loan);
         $loan->loan_amortizations()->createMany($amortization_schedule);
-        if ($loan->cbu_amount) {
+        if (floatval($loan->cbu_amount)) {
+            dd($loan->cbu_amount);
             $cbu = $member->capital_subscriptions_common;
             if (!$cbu) {
                 $cbu = $member->capital_subscriptions()->create([
@@ -48,7 +49,7 @@ class RunLoanProcessesAfterPosting
             ), TransactionType::firstWhere('name', 'CDJ'), false);
         }
 
-        if ($loan->imprest_amount) {
+        if (floatval($loan->imprest_amount)) {
             app(DepositToImprestAccount::class)->handle($member, new ImprestData(
                 payment_type_id: 1,
                 reference_number: $loan->reference_number,

@@ -42,20 +42,21 @@ class BalanceForwardedEntriesRelationManager extends RelationManager
         return $table
             ->modifyQueryUsing(fn ($query) => $query->join('accounts', 'balance_forwarded_entries.account_id', 'accounts.id'))
             ->columns([
+                Tables\Columns\TextColumn::make('account.parent.name')->label('Parent Account'),
+                Tables\Columns\TextColumn::make('account.name')->label('Account Name'),
                 Tables\Columns\TextColumn::make('account.number')->label('Account Number'),
-                Tables\Columns\TextColumn::make('account.fullname')->label('Account Name'),
                 Tables\Columns\TextColumn::make('debit'),
                 Tables\Columns\TextColumn::make('credit'),
             ])
             ->filters([
                 Filter::make('number')
                     ->form([
-                        TextInput::make('account_number'),
-                        TextInput::make('account_name'),
                         Select::make('parent_account')
                             ->searchable()
                             ->preload()
                             ->options(Account::tree(0)->has('children')->pluck('name', 'id')),
+                        TextInput::make('account_name'),
+                        TextInput::make('account_number'),
                     ])
                     ->columns(3)
                     ->columnSpanFull()

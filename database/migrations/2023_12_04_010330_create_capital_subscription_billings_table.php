@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('or_number')->nullable();
             $table->foreignId('cashier_id')->nullable()->constrained('users', 'id')->nullOnDelete();
             $table->boolean('posted')->default(false);
-            $table->boolean('or_approved')->default(false);
+            $table->boolean('for_or')->default(false);
             $table->timestamps();
         });
     }

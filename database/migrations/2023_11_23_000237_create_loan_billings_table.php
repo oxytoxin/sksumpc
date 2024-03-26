@@ -22,7 +22,7 @@ return new class extends Migration
             $table->foreignId('loan_type_id')->constrained();
             $table->foreignId('cashier_id')->nullable()->constrained('users', 'id')->nullOnDelete();
             $table->boolean('posted')->default(false);
-            $table->boolean('or_approved')->default(false);
+            $table->boolean('for_or')->default(false);
             $table->timestamps();
         });
     }
