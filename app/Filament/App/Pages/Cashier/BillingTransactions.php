@@ -2,17 +2,17 @@
 
 namespace App\Filament\App\Pages\Cashier;
 
-use Livewire\Component;
-use Filament\Forms\Form;
-use App\Models\LoanBilling;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Components\TextInput;
 use App\Models\CapitalSubscriptionBilling;
+use App\Models\LoanBilling;
+use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Form;
 use Filament\Notifications\Notification;
+use Livewire\Component;
 
 class BillingTransactions extends Component implements HasForms
 {
@@ -28,7 +28,7 @@ class BillingTransactions extends Component implements HasForms
                 Select::make('type')
                     ->options([
                         1 => 'Capital Subscription',
-                        2 => 'Loan'
+                        2 => 'Loan',
                     ])
                     ->reactive(),
                 Select::make('billing_id')
@@ -65,7 +65,7 @@ class BillingTransactions extends Component implements HasForms
                             ]);
                             Notification::make()->title('OR created for billing!')->success()->send();
                             $this->form->fill();
-                        })
+                        }),
 
                 ]),
             ]);

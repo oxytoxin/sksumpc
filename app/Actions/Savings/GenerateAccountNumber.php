@@ -18,6 +18,7 @@ class GenerateAccountNumber
             4 => '21110-1013-',
             default => '21110-1011-',
         };
+
         return str($account_number_prefix)->append(str_pad((Account::latest('id')->first()?->id ?? 0) + 1, 6, '0', STR_PAD_LEFT));
     }
 }

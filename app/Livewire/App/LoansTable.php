@@ -157,7 +157,7 @@ class LoansTable extends Component implements HasForms, HasTable
                         DatePicker::make('release_date')->required()->native(false),
                     ])
                     ->action(function ($data, $record) {
-                        if (!OverrideProvider::promptManagerPasskey($data['passkey'])) {
+                        if (! OverrideProvider::promptManagerPasskey($data['passkey'])) {
                             return;
                         }
                         unset($data['passkey']);

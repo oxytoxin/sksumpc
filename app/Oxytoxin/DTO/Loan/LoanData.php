@@ -24,7 +24,7 @@ class LoanData extends Data
         public ?string $check_number = null,
         public ?string $account_number = null,
     ) {
-        if (!$this->account_number) {
+        if (! $this->account_number) {
             $this->account_number = str_pad((Loan::latest('id')->first()?->id ?? 0) + 1, 6, '0', STR_PAD_LEFT);
         }
         $this->transaction_date ??= today();

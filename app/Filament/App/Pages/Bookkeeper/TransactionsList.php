@@ -10,8 +10,11 @@ use Filament\Pages\Page;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Livewire\Attributes\Computed;
+use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 use stdClass;
 
 class TransactionsList extends Page implements HasForms, HasTable
@@ -66,6 +69,12 @@ class TransactionsList extends Page implements HasForms, HasTable
                     ->when($this->month, fn ($q) => $q->whereMonth('transaction_date', $this->month))
                     ->when($this->year, fn ($q) => $q->whereYear('transaction_date', $this->year))
             )
+            ->filters([
+                DateRangeFilter::make('transaction_date'),
+                SelectFilter::make('transaction_type')
+                    ->relationship('transaction_type', 'name')
+            ])
+            ->filtersLayout(FiltersLayout::AboveContent)
             ->columns([
                 TextColumn::make('#')->state(
                     static function (HasTable $livewire, stdClass $rowLoop): string {

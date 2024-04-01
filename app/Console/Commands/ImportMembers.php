@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use App\Actions\Memberships\CreateMemberInitialAccounts;
 use App\Models\Member;
-use App\Models\MembershipStatus;
 use DateTimeImmutable;
 use DB;
 use Illuminate\Console\Command;
@@ -31,7 +30,7 @@ class ImportMembers extends Command
      */
     public function handle()
     {
-        if (!Member::count()) {
+        if (! Member::count()) {
             DB::beginTransaction();
             $rows = SimpleExcelReader::create(storage_path('csv/MEMBERSDATA.xlsx'))
                 ->headerOnRow(1)
@@ -50,7 +49,7 @@ class ImportMembers extends Command
                             'ASSOCIATE' => 3,
                             'LABORATORY' => 4,
                             default => dd($memberData)
-                        }
+                        },
                     ]);
                 } catch (\Throwable $e) {
                     dd($memberData, $e->getMessage());

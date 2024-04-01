@@ -3,7 +3,6 @@
 namespace App\Oxytoxin\DTO\MSO\Accounts;
 
 use App\Actions\Savings\GenerateAccountNumber;
-use App\Models\Account;
 use App\Models\Member;
 use Spatie\LaravelData\Data;
 
@@ -15,7 +14,7 @@ class SavingsAccountData extends Data
         public ?string $number = null,
     ) {
         $member = Member::find($this->member_id);
-        if (!$this->number) {
+        if (! $this->number) {
             $this->number = app(GenerateAccountNumber::class)->handle(member_type_id: $member->member_type_id);
         }
     }

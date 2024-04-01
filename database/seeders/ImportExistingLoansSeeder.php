@@ -6,7 +6,6 @@ use App\Actions\Loans\ImportExistingLoan;
 use App\Models\LoanType;
 use App\Models\Member;
 use DB;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\SimpleExcel\SimpleExcelReader;
 
@@ -33,12 +32,12 @@ class ImportExistingLoansSeeder extends Seeder
 
     protected function importLoansFromFile(string $filename, LoanType $loanType)
     {
-        $reader = SimpleExcelReader::create(storage_path('csv/loans/' . $filename), 'xlsx');
+        $reader = SimpleExcelReader::create(storage_path('csv/loans/'.$filename), 'xlsx');
         $members_code = $reader->getRows()->pluck('MEMBERS ID');
         $members = Member::whereIn('mpc_code', $members_code->all())->get();
         $reader->getRows()->each(function ($data) use ($members, $loanType) {
             try {
-                if (filled($data['MEMBERS ID']))
+                if (filled($data['MEMBERS ID'])) {
                     app(ImportExistingLoan::class)->handle(
                         member: $members->firstWhere('mpc_code', $data['MEMBERS ID']),
                         loanType: $loanType,
@@ -48,6 +47,7 @@ class ImportExistingLoansSeeder extends Seeder
                         number_of_terms: $data['NUMBER OF TERMS'],
                         application_date: $data['DATE APPLIED'],
                     );
+                }
             } catch (\Throwable $th) {
                 dd($data, $th);
             }

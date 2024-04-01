@@ -2,16 +2,16 @@
 
 namespace App\Actions\TimeDeposits;
 
-use DB;
-use App\Models\Account;
-use App\Models\TimeDeposit;
-use App\Oxytoxin\DTO\MSO\TimeDepositData;
-use Lorisleiva\Actions\Concerns\AsAction;
 use App\Actions\Transactions\CreateTransaction;
+use App\Models\Account;
 use App\Models\Member;
+use App\Models\TimeDeposit;
 use App\Models\TimeDepositAccount;
 use App\Models\TransactionType;
+use App\Oxytoxin\DTO\MSO\TimeDepositData;
 use App\Oxytoxin\DTO\Transactions\TransactionData;
+use DB;
+use Lorisleiva\Actions\Concerns\AsAction;
 
 class CreateTimeDeposit
 {
@@ -24,14 +24,14 @@ class CreateTimeDeposit
             ->append(str_pad((TimeDepositAccount::latest('id')->first()?->id ?? 0) + 1, 6, '0', STR_PAD_LEFT));
         $member = Member::find($timeDepositData->member_id);
         $member_time_deposits = Account::getMemberTimeDeposits();
-        $tda =  Account::create([
+        $tda = Account::create([
             'name' => strtoupper($member->full_name),
             'number' => $account_number,
             'account_type_id' => $member_time_deposits->account_type_id,
             'member_id' => $member->id,
             'tag' => 'member_time_deposits',
         ], $member_time_deposits);
-        $td =  TimeDeposit::create([
+        $td = TimeDeposit::create([
             'member_id' => $timeDepositData->member_id,
             'maturity_date' => $timeDepositData->maturity_date,
             'reference_number' => $timeDepositData->reference_number,
@@ -71,6 +71,7 @@ class CreateTimeDeposit
             tag: 'member_time_deposit'
         ));
         DB::commit();
+
         return $td;
     }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\App\Pages\MemberView;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -80,7 +79,7 @@ class AppPanelProvider extends PanelProvider
                         succeed(() => {
                             setTimeout(() => {
                                 const firstErrorMessage = document.querySelector(`[data-validation-error]`)
-                    
+
                                 if (firstErrorMessage !== null) {
                                     firstErrorMessage.scrollIntoView({ block: `center`, inline: `center` })
                                 }

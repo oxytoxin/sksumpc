@@ -1,20 +1,16 @@
 <?php
 
-use App\Models\Loan;
-use App\Models\User;
-use App\Models\Member;
+use App\Actions\Loans\CreateNewLoan;
 use App\Models\Account;
+use App\Models\Loan;
 use App\Models\LoanApplication;
-use App\Livewire\App\LoansTable;
+use App\Models\Member;
+use App\Models\User;
 use App\Oxytoxin\DTO\Loan\LoanData;
+use App\Oxytoxin\Providers\LoansProvider;
 
 use function Pest\Laravel\actingAs;
-use App\Actions\Loans\CreateNewLoan;
-use function Pest\Livewire\livewire;
-use App\Oxytoxin\Providers\LoansProvider;
-use Filament\Tables\Actions\CreateAction;
 use function Pest\Laravel\assertModelExists;
-use App\Filament\App\Resources\LoanApplicationResource\Pages\ManageLoanApplications;
 
 it('test loan functions from phpspreadsheet', function () {
 });
@@ -45,6 +41,7 @@ it('can create a new loan', function () {
     $accounts = Account::withCode()->find(collect($disclosure_sheet_items)->pluck('account_id'));
     $items = collect($disclosure_sheet_items)->map(function ($item) use ($accounts) {
         $item['name'] = $accounts->find($item['account_id'])->code;
+
         return $item;
     })->toArray();
     $loanData = new LoanData(

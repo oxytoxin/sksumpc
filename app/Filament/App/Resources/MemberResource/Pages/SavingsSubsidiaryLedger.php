@@ -4,8 +4,6 @@ namespace App\Filament\App\Resources\MemberResource\Pages;
 
 use App\Filament\App\Pages\Cashier\Reports\HasSignatories;
 use App\Filament\App\Resources\MemberResource;
-use App\Models\Member;
-use App\Models\Saving;
 use App\Models\SavingsAccount;
 use App\Models\Transaction;
 use App\Models\User;
@@ -14,7 +12,6 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Enums\FiltersLayout;
-use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;

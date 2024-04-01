@@ -2,53 +2,49 @@
 
 namespace App\Filament\App\Pages\Cashier;
 
-use DB;
-use App\Models\Loan;
-use App\Models\Member;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
-use Filament\Pages\Page;
-use App\Models\LoanAccount;
-use App\Models\TimeDeposit;
-use Filament\Actions\Action;
+use App\Actions\CapitalSubscription\PayCapitalSubscription;
+use App\Actions\CashCollections\PayCashCollectible;
+use App\Actions\Imprests\DepositToImprestAccount;
+use App\Actions\Imprests\WithdrawFromImprestAccount;
 use App\Actions\Loans\PayLoan;
-use App\Models\SavingsAccount;
-use App\Models\CashCollectible;
-use App\Models\LoveGiftAccount;
-use App\Models\TransactionType;
-use Filament\Support\Colors\Color;
-use App\Models\CapitalSubscription;
-use App\Oxytoxin\DTO\MSO\ImprestData;
-use App\Oxytoxin\DTO\MSO\SavingsData;
-use Filament\Forms\Components\Select;
-use App\Oxytoxin\DTO\MSO\LoveGiftData;
-use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
-use App\Oxytoxin\DTO\MSO\TimeDepositData;
-use Filament\Forms\Components\DatePicker;
-use App\Oxytoxin\DTO\Loan\LoanPaymentData;
-use Filament\Forms\Components\Placeholder;
-use Illuminate\Contracts\Support\Htmlable;
-use App\Oxytoxin\Providers\SavingsProvider;
-use function Filament\Support\format_money;
-use App\Oxytoxin\Providers\ImprestsProvider;
-use App\Oxytoxin\Providers\LoveGiftProvider;
-use App\Actions\TimeDeposits\CreateTimeDeposit;
+use App\Actions\LoveGifts\DepositToLoveGiftsAccount;
+use App\Actions\LoveGifts\WithdrawFromLoveGiftsAccount;
 use App\Actions\Savings\CreateNewSavingsAccount;
 use App\Actions\Savings\DepositToSavingsAccount;
-use App\Oxytoxin\Providers\TimeDepositsProvider;
-use App\Actions\Imprests\DepositToImprestAccount;
-use App\Actions\CashCollections\PayCashCollectible;
 use App\Actions\Savings\WithdrawFromSavingsAccount;
-use App\Actions\Imprests\WithdrawFromImprestAccount;
-use App\Actions\LoveGifts\DepositToLoveGiftsAccount;
-use App\Oxytoxin\DTO\MSO\Accounts\SavingsAccountData;
-use App\Actions\LoveGifts\WithdrawFromLoveGiftsAccount;
-
-use App\Actions\CapitalSubscription\PayCapitalSubscription;
-use Filament\Forms\Components\Actions\Action as FormAction;
-use App\Oxytoxin\DTO\CashCollectibles\CashCollectiblePaymentData;
+use App\Actions\TimeDeposits\CreateTimeDeposit;
+use App\Models\CapitalSubscription;
+use App\Models\CashCollectible;
+use App\Models\LoanAccount;
+use App\Models\Member;
+use App\Models\SavingsAccount;
+use App\Models\TransactionType;
 use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionPaymentData;
+use App\Oxytoxin\DTO\CashCollectibles\CashCollectiblePaymentData;
+use App\Oxytoxin\DTO\Loan\LoanPaymentData;
+use App\Oxytoxin\DTO\MSO\Accounts\SavingsAccountData;
+use App\Oxytoxin\DTO\MSO\ImprestData;
+use App\Oxytoxin\DTO\MSO\LoveGiftData;
+use App\Oxytoxin\DTO\MSO\SavingsData;
+use App\Oxytoxin\DTO\MSO\TimeDepositData;
+use App\Oxytoxin\Providers\ImprestsProvider;
+use App\Oxytoxin\Providers\LoveGiftProvider;
+use App\Oxytoxin\Providers\SavingsProvider;
+use App\Oxytoxin\Providers\TimeDepositsProvider;
+use Filament\Actions\Action;
+use Filament\Forms\Components\Actions\Action as FormAction;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Filament\Notifications\Notification;
+use Filament\Pages\Page;
+use Filament\Support\Colors\Color;
+use Illuminate\Contracts\Support\Htmlable;
+
+use function Filament\Support\format_money;
 
 class TransactionsPage extends Page
 {
@@ -148,8 +144,7 @@ class TransactionsPage extends Page
                     ->label('Account')
                     ->required()
                     ->suffixAction(
-                        fn ($get) =>
-                        FormAction::make('NewAccount')
+                        fn ($get) => FormAction::make('NewAccount')
                             ->label('New Account')
                             ->modalHeading('New Savings Account')
                             ->form([
@@ -383,7 +378,7 @@ class TransactionsPage extends Page
                     ->options(fn ($get) => LoanAccount::whereMemberId($get('member_id'))->whereHas('loan', fn ($q) => $q->where('posted', true)->where('outstanding_balance', '>', 0))->pluck('number', 'id'))
                     ->searchable()
                     ->live()
-                    ->afterStateUpdated(fn ($set, $state) => $set('amount', LoanAccount::find($state)?->loan->monthly_payment))
+                    ->afterStateUpdated(fn ($set, $state) => $set('amount', LoanAccount::find($state)?->loan?->monthly_payment))
                     ->required()
                     ->preload(),
                 Select::make('payment_type_id')
@@ -448,7 +443,7 @@ class TransactionsPage extends Page
                     reference_number: $data['reference_number'],
                     amount: $data['amount']
                 ), TransactionType::firstWhere('name', 'CRJ'));
-                Notification::make()->title('Payment made for ' . $cashCollectible->name . '!')->success()->send();
+                Notification::make()->title('Payment made for '.$cashCollectible->name.'!')->success()->send();
             });
     }
 }

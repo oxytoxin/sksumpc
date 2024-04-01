@@ -2,30 +2,30 @@
 
 namespace App\Filament\App\Pages;
 
-use Filament\Infolists\Infolist;
-use Filament\Pages\Page;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Infolists\Components\Tabs;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\Tabs\Tab;
-use Filament\Infolists\Components\TextEntry;
 use App\Filament\App\Resources\MemberResource;
 use App\Infolists\Components\DependentsEntry;
 use App\Livewire\App\CbuTable;
 use App\Livewire\App\LoansTable;
 use App\Livewire\App\MsoTable;
 use App\Models\Member;
-use Filament\Infolists\Contracts\HasInfolists;
 use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Infolists\Components\Actions;
 use Filament\Infolists\Components\Actions\Action;
 use Filament\Infolists\Components\Livewire;
-use Filament\Infolists\Concerns\InteractsWithInfolists;
+use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
+use Filament\Infolists\Components\Tabs;
+use Filament\Infolists\Components\Tabs\Tab;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Concerns\InteractsWithInfolists;
+use Filament\Infolists\Contracts\HasInfolists;
+use Filament\Infolists\Infolist;
+use Filament\Pages\Page;
 
-class MemberView extends Page implements HasInfolists, HasForms
+class MemberView extends Page implements HasForms, HasInfolists
 {
-    use InteractsWithInfolists, InteractsWithForms;
+    use InteractsWithForms, InteractsWithInfolists;
 
     protected static string $resource = MemberResource::class;
 
@@ -34,7 +34,6 @@ class MemberView extends Page implements HasInfolists, HasForms
     protected static ?string $navigationIcon = 'icon-dashboard';
 
     public Member $member;
-
 
     public static function shouldRegisterNavigation(): bool
     {
@@ -108,7 +107,7 @@ class MemberView extends Page implements HasInfolists, HasForms
                         Tab::make('Loan')
                             ->schema(fn ($record) => [
                                 Livewire::make(LoansTable::class, ['member' => $record]),
-                            ])
+                            ]),
                     ])->persistTabInQueryString(),
             ])
             ->columns(1);

@@ -6,7 +6,6 @@ use App\Actions\CapitalSubscriptionBilling\PostCapitalSubscriptionBillingPayment
 use App\Filament\App\Resources\CapitalSubscriptionBillingResource\Pages;
 use App\Models\CapitalSubscriptionBilling;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -68,7 +67,7 @@ class CapitalSubscriptionBillingResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->visible(fn ($record) => !$record->posted)
+                    ->visible(fn ($record) => ! $record->posted)
                     ->form([
                         Select::make('payment_type_id')
                             ->paymenttype()
@@ -77,7 +76,7 @@ class CapitalSubscriptionBillingResource extends Resource
                         TextInput::make('reference_number'),
                     ]),
                 Tables\Actions\DeleteAction::make()
-                    ->visible(fn ($record) => !$record->posted)
+                    ->visible(fn ($record) => ! $record->posted)
                     ->action(function (CapitalSubscriptionBilling $record) {
                         $record->capital_subscription_billing_payments()->delete();
                         $record->delete();
@@ -85,7 +84,7 @@ class CapitalSubscriptionBillingResource extends Resource
                 Action::make('for_or')
                     ->button()
                     ->color('success')
-                    ->visible(fn ($record, $livewire) => !$record->posted && !$record->for_or && !$record->or_number && $livewire->user_is_cashier)
+                    ->visible(fn ($record, $livewire) => ! $record->posted && ! $record->for_or && ! $record->or_number && $livewire->user_is_cashier)
                     ->label('For OR')
                     ->requiresConfirmation()
                     ->action(function (CapitalSubscriptionBilling $record) {
@@ -97,7 +96,7 @@ class CapitalSubscriptionBillingResource extends Resource
                 Action::make('post_payments')
                     ->button()
                     ->color('success')
-                    ->visible(fn ($record, $livewire) => !$record->posted && !$record->for_or && $record->or_number && $livewire->user_is_cbu_officer)
+                    ->visible(fn ($record, $livewire) => ! $record->posted && ! $record->for_or && $record->or_number && $livewire->user_is_cbu_officer)
                     ->requiresConfirmation()
                     ->action(function (CapitalSubscriptionBilling $record) {
                         app(PostCapitalSubscriptionBillingPayments::class)->handle(cbuBilling: $record);

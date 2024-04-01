@@ -3,7 +3,6 @@
 namespace App\Filament\App\Resources\BalanceForwardedSummaryResource\RelationManagers;
 
 use App\Models\Account;
-use App\Models\BalanceForwardedEntry;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -12,9 +11,6 @@ use Filament\Tables;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
-
-use function Amp\Dns\query;
-use function Livewire\invade;
 
 class BalanceForwardedEntriesRelationManager extends RelationManager
 {
@@ -65,7 +61,7 @@ class BalanceForwardedEntriesRelationManager extends RelationManager
                             ->when($state['account_number'], fn ($q, $v) => $q->where('number', 'like', "%{$v}%"))
                             ->when($state['parent_account'], fn ($q, $v) => $q->where('parent_id', $v))
                             ->when($state['account_name'], fn ($q, $v) => $q->where('name', 'like', "%{$v}%"));
-                    })
+                    }),
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
             ->headerActions([

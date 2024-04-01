@@ -3,9 +3,7 @@
 namespace App\Filament\App\Resources;
 
 use App\Filament\App\Resources\UserResource\Pages;
-use App\Filament\App\Resources\UserResource\RelationManagers;
 use App\Models\User;
-use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -15,8 +13,6 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class UserResource extends Resource
 {
@@ -39,7 +35,7 @@ class UserResource extends Resource
                 Select::make('roles')
                     ->relationship('roles', 'name')
                     ->preload()
-                    ->multiple()
+                    ->multiple(),
             ]);
     }
 
@@ -49,21 +45,21 @@ class UserResource extends Resource
             ->columns([
                 TextColumn::make('name'),
                 TextColumn::make('email'),
-                TextColumn::make('roles.name')
+                TextColumn::make('roles.name'),
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
             ->filters([
                 SelectFilter::make('role')
                     ->options([
                         'staff' => 'Staff',
-                        'member' => 'Member'
+                        'member' => 'Member',
                     ])
                     ->default('staff')
                     ->query(
                         fn ($query, $state) => $query
                             ->when($state['value'] == 'member', fn ($q) => $q->whereRelation('roles', 'name', 'member'))
                             ->when($state['value'] == 'staff', fn ($q) => $q->whereRelation('roles', 'name', '!=', 'member'))
-                    )
+                    ),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

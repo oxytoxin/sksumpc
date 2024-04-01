@@ -42,16 +42,17 @@ class TimeDeposit extends Model
 
     public function amountInWords(): Attribute
     {
-        return Attribute::make(get: fn () => (new NumberFormatter("en", NumberFormatter::SPELLOUT))->format($this->amount));
+        return Attribute::make(get: fn () => (new NumberFormatter('en', NumberFormatter::SPELLOUT))->format($this->amount));
     }
 
     public function daysInWords(): Attribute
     {
-        return Attribute::make(get: fn () => (new NumberFormatter("en", NumberFormatter::SPELLOUT))->format($this->number_of_days));
+        return Attribute::make(get: fn () => (new NumberFormatter('en', NumberFormatter::SPELLOUT))->format($this->number_of_days));
     }
+
     public function interestRateInWords(): Attribute
     {
-        return Attribute::make(get: fn () => (new NumberFormatter("en", NumberFormatter::SPELLOUT))->format($this->interest_rate * 100));
+        return Attribute::make(get: fn () => (new NumberFormatter('en', NumberFormatter::SPELLOUT))->format($this->interest_rate * 100));
     }
 
     protected static function booted()
@@ -59,7 +60,7 @@ class TimeDeposit extends Model
         static::creating(function (TimeDeposit $td) {
             $td->cashier_id = auth()->id();
             $td->interest_rate = TimeDepositsProvider::getInterestRate($td->amount);
-            $td->tdc_number = str("TDC-")->append(str_pad((TimeDeposit::latest()->first()->id ?? 0) + 1, 6, '0', STR_PAD_LEFT));
+            $td->tdc_number = str('TDC-')->append(str_pad((TimeDeposit::latest()->first()->id ?? 0) + 1, 6, '0', STR_PAD_LEFT));
             $td->number_of_days = TimeDepositsProvider::NUMBER_OF_DAYS;
             $td->maturity_amount = TimeDepositsProvider::getMaturityAmount($td->amount);
         });

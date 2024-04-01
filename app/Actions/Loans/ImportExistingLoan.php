@@ -2,19 +2,18 @@
 
 namespace App\Actions\Loans;
 
-use App\Models\Member;
+use App\Actions\LoanApplications\CreateNewLoanApplication;
+use App\Actions\Transactions\CreateTransaction;
 use App\Models\Account;
 use App\Models\LoanType;
+use App\Models\Member;
 use App\Models\TransactionType;
-use Illuminate\Support\Facades\DB;
-use App\Oxytoxin\DTO\Loan\LoanData;
-use App\Actions\Loans\CreateNewLoan;
-use App\Oxytoxin\Providers\LoansProvider;
-use Lorisleiva\Actions\Concerns\AsAction;
 use App\Oxytoxin\DTO\Loan\LoanApplicationData;
-use App\Actions\Transactions\CreateTransaction;
+use App\Oxytoxin\DTO\Loan\LoanData;
 use App\Oxytoxin\DTO\Transactions\TransactionData;
-use App\Actions\LoanApplications\CreateNewLoanApplication;
+use App\Oxytoxin\Providers\LoansProvider;
+use Illuminate\Support\Facades\DB;
+use Lorisleiva\Actions\Concerns\AsAction;
 
 class ImportExistingLoan
 {
@@ -59,6 +58,7 @@ class ImportExistingLoan
         $accounts = Account::withCode()->find(collect($loan_disclosure_sheet_items)->pluck('account_id'));
         $items = collect($loan_disclosure_sheet_items)->map(function ($item) use ($accounts) {
             $item['name'] = $accounts->find($item['account_id'])->code;
+
             return $item;
         })->toArray();
         $loanData = new LoanData(

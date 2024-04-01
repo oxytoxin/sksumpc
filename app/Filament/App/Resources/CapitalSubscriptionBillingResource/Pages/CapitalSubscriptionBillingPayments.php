@@ -2,24 +2,23 @@
 
 namespace App\Filament\App\Resources\CapitalSubscriptionBillingResource\Pages;
 
-use Filament\Tables\Table;
+use App\Filament\App\Resources\CapitalSubscriptionBillingResource;
+use App\Models\CapitalSubscriptionBilling;
+use App\Models\CapitalSubscriptionBillingPayment;
 use Filament\Actions\Action;
-use App\Models\LoanBillingPayment;
-use Illuminate\Support\Facades\DB;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Columns\TextColumn;
-use PhpOffice\PhpSpreadsheet\IOFactory;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
-use Filament\Forms\Components\FileUpload;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\DeleteAction;
-use Spatie\SimpleExcel\SimpleExcelReader;
-use App\Models\CapitalSubscriptionBilling;
-use Illuminate\Contracts\Support\Htmlable;
+use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\Summarizers\Sum;
-use App\Models\CapitalSubscriptionBillingPayment;
-use App\Filament\App\Resources\CapitalSubscriptionBillingResource;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Facades\DB;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use Spatie\SimpleExcel\SimpleExcelReader;
 
 class CapitalSubscriptionBillingPayments extends ListRecords
 {
@@ -81,15 +80,15 @@ class CapitalSubscriptionBillingPayments extends ListRecords
                     $worksheet->setCellValue('A1', $title);
                     $worksheet->insertNewRowBefore(3, $capital_subscription_billing_payments->count());
                     foreach ($capital_subscription_billing_payments as $key => $payment) {
-                        $worksheet->setCellValue('A' . $key + 3, $key + 1);
-                        $worksheet->setCellValue('B' . $key + 3, $payment->member_code);
-                        $worksheet->setCellValue('C' . $key + 3, $payment->member_name);
-                        $worksheet->setCellValue('D' . $key + 3, $payment->amount_due);
-                        $worksheet->setCellValue('E' . $key + 3, $payment->amount_paid);
+                        $worksheet->setCellValue('A'.$key + 3, $key + 1);
+                        $worksheet->setCellValue('B'.$key + 3, $payment->member_code);
+                        $worksheet->setCellValue('C'.$key + 3, $payment->member_name);
+                        $worksheet->setCellValue('D'.$key + 3, $payment->amount_due);
+                        $worksheet->setCellValue('E'.$key + 3, $payment->amount_paid);
                     }
                     $worksheet->getProtection()->setSheet(true)->setInsertRows(true)->setInsertColumns(true);
-                    $worksheet->protectCells('E3:E' . ($capital_subscription_billing_payments->count() + 2), auth()->user()->getAuthPassword(), true);
-                    $path = storage_path('app/livewire-tmp/' . $filename);
+                    $worksheet->protectCells('E3:E'.($capital_subscription_billing_payments->count() + 2), auth()->user()->getAuthPassword(), true);
+                    $path = storage_path('app/livewire-tmp/'.$filename);
                     $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
                     $writer->save($path);
 
@@ -124,9 +123,9 @@ class CapitalSubscriptionBillingPayments extends ListRecords
                             ->default(fn ($record) => $record->amount_paid)
                             ->moneymask(),
                     ])
-                    ->visible(fn ($record) => !$record->posted),
+                    ->visible(fn ($record) => ! $record->posted),
                 DeleteAction::make()
-                    ->visible(fn ($record) => !$record->posted),
+                    ->visible(fn ($record) => ! $record->posted),
             ]);
     }
 }

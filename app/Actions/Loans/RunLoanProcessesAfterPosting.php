@@ -31,7 +31,7 @@ class RunLoanProcessesAfterPosting
         if (floatval($loan->cbu_amount)) {
             dd($loan->cbu_amount);
             $cbu = $member->capital_subscriptions_common;
-            if (!$cbu) {
+            if (! $cbu) {
                 $cbu = $member->capital_subscriptions()->create([
                     'number_of_terms' => 0,
                     'number_of_shares' => $loan->cbu_amount / $member->member_type->par_value,

@@ -56,7 +56,7 @@ function oxy_get_year_range(): array
 
 function renumber_format($number, $decimals = 2)
 {
-    if (!$number || !floatval($number)) {
+    if (! $number || ! floatval($number)) {
         return '';
     }
     if ($number < 0) {

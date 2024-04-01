@@ -2,12 +2,10 @@
 
 namespace App\Actions\TimeDeposits;
 
+use App\Actions\Transactions\CreateTransaction;
 use App\Models\Account;
 use App\Models\TimeDeposit;
 use App\Models\TransactionType;
-use App\Oxytoxin\Providers\SavingsProvider;
-use App\Actions\Transactions\CreateTransaction;
-use App\Oxytoxin\Providers\TimeDepositsProvider;
 use App\Oxytoxin\DTO\Transactions\TransactionData;
 
 class ClaimTimeDeposit

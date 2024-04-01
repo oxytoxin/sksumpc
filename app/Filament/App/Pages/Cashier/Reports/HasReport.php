@@ -3,8 +3,8 @@
 namespace App\Filament\App\Pages\Cashier\Reports;
 
 use Filament\Tables\Concerns\InteractsWithTable;
-use Filament\Tables\Table;
 use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 
@@ -20,7 +20,7 @@ trait HasReport
             ->query($this->getReportQuery())
             ->content(fn () => view('filament.app.pages.cashier.reports.report-table', [
                 'signatories' => $this->signatories,
-                'report_title' => $this->report_title
+                'report_title' => $this->report_title,
             ]))
             ->filters([
                 DateRangeFilter::make('transaction_date')

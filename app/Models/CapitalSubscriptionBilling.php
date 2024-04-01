@@ -38,7 +38,7 @@ class CapitalSubscriptionBilling extends Model
     {
         static::created(function (CapitalSubscriptionBilling $capitalSubscriptionBilling) {
             DB::beginTransaction();
-            $capitalSubscriptionBilling->reference_number = 'CBUBILLING' . '-' . today()->format('Y-m-') . str_pad($capitalSubscriptionBilling->id, 6, '0', STR_PAD_LEFT);
+            $capitalSubscriptionBilling->reference_number = 'CBUBILLING'.'-'.today()->format('Y-m-').str_pad($capitalSubscriptionBilling->id, 6, '0', STR_PAD_LEFT);
             CapitalSubscription::where('is_common', true)->where('outstanding_balance', '>', 0)->each(function ($cbu) use ($capitalSubscriptionBilling) {
                 CapitalSubscriptionBillingPayment::firstOrCreate([
                     'member_id' => $cbu->member_id,

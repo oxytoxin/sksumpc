@@ -50,7 +50,7 @@ class LoansProvider
 
     public static function computeInterest($amount, ?LoanType $loanType, $number_of_terms, $transaction_date = null)
     {
-        if (!$loanType || !$amount || !$number_of_terms) {
+        if (! $loanType || ! $amount || ! $number_of_terms) {
             return 0;
         }
         $loan = Loan::make([
@@ -67,7 +67,7 @@ class LoansProvider
 
     public static function computeMonthlyPayment($amount, ?LoanType $loanType, $number_of_terms, $transaction_date = null)
     {
-        if (!$loanType || !$amount || !$number_of_terms) {
+        if (! $loanType || ! $amount || ! $number_of_terms) {
             return 0;
         }
 
@@ -98,7 +98,7 @@ class LoansProvider
 
     public static function getDisclosureSheetItems(?LoanType $loanType, $gross_amount, ?Member $member, $existing_loan_id = null): array
     {
-        if (!$loanType) {
+        if (! $loanType) {
             return [];
         }
         $items = [];
@@ -182,12 +182,13 @@ class LoansProvider
             'readonly' => true,
             'code' => 'net_amount',
         ];
+
         return $items;
     }
 
     public static function computeDeductions(?LoanType $loanType, $gross_amount, ?Member $member, $existing_loan_id = null): array
     {
-        if (!$loanType) {
+        if (! $loanType) {
             return [];
         }
         $deductions = [

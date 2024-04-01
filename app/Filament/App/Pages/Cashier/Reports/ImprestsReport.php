@@ -4,13 +4,11 @@ namespace App\Filament\App\Pages\Cashier\Reports;
 
 use App\Models\Imprest;
 use Filament\Pages\Page;
-use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
-use Livewire\Attributes\Computed;
 
 class ImprestsReport extends Page implements HasTable
 {
-    use HasSignatories, HasReport;
+    use HasReport, HasSignatories;
 
     protected static bool $shouldRegisterNavigation = false;
 

@@ -4,12 +4,10 @@ namespace App\Filament\App\Pages\Cashier\Reports;
 
 use App\Models\LoanPayment;
 use App\Models\LoanType;
-use App\Models\User;
 use Filament\Pages\Page;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Enums\FiltersLayout;
-use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;

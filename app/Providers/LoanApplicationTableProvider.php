@@ -4,12 +4,9 @@ namespace App\Providers;
 
 use App\Models\LoanApplication;
 use App\Models\LoanType;
-use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Enums\FiltersLayout;
-use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\ServiceProvider;
 use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 
@@ -61,7 +58,7 @@ class LoanApplicationTableProvider extends ServiceProvider
                 ->defaultToday()
                 ->displayFormat('MM/DD/YYYY');
 
-            if (!$type || $type == LoanApplication::STATUS_DISAPPROVED) {
+            if (! $type || $type == LoanApplication::STATUS_DISAPPROVED) {
                 $filters[] = DateRangeFilter::make('disapproval_date')
                     ->format('m/d/Y')
                     ->displayFormat('MM/DD/YYYY');
