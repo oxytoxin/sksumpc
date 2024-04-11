@@ -83,6 +83,7 @@ class SavingsTable extends Component implements HasForms, HasTable
                 ViewAction::make('subsidiary_ledger')
                     ->icon('heroicon-o-clipboard-document-list')
                     ->label('Subsidiary Ledger')
+                    ->visible(fn ($livewire) => filled($livewire->tableFilters['savings_account_id']['value']))
                     ->url(fn ($livewire) => route('filament.app.resources.members.savings-subsidiary-ledger', ['savings_account' => $livewire->tableFilters['savings_account_id']['value']])),
             ])
             ->bulkActions([

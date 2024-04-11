@@ -18,27 +18,21 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Division::create([
-            'name' => 'ACCESS Campus',
-        ]);
-        Division::create([
-            'name' => 'Isulan Campus',
-        ]);
-        Division::create([
-            'name' => 'Lutayan Campus',
-        ]);
-        Division::create([
-            'name' => 'Kalamansig Campus',
-        ]);
-        Division::create([
-            'name' => 'Palimbang Campus',
-        ]);
-        Division::create([
-            'name' => 'Tacurong Campus',
-        ]);
-        Division::create([
-            'name' => 'ACCESS-ADMIN',
-        ]);
+        Division::insert(
+            [
+                ['name' => 'ACCESS'],
+                ['name' => 'ADMINISTRATION'],
+                ['name' => 'ASSOCIATE'],
+                ['name' => 'BAGUMBAYAN'],
+                ['name' => 'ISULAN'],
+                ['name' => 'KALAMANSIG'],
+                ['name' => 'LUTAYAN'],
+                ['name' => 'TACURONG'],
+                ['name' => 'RETIRED'],
+                ['name' => 'SKSU-MPC'],
+                ['name' => 'NOT CONNECTED'],
+            ]
+        );
     }
 
     /**

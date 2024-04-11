@@ -77,6 +77,9 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                     ->required()
                     ->disabled(fn ($get) => !$get('member_id'))
                     ->collapsible()
+                    ->addBetweenAction(
+                        fn (Action $action) => $action->visible(false),
+                    )
                     ->blocks([
                         Block::make('cbu')
                             ->label('CBU')

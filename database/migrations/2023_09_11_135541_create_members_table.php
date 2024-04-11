@@ -31,9 +31,10 @@ return new class extends Migration
             $table->foreignId('gender_id')->nullable()->constrained();
             $table->foreignId('civil_status_id')->nullable()->constrained();
             $table->foreignId('patronage_status_id')->default(1)->constrained();
+            $table->date('membership_date')->default(DB::raw("(CURRENT_DATE)"));
             $table->date('dob')->nullable();
             $table->string('place_of_birth')->nullable();
-            // $table->integer('age')->virtualAs('TIMESTAMPDIFF(YEAR,dob,CURDATE())')->nullable();
+            // $table->integer('age')->virtualAs(DB::raw("TIMESTAMPDIFF(YEAR,dob,(CURRENT_DATE))"))->nullable();
             $table->string('address')->nullable();
             $table->foreignId('occupation_id')->nullable()->constrained();
             $table->string('present_employer')->nullable();

@@ -39,6 +39,7 @@ class CashierTransactionsPage extends Page implements HasForms
             ->schema([
                 Tabs::make('transactions')
                     ->activeTab(1)
+                    ->persistTabInQueryString()
                     ->tabs([
                         Tab::make('Payments')->schema([
                             Livewire::make(PaymentTransactions::class),

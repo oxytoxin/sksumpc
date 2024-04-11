@@ -6,6 +6,7 @@ use App\Models\CapitalSubscriptionBilling;
 use App\Models\LoanBilling;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -33,6 +34,7 @@ class BillingTransactions extends Component implements HasForms
                     ->reactive(),
                 Select::make('billing_id')
                     ->label('Billing')
+                    ->reactive()
                     ->options(function ($get) {
                         switch ($get('type')) {
                             case 1:
@@ -46,6 +48,9 @@ class BillingTransactions extends Component implements HasForms
                                 break;
                         }
                     }),
+                Placeholder::make('loan_type')
+                    ->visible(fn ($get) => $get('type') == 2 && $get('billing_id'))
+                    ->content(fn ($get) => LoanBilling::find($get('billing_id'))?->loan_type->name),
                 TextInput::make('name')->required(),
                 TextInput::make('or_number')->required()->label('OR #'),
                 Actions::make([
@@ -66,7 +71,29 @@ class BillingTransactions extends Component implements HasForms
                             Notification::make()->title('OR created for billing!')->success()->send();
                             $this->form->fill();
                         }),
-
+                    Action::make('billing_receivables')
+                        ->url(
+                            function ($get) {
+                                if ($get('billing_id')) {
+                                    return match ((int)$get('type')) {
+                                        1 => route('filament.app.resources.capital-subscription-billings.billing-payments', ['capital_subscription_billing' => $get('billing_id')]),
+                                        2 => route('filament.app.resources.loan-billings.billing-payments', ['loan_billing' => $get('billing_id')]),
+                                        default => '#'
+                                    };
+                                }
+                            }
+                        )
+                        ->visible(fn ($get) => $get('billing_id'))
+                        ->openUrlInNewTab()
+                        ->button()
+                        ->outlined(),
+                    Action::make('print')
+                        ->url(fn ($get) => route('filament.app.resources.loan-billings.statement-of-remittance', ['loan_billing' => $get('billing_id')]))
+                        ->visible(fn ($get) => $get('type') == 2 && $get('billing_id'))
+                        ->icon('heroicon-o-printer')
+                        ->button()
+                        ->openUrlInNewTab()
+                        ->outlined(),
                 ]),
             ]);
     }

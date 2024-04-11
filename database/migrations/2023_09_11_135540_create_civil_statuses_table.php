@@ -19,13 +19,13 @@ return new class extends Migration
         });
 
         CivilStatus::create([
-            'name' => 'Single',
+            'name' => 'SINGLE',
         ]);
         CivilStatus::create([
-            'name' => 'Married',
+            'name' => 'MARRIED',
         ]);
         CivilStatus::create([
-            'name' => 'Widowed',
+            'name' => 'WIDOWED',
         ]);
     }
 

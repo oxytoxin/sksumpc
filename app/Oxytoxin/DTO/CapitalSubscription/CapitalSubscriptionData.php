@@ -14,7 +14,9 @@ class CapitalSubscriptionData extends Data
         public string $amount_subscribed,
         public string $par_value,
         public bool $is_common,
-        public string $code
+        public ?string $code = null,
+        public $transaction_date = null,
     ) {
+        $this->transaction_date = $transaction_date ?? today();
     }
 }

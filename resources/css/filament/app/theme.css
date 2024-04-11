@@ -46,6 +46,10 @@
     @apply gap-1;
 }
 
+.fi-fo-builder-block-picker > .fi-dropdown-panel{
+    @apply !bg-primary-300 font-bold;
+} 
+
 [data-transaction="cbu"] {
     @apply !bg-blue-100;
 }

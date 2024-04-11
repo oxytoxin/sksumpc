@@ -2,12 +2,25 @@
 
 namespace App\Console\Commands;
 
-use App\Actions\Memberships\CreateMemberInitialAccounts;
+use App\Actions\CapitalSubscription\CreateNewCapitalSubscription;
+use App\Actions\CapitalSubscription\CreateNewCapitalSubscriptionAccount;
+use App\Actions\CapitalSubscription\PayCapitalSubscription;
+use DB;
+use App\Models\User;
+use App\Models\Gender;
 use App\Models\Member;
 use DateTimeImmutable;
-use DB;
+use App\Models\Division;
+use App\Models\Religion;
 use Illuminate\Console\Command;
+use Spatie\Permission\Models\Role;
 use Spatie\SimpleExcel\SimpleExcelReader;
+use App\Actions\Memberships\CreateMemberInitialAccounts;
+use App\Models\CivilStatus;
+use App\Models\TransactionType;
+use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionData;
+use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionPaymentData;
+use App\Oxytoxin\DTO\MSO\Accounts\CapitalSubscriptionAccountData;
 
 class ImportMembers extends Command
 {
@@ -30,78 +43,75 @@ class ImportMembers extends Command
      */
     public function handle()
     {
-        if (! Member::count()) {
-            DB::beginTransaction();
-            $rows = SimpleExcelReader::create(storage_path('csv/MEMBERSDATA.xlsx'))
-                ->headerOnRow(1)
+        if (!Member::count()) {
+            $rows = SimpleExcelReader::create(storage_path('csv/PROFILING.xlsx'))
                 ->getRows();
-            $rows->each(function (array $memberData) {
+            $divisions = Division::get();
+            $religions = Religion::get();
+            $genders = Gender::get();
+            $civil_statuses = CivilStatus::get();
+            $transaction_type = TransactionType::firstWhere('name', 'CRJ');
+            $rows->each(function (array $memberData) use ($divisions, $religions, $genders, $civil_statuses, $transaction_type) {
                 try {
-                    $memberData = collect($memberData)->map(fn ($d) => filled($d) ? trim($d instanceof DateTimeImmutable ? strtoupper($d->format('m/d/Y')) : strtoupper($d)) : null)->toArray();
-                    Member::create([
-                        'mpc_code' => $memberData['SKSU MPC NUMBER'],
-                        'first_name' => $memberData['Firstname'],
-                        'last_name' => $memberData['Lastname'],
-                        'middle_name' => $memberData['MI'],
-                        'middle_initial' => isset($memberData['MI']) ? $memberData['MI'][0] : null,
-                        'member_type_id' => match ($memberData['Members Type']) {
-                            'REGULAR' => 1,
-                            'ASSOCIATE' => 3,
-                            'LABORATORY' => 4,
-                            default => dd($memberData)
-                        },
-                    ]);
+                    if ($memberData['mpc_code']) {
+                        $memberData = collect($memberData)->map(fn ($d) => filled($d) ? trim($d instanceof DateTimeImmutable ? strtoupper($d->format('m/d/Y')) : strtoupper($d)) : null)->toArray();
+                        $member = Member::create([
+                            'mpc_code' => $memberData['mpc_code'],
+                            'first_name' => $memberData['firstname'],
+                            'last_name' => $memberData['lastname'],
+                            'middle_name' => $memberData['mi'],
+                            'middle_initial' => isset($memberData['mi']) ? $memberData['mi'][0] : null,
+                            'member_type_id' => match ($memberData['member_type']) {
+                                'REGULAR' => 1,
+                                'ASSOCIATE' => 3,
+                                'LABORATORY' => 4,
+                                default => dd($memberData)
+                            },
+                            'division_id' => $divisions->firstWhere('name', $memberData['division'])?->id,
+                            'religion_id' => $religions->firstWhere('name', $memberData['religion'])?->id,
+                            'gender_id' => $genders->firstWhere('name', $memberData['gender'])?->id,
+                            'civil_status_id' => $civil_statuses->firstWhere('name', $memberData['civil_status'])?->id,
+                            'dob' => $memberData['dob'],
+                            'tin' => $memberData['tin'],
+                            'place_of_birth' => $memberData['birthplace'],
+                            'present_employer' => $memberData['present_employer'],
+                            'annual_income' => $memberData['annual_income'],
+                            'highest_educational_attainment' => $memberData['highest_educational_attainment'],
+                            'membership_date' => '12/30/2023',
+                        ]);
+                        $member->refresh();
+                        app(CreateNewCapitalSubscriptionAccount::class)->handle(new CapitalSubscriptionAccountData(
+                            member_id: $member->id,
+                            name: $member->full_name
+                        ));
+                        $cbu = app(CreateNewCapitalSubscription::class)->handle($member, new CapitalSubscriptionData(
+                            number_of_terms: 36,
+                            number_of_shares: $memberData['no_shares'],
+                            initial_amount_paid: $memberData['amount_paid'],
+                            monthly_payment: ($memberData['amount_shares'] - $memberData['amount_paid']) / 36,
+                            amount_subscribed: $memberData['amount_shares'],
+                            par_value: $memberData['par_value'],
+                            is_common: true,
+                            transaction_date: '12/30/2023'
+                        ));
+                        app(PayCapitalSubscription::class)->handle($cbu, new CapitalSubscriptionPaymentData(
+                            payment_type_id: 1,
+                            reference_number: '#BALANCEFORWARDED',
+                            amount: $memberData['amount_paid'],
+                        ), $transaction_type);
+
+                        $user = User::create([
+                            'member_id' => $member->id,
+                            'name' => $member->full_name,
+                            'email' => str($member->mpc_code)->lower()->append('@gmail.com'),
+                            'password' => 'password',
+                        ]);
+                        $user->assignRole(Role::firstWhere('name', 'member'));
+                    }
                 } catch (\Throwable $e) {
-                    dd($memberData, $e->getMessage());
+                    dd($memberData, $e);
                 }
             });
-            DB::commit();
-            foreach (Member::all() as $key => $member) {
-                app(CreateMemberInitialAccounts::class)->handle($member);
-            }
-        }
-        // DB::beginTransaction();
-        // $rows = SimpleExcelReader::create(storage_path('csv/CBU.xlsx'))->fromSheetName('REGULAR')->getRows();
-        // $rows->each(function ($data) {
-        //     $this->seedCBU($data);
-        // });
-        // $rows = SimpleExcelReader::create(storage_path('csv/CBU.xlsx'))->fromSheetName('ASSOCIATE')->getRows();
-        // $rows->each(function ($data) {
-        //     $this->seedCBU($data);
-        // });
-        // $rows = SimpleExcelReader::create(storage_path('csv/CBU.xlsx'))->fromSheetName('LABORATORY')->getRows();
-        // $rows->each(function ($data) {
-        //     $this->seedCBU($data);
-        // });
-        // DB::commit();
-    }
-
-    private function seedCBU($data)
-    {
-        $member = Member::where('mpc_code', $data['mpc_code'])->with('member_type')->first();
-        if ($member) {
-            try {
-                $cbu = $member->initial_capital_subscription()->create([
-                    'code' => '',
-                    'number_of_shares' => $data['shares_subscribed'],
-                    'number_of_terms' => $member->member_type->additional_number_of_terms,
-                    'is_common' => true,
-                    'par_value' => $data['amount_shares_subscribed'] / $data['shares_subscribed'],
-                    'amount_subscribed' => $data['amount_shares_subscribed'],
-                    'transaction_date' => today()->subYear()->endOfYear(),
-                ]);
-                $payment = $cbu->payments()->create([
-                    'amount' => $data['amount_shares_paid_total'],
-                    'reference_number' => '#BALANCEFORWARDED',
-                    'payment_type_id' => 1,
-                    'transaction_date' => today()->subYear()->endOfYear(),
-                ]);
-                $payment->update([
-                    'cashier_id' => 1,
-                ]);
-            } catch (\Throwable $e) {
-                dd($data, $e->getMessage());
-            }
         }
     }
 }
