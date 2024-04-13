@@ -60,7 +60,7 @@ class TimeDeposit extends Model
         static::creating(function (TimeDeposit $td) {
             $td->cashier_id = auth()->id();
             $td->interest_rate = TimeDepositsProvider::getInterestRate($td->amount);
-            $td->tdc_number = str('TDC-')->append(str_pad((TimeDeposit::latest()->first()->id ?? 0) + 1, 6, '0', STR_PAD_LEFT));
+            $td->tdc_number = str('TDC-')->append(str_pad((TimeDeposit::latest('id')->first()->id ?? 0) + 1, 6, '0', STR_PAD_LEFT));
             $td->number_of_days = TimeDepositsProvider::NUMBER_OF_DAYS;
             $td->maturity_amount = TimeDepositsProvider::getMaturityAmount($td->amount);
         });

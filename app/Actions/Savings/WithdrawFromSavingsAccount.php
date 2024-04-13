@@ -48,6 +48,7 @@ class WithdrawFromSavingsAccount
                 credit: $savings->amount,
                 member_id: $savings->member_id,
                 remarks: 'Member Withdrawal from Savings',
+                transaction_date: $data->transaction_date,
             ));
         }
         if ($data->payment_type_id == 4) {
@@ -58,6 +59,7 @@ class WithdrawFromSavingsAccount
                 credit: $savings->amount,
                 member_id: $savings->member_id,
                 remarks: 'Member Withdrawal from Savings',
+                transaction_date: $data->transaction_date,
             ));
         }
         app(CreateTransaction::class)->handle(new TransactionData(
@@ -66,7 +68,8 @@ class WithdrawFromSavingsAccount
             reference_number: $savings->reference_number,
             debit: $savings->amount,
             member_id: $member->id,
-            remarks: 'Member Withdrawal from Savings'
+            remarks: 'Member Withdrawal from Savings',
+            transaction_date: $data->transaction_date,
         ));
         DB::commit();
 

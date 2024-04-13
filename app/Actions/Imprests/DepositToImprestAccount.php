@@ -38,6 +38,7 @@ class DepositToImprestAccount
                     debit: $imprest->amount,
                     member_id: $imprest->member_id,
                     remarks: 'Member Deposit to Imprest',
+                    transaction_date: $data->transaction_date,
                 ));
             }
             if ($data->payment_type_id == 4) {
@@ -48,6 +49,7 @@ class DepositToImprestAccount
                     debit: $imprest->amount,
                     member_id: $imprest->member_id,
                     remarks: 'Member Deposit to Imprest',
+                    transaction_date: $data->transaction_date,
                 ));
             }
             app(CreateTransaction::class)->handle(new TransactionData(
@@ -56,7 +58,8 @@ class DepositToImprestAccount
                 reference_number: $imprest->reference_number,
                 credit: $imprest->amount,
                 member_id: $member->id,
-                remarks: 'Member Deposit to Imprest'
+                remarks: 'Member Deposit to Imprest',
+                transaction_date: $data->transaction_date,
             ));
         }
         DB::commit();

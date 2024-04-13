@@ -45,6 +45,7 @@ class WithdrawFromImprestAccount
                 credit: $imprest->amount,
                 member_id: $imprest->member_id,
                 remarks: 'Member Withdrawal from Imprest',
+                transaction_date: $data->transaction_date,
             ));
         }
         if ($data->payment_type_id == 4) {
@@ -55,6 +56,7 @@ class WithdrawFromImprestAccount
                 credit: $imprest->amount,
                 member_id: $imprest->member_id,
                 remarks: 'Member Withdrawal from Imprest',
+                transaction_date: $data->transaction_date,
             ));
         }
         app(CreateTransaction::class)->handle(new TransactionData(
@@ -63,7 +65,8 @@ class WithdrawFromImprestAccount
             reference_number: $imprest->reference_number,
             debit: $imprest->amount,
             member_id: $member->id,
-            remarks: 'Member Withdrawal from Imprest'
+            remarks: 'Member Withdrawal from Imprest',
+            transaction_date: $data->transaction_date,
         ));
         DB::commit();
 

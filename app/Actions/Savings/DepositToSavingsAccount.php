@@ -39,6 +39,7 @@ class DepositToSavingsAccount
                 debit: $savings->amount,
                 member_id: $savings->member_id,
                 remarks: 'Member Deposit to Savings',
+                transaction_date: $data->transaction_date,
             ));
         }
         if ($data->payment_type_id == 4) {
@@ -49,6 +50,7 @@ class DepositToSavingsAccount
                 debit: $savings->amount,
                 member_id: $savings->member_id,
                 remarks: 'Member Deposit to Savings',
+                transaction_date: $data->transaction_date,
             ));
         }
         app(CreateTransaction::class)->handle(new TransactionData(
@@ -57,7 +59,8 @@ class DepositToSavingsAccount
             reference_number: $savings->reference_number,
             credit: $savings->amount,
             member_id: $member->id,
-            remarks: 'Member Deposit to Savings'
+            remarks: 'Member Deposit to Savings',
+            transaction_date: $data->transaction_date,
         ));
         DB::commit();
 

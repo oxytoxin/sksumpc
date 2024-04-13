@@ -17,10 +17,10 @@ class CreateTimeDeposit
 {
     use AsAction;
 
-    public function handle(TimeDepositData $timeDepositData, TransactionType $transactionType)
+    public function handle(TimeDepositData $timeDepositData, TransactionType $transactionType, $account_number = null)
     {
         DB::beginTransaction();
-        $account_number = str('21112-1015-')
+        $account_number ??= str('21112-1015-')
             ->append(str_pad((TimeDepositAccount::latest('id')->first()?->id ?? 0) + 1, 6, '0', STR_PAD_LEFT));
         $member = Member::find($timeDepositData->member_id);
         $member_time_deposits = Account::getMemberTimeDeposits();
@@ -48,7 +48,8 @@ class CreateTimeDeposit
                 reference_number: $td->reference_number,
                 debit: $td->amount,
                 member_id: $td->member_id,
-                remarks: 'Member Time Deposit'
+                remarks: 'Member Time Deposit',
+                transaction_date: $timeDepositData->transaction_date,
             ));
         }
         if ($timeDepositData->payment_type_id == 4) {
@@ -58,7 +59,8 @@ class CreateTimeDeposit
                 reference_number: $td->reference_number,
                 debit: $td->amount,
                 member_id: $td->member_id,
-                remarks: 'Member Time Deposit'
+                remarks: 'Member Time Deposit',
+                transaction_date: $timeDepositData->transaction_date,
             ));
         }
         app(CreateTransaction::class)->handle(new TransactionData(
@@ -68,7 +70,8 @@ class CreateTimeDeposit
             credit: $td->amount,
             member_id: $td->member_id,
             remarks: 'Member Time Deposit',
-            tag: 'member_time_deposit'
+            tag: 'member_time_deposit',
+            transaction_date: $timeDepositData->transaction_date,
         ));
         DB::commit();
 
