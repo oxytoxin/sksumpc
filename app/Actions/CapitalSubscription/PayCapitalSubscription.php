@@ -25,6 +25,7 @@ class PayCapitalSubscription
             'payment_type_id' => $data->payment_type_id,
             'reference_number' => $data->reference_number,
             'amount' => $data->amount,
+            'transaction_date' => $data->transaction_date
         ]);
         if ($transact) {
             if ($data->payment_type_id == 1) {
@@ -34,7 +35,8 @@ class PayCapitalSubscription
                     reference_number: $payment->reference_number,
                     debit: $payment->amount,
                     member_id: $cbu->member->id,
-                    remarks: 'Member CBU Payment'
+                    remarks: 'Member CBU Payment',
+                    transaction_date: $data->transaction_date,
                 ));
             }
             if ($data->payment_type_id == 4) {
@@ -44,7 +46,8 @@ class PayCapitalSubscription
                     reference_number: $payment->reference_number,
                     debit: $payment->amount,
                     member_id: $cbu->member->id,
-                    remarks: 'Member CBU Payment'
+                    remarks: 'Member CBU Payment',
+                    transaction_date: $data->transaction_date,
                 ));
             }
             app(CreateTransaction::class)->handle(new TransactionData(
@@ -53,7 +56,8 @@ class PayCapitalSubscription
                 reference_number: $payment->reference_number,
                 credit: $payment->amount,
                 member_id: $cbu->member->id,
-                remarks: 'Member CBU Payment'
+                remarks: 'Member CBU Payment',
+                transaction_date: $data->transaction_date,
             ));
         }
         DB::commit();

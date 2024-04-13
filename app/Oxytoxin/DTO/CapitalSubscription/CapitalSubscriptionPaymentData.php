@@ -10,6 +10,8 @@ class CapitalSubscriptionPaymentData extends Data
         public int $payment_type_id,
         public string $reference_number,
         public string $amount,
+        public $transaction_date = null
     ) {
+        $this->transaction_date ??= today();
     }
 }
