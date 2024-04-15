@@ -36,7 +36,7 @@ class BalanceForwardedEntriesRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn ($query) => $query->join('accounts', 'balance_forwarded_entries.account_id', 'accounts.id'))
+            ->modifyQueryUsing(fn ($query) => $query->join('accounts', 'balance_forwarded_entries.account_id', 'accounts.id')->select(['accounts.*', 'balance_forwarded_entries.*', 'accounts.id as account_id']))
             ->columns([
                 Tables\Columns\TextColumn::make('account.parent.name')->label('Parent Account'),
                 Tables\Columns\TextColumn::make('account.name')->label('Account Name'),
