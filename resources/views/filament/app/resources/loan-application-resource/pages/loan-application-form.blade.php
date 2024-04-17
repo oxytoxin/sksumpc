@@ -118,20 +118,20 @@
                                 @forelse ($loan_application->member->loans()->with('loan_type')->get() as $loan)
                                     <tr>
                                         <td class="border border-black px-2">
-                                            {{ $loan->transaction_date->format('m/d/Y') }}</td>
+                                            {{ $loan?->transaction_date->format('m/d/Y') }}</td>
                                         <td class="border border-black px-2">
-                                            {{ format_money($loan->cbu_amount, 'PHP') }}</td>
-                                        <td class="border border-black px-2">{{ $loan->loan_type->name }}</td>
+                                            {{ format_money($loan?->cbu_amount, 'PHP') }}</td>
+                                        <td class="border border-black px-2">{{ $loan?->loan_type->name }}</td>
                                         <td class="border border-black px-2">
-                                            {{ $loan->release_date?->format('m/d/Y') }}</td>
+                                            {{ $loan?->release_date?->format('m/d/Y') }}</td>
                                         <td class="border border-black px-2">
-                                            {{ format_money($loan->gross_amount, 'PHP') }}</td>
+                                            {{ format_money($loan?->gross_amount, 'PHP') }}</td>
                                         <td class="border border-black px-2">
-                                            {{ format_money($loan->monthly_payment, 'PHP') }}</td>
+                                            {{ format_money($loan?->monthly_payment, 'PHP') }}</td>
                                         <td class="border border-black px-2">
-                                            {{ format_money($loan->outstanding_balance, 'PHP') }}</td>
+                                            {{ format_money($loan?->outstanding_balance, 'PHP') }}</td>
                                         <td class="border border-black px-2">
-                                            {{ $loan->posted ? 'Approved' : 'On Process' }}</td>
+                                            {{ $loan?->posted ? 'Approved' : 'On Process' }}</td>
                                     </tr>
                                 @empty
                                     <tr>
@@ -189,11 +189,11 @@
                     <div class="flex-1">
                         <p>
                             P <span
-                                class="border-b border-black px-8">{{ renumber_format($loan->gross_amount, 2) }}</span>
+                                class="border-b border-black px-8">{{ renumber_format($loan?->gross_amount, 2) }}</span>
                         </p>
                     </div>
                     <div class="flex-1">
-                        <p>Priority Number: <span>{{ $loan->priority_number }}</span></p>
+                        <p>Priority Number: <span>{{ $loan?->priority_number }}</span></p>
                         <p>Authenticated by: <span>&nbsp;</span></p>
                     </div>
 
@@ -202,15 +202,15 @@
                     <p class="indent-8">
                         For the value received, I/We jointly and severally, promise to pay the SKSU - MPC or order the
                         sum
-                        of <span class="uppercase px-4 border-b border-black">{{ $loan->net_amount_in_words }} pesos
+                        of <span class="uppercase px-4 border-b border-black">{{ $loan?->net_amount_in_words }} pesos
                             only</span>
                         <span class="border-b border-black px-4">(P
-                            {{ renumber_format($loan->net_amount, 2) }})</span>
-                        payable in <span class="px-4 border-b border-black">{{ $loan->number_of_terms }} months</span>
+                            {{ renumber_format($loan?->net_amount, 2) }})</span>
+                        payable in <span class="px-4 border-b border-black">{{ $loan?->number_of_terms }} months</span>
                         equal installment of <span class="border-b border-black px-4">(P
-                            {{ renumber_format($loan->monthly_payment, 2) }})</span> the first payment to be made on
+                            {{ renumber_format($loan?->monthly_payment, 2) }})</span> the first payment to be made on
                         <span
-                            class="px-4 border-b border-black">{{ $loan->transaction_date->addMonthNoOverflow()->format('F d, Y') }}</span>
+                            class="px-4 border-b border-black">{{ $loan?->transaction_date->addMonthNoOverflow()->format('F d, Y') }}</span>
                         and every payday thereafter
                         until the full amount has been paid.
                     </p>
@@ -225,7 +225,7 @@
                         penalty
                         of 1% per month of the principal balance and the interest due this note starting from
                         <span class="border-b border-black px-4">
-                            {{ $loan->transaction_date->addMonthsNoOverflow($loan->number_of_terms)->addDay()->format('F d, Y') }}
+                            {{ $loan?->transaction_date->addMonthsNoOverflow($loan?->number_of_terms)->addDay()->format('F d, Y') }}
                         </span>
                     </p>
                     <p class="indent-8">
@@ -237,15 +237,15 @@
                 <div class="grid grid-cols-2 gap-x-32 gap-y-12 mt-12">
                     <div>
                         <p class="uppercase border-b border-black text-center">
-                            {{ $loan->disbursement_voucher?->address }}&nbsp;
+                            {{ $loan?->disbursement_voucher?->address }}&nbsp;
                         </p>
                         <p class="text-center">Address</p>
                     </div>
                     <div>
-                        <p class="uppercase border-b border-black text-center">{{ $loan->member->full_name }}</p>
+                        <p class="uppercase border-b border-black text-center">{{ $loan?->member->full_name }}</p>
                         <p class="text-center">( Signature over Printed Name of Borrower)</p>
                     </div>
-                    @foreach ($loan->loan_application->comakers as $comaker)
+                    @foreach ($loan?->loan_application->comakers as $comaker)
                         <div>
                             <p class="uppercase border-b border-black text-center">{{ $comaker }}</p>
                             <p class="text-center">( Signature over Printed Name of Co-Borrower)</p>
@@ -259,19 +259,19 @@
                 <div class="flex flex-col gap-4 mt-8">
                     <p class="indent-8">
                         That we <strong>
-                            {{ $loan->member->full_name }} (Borrower),
-                            @foreach ($loan->loan_application->comakers as $comaker)
+                            {{ $loan?->member->full_name }} (Borrower),
+                            @foreach ($loan?->loan_application->comakers as $comaker)
                                 {{ $comaker }} (co-borrower),
                             @endforeach
                         </strong>
                         of legal age single/married, Filipino and with postal addresses
-                        at {{ $loan->disbursement_voucher?->address }} and in consideration
+                        at {{ $loan?->disbursement_voucher?->address }} and in consideration
                         of the sum
                         <span class="uppercase px-4 border-b border-black">
-                            {{ $loan->net_amount_in_words }} pesos only
+                            {{ $loan?->net_amount_in_words }} pesos only
                         </span>
                         <span class="border-b border-black px-4">
-                            (P {{ renumber_format($loan->net_amount, 2) }})
+                            (P {{ renumber_format($loan?->net_amount, 2) }})
                         </span> Granted to the borrower as salary loan
                         by the SKSU MPC, EJC Montilla, Tacurong City
                         by these presents do hereby code and assign in favor of the SKSU MPC our salaries, bonuses,
@@ -287,18 +287,18 @@
                     </p>
                     <p class="indent-8">
                         In WITNESS WHEREOF, we have hereunto set our hands this
-                        <strong>{{ $loan->transaction_date->format('jS \d\a\y \o\f\ F, Y') }}</strong> at
-                        <span>{{ $loan->disbursement_voucher?->address }}</span>.
+                        <strong>{{ $loan?->transaction_date->format('jS \d\a\y \o\f\ F, Y') }}</strong> at
+                        <span>{{ $loan?->disbursement_voucher?->address }}</span>.
                     </p>
                 </div>
                 <div class="grid grid-cols-2 gap-x-32 gap-y-12 mt-12">
                     <div>
                     </div>
                     <div>
-                        <p class="uppercase border-b border-black text-center">{{ $loan->member->full_name }}</p>
+                        <p class="uppercase border-b border-black text-center">{{ $loan?->member->full_name }}</p>
                         <p class="text-center">( Signature over Printed Name of Borrower)</p>
                     </div>
-                    @foreach ($loan->loan_application->comakers as $comaker)
+                    @foreach ($loan?->loan_application->comakers as $comaker)
                         <div>
                             <p class="uppercase border-b border-black text-center">{{ $comaker }}</p>
                             <p class="text-center">( Signature over Printed Name of Co-Borrower)</p>
