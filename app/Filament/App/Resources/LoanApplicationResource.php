@@ -30,6 +30,7 @@ use Filament\Resources\Resource;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -256,6 +257,12 @@ class LoanApplicationResource extends Resource
                         app(CreateNewLoan::class)->handle($record, $loanData);
                         Notification::make()->title('New loan created.')->success()->send();
                     }),
+                EditAction::make()
+                    ->label('Dates')
+                    ->form([
+                        DatePicker::make('payment_start_date')->time(false)->native(false),
+                        DatePicker::make('surcharge_start_date')->time(false)->native(false),
+                    ]),
                 Action::make('print')
                     ->icon('heroicon-o-printer')
                     ->url(fn ($record) => route('filament.app.resources.loan-applications.application-form', ['loan_application' => $record]), true),

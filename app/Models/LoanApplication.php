@@ -27,6 +27,7 @@ class LoanApplication extends Model
     protected $casts = [
         'number_of_terms' => 'integer',
         'desired_amount' => 'decimal:4',
+        'cbu_amount' => 'decimal:4',
         'monthly_payment' => 'decimal:4',
         'transaction_date' => 'immutable_date',
         'disapproval_date' => 'immutable_date',
@@ -41,7 +42,7 @@ class LoanApplication extends Model
     {
         return match ($this->status) {
             self::STATUS_PROCESSING => 'processing',
-            self::STATUS_APPROVED => 'approved',
+            self::STATUS_APPROVED => 'processing',
             self::STATUS_DISAPPROVED => 'disapproved',
             self::STATUS_POSTED => 'posted',
             default => 'processing'
@@ -104,7 +105,9 @@ class LoanApplication extends Model
             }
             $loanApplication->processor_id = auth()->id();
             $loanApplication->approvals = $approvals;
+            $loanApplication->cbu_amount = CapitalSubscription::whereMemberId($loanApplication->member_id)->where('outstanding_balance', '>', 0)->sum('total_amount_paid');
         });
+
 
         static::created(function (LoanApplication $loanApplication) {
             $loanApplication->reference_number = $loanApplication->loan_type->code . '-' . today()->format('Y-') . str_pad($loanApplication->id, 6, '0', STR_PAD_LEFT);

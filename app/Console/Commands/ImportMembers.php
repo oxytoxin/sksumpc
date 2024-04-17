@@ -98,11 +98,15 @@ class ImportMembers extends Command
                             member_id: $member->id,
                             name: $member->full_name
                         ));
+                        $monthly_payment = ($memberData['amount_shares'] - $memberData['amount_paid']) / 36;
+                        if ($monthly_payment < 0) {
+                            $monthly_payment = 0;
+                        }
                         $cbu = app(CreateNewCapitalSubscription::class)->handle($member, new CapitalSubscriptionData(
                             number_of_terms: 36,
                             number_of_shares: $memberData['no_shares'],
                             initial_amount_paid: $memberData['amount_paid'],
-                            monthly_payment: ($memberData['amount_shares'] - $memberData['amount_paid']) / 36,
+                            monthly_payment: $monthly_payment,
                             amount_subscribed: $memberData['amount_shares'],
                             par_value: $memberData['par_value'],
                             is_common: true,

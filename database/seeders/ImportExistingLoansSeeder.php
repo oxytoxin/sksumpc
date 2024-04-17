@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Actions\Loans\ImportExistingLoan;
+use App\Models\LoanApplication;
 use App\Models\LoanType;
 use App\Models\Member;
 use DB;
@@ -27,12 +28,15 @@ class ImportExistingLoansSeeder extends Seeder
         $this->importLoansFromFile('RES-REGULAR-LOAN.xlsx', LoanType::find(11));
         $this->importLoansFromFile('LBP-REGULAR-LOAN.xlsx', LoanType::find(10));
         $this->importLoansFromFile('RES-LBP-COMMODITY-LOAN.xlsx', LoanType::find(15));
+        LoanApplication::query()->update([
+            'status' => LoanApplication::STATUS_POSTED
+        ]);
         DB::commit();
     }
 
     protected function importLoansFromFile(string $filename, LoanType $loanType)
     {
-        $reader = SimpleExcelReader::create(storage_path('csv/loans/'.$filename), 'xlsx');
+        $reader = SimpleExcelReader::create(storage_path('csv/loans/' . $filename), 'xlsx');
         $members_code = $reader->getRows()->pluck('MEMBERS ID');
         $members = Member::whereIn('mpc_code', $members_code->all())->get();
         $reader->getRows()->each(function ($data) use ($members, $loanType) {

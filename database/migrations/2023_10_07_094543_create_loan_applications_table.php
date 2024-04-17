@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignId('processor_id')->nullable()->constrained('users', 'id')->nullOnDelete();
             $table->foreignId('loan_type_id')->constrained();
             $table->decimal('desired_amount', 18, 4);
+            $table->decimal('cbu_amount', 18, 4);
             $table->integer('number_of_terms');
             $table->string('reference_number')->nullable();
             $table->string('priority_number')->nullable();

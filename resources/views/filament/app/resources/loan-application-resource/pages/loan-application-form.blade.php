@@ -1,6 +1,18 @@
 @php
     use function Filament\Support\format_money;
-    $loan = $loan_application->loan;
+    $loans = $loan_application->member->loans()->with('loan_type')->get();
+    $loan_applications = $loan_application->member->loan_applications()->doesntHave('loan')->with('loan_type')->get();
+
+    $treasurer = App\Models\User::whereRelation('roles', 'name', 'treasurer')->first();
+    $witness1 = new App\Oxytoxin\DTO\Loan\LoanApproval($treasurer->name, 'Treasurer');
+
+    if ($loan_application->desired_amount > 50000) {
+        $bod_chairperson = App\Models\User::whereRelation('roles', 'name', 'bod-chairperson')->first();
+        $witness2 = new App\Oxytoxin\DTO\Loan\LoanApproval($bod_chairperson->name, 'BOD-Chairperson');
+    } else {
+        $manager = App\Models\User::whereRelation('roles', 'name', 'manager')->first();
+        $witness2 = new App\Oxytoxin\DTO\Loan\LoanApproval($manager->name, 'Manager');
+    }
 @endphp
 
 <x-filament-panels::page>
@@ -12,43 +24,52 @@
                 <div class="my-2 grid grid-cols-2 print:text-[8pt]">
                     <div class="space-x-4 flex">
                         <h4 class="font-bold">NAME:</h4>
-                        <h4>{{ $loan_application->member->full_name }}</h4>
+                        <h4 class="min-w-[8rem] border-b border-black px-4">{{ $loan_application->member->full_name }}
+                        </h4>
                     </div>
                     <div class="space-x-4 flex">
                         <h4 class="font-bold">PRIORITY NUMBER:</h4>
-                        <h4>{{ $loan_application->priority_number }}</h4>
+                        <h4 class="min-w-[8rem] border-b border-black px-4">{{ $loan_application->priority_number }}
+                        </h4>
                     </div>
                     <div class="space-x-4 flex">
                         <h4 class="font-bold">ADDRESS:</h4>
-                        <h4>{{ $loan_application->member->address }}</h4>
+                        <h4 class="min-w-[8rem] border-b border-black px-4">{{ $loan_application->member->address }}
+                        </h4>
                     </div>
                     <div class="space-x-4 flex">
                         <h4 class="font-bold">BIRTHDATE:</h4>
-                        <h4>{{ $loan_application->member->dob?->format('F d, Y') }}</h4>
+                        <h4 class="min-w-[8rem] border-b border-black px-4">
+                            {{ $loan_application->member->dob?->format('F d, Y') }}</h4>
                     </div>
                     <div class="space-x-4 flex">
                         <h4 class="font-bold">CONTACT NUMBER:</h4>
-                        <h4></h4>
+                        <h4 class="min-w-[8rem] border-b border-black px-4">{{ $loan_application->member->contact }}
+                        </h4>
                     </div>
                     <div class="space-x-4 flex">
                         <h4 class="font-bold">DESIRED LOAN AMOUNT:</h4>
-                        <h4>{{ format_money($loan_application->desired_amount, 'PHP') }}</h4>
+                        <h4 class="min-w-[8rem] border-b border-black px-4">
+                            {{ format_money($loan_application->desired_amount, 'PHP') }}</h4>
                     </div>
                     <div class="space-x-4 flex">
                         <h4 class="font-bold">PURPOSE:</h4>
-                        <h4>{{ $loan_application->purpose }}</h4>
+                        <h4 class="min-w-[8rem] border-b border-black px-4">{{ $loan_application->purpose }}</h4>
                     </div>
                     <div class="space-x-4 flex">
                         <h4 class="font-bold">MONTHLY AMORTIZATION:</h4>
-                        <h4>{{ format_money($loan_application->monthly_payment, 'PHP') }}</h4>
+                        <h4 class="min-w-[8rem] border-b border-black px-4">
+                            {{ format_money($loan_application->monthly_payment, 'PHP') }}</h4>
                     </div>
                     <div class="space-x-4 flex">
                         <h4 class="font-bold">TYPE OF LOAN:</h4>
-                        <h4>{{ $loan_application->loan_type->name }}</h4>
+                        <h4 class="min-w-[8rem] border-b border-black px-4">{{ $loan_application->loan_type->name }}
+                        </h4>
                     </div>
                     <div class="space-x-4 flex">
                         <h4 class="font-bold">TERMS APPLIED:</h4>
-                        <h4>{{ $loan_application->number_of_terms }}</h4>
+                        <h4 class="min-w-[8rem] border-b border-black px-4">{{ $loan_application->number_of_terms }}
+                        </h4>
                     </div>
                 </div>
                 <div class="flex flex-col items-center mt-8 print:leading-[0]">
@@ -92,9 +113,17 @@
                 <hr class="border-2 border-black my-8">
                 <div class="mt-4 print:text-[8pt]">
                     <div class="grid grid-cols-2">
-                        <h4>Name: {{ $loan_application->member->full_name }}</h4>
-                        <h4>Date: <span class="uppercase">{{ today()->format('F d, Y') }}</span></h4>
-                        <h4>Station: {{ $loan_application->member->division?->name }}</h4>
+                        <h4>Name:
+                            <span class="min-w-[8rem] border-b border-black px-4">
+                                {{ $loan_application->member->full_name }}
+                            </span>
+                        </h4>
+                        <h4>Date: <span
+                                class="min-w-[8rem] border-b border-black px-4">{{ today()->format('F d, Y') }}</span>
+                        </h4>
+                        <h4>Station: <span
+                                class="min-w-[8rem] border-b border-black px-4">{{ $loan_application->member->division?->name }}</span>
+                        </h4>
                     </div>
                     <h3 class="font-bold text-center my-4">STATEMENT OF ACCOUNT</h3>
                     <div>
@@ -112,49 +141,25 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td colspan="8" class="border border-black px-2 font-bold">Loans</td>
-                                </tr>
-                                @forelse ($loan_application->member->loans()->with('loan_type')->get() as $loan)
-                                    <tr>
-                                        <td class="border border-black px-2">
-                                            {{ $loan?->transaction_date->format('m/d/Y') }}</td>
-                                        <td class="border border-black px-2">
-                                            {{ format_money($loan?->cbu_amount, 'PHP') }}</td>
-                                        <td class="border border-black px-2">{{ $loan?->loan_type->name }}</td>
-                                        <td class="border border-black px-2">
-                                            {{ $loan?->release_date?->format('m/d/Y') }}</td>
-                                        <td class="border border-black px-2">
-                                            {{ format_money($loan?->gross_amount, 'PHP') }}</td>
-                                        <td class="border border-black px-2">
-                                            {{ format_money($loan?->monthly_payment, 'PHP') }}</td>
-                                        <td class="border border-black px-2">
-                                            {{ format_money($loan?->outstanding_balance, 'PHP') }}</td>
-                                        <td class="border border-black px-2">
-                                            {{ $loan?->posted ? 'Approved' : 'On Process' }}</td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="8" class="border border-black px-2 text-center">No loans found.
-                                        </td>
-                                    </tr>
-                                @endforelse
+
                                 <tr>
                                     <td colspan="8" class="border border-black px-2 font-bold">Loan Applications</td>
                                 </tr>
-                                @forelse ($loan_application->member->loan_applications()->with('loan_type')->get() as $loan_application)
+                                @forelse ($loan_applications as $la)
                                     <tr>
                                         <td class="border border-black px-2">
-                                            {{ $loan_application->transaction_date->format('m/d/Y') }}</td>
-                                        <td class="border border-black px-2"></td>
-                                        <td class="border border-black px-2">{{ $loan_application->loan_type->name }}
+                                            {{ $la->transaction_date->format('m/d/Y') }}</td>
+                                        <td class="border border-black px-2">
+                                            {{ format_money($la->cbu_amount, 'PHP') }}</td>
+                                        <td class="border border-black px-2">{{ $la->loan_type->name }}
                                         </td>
                                         <td class="border border-black px-2"></td>
                                         <td class="border border-black px-2">
-                                            {{ format_money($loan_application->desired_amount, 'PHP') }}</td>
+                                            {{ format_money($la->desired_amount, 'PHP') }}</td>
+                                        <td class="border border-black px-2">
+                                            {{ format_money($la->monthly_payment, 'PHP') }}</td>
                                         <td class="border border-black px-2"></td>
-                                        <td class="border border-black px-2"></td>
-                                        <td class="border border-black px-2">{{ $loan_application->status_name }}</td>
+                                        <td class="border border-black px-2">{{ $la->status_name }}</td>
                                     </tr>
                                 @empty
                                     <tr>
@@ -162,7 +167,42 @@
                                             applications found.</td>
                                     </tr>
                                 @endforelse
+
+                                @if (count($loans))
+                                    <tr>
+                                        <td colspan="8" class="border border-black px-2 font-bold">Loans</td>
+                                    </tr>
+                                    @forelse ($loans as $loan)
+                                        <tr>
+                                            <td class="border border-black px-2">
+                                                {{ $loan->transaction_date->format('m/d/Y') }}</td>
+                                            <td class="border border-black px-2">
+                                                {{ format_money($loan->loan_application->cbu_amount, 'PHP') }}</td>
+                                            <td class="border border-black px-2">
+                                                {{ $loan->loan_type->name }}</td>
+                                            <td class="border border-black px-2">
+                                                {{ $loan->release_date?->format('m/d/Y') }}</td>
+                                            <td class="border border-black px-2">
+                                                {{ format_money($loan->gross_amount, 'PHP') }}</td>
+                                            <td class="border border-black px-2">
+                                                {{ format_money($loan->monthly_payment, 'PHP') }}
+                                            </td>
+                                            <td class="border border-black px-2">
+                                                {{ format_money($loan->outstanding_balance, 'PHP') }}
+                                            </td>
+                                            <td class="border border-black px-2">
+                                                {{ $loan->loan_application->posted ? 'Approved' : 'On Process' }}</td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="8" class="border border-black px-2 text-center">No loans
+                                                found.
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                @endif
                             </tbody>
+
                         </table>
                     </div>
                     <div class="mt-16">
@@ -189,12 +229,15 @@
                     <div class="flex-1">
                         <p>
                             P <span
-                                class="border-b border-black px-8">{{ renumber_format($loan_application->desired_amount, 2) }}</span>
+                                class="border-b border-black px-4 min-w-[8rem] inline-block">{{ renumber_format($loan_application->desired_amount, 2) }}</span>
                         </p>
                     </div>
                     <div class="flex-1">
-                        <p>Priority Number: <span>{{ $loan_application->priority_number }}</span></p>
-                        <p>Authenticated by: <span>&nbsp;</span></p>
+                        <p>Priority Number: <span
+                                class="border-b border-black px-4 min-w-[8rem] inline-block">{{ $loan_application->priority_number }}</span>
+                        </p>
+                        <p>Authenticated by: <span
+                                class="border-b border-black px-4 min-w-[12rem] inline-block">&nbsp;</span></p>
                     </div>
 
                 </div>
@@ -205,15 +248,14 @@
                         of <span
                             class="uppercase px-4 border-b border-black">{{ $loan_application->desired_amount_in_words }}
                             pesos
-                            only</span>
-                        <span class="border-b border-black px-4">(P
-                            {{ renumber_format($loan_application->desired_amount, 2) }})</span>
-                        payable in <span class="px-4 border-b border-black">{{ $loan?->number_of_terms }} months</span>
+                            only (P{{ renumber_format($loan_application->desired_amount, 2) }})</span>
+                        payable in <span class="px-4 border-b border-black">{{ $loan_application->number_of_terms }}
+                            months</span>
                         equal installment of <span class="border-b border-black px-4">(P
                             {{ renumber_format($loan_application->monthly_payment, 2) }})</span> the first payment to
                         be made on
                         <span
-                            class="px-4 border-b border-black">{{ $loan_application->transaction_date->addMonthNoOverflow()->format('F d, Y') }}</span>
+                            class="px-4 border-b border-black min-w-[8rem] indent-0 inline-block text-center">{{ $loan_application->payment_start_date?->format('F d, Y') }}</span>
                         and every payday thereafter
                         until the full amount has been paid.
                     </p>
@@ -227,8 +269,8 @@
                         It is further agreed that in case payment shall not be made at maturity, I/We will pay the
                         penalty
                         of 1% per month of the principal balance and the interest due this note starting from
-                        <span class="border-b border-black px-4">
-                            {{ $loan_application->transaction_date->addMonthsNoOverflow($loan_application->number_of_terms)->addDay()->format('F d, Y') }}
+                        <span class="border-b border-black px-4 indent-0 inline-block min-w-[8rem]">
+                            {{ $loan_application->surcharge_start_date?->format('F d, Y') }}
                         </span>
                     </p>
                     <p class="indent-8">
@@ -269,7 +311,10 @@
                             @endforeach
                         </strong>
                         of legal age single/married, Filipino and with postal addresses
-                        at {{ $loan_application->member->address }} and in consideration
+                        at <span
+                            class="border-b border-black px-4 min-w-[8rem] inline-block">{{ $loan_application->member->address }}</span>
+                        and in
+                        consideration
                         of the sum
                         <span class="uppercase px-4 border-b border-black">
                             {{ $loan_application->desired_amount_in_words }} pesos only
@@ -291,15 +336,17 @@
                     </p>
                     <p class="indent-8">
                         In WITNESS WHEREOF, we have hereunto set our hands this
-                        <strong>{{ $loan_application?->transaction_date->format('jS \d\a\y \o\f\ F, Y') }}</strong> at
-                        <span>{{ $loan?->disbursement_voucher?->address }}</span>.
+                        <strong>{{ $loan_application->transaction_date->format('jS \d\a\y \o\f\ F, Y') }}</strong> at
+                        <span
+                            class="border-b border-black px-4 min-w-[8rem] inline-block">{{ $loan_application->member->address }}</span>.
                     </p>
                 </div>
                 <div class="grid grid-cols-2 gap-x-32 gap-y-12 mt-12">
                     <div>
                     </div>
                     <div>
-                        <p class="uppercase border-b border-black text-center">{{ $loan?->member->full_name }}</p>
+                        <p class="uppercase border-b border-black text-center">
+                            {{ $loan_application->member->full_name }}</p>
                         <p class="text-center">( Signature over Printed Name of Borrower)</p>
                     </div>
                     @foreach ($loan_application->comakers ?? [] as $comaker)
@@ -308,6 +355,17 @@
                             <p class="text-center">( Signature over Printed Name of Co-Borrower)</p>
                         </div>
                     @endforeach
+                </div>
+                <h3 class="text-center text-lg font-bold mt-4">Signed in the presence of:</h3>
+                <div class="grid grid-cols-2 gap-x-32 gap-y-12 mt-12">
+                    <div>
+                        <p class="uppercase border-b border-black text-center">{{ $witness1->name }}</p>
+                        <p class="text-center">{{ $witness1->position }}</p>
+                    </div>
+                    <div>
+                        <p class="uppercase border-b border-black text-center">{{ $witness2->name }}</p>
+                        <p class="text-center">{{ $witness2->position }}</p>
+                    </div>
                 </div>
             </div>
         </div>
