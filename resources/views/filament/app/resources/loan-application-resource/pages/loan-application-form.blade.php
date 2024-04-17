@@ -245,7 +245,7 @@
                         <p class="uppercase border-b border-black text-center">{{ $loan?->member->full_name }}</p>
                         <p class="text-center">( Signature over Printed Name of Borrower)</p>
                     </div>
-                    @foreach ($loan?->loan_application->comakers as $comaker)
+                    @foreach ($loan?->loan_application->comakers ?? [] as $comaker)
                         <div>
                             <p class="uppercase border-b border-black text-center">{{ $comaker }}</p>
                             <p class="text-center">( Signature over Printed Name of Co-Borrower)</p>
@@ -260,7 +260,7 @@
                     <p class="indent-8">
                         That we <strong>
                             {{ $loan?->member->full_name }} (Borrower),
-                            @foreach ($loan?->loan_application->comakers as $comaker)
+                            @foreach ($loan?->loan_application->comakers ?? [] as $comaker)
                                 {{ $comaker }} (co-borrower),
                             @endforeach
                         </strong>
@@ -298,7 +298,7 @@
                         <p class="uppercase border-b border-black text-center">{{ $loan?->member->full_name }}</p>
                         <p class="text-center">( Signature over Printed Name of Borrower)</p>
                     </div>
-                    @foreach ($loan?->loan_application->comakers as $comaker)
+                    @foreach ($loan?->loan_application->comakers ?? [] as $comaker)
                         <div>
                             <p class="uppercase border-b border-black text-center">{{ $comaker }}</p>
                             <p class="text-center">( Signature over Printed Name of Co-Borrower)</p>
