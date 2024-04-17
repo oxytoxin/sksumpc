@@ -89,7 +89,7 @@
                         </div>
                     </div>
                 </div>
-                <hr class="border-2 print:hidden border-black my-4">
+                <hr class="border-2 border-black my-8">
                 <div class="mt-4 print:text-[8pt]">
                     <div class="grid grid-cols-2">
                         <h4>Name: {{ $loan_application->member->full_name }}</h4>
@@ -202,13 +202,16 @@
                     <p class="indent-8">
                         For the value received, I/We jointly and severally, promise to pay the SKSU - MPC or order the
                         sum
-                        of <span class="uppercase px-4 border-b border-black">{{ $loan_application->desired_amount_in_words }} pesos
+                        of <span
+                            class="uppercase px-4 border-b border-black">{{ $loan_application->desired_amount_in_words }}
+                            pesos
                             only</span>
                         <span class="border-b border-black px-4">(P
                             {{ renumber_format($loan_application->desired_amount, 2) }})</span>
                         payable in <span class="px-4 border-b border-black">{{ $loan?->number_of_terms }} months</span>
                         equal installment of <span class="border-b border-black px-4">(P
-                            {{ renumber_format($loan_application->monthly_payment, 2) }})</span> the first payment to be made on
+                            {{ renumber_format($loan_application->monthly_payment, 2) }})</span> the first payment to
+                        be made on
                         <span
                             class="px-4 border-b border-black">{{ $loan_application->transaction_date->addMonthNoOverflow()->format('F d, Y') }}</span>
                         and every payday thereafter
@@ -237,12 +240,13 @@
                 <div class="grid grid-cols-2 gap-x-32 gap-y-12 mt-12">
                     <div>
                         <p class="uppercase border-b border-black text-center">
-                            {{$loan_application->member->address }}&nbsp;
+                            {{ $loan_application->member->address }}&nbsp;
                         </p>
                         <p class="text-center">Address</p>
                     </div>
                     <div>
-                        <p class="uppercase border-b border-black text-center">{{ $loan_application->member->full_name }}</p>
+                        <p class="uppercase border-b border-black text-center">
+                            {{ $loan_application->member->full_name }}</p>
                         <p class="text-center">( Signature over Printed Name of Borrower)</p>
                     </div>
                     @foreach ($loan_application->comakers ?? [] as $comaker)

@@ -54,13 +54,27 @@ class ImportMembers extends Command
             $rows->each(function (array $memberData) use ($divisions, $religions, $genders, $civil_statuses, $transaction_type) {
                 try {
                     if ($memberData['mpc_code']) {
+                        $address = [];
+                        $address_parts = [
+                            $memberData['barangay'],
+                            $memberData['municipality'],
+                            $memberData['province'],
+                            $memberData['region'],
+                        ];
+                        foreach ($address_parts as $part) {
+                            if (filled($part)) {
+                                $address[] = $part;
+                            }
+                        }
+                        $member_address = implode(', ', $address);
                         $memberData = collect($memberData)->map(fn ($d) => filled($d) ? trim($d instanceof DateTimeImmutable ? strtoupper($d->format('m/d/Y')) : strtoupper($d)) : null)->toArray();
                         $member = Member::create([
                             'mpc_code' => $memberData['mpc_code'],
                             'first_name' => $memberData['firstname'],
                             'last_name' => $memberData['lastname'],
                             'middle_name' => $memberData['mi'],
-                            'middle_initial' => isset($memberData['mi']) ? $memberData['mi'][0] : null,
+                            'middle_initial' => isset($memberData['mi']) ? $memberData['mi'][0] . '.' : null,
+                            'address' => $member_address,
                             'member_type_id' => match ($memberData['member_type']) {
                                 'REGULAR' => 1,
                                 'ASSOCIATE' => 3,

@@ -28,6 +28,8 @@ return new class extends Migration
             $table->date('transaction_date')->default(DB::raw('(CURRENT_DATE)'));
             $table->foreignIdFor(DisapprovalReason::class)->nullable()->constrained();
             $table->date('disapproval_date')->nullable();
+            $table->date('payment_start_date')->nullable();
+            $table->date('surcharge_start_date')->nullable();
             $table->json('comakers')->default(DB::raw('(JSON_ARRAY())'));
             $table->json('approvals')->default(DB::raw('(JSON_ARRAY())'));
             $table->string('remarks')->nullable();

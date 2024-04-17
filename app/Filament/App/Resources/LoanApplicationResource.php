@@ -71,7 +71,6 @@ class LoanApplicationResource extends Resource
                     TextEntry::make('loan.interest')->money('PHP')->label('Interest Amount'),
                     TextEntry::make('loan.monthly_payment')->money('PHP')->label('Monthly Payment'),
                     TextEntry::make('loan.release_date')->date('m/d/Y')->label('Release Date'),
-
                 ]),
         ])->columns(1);
     }
@@ -159,7 +158,7 @@ class LoanApplicationResource extends Resource
                     ->color('danger')
                     ->visible(fn ($record) => $record->status == LoanApplication::STATUS_PROCESSING),
                 Action::make('disclosure')
-                    ->visible(fn ($record) => auth()->user()->can('manage loans') && ! $record->loan && $record->status == LoanApplication::STATUS_APPROVED)
+                    ->visible(fn ($record) => auth()->user()->can('manage loans') && !$record->loan && $record->status == LoanApplication::STATUS_APPROVED)
                     ->modalWidth(MaxWidth::ScreenExtraLarge)
                     ->fillForm(function ($record) {
                         $disclosure_sheet_items = LoansProvider::getDisclosureSheetItems($record->loan_type, $record->desired_amount, $record->member);
@@ -229,7 +228,6 @@ class LoanApplicationResource extends Resource
                         $accounts = Account::withCode()->find(collect($data['disclosure_sheet_items'])->pluck('account_id'));
                         $items = collect($data['disclosure_sheet_items'])->map(function ($item) use ($accounts) {
                             $item['name'] = $accounts->find($item['account_id'])->code;
-
                             return $item;
                         })->toArray();
                         $loanData = new LoanData(
