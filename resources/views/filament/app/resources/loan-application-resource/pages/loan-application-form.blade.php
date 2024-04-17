@@ -245,7 +245,7 @@
                         <p class="uppercase border-b border-black text-center">{{ $loan?->member->full_name }}</p>
                         <p class="text-center">( Signature over Printed Name of Borrower)</p>
                     </div>
-                    @foreach ($loan?->loan_application->comakers ?? [] as $comaker)
+                    @foreach ($loan_application->comakers ?? [] as $comaker)
                         <div>
                             <p class="uppercase border-b border-black text-center">{{ $comaker }}</p>
                             <p class="text-center">( Signature over Printed Name of Co-Borrower)</p>
@@ -259,8 +259,8 @@
                 <div class="flex flex-col gap-4 mt-8">
                     <p class="indent-8">
                         That we <strong>
-                            {{ $loan?->member->full_name }} (Borrower),
-                            @foreach ($loan?->loan_application->comakers ?? [] as $comaker)
+                            {{ $loan_application->member->full_name }} (Borrower),
+                            @foreach ($loan_application->comakers ?? [] as $comaker)
                                 {{ $comaker }} (co-borrower),
                             @endforeach
                         </strong>
@@ -268,7 +268,7 @@
                         at {{ $loan?->disbursement_voucher?->address }} and in consideration
                         of the sum
                         <span class="uppercase px-4 border-b border-black">
-                            {{ $loan?->net_amount_in_words }} pesos only
+                            {{ $loan_application->desired_amount_in_words }} pesos only
                         </span>
                         <span class="border-b border-black px-4">
                             (P {{ renumber_format($loan?->net_amount, 2) }})
@@ -287,7 +287,7 @@
                     </p>
                     <p class="indent-8">
                         In WITNESS WHEREOF, we have hereunto set our hands this
-                        <strong>{{ $loan?->transaction_date->format('jS \d\a\y \o\f\ F, Y') }}</strong> at
+                        <strong>{{ $loan_application?->transaction_date->format('jS \d\a\y \o\f\ F, Y') }}</strong> at
                         <span>{{ $loan?->disbursement_voucher?->address }}</span>.
                     </p>
                 </div>
@@ -298,7 +298,7 @@
                         <p class="uppercase border-b border-black text-center">{{ $loan?->member->full_name }}</p>
                         <p class="text-center">( Signature over Printed Name of Borrower)</p>
                     </div>
-                    @foreach ($loan?->loan_application->comakers ?? [] as $comaker)
+                    @foreach ($loan_application->comakers ?? [] as $comaker)
                         <div>
                             <p class="uppercase border-b border-black text-center">{{ $comaker }}</p>
                             <p class="text-center">( Signature over Printed Name of Co-Borrower)</p>

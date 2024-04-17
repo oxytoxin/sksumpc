@@ -44,6 +44,11 @@ class LoanApplication extends Model
         };
     }
 
+    public function desiredAmountInWords(): Attribute
+    {
+        return Attribute::make(get: fn () => (new NumberFormatter('en', NumberFormatter::SPELLOUT))->format($this->desired_amount));
+    }
+
     public function disapproval_reason()
     {
         return $this->belongsTo(DisapprovalReason::class);
