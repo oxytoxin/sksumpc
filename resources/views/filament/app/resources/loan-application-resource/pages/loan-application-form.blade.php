@@ -1,5 +1,6 @@
 @php
     use function Filament\Support\format_money;
+    $loan = $loan_application->loan;
 @endphp
 
 <x-filament-panels::page>
@@ -188,7 +189,7 @@
                     <div class="flex-1">
                         <p>
                             P <span
-                                class="border-b border-black px-8">{{ renumber_format($loan_application->loan?->gross_amount, 2) }}</span>
+                                class="border-b border-black px-8">{{ renumber_format($loan->gross_amount, 2) }}</span>
                         </p>
                     </div>
                     <div class="flex-1">
