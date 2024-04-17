@@ -189,11 +189,11 @@
                     <div class="flex-1">
                         <p>
                             P <span
-                                class="border-b border-black px-8">{{ renumber_format($loan?->gross_amount, 2) }}</span>
+                                class="border-b border-black px-8">{{ renumber_format($loan_application->desired_amount, 2) }}</span>
                         </p>
                     </div>
                     <div class="flex-1">
-                        <p>Priority Number: <span>{{ $loan?->priority_number }}</span></p>
+                        <p>Priority Number: <span>{{ $loan_application->priority_number }}</span></p>
                         <p>Authenticated by: <span>&nbsp;</span></p>
                     </div>
 
@@ -202,15 +202,15 @@
                     <p class="indent-8">
                         For the value received, I/We jointly and severally, promise to pay the SKSU - MPC or order the
                         sum
-                        of <span class="uppercase px-4 border-b border-black">{{ $loan?->net_amount_in_words }} pesos
+                        of <span class="uppercase px-4 border-b border-black">{{ $loan_application->desired_amount_in_words }} pesos
                             only</span>
                         <span class="border-b border-black px-4">(P
-                            {{ renumber_format($loan?->net_amount, 2) }})</span>
+                            {{ renumber_format($loan_application->desired_amount, 2) }})</span>
                         payable in <span class="px-4 border-b border-black">{{ $loan?->number_of_terms }} months</span>
                         equal installment of <span class="border-b border-black px-4">(P
-                            {{ renumber_format($loan?->monthly_payment, 2) }})</span> the first payment to be made on
+                            {{ renumber_format($loan_application->monthly_payment, 2) }})</span> the first payment to be made on
                         <span
-                            class="px-4 border-b border-black">{{ $loan?->transaction_date->addMonthNoOverflow()->format('F d, Y') }}</span>
+                            class="px-4 border-b border-black">{{ $loan_application->transaction_date->addMonthNoOverflow()->format('F d, Y') }}</span>
                         and every payday thereafter
                         until the full amount has been paid.
                     </p>
@@ -225,7 +225,7 @@
                         penalty
                         of 1% per month of the principal balance and the interest due this note starting from
                         <span class="border-b border-black px-4">
-                            {{ $loan?->transaction_date->addMonthsNoOverflow($loan?->number_of_terms)->addDay()->format('F d, Y') }}
+                            {{ $loan_application->transaction_date->addMonthsNoOverflow($loan_application->number_of_terms)->addDay()->format('F d, Y') }}
                         </span>
                     </p>
                     <p class="indent-8">
@@ -237,12 +237,12 @@
                 <div class="grid grid-cols-2 gap-x-32 gap-y-12 mt-12">
                     <div>
                         <p class="uppercase border-b border-black text-center">
-                            {{ $loan?->disbursement_voucher?->address }}&nbsp;
+                            {{$loan_application->member->address }}&nbsp;
                         </p>
                         <p class="text-center">Address</p>
                     </div>
                     <div>
-                        <p class="uppercase border-b border-black text-center">{{ $loan?->member->full_name }}</p>
+                        <p class="uppercase border-b border-black text-center">{{ $loan_application->member->full_name }}</p>
                         <p class="text-center">( Signature over Printed Name of Borrower)</p>
                     </div>
                     @foreach ($loan_application->comakers ?? [] as $comaker)
@@ -265,13 +265,13 @@
                             @endforeach
                         </strong>
                         of legal age single/married, Filipino and with postal addresses
-                        at {{ $loan?->disbursement_voucher?->address }} and in consideration
+                        at {{ $loan_application->member->address }} and in consideration
                         of the sum
                         <span class="uppercase px-4 border-b border-black">
                             {{ $loan_application->desired_amount_in_words }} pesos only
                         </span>
                         <span class="border-b border-black px-4">
-                            (P {{ renumber_format($loan?->net_amount, 2) }})
+                            (P {{ renumber_format($loan_application->desired_amount, 2) }})
                         </span> Granted to the borrower as salary loan
                         by the SKSU MPC, EJC Montilla, Tacurong City
                         by these presents do hereby code and assign in favor of the SKSU MPC our salaries, bonuses,
