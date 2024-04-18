@@ -116,6 +116,7 @@ class ImportMembers extends Command
                             payment_type_id: 1,
                             reference_number: '#BALANCEFORWARDED',
                             amount: $memberData['amount_paid'],
+                            transaction_date: '12/30/2023'
                         ), $transaction_type);
 
                         $user = User::create([
