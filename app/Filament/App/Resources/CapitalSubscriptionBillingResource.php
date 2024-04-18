@@ -40,10 +40,10 @@ class CapitalSubscriptionBillingResource extends Resource
                     ->selectablePlaceholder(true),
                 DatePicker::make('date')
                     ->date()
-                    ->afterOrEqual(today())
-                    ->validationMessages([
-                        'after_or_equal' => 'The date must be after or equal to today.',
-                    ])
+                    // ->afterOrEqual(today())
+                    // ->validationMessages([
+                    //     'after_or_equal' => 'The date must be after or equal to today.',
+                    // ])
                     ->required()
                     ->native(false),
             ]);

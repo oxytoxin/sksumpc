@@ -26,6 +26,7 @@ class PostCapitalSubscriptionBillingPayments
                 payment_type_id: $cbuBilling->payment_type_id,
                 reference_number: $cbuBilling->or_number,
                 amount: $cbup->amount_paid,
+                transaction_date: $cbuBilling->date,
             ), TransactionType::firstWhere('name', 'CRJ'));
             $cbup->update([
                 'posted' => true,

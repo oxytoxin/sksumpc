@@ -27,6 +27,7 @@ class PostLoanBillingPayments
                 reference_number: $loanBilling->or_number,
                 amount: $lp->amount_paid,
                 remarks: $loanBilling->name,
+                transaction_date: $loanBilling->date,
             ), TransactionType::firstWhere('name', 'CRJ'));
             $lp->update([
                 'posted' => true,
