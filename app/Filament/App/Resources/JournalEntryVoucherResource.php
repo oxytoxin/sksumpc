@@ -97,14 +97,8 @@ class JournalEntryVoucherResource extends Resource
                     ->modalCancelAction(false)
                     ->modalSubmitAction(false)
                     ->modalContent(fn ($record) => view('components.app.bookkeeper.reports.journal-entry-voucher-preview', ['journal_entry_voucher' => $record])),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+            ->bulkActions([]);
     }
 
     public static function getPages(): array

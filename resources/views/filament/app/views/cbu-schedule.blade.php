@@ -20,7 +20,7 @@
                 @foreach ($this->table->getRecords() as $record)
                 <tr>
                     <td class="text-left px-4 border border-black whitespace-nowrap">{{ $record->alt_full_name }}</td>
-                    <td class="text-center px-4 border border-black whitespace-nowrap">{{ renumber_format($record->capital_subscriptions_sum_number_of_shares, 2) }}</td>
+                    <td class="text-center px-4 border border-black whitespace-nowrap">{{ round($record->capital_subscriptions_sum_number_of_shares, 0) }}</td>
                     <td class="text-right px-4 border border-black whitespace-nowrap">{{ renumber_format($record->capital_subscriptions_sum_amount_subscribed, 2) }}</td>
                     <td class="text-center px-4 border border-black whitespace-nowrap">{{ renumber_format($this->number_of_shares_paid($record), 2) }}</td>
                     <td class="text-right px-4 border border-black whitespace-nowrap">{{ renumber_format($record->capital_subscription_payments_sum_amount, 2) }}</td>
@@ -30,6 +30,18 @@
                 </tr>
                 @endforeach
             </tbody>
+            <tfoot>
+            <tr>
+                    <td class="text-left px-4 border border-black whitespace-nowrap">{{ $record->alt_full_name }}</td>
+                    <td class="text-center px-4 border border-black whitespace-nowrap">{{ round($record->capital_subscriptions_sum_number_of_shares, 0) }}</td>
+                    <td class="text-right px-4 border border-black whitespace-nowrap">{{ renumber_format($record->capital_subscriptions_sum_amount_subscribed, 2) }}</td>
+                    <td class="text-center px-4 border border-black whitespace-nowrap">{{ renumber_format($this->number_of_shares_paid($record), 2) }}</td>
+                    <td class="text-right px-4 border border-black whitespace-nowrap">{{ renumber_format($record->capital_subscription_payments_sum_amount, 2) }}</td>
+                    <td class="text-right px-4 border border-black whitespace-nowrap">{{ renumber_format($record->capital_subscriptions_sum_amount_subscribed - $record->capital_subscription_payments_sum_amount, 2) }}</td>
+                    <td class="text-right px-4 border border-black whitespace-nowrap">{{ renumber_format($this->amount_shares_paid($record), 2) }}</td>
+                    <td class="text-right px-4 border border-black whitespace-nowrap">{{ renumber_format($record->capital_subscription_payments_sum_amount - $this->amount_shares_paid($record), 2) }}</td>
+                </tr>
+            </tfoot>
         </table>
     </div>
     <div class="p-4 flex justify-end">
