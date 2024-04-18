@@ -45,5 +45,7 @@ class DatabaseSeeder extends Seeder
         }
 
         $this->call(ImportExistingLoansSeeder::class);
+        Artisan::call('app:import-member-accounts');
+
     }
 }
