@@ -79,7 +79,7 @@
                 </div>
                 <div class="mt-2 print:text-[8pt]">
                     <h3 class="font-bold">CREDIT COMMITTEE ACTION</h3>
-                    <div class="my-2 flex">
+                    <div class="my-2 flex items-start">
                         <div class="w-2/5">
                             <div class="space-x-4 flex">
                                 <h4>Returned due to:</h4>
@@ -97,7 +97,7 @@
                            
                             </div>
                         </div>
-                        <div class="space-x-4 flex flex-grow-0">
+                        <div class="space-x-4 flex">
                             <h4>Recommending approval priority number:</h4>
                             <h4 class="min-w-[8rem] inline-block border-b border-black px-4"></h4>
                         </div>
