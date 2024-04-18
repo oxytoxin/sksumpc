@@ -17,7 +17,7 @@
 
 <x-filament-panels::page>
     <div x-data class="mx-auto">
-        <div class="p-4 print:text-[10pt] print:leading-tight print:w-full" x-ref="print">
+        <div class="p-4 print:text-[8pt] print:leading-tight print:w-full" x-ref="print">
             <div>
                 <x-app.cashier.reports.report-heading />
                 <h4 class="text-xl print:text-[10pt] text-center font-bold">APPLICATION FORM</h4>
@@ -97,7 +97,7 @@
                            
                             </div>
                         </div>
-                        <div class="space-x-4 flex">
+                        <div class="space-x-4 flex flex-grow-0">
                             <h4>Recommending approval priority number:</h4>
                             <h4 class="min-w-[8rem] inline-block border-b border-black px-4"></h4>
                         </div>
