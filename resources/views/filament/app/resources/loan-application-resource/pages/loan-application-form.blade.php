@@ -145,9 +145,9 @@
                             </thead>
                             <tbody>
 
-                                <tr>
+                                <!-- <tr>
                                     <td colspan="8" class="border border-black px-2 font-bold">Loan Applications</td>
-                                </tr>
+                                </tr> -->
                                 @forelse ($loan_applications as $la)
                                     <tr>
                                         <td class="border border-black px-2">
@@ -172,9 +172,9 @@
                                 @endforelse
 
                                 @if (count($loans))
-                                    <tr>
+                                    <!-- <tr>
                                         <td colspan="8" class="border border-black px-2 font-bold">Loans</td>
-                                    </tr>
+                                    </tr> -->
                                     @forelse ($loans as $loan)
                                         <tr>
                                             <td class="border border-black px-2">
