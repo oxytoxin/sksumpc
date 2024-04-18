@@ -90,6 +90,7 @@ class MemberResource extends Resource
                             ->visible(fn ($record) => $record->getFirstMedia('profile_photo')),
                         TextEntry::make('full_name')->extraAttributes(['class' => 'font-semibold'])->inlineLabel()->alignStart(),
                         TextEntry::make('dob')->label('Date of Birth')->date('F d, Y')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
+                        TextEntry::make('address')->label('Address')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                         TextEntry::make('place_of_birth')->label('Place of Birth')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                         TextEntry::make('gender.name')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                         TextEntry::make('civil_status.name')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
