@@ -83,20 +83,23 @@
                         <div class="w-2/5">
                             <div class="space-x-4 flex">
                                 <h4>Returned due to:</h4>
-                                <h4></h4>
+                                <h4 class="min-w-[8rem] inline-block border-b border-black px-4"></h4>
                             </div>
                             <div class="space-x-4 flex">
                                 <h4>Disapproved due to:</h4>
+                                <h4 class="min-w-[8rem] inline-block border-b border-black px-4">
                                 @if ($loan_application->disapproval_reason?->id == 1)
-                                    <h4>{{ $loan_application->remarks }}</h4>
+                                    {{ $loan_application->remarks }}
                                 @else
-                                    <h4>{{ $loan_application->disapproval_reason?->name }}</h4>
+                                    {{ $loan_application->disapproval_reason?->name }}
                                 @endif
+                                </h4>
+                           
                             </div>
                         </div>
                         <div class="space-x-4 flex">
                             <h4>Recommending approval priority number:</h4>
-                            <h4></h4>
+                            <h4 class="min-w-[8rem] inline-block border-b border-black px-4"></h4>
                         </div>
                     </div>
                     <div class="mt-2">
@@ -122,7 +125,7 @@
                                 class="min-w-[8rem] border-b border-black px-4">{{ today()->format('F d, Y') }}</span>
                         </h4>
                         <h4>Station: <span
-                                class="min-w-[8rem] border-b border-black px-4">{{ $loan_application->member->division?->name }}</span>
+                                class="min-w-[8rem] inline-block border-b border-black px-4">{{ $loan_application->member->division?->name }}</span>
                         </h4>
                     </div>
                     <h3 class="font-bold text-center my-4">STATEMENT OF ACCOUNT</h3>
