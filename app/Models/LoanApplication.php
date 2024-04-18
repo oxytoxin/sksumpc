@@ -35,7 +35,6 @@ class LoanApplication extends Model
         'surcharge_start_date' => 'immutable_date',
         'status' => 'integer',
         'approvals' => DataCollection::class . ':' . LoanApproval::class,
-        'comakers' => 'array',
     ];
 
     public function getStatusNameAttribute()
@@ -62,6 +61,11 @@ class LoanApplication extends Model
     public function member()
     {
         return $this->belongsTo(Member::class);
+    }
+
+    public function comakers()
+    {
+        return $this->belongsToMany(Member::class, 'loan_application_comakers');
     }
 
     public function processor()

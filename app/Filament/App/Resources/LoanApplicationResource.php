@@ -6,6 +6,7 @@ use App\Actions\LoanApplications\ApproveLoanApplication;
 use App\Actions\LoanApplications\DisapproveLoanApplication;
 use App\Actions\Loans\CreateNewLoan;
 use App\Filament\App\Resources\LoanApplicationResource\Pages;
+use App\Filament\App\Resources\LoanApplicationResource\Pages\CreditAndBackgroundInvestigationReport;
 use App\Filament\App\Resources\LoanResource\Actions\ViewLoanDetailsActionGroup;
 use App\Livewire\App\Loans\Traits\HasViewLoanDetailsActionGroup;
 use App\Models\Account;
@@ -96,7 +97,15 @@ class LoanApplicationResource extends Resource
                 TextInput::make('priority_number'),
                 TextInput::make('desired_amount')->moneymask()->required(),
                 TextInput::make('purpose'),
-                TagsInput::make('comakers')->placeholder('Add co-maker'),
+                TableRepeater::make('comakers')
+                    ->schema([
+                        Select::make('member_id')
+                            ->label('Name')
+                            ->options(Member::pluck('full_name', 'id'))
+                            ->searchable()
+                            ->preload(),
+                    ])
+                    ->hideLabels(),
             ]);
     }
 
@@ -128,6 +137,7 @@ class LoanApplicationResource extends Resource
             ->defaultLoanApplicationFilters()
             ->actions([
                 Tables\Actions\EditAction::make()->visible(fn ($record) => auth()->user()->can('manage loans') && $record->status == LoanApplication::STATUS_PROCESSING),
+                Action::make('CIBI')->label('CIBI')->button()->url(fn ($record) => route('filament.app.resources.loan-applications.credit-and-background-investigation-report', ['loan_application' => $record])),
                 Action::make('Approve')
                     ->action(function (LoanApplication $record) {
                         app(ApproveLoanApplication::class)->handle($record);
@@ -285,6 +295,7 @@ class LoanApplicationResource extends Resource
             'index' => Pages\ManageLoanApplications::route('/'),
             'view' => Pages\ViewLoanApplication::route('/{record}'),
             'application-form' => Pages\LoanApplicationForm::route('/{loan_application}/application-form'),
+            'credit-and-background-investigation-report' => CreditAndBackgroundInvestigationReport::route('/cibi/{loan_application}')
         ];
     }
 }

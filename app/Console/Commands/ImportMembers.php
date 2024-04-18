@@ -73,7 +73,7 @@ class ImportMembers extends Command
                             'first_name' => $memberData['firstname'],
                             'last_name' => $memberData['lastname'],
                             'middle_name' => $memberData['mi'],
-                            'middle_initial' => isset($memberData['mi']) ? $memberData['mi'][0] . '.' : null,
+                            'middle_initial' => isset($memberData['mi']) ? $memberData['mi'][0] : null,
                             'address' => $member_address,
                             'member_type_id' => match ($memberData['member_type']) {
                                 'REGULAR' => 1,

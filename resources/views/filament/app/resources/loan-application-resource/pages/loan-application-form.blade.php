@@ -2,7 +2,7 @@
     use function Filament\Support\format_money;
     $loans = $loan_application->member->loans()->with('loan_type')->get();
     $loan_applications = $loan_application->member->loan_applications()->doesntHave('loan')->with('loan_type')->get();
-
+    $loan_application->load('comakers');
     $treasurer = App\Models\User::whereRelation('roles', 'name', 'treasurer')->first();
     $witness1 = new App\Oxytoxin\DTO\Loan\LoanApproval($treasurer->name, 'Treasurer');
 
@@ -88,13 +88,13 @@
                             <div class="space-x-4 flex">
                                 <h4>Disapproved due to:</h4>
                                 <h4 class="min-w-[8rem] inline-block border-b border-black px-4">
-                                @if ($loan_application->disapproval_reason?->id == 1)
-                                    {{ $loan_application->remarks }}
-                                @else
-                                    {{ $loan_application->disapproval_reason?->name }}
-                                @endif
+                                    @if ($loan_application->disapproval_reason?->id == 1)
+                                        {{ $loan_application->remarks }}
+                                    @else
+                                        {{ $loan_application->disapproval_reason?->name }}
+                                    @endif
                                 </h4>
-                           
+
                             </div>
                         </div>
                         <div class="space-x-4 flex">
@@ -170,42 +170,29 @@
                                             applications found.</td>
                                     </tr>
                                 @endforelse
-
-                                @if (count($loans))
-                                    <!-- <tr>
-                                        <td colspan="8" class="border border-black px-2 font-bold">Loans</td>
-                                    </tr> -->
-                                    @forelse ($loans as $loan)
-                                        <tr>
-                                            <td class="border border-black px-2">
-                                                {{ $loan->transaction_date->format('m/d/Y') }}</td>
-                                            <td class="border border-black px-2">
-                                                {{ format_money($loan->loan_application->cbu_amount, 'PHP') }}</td>
-                                            <td class="border border-black px-2">
-                                                {{ $loan->loan_type->name }}</td>
-                                            <td class="border border-black px-2">
-                                                {{ $loan->release_date?->format('m/d/Y') }}</td>
-                                            <td class="border border-black px-2">
-                                                {{ format_money($loan->gross_amount, 'PHP') }}</td>
-                                            <td class="border border-black px-2">
-                                                {{ format_money($loan->monthly_payment, 'PHP') }}
-                                            </td>
-                                            <td class="border border-black px-2">
-                                                {{ format_money($loan->outstanding_balance, 'PHP') }}
-                                            </td>
-                                            <td class="border border-black px-2">
-                                                {{ $loan->loan_application->posted ? 'Approved' : 'On Process' }}</td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="8" class="border border-black px-2 text-center">No loans
-                                                found.
-                                            </td>
-                                        </tr>
-                                    @endforelse
-                                @endif
+                                @foreach ($loans as $loan)
+                                    <tr>
+                                        <td class="border border-black px-2">
+                                            {{ $loan->transaction_date->format('m/d/Y') }}</td>
+                                        <td class="border border-black px-2">
+                                            {{ format_money($loan->loan_application->cbu_amount, 'PHP') }}</td>
+                                        <td class="border border-black px-2">
+                                            {{ $loan->loan_type->name }}</td>
+                                        <td class="border border-black px-2">
+                                            {{ $loan->release_date?->format('m/d/Y') }}</td>
+                                        <td class="border border-black px-2">
+                                            {{ format_money($loan->gross_amount, 'PHP') }}</td>
+                                        <td class="border border-black px-2">
+                                            {{ format_money($loan->monthly_payment, 'PHP') }}
+                                        </td>
+                                        <td class="border border-black px-2">
+                                            {{ format_money($loan->outstanding_balance, 'PHP') }}
+                                        </td>
+                                        <td class="border border-black px-2">
+                                            {{ $loan->loan_application->posted ? 'Approved' : 'On Process' }}</td>
+                                    </tr>
+                                @endforeach
                             </tbody>
-
                         </table>
                     </div>
                     <div class="mt-16">
@@ -296,7 +283,7 @@
                     </div>
                     @foreach ($loan_application->comakers ?? [] as $comaker)
                         <div>
-                            <p class="uppercase border-b border-black text-center">{{ $comaker }}</p>
+                            <p class="uppercase border-b border-black text-center">{{ $comaker->full_name }}</p>
                             <p class="text-center">( Signature over Printed Name of Co-Borrower)</p>
                         </div>
                     @endforeach
@@ -309,13 +296,25 @@
                     <p class="indent-8">
                         That we <strong>
                             {{ $loan_application->member->full_name }} (Borrower),
-                            @foreach ($loan_application->comakers ?? [] as $comaker)
-                                {{ $comaker }} (co-borrower),
+                            @foreach ($loan_application->comakers as $comaker)
+                                {{ $comaker->full_name }} (co-borrower),
                             @endforeach
                         </strong>
+                        @php
+                            $addresses = [];
+                            if ($loan_application->member->address) {
+                                $addresses[] = $loan_application->member->address;
+                            }
+
+                            foreach ($loan_application->comakers as $comaker) {
+                                if ($comaker->address) {
+                                    $addresses[] = $comaker->address;
+                                }
+                            }
+                        @endphp
                         of legal age single/married, Filipino and with postal addresses
                         at <span
-                            class="border-b border-black px-4 min-w-[8rem] inline-block">{{ $loan_application->member->address }}</span>
+                            class="border-b border-black px-4 min-w-[8rem] inline-block">{{ implode(', ', $addresses) }}</span>
                         and in
                         consideration
                         of the sum
@@ -341,7 +340,7 @@
                         In WITNESS WHEREOF, we have hereunto set our hands this
                         <strong>{{ $loan_application->transaction_date->format('jS \d\a\y \o\f\ F, Y') }}</strong> at
                         <span
-                            class="border-b border-black px-4 min-w-[8rem] inline-block">{{ $loan_application->member->address }}</span>.
+                            class="border-b border-black px-4 min-w-[8rem] inline-block indent-0">{{ $loan_application->member->address }}</span>.
                     </p>
                 </div>
                 <div class="grid grid-cols-2 gap-x-32 gap-y-12 mt-12">
@@ -352,9 +351,9 @@
                             {{ $loan_application->member->full_name }}</p>
                         <p class="text-center">( Signature over Printed Name of Borrower)</p>
                     </div>
-                    @foreach ($loan_application->comakers ?? [] as $comaker)
+                    @foreach ($loan_application->comakers as $comaker)
                         <div>
-                            <p class="uppercase border-b border-black text-center">{{ $comaker }}</p>
+                            <p class="uppercase border-b border-black text-center">{{ $comaker->full_name }}</p>
                             <p class="text-center">( Signature over Printed Name of Co-Borrower)</p>
                         </div>
                     @endforeach
