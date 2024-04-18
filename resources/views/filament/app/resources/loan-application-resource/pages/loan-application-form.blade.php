@@ -359,7 +359,7 @@
                         </div>
                     @endforeach
                 </div>
-                <h3 class="text-center text-lg font-bold mt-4">Signed in the presence of:</h3>
+                <h3 class="text-center font-bold mt-4">Signed in the presence of:</h3>
                 <div class="grid grid-cols-2 gap-x-32 gap-y-12 mt-12">
                     <div>
                         <p class="uppercase border-b border-black text-center">{{ $witness1->name }}</p>
