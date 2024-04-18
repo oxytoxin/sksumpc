@@ -217,6 +217,7 @@ class MemberResource extends Resource
                             ->columnSpan(2),
                         Section::make('Address')
                             ->schema([
+                                TextInput::make('address')->columnSpanFull(),
                                 Select::make('region_id')
                                     ->live()
                                     ->relationship('region', 'description'),
