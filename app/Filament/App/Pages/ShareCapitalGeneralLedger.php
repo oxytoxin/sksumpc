@@ -4,18 +4,22 @@ namespace App\Filament\App\Pages;
 
 use App\Models\CapitalSubscriptionPayment;
 use App\Models\MemberType;
+use Filament\Forms\Form;
 use Filament\Pages\Page;
 use Livewire\Attributes\Computed;
+use Malzariey\FilamentDaterangepickerFilter\Fields\DateRangePicker;
 
 class ShareCapitalGeneralLedger extends Page
 {
     protected static ?string $navigationGroup = 'Share Capital';
 
-    protected static ?string $navigationLabel = 'General Ledger';
+    protected static ?string $navigationLabel = 'CBU Schedule Summary';
 
     protected static ?int $navigationSort = 3;
 
     protected static string $view = 'filament.app.pages.share-capital-general-ledger';
+
+    public $data = [];
 
     public static function shouldRegisterNavigation(): bool
     {
@@ -37,7 +41,8 @@ class ShareCapitalGeneralLedger extends Page
         $memberType = MemberType::find(4);
         $amount_paid = CapitalSubscriptionPayment::whereHas('capital_subscription', function ($q) {
             return $q->whereRelation('member', 'member_type_id', 4);
-        })->sum('amount');
+        })->when($this->data['transaction_date'], fn ($q, $v) => $q->whereBetween('transaction_date', explode(' - ', $v)))
+            ->sum('amount');
 
         return $this->getAmounts($amount_paid, $memberType);
     }
@@ -48,12 +53,15 @@ class ShareCapitalGeneralLedger extends Page
         $memberType = MemberType::find(1);
         $amount_paid = CapitalSubscriptionPayment::whereHas('capital_subscription', function ($q) {
             return $q->whereHas('member', fn ($qu) => $qu->where('member_type_id', 1));
-        })->sum('amount');
+        })
+            ->when($this->data['transaction_date'], fn ($q, $v) => $q->whereBetween('transaction_date', explode(' - ', $v)))
+            ->sum('amount');
         $amounts1 = $this->getAmounts($amount_paid, $memberType);
         $memberType = MemberType::find(2);
         $amount_paid = CapitalSubscriptionPayment::whereHas('capital_subscription', function ($q) {
             return $q->whereHas('member', fn ($qu) => $qu->where('member_type_id', 2));
-        })->sum('amount');
+        })->when($this->data['transaction_date'], fn ($q, $v) => $q->whereBetween('transaction_date', explode(' - ', $v)))
+            ->sum('amount');
         $amounts2 = $this->getAmounts($amount_paid, $memberType);
 
         return [
@@ -69,8 +77,23 @@ class ShareCapitalGeneralLedger extends Page
         $memberType = MemberType::find(3);
         $amount_paid = CapitalSubscriptionPayment::whereHas('capital_subscription', function ($q) {
             return $q->whereRelation('member', 'member_type_id', 3);
-        })->sum('amount');
+        })
+            ->when($this->data['transaction_date'], fn ($q, $v) => $q->whereBetween('transaction_date', explode(' - ', $v)))
+            ->sum('amount');
 
         return $this->getAmounts($amount_paid, $memberType);
+    }
+
+    public function mount()
+    {
+        $this->form->fill();
+    }
+
+    public function form(Form $form): Form
+    {
+        return $form->schema([
+            DateRangePicker::make('transaction_date')
+                ->displayFormat('YYYY-MM-DD')
+        ])->columns(4)->statePath('data');
     }
 }

@@ -109,7 +109,7 @@ class LoanApplication extends Model
             }
             $loanApplication->processor_id = auth()->id();
             $loanApplication->approvals = $approvals;
-            $loanApplication->cbu_amount = CapitalSubscription::whereMemberId($loanApplication->member_id)->sum('total_amount_paid');
+            $loanApplication->cbu_amount = CapitalSubscription::whereMemberId($loanApplication->member_id)->sum('actual_amount_paid');
         });
 
 

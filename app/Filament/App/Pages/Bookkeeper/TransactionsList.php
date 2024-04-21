@@ -70,7 +70,10 @@ class TransactionsList extends Page implements HasForms, HasTable
                     ->when($this->year, fn ($q) => $q->whereYear('transaction_date', $this->year))
             )
             ->filters([
-                DateRangeFilter::make('transaction_date'),
+                DateRangeFilter::make('transaction_date')
+                    ->format('m/d/Y')
+                    ->defaultToday()
+                    ->displayFormat('MM/DD/YYYY'),
                 SelectFilter::make('transaction_type')
                     ->relationship('transaction_type', 'name')
             ])

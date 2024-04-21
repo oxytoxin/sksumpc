@@ -1,8 +1,9 @@
 <x-filament-panels::page>
     <div class="p-4 print:text-[10pt] print:leading-tight print:w-full" x-ref="print">
         <x-app.cashier.reports.report-heading />
-        <h4 class="text-3xl text-center mt-4 print:text-[10pt] font-bold uppercase">CBU GENERAL LEDGER AS OF
+        <h4 class="text-3xl text-center mt-4 print:text-[10pt] font-bold uppercase">CBU SCHEDULE SUMMARY AS OF
             {{ today()->format('F d, Y') }}</h4>
+        {{ $this->form }}
         <table class="w-full mt-4 print:text-[8pt]">
             <thead>
                 <tr>

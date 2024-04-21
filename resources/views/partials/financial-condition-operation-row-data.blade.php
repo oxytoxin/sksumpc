@@ -36,8 +36,38 @@
     @endif
 </tr>
 
-@if ($account->children->isNotEmpty())
+@if ($account->children_count > 0)
     @foreach ($account->children as $child)
         @include('partials.financial-condition-operation-row-data', ['account' => $child])
     @endforeach
+@endif
+
+@if ($account->children_count > 0)
+    <tr>
+        <td class="border border-black px-2 uppercase text-sm whitespace-nowrap font-bold pl-4">
+            TOTAL {{ format_account_name_from_depth($account->fullname, $account->depth) }}
+        </td>
+        <td class="border hover:bg-green-300 border-black px-2 uppercase text-xs text-right whitespace-nowrap">
+            <a href="{{ route('filament.app.pages.transactions-list', ['month' => $data['month'], 'year' => $data['year'], 'account_id' => $account->id]) }}"
+                target="blank" class="w-full inline-block">
+                {{ renumber_format($account->ending_balance) }}
+            </a>
+        </td>
+        <td class="border hover:bg-green-300 border-black px-2 uppercase text-xs text-right whitespace-nowrap">
+            @if ($account->debit_operator == 1)
+                {{ renumber_format($account->balance_forwarded_debit) }}
+            @else
+                {{ renumber_format($account->balance_forwarded_credit) }}
+            @endif
+        </td>
+        <td class="border hover:bg-green-300 border-black px-2 uppercase text-xs text-right whitespace-nowrap">
+            @if ($account->debit_operator == 1)
+                {{ format_percentage($account->ending_balance, $account->balance_forwarded_debit) }}
+            @else
+                {{ format_percentage($account->ending_balance, $account->balance_forwarded_credit) }}
+            @endif
+        </td>
+        <td class="border hover:bg-green-300 border-black px-2 uppercase text-xs text-right whitespace-nowrap">
+        </td>
+    </tr>
 @endif

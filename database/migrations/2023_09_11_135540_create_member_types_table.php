@@ -75,6 +75,16 @@ return new class extends Migration
             'initial_number_of_terms' => 12,
             'additional_number_of_terms' => 36,
         ]);
+        MemberType::create([
+            'name' => 'REGULAR-NOT CONNECTED',
+            'minimum_initial_payment' => 2500,
+            'default_amount_subscribed' => 10000,
+            'default_number_of_shares' => 20,
+            'par_value' => 500,
+            'surcharge_rate' => 0.01,
+            'initial_number_of_terms' => 12,
+            'additional_number_of_terms' => 36,
+        ]);
     }
 
     /**

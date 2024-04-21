@@ -144,10 +144,6 @@
                                 </tr>
                             </thead>
                             <tbody>
-
-                                <!-- <tr>
-                                    <td colspan="8" class="border border-black px-2 font-bold">Loan Applications</td>
-                                </tr> -->
                                 @forelse ($loan_applications as $la)
                                     <tr>
                                         <td class="border border-black px-2">
@@ -314,7 +310,7 @@
                         @endphp
                         of legal age single/married, Filipino and with postal addresses
                         at <span
-                            class="border-b border-black px-4 min-w-[8rem] inline-block">{{ implode(', ', $addresses) }}</span>
+                            class="border-b uppercase border-black px-4 min-w-[8rem] inline-block">{{ implode(', ', $addresses) }}</span>
                         and in
                         consideration
                         of the sum
