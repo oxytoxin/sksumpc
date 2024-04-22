@@ -40,10 +40,10 @@ class LoanApplication extends Model
     public function getStatusNameAttribute()
     {
         return match ($this->status) {
-            self::STATUS_PROCESSING => 'processing',
-            self::STATUS_APPROVED => 'processing',
-            self::STATUS_DISAPPROVED => 'disapproved',
-            self::STATUS_POSTED => 'posted',
+            self::STATUS_PROCESSING => 'On Process',
+            self::STATUS_APPROVED => 'Om Process',
+            self::STATUS_DISAPPROVED => 'Disapproved',
+            self::STATUS_POSTED => 'Posted',
             default => 'processing'
         };
     }
