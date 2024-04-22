@@ -6,6 +6,7 @@ use App\Models\CapitalSubscriptionPayment;
 use App\Models\MemberType;
 use Filament\Forms\Form;
 use Filament\Pages\Page;
+use Illuminate\Contracts\Support\Htmlable;
 use Livewire\Attributes\Computed;
 use Malzariey\FilamentDaterangepickerFilter\Fields\DateRangePicker;
 
@@ -20,6 +21,11 @@ class CbuScheduleSummary extends Page
     protected static string $view = 'filament.app.pages.cbu-schedule-summary';
 
     public $data = [];
+
+    public function getHeading(): string|Htmlable
+    {
+        return 'CBU Schedule Summary';
+    }
 
     public static function shouldRegisterNavigation(): bool
     {

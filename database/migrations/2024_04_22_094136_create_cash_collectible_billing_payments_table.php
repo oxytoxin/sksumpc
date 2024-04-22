@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\CashCollectible;
+use App\Models\CashCollectibleBilling;
+use App\Models\Member;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,6 +16,13 @@ return new class extends Migration
     {
         Schema::create('cash_collectible_billing_payments', function (Blueprint $table) {
             $table->id();
+            $table->foreignIdFor(CashCollectibleBilling::class)->constrained(indexName: 'cash_collectible_billing_foreign');
+            $table->foreignIdFor(CashCollectible::class)->constrained(indexName: 'cash_collectible_foreign');
+            $table->foreignIdFor(Member::class)->nullable()->constrained();
+            $table->string('payee');
+            $table->decimal('amount_due', 18, 4);
+            $table->decimal('amount_paid', 18, 4);
+            $table->boolean('posted')->default(false);
             $table->timestamps();
         });
     }

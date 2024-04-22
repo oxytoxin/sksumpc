@@ -19,6 +19,15 @@
                 </tr>
             </thead>
             <tbody>
+                @php
+                    $totals['capital_subscriptions_sum_number_of_shares'] = 0;
+                    $totals['capital_subscriptions_sum_amount_subscribed'] = 0;
+                    $totals['number_of_shares_paid'] = 0;
+                    $totals['capital_subscription_payments_sum_amount'] = 0;
+                    $totals['capital_subscriptions_sum_receivable'] = 0;
+                    $totals['amount_shares_paid'] = 0;
+                    $totals['capital_subscriptions_sum_deposit'] = 0;
+                @endphp
                 @foreach ($this->table->getRecords() as $record)
                     <tr>
                         <td class="text-left px-4 border border-black whitespace-nowrap">{{ $record->alt_full_name }}
@@ -40,7 +49,42 @@
                             {{ renumber_format($record->capital_subscription_payments_sum_amount - $this->amount_shares_paid($record), 2) }}
                         </td>
                     </tr>
+                    @php
+                        $totals['capital_subscriptions_sum_number_of_shares'] +=
+                            $record->capital_subscriptions_sum_number_of_shares;
+                        $totals['capital_subscriptions_sum_amount_subscribed'] +=
+                            $record->capital_subscriptions_sum_amount_subscribed;
+                        $totals['number_of_shares_paid'] += $this->number_of_shares_paid($record);
+                        $totals['capital_subscription_payments_sum_amount'] +=
+                            $record->capital_subscription_payments_sum_amount;
+                        $totals['capital_subscriptions_sum_receivable'] +=
+                            $record->capital_subscriptions_sum_amount_subscribed -
+                            $record->capital_subscription_payments_sum_amount;
+                        $totals['amount_shares_paid'] += $this->amount_shares_paid($record);
+                        $totals['capital_subscriptions_sum_deposit'] +=
+                            $record->capital_subscription_payments_sum_amount - $this->amount_shares_paid($record);
+                    @endphp
                 @endforeach
+                <tr>
+                    <td class="text-left px-4 border font-bold border-black whitespace-nowrap">TOTAL
+                    </td>
+                    <td class="text-center px-4 border border-black whitespace-nowrap">
+                        {{ round($totals['capital_subscriptions_sum_number_of_shares'], 0) }}</td>
+                    <td class="text-right px-4 border border-black whitespace-nowrap">
+                        {{ renumber_format($totals['capital_subscriptions_sum_amount_subscribed'], 2) }}</td>
+                    <td class="text-center px-4 border border-black whitespace-nowrap">
+                        {{ round($totals['number_of_shares_paid'], 0) }}</td>
+                    <td class="text-right px-4 border border-black whitespace-nowrap">
+                        {{ renumber_format($totals['capital_subscription_payments_sum_amount'], 2) }}</td>
+                    <td class="text-right px-4 border border-black whitespace-nowrap">
+                        {{ renumber_format($totals['capital_subscriptions_sum_receivable'], 2) }}
+                    </td>
+                    <td class="text-right px-4 border border-black whitespace-nowrap">
+                        {{ renumber_format($totals['amount_shares_paid'], 2) }}</td>
+                    <td class="text-right px-4 border border-black whitespace-nowrap">
+                        {{ renumber_format($totals['capital_subscriptions_sum_deposit'], 2) }}
+                    </td>
+                </tr>
             </tbody>
         </table>
     </div>
