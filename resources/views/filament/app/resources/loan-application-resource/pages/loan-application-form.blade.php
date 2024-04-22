@@ -361,7 +361,7 @@
                         <p class="text-center">{{ $witness1->position }}</p>
                     </div>
                     <div>
-                        <p class="uppercase border-b border-black text-center">{{ $witness2->name }}</p>
+                        <p class="border-b border-black text-center">{{ $witness2->name }}</p>
                         <p class="text-center">{{ $witness2->position }}</p>
                     </div>
                 </div>
