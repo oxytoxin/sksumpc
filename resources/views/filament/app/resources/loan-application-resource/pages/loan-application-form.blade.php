@@ -75,7 +75,7 @@
                 <div class="flex flex-col items-center mt-8 print:leading-[0]">
                     <h4 class="uppercase font-bold text-xl print:text-[8pt]">{{ $loan_application->member->full_name }}
                     </h4>
-                    <h4 class="print:text-[7pt]">(Signature over printed name of applicant)</h4>
+                    <h4 class="print:text-[7pt]">(Signature over Printed Name of applicant)</h4>
                 </div>
                 <div class="mt-2 print:text-[8pt]">
                     <h3 class="font-bold">CREDIT COMMITTEE ACTION</h3>
@@ -106,7 +106,7 @@
                         <div class="flex flex-wrap justify-around gap-y-4">
                             @foreach ($signatories as $approver)
                                 <div class="flex w-1/3 flex-col items-center mt-4">
-                                    <p class="font-bold uppercase">{{ $approver['name'] }}</p>
+                                    <p class="font-bold">{{ $approver['name'] }}</p>
                                     <p class="print:text-[7pt]">{{ $approver['position'] }}</p>
                                 </div>
                             @endforeach
@@ -293,7 +293,7 @@
                         That we <strong>
                             {{ $loan_application->member->full_name }} (Borrower),
                             @foreach ($loan_application->comakers as $comaker)
-                                {{ $comaker->full_name }} (co-borrower),
+                                {{ $comaker->full_name }} (Co-Borrower),
                             @endforeach
                         </strong>
                         @php
@@ -336,7 +336,7 @@
                         In WITNESS WHEREOF, we have hereunto set our hands this
                         <strong>{{ $loan_application->transaction_date->format('jS \d\a\y \o\f\ F, Y') }}</strong> at
                         <span
-                            class="border-b border-black px-4 min-w-[8rem] inline-block indent-0">{{ $loan_application->member->address }}</span>.
+                            class="border-b border-black px-4 min-w-[8rem] inline-block indent-0">City of Tacurong</span>.
                     </p>
                 </div>
                 <div class="grid grid-cols-2 gap-x-32 gap-y-12 mt-12">
