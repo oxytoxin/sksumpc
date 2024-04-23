@@ -3,6 +3,7 @@
 namespace App\Filament\App\Pages\Cashier;
 
 use App\Models\CapitalSubscriptionBilling;
+use App\Models\CashCollectibleBilling;
 use App\Models\LoanBilling;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
@@ -30,6 +31,7 @@ class BillingTransactions extends Component implements HasForms
                     ->options([
                         1 => 'Capital Subscription',
                         2 => 'Loan',
+                        3 => 'Cash Collectible',
                     ])
                     ->reactive(),
                 Select::make('billing_id')
@@ -42,6 +44,9 @@ class BillingTransactions extends Component implements HasForms
                                 break;
                             case 2:
                                 return LoanBilling::where('for_or', true)->pluck('reference_number', 'id');
+                                break;
+                            case 3:
+                                return CashCollectibleBilling::where('for_or', true)->pluck('reference_number', 'id');
                                 break;
                             default:
                                 return [];
@@ -57,12 +62,13 @@ class BillingTransactions extends Component implements HasForms
                     Action::make('submit')
                         ->action(function () {
                             $data = $this->form->getState();
-                            if ($data['type'] == 1) {
-                                $record = CapitalSubscriptionBilling::find($data['billing_id']);
-                            }
-                            if ($data['type'] == 2) {
-                                $record = LoanBilling::find($data['billing_id']);
-                            }
+                            $record = match ((int) $data['type']) {
+                                1 => CapitalSubscriptionBilling::find($data['billing_id']),
+                                2 => LoanBilling::find($data['billing_id']),
+                                3 => CashCollectibleBilling::find($data['billing_id']),
+                                default => null
+                            };
+
                             $record->update([
                                 'name' => $data['name'],
                                 'or_number' => $data['or_number'],

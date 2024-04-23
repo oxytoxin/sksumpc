@@ -18,9 +18,9 @@ class Mmigs extends Page implements HasTable
 
     protected static string $view = 'filament.app.pages.mmigs';
 
-    protected static ?string $navigationIcon = 'icon-membership';
+    protected static ?int $navigationSort = 15;
 
-    protected static ?int $navigationSort = 5;
+    protected static ?string $navigationGroup = 'Share Capital';
 
     protected static ?string $navigationLabel = 'MMIGS';
 
@@ -34,7 +34,7 @@ class Mmigs extends Page implements HasTable
         return $table
             ->query(Member::query())
             ->columns([
-                TextColumn::make('alt_full_name')->label('Name'),
+                TextColumn::make('alt_full_name')->label('Name')->searchable(),
                 TextColumn::make('patronage_status.name'),
                 TextColumn::make('membership_acceptance.bod_resolution')->label('BOD Resolution'),
                 TextColumn::make('membership_acceptance.effectivity_date')->label('Date Accepted')->date('F d, Y')

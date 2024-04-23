@@ -114,7 +114,7 @@ class CapitalSubscriptionBillingPayments extends ListRecords
                     ->orderBy('member_name')
             )
             ->columns([
-                TextColumn::make('member_name')->label('Member'),
+                TextColumn::make('member.alt_full_name')->label('Member')->searchable(),
                 TextColumn::make('amount_due')->money('PHP')->summarize(Sum::make()->money('PHP')->label('')),
                 TextColumn::make('amount_paid')->money('PHP')->summarize(Sum::make()->money('PHP')->label('')),
             ])

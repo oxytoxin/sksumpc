@@ -72,7 +72,7 @@ class ImportMemberAccounts extends Command
                     reference_number: '#BALANCEFORWARDED',
                     amount: $data['amount'],
                     savings_account_id: $account->id,
-                    transaction_date: '12/30/2023',
+                    transaction_date: '12/31/2023',
                 ), $transaction_type);
             }
         });
@@ -92,7 +92,7 @@ class ImportMemberAccounts extends Command
                     payment_type_id: 1,
                     reference_number: '#BALANCEFORWARDED',
                     amount: $data['amount'],
-                    transaction_date: '12/30/2023',
+                    transaction_date: '12/31/2023',
                 ), $transaction_type);
             }
         });

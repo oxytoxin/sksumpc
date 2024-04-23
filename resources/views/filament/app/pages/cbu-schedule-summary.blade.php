@@ -1,9 +1,11 @@
 <x-filament-panels::page>
     <div class="p-4 print:text-[10pt] print:leading-tight print:w-full" x-ref="print">
         <x-app.cashier.reports.report-heading />
-        <h4 class="text-3xl text-center mt-4 print:text-[10pt] font-bold uppercase">CBU SCHEDULE SUMMARY AS OF
-            {{ today()->format('F d, Y') }}</h4>
-        {{ $this->form }}
+        <h4 class="text-2xl text-center mt-4 print:text-[10pt] font-bold uppercase">CBU SCHEDULE SUMMARY AS OF
+            {{ $this->date_range ?? today()->format('F d, Y') }}</h4>
+        <div class="print:hidden">
+            {{ $this->form }}
+        </div>
         <table class="w-full mt-4 print:text-[8pt]">
             <thead>
                 <tr>

@@ -48,10 +48,10 @@ class CashierTransactionsPage extends Page implements HasForms
                             ->schema([
                                 Livewire::make(BillingTransactions::class),
                             ]),
-                        Tab::make('Accounts')
-                            ->schema([
-                                Livewire::make(BillingTransactions::class),
-                            ]),
+                        // Tab::make('Accounts')
+                        //     ->schema([
+                        //         Livewire::make(BillingTransactions::class),
+                        //     ]),
                     ]),
 
             ]);

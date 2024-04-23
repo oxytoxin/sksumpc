@@ -38,8 +38,8 @@ class UserRoleSeeder extends Seeder
         ]);
         $user = User::create([
             'name' => 'CRISTY A. MANTOS',
-            'email' => 'sksumpccashier@gmail.com',
-            'password' => Hash::make('password'),
+            'email' => 'carochi2024@gmail.com',
+            'password' => Hash::make('CATaro2024'),
         ]);
         $permission = Permission::create([
             'name' => 'manage payments',
@@ -53,8 +53,8 @@ class UserRoleSeeder extends Seeder
         ]);
         $user = User::create([
             'name' => 'ADRIAN VOLTAIRE POLO',
-            'email' => 'sksumpccbu@gmail.com',
-            'password' => Hash::make('password'),
+            'email' => 'MPCCBU@gmail.com',
+            'password' => Hash::make('1234567'),
         ]);
         $permission = Permission::create([
             'name' => 'manage members',
@@ -72,8 +72,8 @@ class UserRoleSeeder extends Seeder
         ]);
         $user = User::create([
             'name' => 'SKSUMPC MSO Staff',
-            'email' => 'sksumpcmso@gmail.com',
-            'password' => Hash::make('password'),
+            'email' => 'CJLsexy@gmail.com@gmail.com',
+            'password' => Hash::make('072820'),
         ]);
         $permission = Permission::create([
             'name' => 'manage mso',
@@ -91,7 +91,7 @@ class UserRoleSeeder extends Seeder
         $user = User::create([
             'name' => 'SKSUMPC Loan Staff',
             'email' => 'sksumpcloan@gmail.com',
-            'password' => Hash::make('password'),
+            'password' => Hash::make('EDA070784'),
         ]);
         $role->givePermissionTo($permission);
         $user->assignRole($role);
@@ -101,9 +101,9 @@ class UserRoleSeeder extends Seeder
             'name' => 'book-keeper',
         ]);
         $user = User::create([
-            'name' => 'ADRIAN VOLTAIRE POLO',
+            'name' => 'JOANA MONA R. PRIMACIO ',
             'email' => 'sksumpcbookkeeper@gmail.com',
-            'password' => Hash::make('password'),
+            'password' => Hash::make('gwapaako'),
         ]);
         $permission = Permission::create([
             'name' => 'manage bookkeeping',

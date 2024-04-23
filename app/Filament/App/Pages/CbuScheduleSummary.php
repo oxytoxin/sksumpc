@@ -42,6 +42,12 @@ class CbuScheduleSummary extends Page
     }
 
     #[Computed]
+    public function DateRange()
+    {
+        return implode(' - ', collect(explode(' - ', $this->data['transaction_date']))->map(fn ($d) => date_create($d)->format('F d, Y'))->toArray());
+    }
+
+    #[Computed]
     public function laboratoryAmounts()
     {
         $memberType = MemberType::find(4);

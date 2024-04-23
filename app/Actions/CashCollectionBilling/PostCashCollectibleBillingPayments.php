@@ -5,10 +5,9 @@ namespace App\Actions\CashCollectionBilling;
 use App\Models\TransactionType;
 use Illuminate\Support\Facades\DB;
 use Filament\Notifications\Notification;
-use App\Actions\CapitalSubscription\PayCapitalSubscription;
+use App\Actions\CashCollections\PayCashCollectible;
 use App\Models\CashCollectibleBilling;
 use App\Models\CashCollectibleBillingPayment;
-use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionPaymentData;
 use App\Oxytoxin\DTO\CashCollectibles\CashCollectiblePaymentData;
 use Lorisleiva\Actions\Concerns\AsAction;
 
@@ -44,6 +43,5 @@ class PostCashCollectibleBillingPayments
             'posted' => true,
         ]);
         DB::commit();
-        Notification::make()->title('Payments posted!')->success()->send();
     }
 }

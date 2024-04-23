@@ -30,7 +30,7 @@ class CapitalSubscriptionResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('member.alt_full_name')->sortable(),
+                TextColumn::make('member.alt_full_name')->sortable()->searchable(),
                 TextColumn::make('amount_subscribed')->money('PHP'),
                 TextColumn::make('monthly_payment')->money('PHP'),
                 TextColumn::make('outstanding_balance')->money('PHP'),

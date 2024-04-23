@@ -110,6 +110,11 @@ class Member extends Model implements HasMedia
         };
     }
 
+    public function getAgeAttribute()
+    {
+        return $this->dob?->diffInYears(today());
+    }
+
     public function capital_subscriptions_common(): HasOne
     {
         return $this->hasOne(CapitalSubscription::class)->where('is_common', true)->latestOfMany();

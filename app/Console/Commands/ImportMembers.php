@@ -91,7 +91,7 @@ class ImportMembers extends Command
                             'present_employer' => $memberData['present_employer'],
                             'annual_income' => $memberData['annual_income'],
                             'highest_educational_attainment' => $memberData['highest_educational_attainment'],
-                            'membership_date' => '12/30/2023',
+                            'membership_date' => '12/31/2023',
                         ]);
                         $member->refresh();
                         app(CreateNewCapitalSubscriptionAccount::class)->handle(new CapitalSubscriptionAccountData(
@@ -110,13 +110,13 @@ class ImportMembers extends Command
                             amount_subscribed: $memberData['amount_shares'],
                             par_value: $memberData['par_value'],
                             is_common: true,
-                            transaction_date: '12/30/2023'
+                            transaction_date: '12/31/2023'
                         ));
                         app(PayCapitalSubscription::class)->handle($cbu, new CapitalSubscriptionPaymentData(
                             payment_type_id: 1,
                             reference_number: '#BALANCEFORWARDED',
                             amount: $memberData['amount_paid'],
-                            transaction_date: '12/30/2023'
+                            transaction_date: '12/31/2023'
                         ), $transaction_type);
 
                         $user = User::create([

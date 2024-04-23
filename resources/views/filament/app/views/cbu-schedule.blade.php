@@ -68,20 +68,20 @@
                 <tr>
                     <td class="text-left px-4 border font-bold border-black whitespace-nowrap">TOTAL
                     </td>
-                    <td class="text-center px-4 border border-black whitespace-nowrap">
+                    <td class="text-center px-4 border font-bold border-black whitespace-nowrap">
                         {{ round($totals['capital_subscriptions_sum_number_of_shares'], 0) }}</td>
-                    <td class="text-right px-4 border border-black whitespace-nowrap">
+                    <td class="text-right px-4 border font-bold border-black whitespace-nowrap">
                         {{ renumber_format($totals['capital_subscriptions_sum_amount_subscribed'], 2) }}</td>
-                    <td class="text-center px-4 border border-black whitespace-nowrap">
+                    <td class="text-center px-4 border font-bold border-black whitespace-nowrap">
                         {{ round($totals['number_of_shares_paid'], 0) }}</td>
-                    <td class="text-right px-4 border border-black whitespace-nowrap">
+                    <td class="text-right px-4 border font-bold border-black whitespace-nowrap">
                         {{ renumber_format($totals['capital_subscription_payments_sum_amount'], 2) }}</td>
-                    <td class="text-right px-4 border border-black whitespace-nowrap">
+                    <td class="text-right px-4 border font-bold border-black whitespace-nowrap">
                         {{ renumber_format($totals['capital_subscriptions_sum_receivable'], 2) }}
                     </td>
-                    <td class="text-right px-4 border border-black whitespace-nowrap">
+                    <td class="text-right px-4 border font-bold border-black whitespace-nowrap">
                         {{ renumber_format($totals['amount_shares_paid'], 2) }}</td>
-                    <td class="text-right px-4 border border-black whitespace-nowrap">
+                    <td class="text-right px-4 border font-bold border-black whitespace-nowrap">
                         {{ renumber_format($totals['capital_subscriptions_sum_deposit'], 2) }}
                     </td>
                 </tr>

@@ -89,6 +89,8 @@ class MemberResource extends Resource
                             ->collection('profile_photo')->circular()
                             ->visible(fn ($record) => $record->getFirstMedia('profile_photo')),
                         TextEntry::make('full_name')->extraAttributes(['class' => 'font-semibold'])->inlineLabel()->alignStart(),
+                        TextEntry::make('contact')->extraAttributes(['class' => 'font-semibold'])->inlineLabel()->alignStart(),
+                        TextEntry::make('age')->extraAttributes(['class' => 'font-semibold'])->inlineLabel()->alignStart(),
                         TextEntry::make('dob')->label('Date of Birth')->date('F d, Y')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                         TextEntry::make('address')->label('Address')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                         TextEntry::make('place_of_birth')->label('Place of Birth')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
@@ -208,14 +210,13 @@ class MemberResource extends Resource
                             ->label('MI')
                             ->dehydrateStateUsing(fn ($state) => $state ? strtoupper($state) : null)
                             ->maxLength(1),
+                        TextInput::make('contact'),
                         DatePicker::make('dob')
                             ->before(today()->subYearsNoOverflow(10))
                             ->validationAttribute('Date of Birth')
-                            ->required()
                             ->label('Date of Birth'),
                         TextInput::make('place_of_birth')
-                            ->label('Place of Birth')
-                            ->columnSpan(2),
+                            ->label('Place of Birth'),
                         Section::make('Address')
                             ->schema([
                                 TextInput::make('address')->columnSpanFull(),
