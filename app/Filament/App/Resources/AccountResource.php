@@ -30,20 +30,28 @@ class AccountResource extends Resource
     {
         return $form
             ->schema([
+                Select::make('account_type_id')->required()
+                    ->relationship(name: 'account_type', titleAttribute: 'name')
+                    ->afterStateUpdated(fn ($set, $state) => $set('children.*.account_type_id', $state))
+                    ->reactive(),
                 TextInput::make('name')->required(),
                 TextInput::make('number')->required(),
                 TableRepeater::make('children')
                     ->schema([
                         Select::make('account_type_id')->required()
-                            ->relationship(name: 'account_type', titleAttribute: 'name'),
+                            ->relationship(name: 'account_type', titleAttribute: 'name')
+                            ->disabled()
+                            ->dehydrated(true)
+                            ->default(fn ($get) => $get('../../account_type_id')),
                         TextInput::make('name')->required(),
                         TextInput::make('number')->required()
                             ->unique('accounts', 'number', ignoreRecord: true),
                     ])
+                    ->default([])
                     ->columnSpanFull()
                     ->hideLabels()
                     ->relationship(),
-            ]);
+            ])->columns(3);
     }
 
     public static function table(Table $table): Table
