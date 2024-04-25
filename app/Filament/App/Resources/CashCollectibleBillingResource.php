@@ -27,7 +27,7 @@ class CashCollectibleBillingResource extends Resource
     protected static ?string $model = CashCollectibleBilling::class;
 
     protected static ?string $navigationGroup = 'Share Capital';
-
+    protected static ?string $navigationLabel = 'Stakeholders';
     protected static ?int $navigationSort = 6;
 
     public static function form(Form $form): Form

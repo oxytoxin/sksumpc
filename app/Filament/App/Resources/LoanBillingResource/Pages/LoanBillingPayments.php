@@ -113,8 +113,8 @@ class LoanBillingPayments extends ListRecords
             )
             ->columns([
                 TextColumn::make('member_name')->label('Member'),
-                TextColumn::make('amount_due')->money('PHP')->summarize(Sum::make()->money('PHP')->label('')),
-                TextColumn::make('amount_paid')->money('PHP')->summarize(Sum::make()->money('PHP')->label('')),
+                TextColumn::make('amount_due')->money('PHP'),
+                TextColumn::make('amount_paid')->money('PHP'),
             ])
             ->filters([
                 SelectFilter::make('member.member_type_id')

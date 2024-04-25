@@ -30,9 +30,9 @@ it('can create a new loan', function () {
         'transaction_date' => today(),
         'status' => LoanApplication::STATUS_APPROVED,
         'approvals' => [
-            ['name' => 'CATHERINE A. LEGASPI', 'position' => 'Crecom-Secretary'],
-            ['name' => 'JACQUILINE B. CANDIDO', 'position' => 'Crecom-Chairperson'],
-            ['name' => 'JUVEN LACONSE', 'position' => 'Crecom-Vice Chairperson'],
+            ['name' => 'CATHERINE A. LEGASPI', 'position' => 'CRECOM-Secretary'],
+            ['name' => 'JACQUILINE B. CANDIDO', 'position' => 'CRECOM-Chairperson'],
+            ['name' => 'JUVEN LACONSE', 'position' => 'CRECOM-Vice Chairperson'],
             ['name' => 'FLORA C. DAMANDAMAN', 'position' => 'Manager'],
         ],
     ]);

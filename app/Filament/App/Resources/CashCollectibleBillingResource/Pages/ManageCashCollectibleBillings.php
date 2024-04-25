@@ -17,6 +17,8 @@ use Livewire\Attributes\Computed;
 class ManageCashCollectibleBillings extends ManageRecords
 {
     protected static string $resource = CashCollectibleBillingResource::class;
+    protected ?string $heading = 'Stakeholders';
+    protected static ?string $title = 'Stakeholders';
 
     #[Computed]
     public function UserIsCashier()

@@ -115,8 +115,8 @@ class CapitalSubscriptionBillingPayments extends ListRecords
             )
             ->columns([
                 TextColumn::make('member.alt_full_name')->label('Member')->searchable(),
-                TextColumn::make('amount_due')->money('PHP')->summarize(Sum::make()->money('PHP')->label('')),
-                TextColumn::make('amount_paid')->money('PHP')->summarize(Sum::make()->money('PHP')->label('')),
+                TextColumn::make('amount_due')->money('PHP'),
+                TextColumn::make('amount_paid')->money('PHP'),
             ])
             ->filters([
                 SelectFilter::make('member.member_type_id')

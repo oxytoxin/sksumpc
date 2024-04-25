@@ -91,13 +91,13 @@ class LoanApplication extends Model
             $crecom_chairperson = User::whereRelation('roles', 'name', 'crecom-chairperson')->first();
             $approvals = [];
             if ($crecom_secretary) {
-                $approvals[] = (new LoanApproval($crecom_secretary->name, 'Crecom-Secretary'));
+                $approvals[] = (new LoanApproval($crecom_secretary->name, 'CRECOM-Secretary'));
             }
             if ($crecom_chairperson) {
-                $approvals[] = (new LoanApproval($crecom_chairperson->name, 'Crecom-Chairperson'));
+                $approvals[] = (new LoanApproval($crecom_chairperson->name, 'CRECOM-Chairperson'));
             }
             if ($crecom_vicechairperson) {
-                $approvals[] = (new LoanApproval($crecom_vicechairperson->name, 'Crecom-Vice Chairperson'));
+                $approvals[] = (new LoanApproval($crecom_vicechairperson->name, 'CRECOM-Vice Chairperson'));
             }
 
             if ($loanApplication->desired_amount > 50000) {
