@@ -6,6 +6,7 @@ use App\Filament\App\Resources\CapitalSubscriptionResource\Pages;
 use App\Models\CapitalSubscription;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -55,6 +56,7 @@ class CapitalSubscriptionResource extends Resource
         return [
             'index' => Pages\ListCapitalSubscriptions::route('/'),
             'reports.top-ten-highest-cbu' => Pages\Reports\TopTenHighestCbuReport::route('/reports/top-ten-highest-cbu'),
+            'share-certificate' => Pages\ShareCertificate::route('/share-certificate/{capital_subscription}'),
         ];
     }
 }

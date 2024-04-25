@@ -1,7 +1,9 @@
-@props(['title', 'signatories'])
+@props(['title', 'signatories', 'hasHeader' => true])
 <div x-data class="max-w-7xl mx-auto">
     <div class="p-4" x-ref="print">
-        <x-app.cashier.reports.report-heading />
+        @if ($hasHeader)
+            <x-app.cashier.reports.report-heading />
+        @endif
         @isset($title)
             <h4 wire:ignore class="text-xl mt-4 font-bold text-center">{{ $title }}</h4>
             <p class="text-center font-bold">{{ today()->format('l, F d, Y') }}</p>
