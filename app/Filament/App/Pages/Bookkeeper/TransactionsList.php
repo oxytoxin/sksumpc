@@ -4,6 +4,8 @@ namespace App\Filament\App\Pages\Bookkeeper;
 
 use App\Models\Account;
 use App\Models\Transaction;
+use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
@@ -38,9 +40,7 @@ class TransactionsList extends Page implements HasForms, HasTable
 
     public ?int $payment_mode;
 
-    public ?int $month;
-
-    public ?int $year;
+    public $date_range;
 
     #[Computed]
     public function account()
@@ -53,8 +53,13 @@ class TransactionsList extends Page implements HasForms, HasTable
         $this->transaction_type = request()->integer('transaction_type');
         $this->account_id = request()->integer('account_id');
         $this->payment_mode = request()->integer('payment_mode');
-        $this->month = request()->integer('month');
-        $this->year = request()->integer('year');
+        $month = request()->integer('month');
+        $year = request()->integer('year');
+        if ($month && $year) {
+            $date = CarbonImmutable::create(month: $month, year: $year);
+            $this->date_range = $date->format('m/d/Y') . ' - ' . $date->endOfMonth()->format('m/d/Y');
+            data_set($this, 'tableFilters.transaction_date.transaction_date', $this->date_range);
+        };
     }
 
     public function table(Table $table): Table
@@ -66,16 +71,14 @@ class TransactionsList extends Page implements HasForms, HasTable
                     ->when($this->transaction_type, fn ($q) => $q->where('transaction_type_id', $this->transaction_type))
                     ->when($this->payment_mode == 1, fn ($q) => $q->whereNotNull('debit'))
                     ->when($this->payment_mode == -1, fn ($q) => $q->whereNotNull('credit'))
-                    ->when($this->month, fn ($q) => $q->whereMonth('transaction_date', $this->month))
-                    ->when($this->year, fn ($q) => $q->whereYear('transaction_date', $this->year))
             )
             ->filters([
                 DateRangeFilter::make('transaction_date')
-                    ->format('m/d/Y')
-                    ->defaultToday()
+                    ->default("01/01/2024 - 01/01/2024")
                     ->displayFormat('MM/DD/YYYY'),
                 SelectFilter::make('transaction_type')
                     ->relationship('transaction_type', 'name')
+                    ->default($this->transaction_type)
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
             ->columns([

@@ -4878,21 +4878,21 @@
         },
         {
             "name": "malzariey/filament-daterangepicker-filter",
-            "version": "2.3.1",
+            "version": "2.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/malzariey/filament-daterangepicker-filter.git",
-                "reference": "0ae502d24c36ea0c8e64769ba7dd3a6e8994461d"
+                "reference": "d6dc4991a8c1486615ebe3330c9b55f5cae26340"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/malzariey/filament-daterangepicker-filter/zipball/0ae502d24c36ea0c8e64769ba7dd3a6e8994461d",
-                "reference": "0ae502d24c36ea0c8e64769ba7dd3a6e8994461d",
+                "url": "https://api.github.com/repos/malzariey/filament-daterangepicker-filter/zipball/d6dc4991a8c1486615ebe3330c9b55f5cae26340",
+                "reference": "d6dc4991a8c1486615ebe3330c9b55f5cae26340",
                 "shasum": ""
             },
             "require": {
                 "filament/filament": "^2.0|^3.0",
-                "illuminate/contracts": "^8.0|^9.0|^10.0",
+                "illuminate/contracts": "^8.0|^9.0|^10.0|^11.0",
                 "php": "^8.0",
                 "spatie/laravel-package-tools": "^1.15"
             },
@@ -4941,7 +4941,7 @@
             ],
             "support": {
                 "issues": "https://github.com/malzariey/filament-daterangepicker-filter/issues",
-                "source": "https://github.com/malzariey/filament-daterangepicker-filter/tree/2.3.1"
+                "source": "https://github.com/malzariey/filament-daterangepicker-filter/tree/2.5.1"
             },
             "funding": [
                 {
@@ -4949,7 +4949,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-11-25T10:10:37+00:00"
+            "time": "2024-04-09T22:17:20+00:00"
         },
         {
             "name": "markbaker/complex",

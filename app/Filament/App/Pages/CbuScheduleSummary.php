@@ -105,7 +105,8 @@ class CbuScheduleSummary extends Page
     {
         return $form->schema([
             DateRangePicker::make('transaction_date')
-                ->displayFormat('YYYY-MM-DD')
+                ->format('m/d/Y')
+                ->displayFormat('MM/DD/YYYY')
         ])->columns(4)->statePath('data');
     }
 }

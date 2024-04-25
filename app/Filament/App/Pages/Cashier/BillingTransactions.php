@@ -31,7 +31,7 @@ class BillingTransactions extends Component implements HasForms
                     ->options([
                         1 => 'Capital Subscription',
                         2 => 'Loan',
-                        3 => 'Cash Collectible',
+                        3 => 'Stakeholders',
                     ])
                     ->reactive(),
                 Select::make('billing_id')
