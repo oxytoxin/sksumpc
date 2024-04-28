@@ -10,6 +10,7 @@ use Carbon\CarbonImmutable;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -38,16 +39,18 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
     public function form(Form $form): Form
     {
         return $form->schema([
-            Select::make('month')
-                ->options(oxy_get_month_range())
+            DatePicker::make('transaction_date')
+                ->default(today())
+                ->native(false)
+                ->reactive(),
+            Select::make('mode')
+                ->options([
+                    'daily' => 'Daily',
+                    'monthly' => 'Monthly'
+                ])
+                ->default('monthly')
                 ->selectablePlaceholder(false)
-                ->default(today()->month)
-                ->live(),
-            Select::make('year')
-                ->options(oxy_get_year_range())
-                ->selectablePlaceholder(false)
-                ->default(today()->year)
-                ->live(),
+                ->reactive(),
         ])
             ->columns(4)
             ->statePath('data');
@@ -61,13 +64,24 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
     #[Computed]
     public function Accounts()
     {
-        return FinancialStatementProvider::getAccountsSummary($this->data['month'], $this->data['year']);
+        if ($this->data['mode'] == 'daily') {
+            $date = date_create($this->data['transaction_date'] ?? today());
+            return FinancialStatementProvider::getDailyAccountsSummary($date);
+        }
+        $transaction_date = CarbonImmutable::create($this->data['transaction_date'] ?? today());
+        return FinancialStatementProvider::getAccountsSummary(month: $transaction_date->month, year: $transaction_date->year);
     }
 
     #[Computed]
     public function BalanceForwardedDate()
     {
-        return CarbonImmutable::create(month: $this->data['month'], year: $this->data['year'])->subMonthNoOverflow();
+        return CarbonImmutable::create($this->data['transaction_date'])->subMonthNoOverflow();
+    }
+
+    #[Computed]
+    public function TransactionDate()
+    {
+        return CarbonImmutable::create($this->data['transaction_date']);
     }
 
     #[Computed]
@@ -92,7 +106,7 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
                 $spreadsheet = IOFactory::load(storage_path('templates/trial_balance.xlsx'));
                 $worksheet = $spreadsheet->getActiveSheet();
 
-                $path = storage_path('app/livewire-tmp/trial_balance-'.today()->year.'.xlsx');
+                $path = storage_path('app/livewire-tmp/trial_balance-' . today()->year . '.xlsx');
                 $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
                 $writer->save($path);
 

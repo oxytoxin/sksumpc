@@ -41,7 +41,7 @@ class LoanApplication extends Model
     {
         return match ($this->status) {
             self::STATUS_PROCESSING => 'On Process',
-            self::STATUS_APPROVED => 'Om Process',
+            self::STATUS_APPROVED => 'On Process',
             self::STATUS_DISAPPROVED => 'Disapproved',
             self::STATUS_POSTED => 'Posted',
             default => 'processing'

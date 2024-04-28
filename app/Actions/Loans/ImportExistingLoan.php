@@ -5,6 +5,7 @@ namespace App\Actions\Loans;
 use App\Actions\LoanApplications\CreateNewLoanApplication;
 use App\Actions\Transactions\CreateTransaction;
 use App\Models\Account;
+use App\Models\LoanApplication;
 use App\Models\LoanType;
 use App\Models\Member;
 use App\Models\TransactionType;
@@ -36,6 +37,10 @@ class ImportExistingLoan
             ),
             transaction_date: $application_date
         ));
+
+        $loan_application->status = LoanApplication::STATUS_APPROVED;
+        $loan_application->approval_date = $application_date;
+        $loan_application->save();
 
         $loan_disclosure_sheet_items = [];
         $loan_disclosure_sheet_items[] = [

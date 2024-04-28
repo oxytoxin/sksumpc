@@ -25,7 +25,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4" class="text-center border border-black">No contributors found.</td>
+                        <td colspan="4" class="border border-black text-center">No contributors found.</td>
                     </tr>
                 @endforelse
             </tbody>
