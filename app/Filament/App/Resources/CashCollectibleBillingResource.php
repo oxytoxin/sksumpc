@@ -91,6 +91,10 @@ class CashCollectibleBillingResource extends Resource
                     ->label('For OR')
                     ->requiresConfirmation()
                     ->action(function (CashCollectibleBilling $record) {
+                        if ($record->cash_collectible_billing_payments()->doesntExist()) {
+                            Notification::make()->title('No content, Subject for Review')->danger()->send();
+                            return;
+                        }
                         $record->update([
                             'for_or' => true,
                         ]);

@@ -71,7 +71,7 @@ class LoanBillingResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->visible(fn ($record, $livewire) => ! $record->posted && ! $record->or_number && $livewire->user_is_loan_officer)
+                    ->visible(fn ($record, $livewire) => !$record->posted && !$record->or_number && $livewire->user_is_loan_officer)
                     ->form([
                         Select::make('payment_type_id')
                             ->paymenttype()
@@ -80,7 +80,7 @@ class LoanBillingResource extends Resource
                         TextInput::make('reference_number'),
                     ]),
                 Tables\Actions\DeleteAction::make()
-                    ->visible(fn ($record, $livewire) => ! $record->posted && ! $record->or_number && $livewire->user_is_loan_officer)
+                    ->visible(fn ($record, $livewire) => !$record->posted && !$record->or_number && $livewire->user_is_loan_officer)
                     ->action(function (LoanBilling $record) {
                         $record->loan_billing_payments()->delete();
                         $record->delete();
@@ -88,10 +88,14 @@ class LoanBillingResource extends Resource
                 Action::make('for_or')
                     ->button()
                     ->color('success')
-                    ->visible(fn ($record, $livewire) => ! $record->posted && ! $record->for_or && ! $record->or_number && $livewire->user_is_cashier)
+                    ->visible(fn ($record, $livewire) => !$record->posted && !$record->for_or && !$record->or_number && $livewire->user_is_cashier)
                     ->label('For OR')
                     ->requiresConfirmation()
                     ->action(function (LoanBilling $record) {
+                        if ($record->loan_billing_payments()->doesntExist()) {
+                            Notification::make()->title('No content, Subject for Review')->danger()->send();
+                            return;
+                        }
                         $record->update([
                             'for_or' => true,
                         ]);
@@ -100,7 +104,7 @@ class LoanBillingResource extends Resource
                 Action::make('post_payments')
                     ->button()
                     ->color('success')
-                    ->visible(fn ($record, $livewire) => ! $record->posted && ! $record->for_or && $record->or_number && $livewire->user_is_loan_officer)
+                    ->visible(fn ($record, $livewire) => !$record->posted && !$record->for_or && $record->or_number && $livewire->user_is_loan_officer)
                     ->requiresConfirmation()
                     ->action(function (LoanBilling $record) {
                         app(PostLoanBillingPayments::class)->handle(loanBilling: $record);
