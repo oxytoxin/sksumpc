@@ -37,10 +37,10 @@ class ImportExistingLoan
             ),
             transaction_date: $application_date
         ));
-
-        $loan_application->status = LoanApplication::STATUS_APPROVED;
-        $loan_application->approval_date = $application_date;
-        $loan_application->save();
+        $loan_application->update([
+            'status' => LoanApplication::STATUS_APPROVED,
+            'approval_date' => date_create($application_date),
+        ]);
 
         $loan_disclosure_sheet_items = [];
         $loan_disclosure_sheet_items[] = [
