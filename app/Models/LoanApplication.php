@@ -31,6 +31,7 @@ class LoanApplication extends Model
         'monthly_payment' => 'decimal:4',
         'transaction_date' => 'immutable_date',
         'disapproval_date' => 'immutable_date',
+        'approval_date' => 'immutable_date',
         'payment_start_date' => 'immutable_date',
         'surcharge_start_date' => 'immutable_date',
         'status' => 'integer',
