@@ -53,20 +53,20 @@ class CreditAndBackgroundInvestigationForm extends Page
                     ]),
                 Fieldset::make('financial_capability')
                     ->schema([
-                        TextInput::make('main_income_source'),
-                        TagsInput::make('other_income_sources')->placeholder('New source'),
-                        TextInput::make('total_income')->numeric(),
+                        TextInput::make('financial_capability.main_income_source'),
+                        TagsInput::make('financial_capability.other_income_sources')->placeholder('New source'),
+                        TextInput::make('financial_capability.total_income')->numeric(),
                     ]),
                 Fieldset::make('project_information')
                     ->schema([
-                        TextInput::make('name'),
-                        DatePicker::make('date_started')
+                        TextInput::make('project_information.name'),
+                        DatePicker::make('project_information.date_started')
                             ->native(false),
-                        TextInput::make('commodities'),
-                        TextInput::make('starting_capital')->numeric(),
-                        TextInput::make('present_capital')->numeric(),
-                        TextInput::make('monthly_business_income')->numeric(),
-                        TagsInput::make('business_expenses')->placeholder('New expense'),
+                        TextInput::make('project_information.commodities'),
+                        TextInput::make('project_information.starting_capital')->numeric(),
+                        TextInput::make('project_information.present_capital')->numeric(),
+                        TextInput::make('project_information.monthly_business_income')->numeric(),
+                        TagsInput::make('project_information.business_expenses')->placeholder('New expense'),
                     ]),
                 TableRepeater::make('assets')
                     ->hideLabels()

@@ -6,22 +6,30 @@
         {{ format_account_name_from_depth($account->fullname, $account->depth) }}
     </td>
     @if ($account->children_count > 0)
-        @for ($i = 0; $i < 4; $i++)
+        @for ($i = 0; $i < 6; $i++)
             <td class="whitespace-nowrap border border-black px-2 text-right text-xs uppercase hover:bg-green-300">
             </td>
         @endfor
     @else
         <td class="whitespace-nowrap border border-black px-2 text-right text-xs uppercase hover:bg-green-300">
-            <a href="{{ route('filament.app.pages.transactions-list', ['month' => $this->transaction_date->month, 'year' => $this->transaction_date->year, 'account_id' => $account->id]) }}" target="blank" class="inline-block w-full">
-                {{ renumber_format($account->ending_balance) }}
-            </a>
+            @if ($account->debit_operator == 1)
+                <a href="{{ route('filament.app.pages.transactions-list', ['month' => $this->transaction_date->month, 'year' => $this->transaction_date->year, 'account_id' => $account->id]) }}" target="blank" class="inline-block w-full">
+                    {{ renumber_format($account->ending_balance) }}
+                </a>
+            @endif
         </td>
         <td class="whitespace-nowrap border border-black px-2 text-right text-xs uppercase hover:bg-green-300">
-            @if ($account->debit_operator == 1)
-                {{ renumber_format($account->balance_forwarded_debit) }}
-            @else
-                {{ renumber_format($account->balance_forwarded_credit) }}
+            @if ($account->credit_operator == 1)
+                <a href="{{ route('filament.app.pages.transactions-list', ['month' => $this->transaction_date->month, 'year' => $this->transaction_date->year, 'account_id' => $account->id]) }}" target="blank" class="inline-block w-full">
+                    {{ renumber_format($account->ending_balance) }}
+                </a>
             @endif
+        </td>
+        <td class="whitespace-nowrap border border-black px-2 text-right text-xs uppercase hover:bg-green-300">
+            {{ renumber_format($account->balance_forwarded_debit) }}
+        </td>
+        <td class="whitespace-nowrap border border-black px-2 text-right text-xs uppercase hover:bg-green-300">
+            {{ renumber_format($account->balance_forwarded_credit) }}
         </td>
         <td class="whitespace-nowrap border border-black px-2 text-right text-xs uppercase hover:bg-green-300">
             @if ($account->debit_operator == 1)
@@ -46,12 +54,12 @@
         <td class="whitespace-nowrap border border-black px-2 pl-4 text-sm font-bold uppercase">
             TOTAL {{ format_account_name_from_depth($account->fullname, $account->depth) }}
         </td>
-        <td class="whitespace-nowrap border border-black px-2 text-right text-xs uppercase hover:bg-green-300">
+        <td colspan="2" class="whitespace-nowrap border border-black px-2 text-right text-xs uppercase hover:bg-green-300">
             <a href="{{ route('filament.app.pages.transactions-list', ['month' => $this->transaction_date->month, 'year' => $this->transaction_date->year, 'account_id' => $account->id]) }}" target="blank" class="inline-block w-full">
                 {{ renumber_format($account->ending_balance) }}
             </a>
         </td>
-        <td class="whitespace-nowrap border border-black px-2 text-right text-xs uppercase hover:bg-green-300">
+        <td colspan="2" class="whitespace-nowrap border border-black px-2 text-right text-xs uppercase hover:bg-green-300">
             @if ($account->debit_operator == 1)
                 {{ renumber_format($account->balance_forwarded_debit) }}
             @else

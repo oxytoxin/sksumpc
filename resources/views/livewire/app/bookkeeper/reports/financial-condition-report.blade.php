@@ -1,24 +1,29 @@
-<div class="flex flex-col max-h-[32rem]">
+<div class="flex max-h-[32rem] flex-col">
     <div class="flex items-center justify-center">
-        <h1 class="text-center font-bold text-xl my-2">STATEMENT OF FINANCIAL OPERATION</h1>
-        <x-heroicon-o-arrow-path wire:loading class="w-6 h-6 animate-spin" />
+        <h1 class="my-2 text-center text-xl font-bold">STATEMENT OF FINANCIAL OPERATION</h1>
+        <x-heroicon-o-arrow-path wire:loading class="h-6 w-6 animate-spin" />
     </div>
     <div class="flex-1 overflow-auto">
-        <table class="border-separate w-full border-spacing-0 border border-black">
+        <table class="w-full border-separate border-spacing-0 border border-black">
             <thead class="sticky top-0 bg-white">
-
                 <tr>
-                    <th class="border border-black px-2"></th>
-                    <th class="border border-black px-2">CURRENT</th>
-                    <th class="border border-black px-2">PREVIOUS</th>
-                    <th class="border border-black px-2">INCREASE/DECREASE</th>
-                    <th class="border border-black px-2">REMARKS</th>
+                    <th rowspan="2" class="border border-black px-2"></th>
+                    <th colspan="2" class="border border-black px-2">CURRENT</th>
+                    <th colspan="2" class="border border-black px-2">PREVIOUS</th>
+                    <th rowspan="2" class="border border-black px-2">INCREASE/DECREASE</th>
+                    <th rowspan="2" class="border border-black px-2">REMARKS</th>
+                </tr>
+                <tr>
+                    <th class="border border-black px-2">DEBIT</th>
+                    <th class="border border-black px-2">CREDIT</th>
+                    <th class="border border-black px-2">DEBIT</th>
+                    <th class="border border-black px-2">CREDIT</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($this->account_types->whereIn('id', [1, 2, 4]) as $account_type)
                     <tr>
-                        <th colspan="5" class="border border-black text-left px-4 whitespace-nowrap">
+                        <th colspan="7" class="whitespace-nowrap border border-black px-4 text-left">
                             {{ $account_type->name }}</th>
                     </tr>
                     @foreach ($this->accounts->where('account_type_id', $account_type->id) as $account)
