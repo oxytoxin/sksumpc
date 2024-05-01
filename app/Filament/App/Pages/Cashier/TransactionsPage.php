@@ -48,13 +48,14 @@ use function Filament\Support\format_money;
 
 class TransactionsPage extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-square-3-stack-3d';
 
     protected static string $view = 'filament.app.pages.transactions-page';
 
     protected static ?string $navigationLabel = 'Transaction';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?string $navigationGroup = 'Cashier';
+
+    protected static ?int $navigationSort = 1;
 
     public static function shouldRegisterNavigation(): bool
     {
@@ -443,7 +444,7 @@ class TransactionsPage extends Page
                     reference_number: $data['reference_number'],
                     amount: $data['amount']
                 ), TransactionType::firstWhere('name', 'CRJ'));
-                Notification::make()->title('Payment made for '.$cashCollectible->name.'!')->success()->send();
+                Notification::make()->title('Payment made for ' . $cashCollectible->name . '!')->success()->send();
             });
     }
 }

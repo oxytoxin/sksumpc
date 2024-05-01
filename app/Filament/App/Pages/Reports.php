@@ -21,11 +21,11 @@ class Reports extends Page implements HasForms
 {
     use InteractsWithForms;
 
-    protected static ?string $navigationIcon = 'icon-reports';
-
     protected static string $view = 'filament.app.pages.reports';
 
-    protected static ?int $navigationSort = 14;
+    protected static ?string $navigationGroup = 'Cashier';
+
+    protected static ?int $navigationSort = 4;
 
     public static function shouldRegisterNavigation(): bool
     {

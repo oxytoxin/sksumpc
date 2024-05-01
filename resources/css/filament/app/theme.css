@@ -71,3 +71,11 @@
 [data-transaction="cash-collection"] {
     @apply !bg-violet-100;
 }
+
+.fs-row-data{
+    @apply whitespace-nowrap border border-black px-2 text-right text-xs uppercase hover:bg-green-300;
+}
+
+.fs-row-header{
+    @apply whitespace-nowrap border border-black px-2 text-lg font-bold uppercase hover:bg-green-300;
+}

@@ -23,17 +23,21 @@
             <tbody>
                 @foreach ($this->account_types->whereIn('id', [1, 2, 4]) as $account_type)
                     <tr>
-                        <th colspan="7" class="whitespace-nowrap border border-black px-4 text-left">
+                        <th colspan="7" class="whitespace-nowrap border border-black bg-green-300 px-4 text-left">
                             {{ $account_type->name }}</th>
                     </tr>
+                    @if ($account_type->id == 4)
+                        @include('partials.financial-condition-equity-extras')
+                    @endif
                     @foreach ($this->accounts->where('account_type_id', $account_type->id) as $account)
                         @include('partials.financial-condition-operation-row-data', [
                             'account' => $account,
+                            'account_type' => $account_type,
                         ])
                     @endforeach
                     @include('partials.financial-condition-operation-row-footer', [
                         'accounts' => $this->accounts->where('account_type_id', $account_type->id),
-                        'account_type' => $account_type->name,
+                        'account_type' => $account_type,
                     ])
                 @endforeach
             </tbody>

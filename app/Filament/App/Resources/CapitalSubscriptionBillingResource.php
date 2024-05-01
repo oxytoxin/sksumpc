@@ -5,6 +5,7 @@ namespace App\Filament\App\Resources;
 use App\Actions\CapitalSubscriptionBilling\PostCapitalSubscriptionBillingPayments;
 use App\Filament\App\Resources\CapitalSubscriptionBillingResource\Pages;
 use App\Models\CapitalSubscriptionBilling;
+use App\Models\MemberType;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -34,6 +35,9 @@ class CapitalSubscriptionBillingResource extends Resource
     {
         return $form
             ->schema([
+                Select::make('member_type_id')
+                    ->label('Member Type')
+                    ->options(MemberType::pluck('name', 'id')),
                 Select::make('payment_type_id')
                     ->paymenttype()
                     ->default(null)

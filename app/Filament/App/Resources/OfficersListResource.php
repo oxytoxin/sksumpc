@@ -16,9 +16,9 @@ class OfficersListResource extends Resource
 {
     protected static ?string $model = OfficersList::class;
 
-    protected static ?string $navigationIcon = 'icon-membership';
+    protected static ?string $navigationGroup = 'Share Capital';
 
-    protected static ?int $navigationSort = 6;
+    protected static ?int $navigationSort = 20;
 
     public static function shouldRegisterNavigation(): bool
     {

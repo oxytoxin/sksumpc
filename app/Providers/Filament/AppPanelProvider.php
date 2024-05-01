@@ -37,6 +37,9 @@ class AppPanelProvider extends PanelProvider
             ->login()
             ->navigationGroups([
                 NavigationGroup::make()
+                    ->label('Cashier')
+                    ->icon('icon-membership'),
+                NavigationGroup::make()
                     ->label('Loan')
                     ->icon('icon-loan'),
                 NavigationGroup::make()

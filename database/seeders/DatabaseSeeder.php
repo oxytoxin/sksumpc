@@ -39,10 +39,6 @@ class DatabaseSeeder extends Seeder
         Artisan::call('app:import-members');
         $this->command->info("Seeded members...\n");
 
-        if (App::environment('local')) {
-            $this->call(SeedInitialTestData::class);
-        }
-
         $this->call(ImportExistingLoansSeeder::class);
         Artisan::call('app:import-member-accounts');
     }

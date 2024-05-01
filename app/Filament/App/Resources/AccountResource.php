@@ -88,6 +88,7 @@ class AccountResource extends Resource
     public static function getPages(): array
     {
         return [
+            'financial-operation-editor' => Pages\FinancialOperationEditor::route('financial-operation-editor'),
             'index' => Pages\ListAccounts::route('/'),
             'create' => Pages\CreateAccount::route('/create'),
             'edit' => Pages\EditAccount::route('/{record}/edit'),

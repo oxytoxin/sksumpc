@@ -55,11 +55,11 @@ class MemberResource extends Resource
 {
     protected static ?string $model = Member::class;
 
-    protected static ?string $navigationIcon = 'icon-membership';
-
     protected static ?string $navigationLabel = 'Membership';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?string $navigationGroup = 'Cashier';
+
+    protected static ?int $navigationSort = 3;
 
     public static function shouldRegisterNavigation(): bool
     {

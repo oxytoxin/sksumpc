@@ -48,7 +48,6 @@ class CashCollectibleBillingPayments extends ListRecords
                         ->label('Member')
                         ->options(Member::pluck('full_name', 'id'))
                         ->searchable()
-                        ->required()
                         ->reactive()
                         ->afterStateUpdated(fn ($set, $state) => $set('payee', Member::find($state)?->full_name))
                         ->preload(),

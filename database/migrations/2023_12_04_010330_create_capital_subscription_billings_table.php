@@ -16,6 +16,7 @@ return new class extends Migration
             $table->date('date');
             $table->string('billable_date')->virtualAs("DATE_FORMAT(date, '%M %Y')");
             $table->foreignId('payment_type_id')->nullable()->constrained();
+            $table->foreignId('member_type_id')->nullable()->constrained();
             $table->string('reference_number')->nullable();
             $table->string('name')->nullable();
             $table->string('or_number')->nullable();
