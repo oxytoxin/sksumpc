@@ -56,21 +56,21 @@
         </td>
         <td colspan="2" class="whitespace-nowrap border border-black px-2 text-right text-xs uppercase hover:bg-green-300">
             <a href="{{ route('filament.app.pages.transactions-list', ['month' => $this->transaction_date->month, 'year' => $this->transaction_date->year, 'account_id' => $account->id]) }}" target="blank" class="inline-block w-full">
-                {{ renumber_format($account->ending_balance) }}
+                {{ renumber_format($account->children->sum('ending_balance')) }}
             </a>
         </td>
         <td colspan="2" class="whitespace-nowrap border border-black px-2 text-right text-xs uppercase hover:bg-green-300">
             @if ($account_type->debit_operator == 1)
-                {{ renumber_format($account->balance_forwarded_debit) }}
+                {{ renumber_format($account->children->sum('balance_forwarded_debit')) }}
             @else
-                {{ renumber_format($account->balance_forwarded_credit) }}
+                {{ renumber_format($account->children->sum('balance_forwarded_credit')) }}
             @endif
         </td>
         <td class="whitespace-nowrap border border-black px-2 text-right text-xs uppercase hover:bg-green-300">
             @if ($account_type->debit_operator == 1)
-                {{ format_percentage($account->ending_balance, $account->balance_forwarded_debit) }}
+                {{ format_percentage($account->children->sum('ending_balance'), $account->children->sum('balance_forwarded_debit')) }}
             @else
-                {{ format_percentage($account->ending_balance, $account->balance_forwarded_credit) }}
+                {{ format_percentage($account->children->sum('ending_balance'), $account->children->sum('balance_forwarded_credit')) }}
             @endif
         </td>
         <td class="whitespace-nowrap border border-black px-2 text-right text-xs uppercase hover:bg-green-300">
