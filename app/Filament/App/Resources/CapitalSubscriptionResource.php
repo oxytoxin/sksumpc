@@ -4,10 +4,13 @@ namespace App\Filament\App\Resources;
 
 use App\Filament\App\Resources\CapitalSubscriptionResource\Pages;
 use App\Models\CapitalSubscription;
+use App\Models\MemberType;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class CapitalSubscriptionResource extends Resource
@@ -37,8 +40,10 @@ class CapitalSubscriptionResource extends Resource
                 TextColumn::make('outstanding_balance')->money('PHP'),
             ])
             ->filters([
-                //
+                SelectFilter::make('member_type')
+                    ->options(MemberType::pluck('name', 'id'))
             ])
+            ->filtersLayout(FiltersLayout::AboveContent)
             ->defaultSort('member.alt_full_name')
             ->actions([])
             ->bulkActions([]);

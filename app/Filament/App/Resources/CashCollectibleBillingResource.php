@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\App\Resources\CashCollectibleBillingResource\Pages;
 use App\Filament\App\Resources\CashCollectibleBillingResource\RelationManagers;
 use App\Models\CashCollectible;
+use App\Models\PaymentType;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Tables\Actions\Action;
@@ -40,6 +41,7 @@ class CashCollectibleBillingResource extends Resource
                     ->required(),
                 Select::make('payment_type_id')
                     ->paymenttype()
+                    ->options(PaymentType::whereIn('id', [1, 3, 4])->pluck('name', 'id'))
                     ->default(null)
                     ->selectablePlaceholder(true),
                 DatePicker::make('date')

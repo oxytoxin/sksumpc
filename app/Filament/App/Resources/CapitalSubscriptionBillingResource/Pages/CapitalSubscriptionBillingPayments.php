@@ -88,6 +88,9 @@ class CapitalSubscriptionBillingPayments extends ListRecords
                         $worksheet->setCellValue('D' . $key + 3, $payment->amount_due);
                         $worksheet->setCellValue('E' . $key + 3, $payment->amount_paid);
                     }
+                    $worksheet->setCellValue('A' . $key + 4, 'GRAND TOTAL');
+                    $worksheet->setCellValue('D' . $key + 4, "=SUM(D3:D" . $key + 3 . ")");
+                    $worksheet->setCellValue('E' . $key + 4, "=SUM(E3:E" . $key + 3 . ")");
                     $worksheet->getProtection()->setSheet(true)->setInsertRows(true)->setInsertColumns(true);
                     $worksheet->protectCells('E3:E' . ($capital_subscription_billing_payments->count() + 2), auth()->user()->getAuthPassword(), true);
                     $path = storage_path('app/livewire-tmp/' . $filename);
