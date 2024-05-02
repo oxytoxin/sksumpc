@@ -6,6 +6,7 @@ use App\Actions\CashCollectionBilling\CreateIndividualBilling;
 use App\Filament\App\Resources\CashCollectibleBillingResource;
 use App\Models\CashCollectible;
 use App\Models\Member;
+use App\Models\PaymentType;
 use Filament\Actions;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
@@ -47,6 +48,7 @@ class ManageCashCollectibleBillings extends ManageRecords
                         ->required(),
                     Select::make('payment_type_id')
                         ->paymenttype()
+                        ->options(PaymentType::whereIn('id', [1, 3, 4])->pluck('name', 'id'))
                         ->default(null)
                         ->selectablePlaceholder(true),
                     DatePicker::make('date')
@@ -61,7 +63,6 @@ class ManageCashCollectibleBillings extends ManageRecords
                         ->label('Member')
                         ->options(Member::pluck('full_name', 'id'))
                         ->searchable()
-                        ->required()
                         ->reactive()
                         ->afterStateUpdated(fn ($set, $state) => $set('payee', Member::find($state)?->full_name))
                         ->preload(),
