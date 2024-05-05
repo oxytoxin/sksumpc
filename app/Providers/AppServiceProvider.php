@@ -30,7 +30,7 @@ class AppServiceProvider extends ServiceProvider
 
 
         Select::macro('paymenttype', function () {
-            $this->options(PaymentType::whereIn('id', [1, 4])->pluck('name', 'id'))
+            $this->options(PaymentType::whereIn('id', [1, 3, 4])->pluck('name', 'id'))
                 ->default(1)
                 ->label('Payment Type')
                 ->selectablePlaceholder(false)
