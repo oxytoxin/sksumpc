@@ -1,6 +1,7 @@
 <?php
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
 function format_percentage($new, $old): string
@@ -30,16 +31,25 @@ function sum_recursive(Collection $items, string $key): float
     return $sum;
 }
 
-function sum_no_children_recursive(Collection $items, string $key): float
+function sum_no_children_recursive(Collection|Model $items, string $key): float
 {
     $sum = 0;
-    foreach ($items as $item) {
-        if ($item->children_count == 0) {
-            $sum += $item[$key];
+    if ($items instanceof Model) {
+        if ($items->children_count == 0) {
+            $sum += $items[$key];
         } else {
-            $sum += sum_no_children_recursive($item->children ?? collect(), $key);
+            $sum += sum_no_children_recursive($items->children ?? collect(), $key);
+        }
+    } else {
+        foreach ($items as $item) {
+            if ($item->children_count == 0) {
+                $sum += $item[$key];
+            } else {
+                $sum += sum_no_children_recursive($item->children ?? collect(), $key);
+            }
         }
     }
+
 
     return $sum;
 }
@@ -56,7 +66,7 @@ function oxy_get_year_range(): array
 
 function renumber_format($number, $decimals = 2)
 {
-    if (! $number || ! floatval($number)) {
+    if (!$number || !floatval($number)) {
         return '';
     }
     if ($number < 0) {

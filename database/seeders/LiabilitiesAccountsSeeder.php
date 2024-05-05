@@ -37,8 +37,8 @@ class LiabilitiesAccountsSeeder extends Seeder
         ]]);
 
         Account::create(['account_type_id' => 2, 'name' => 'NON-CURRENT LIABILITIES', 'number' => '21000', 'children' => [
-            ['account_type_id' => 2, 'name' => 'RETIREMENT PAYABLE', 'number' => '22400'],
-            ['account_type_id' => 2, 'name' => 'MEMBERS BENEFIT AND OTHER FUND PAYABLE', 'number' => '24120'],
+            ['account_type_id' => 2, 'name' => 'EMPLOYEES RETIREMENT FUND PAYABLE', 'number' => '22400'],
+            ['account_type_id' => 2, 'name' => 'MEMBERS BENEFIT FUND PAYABLE', 'number' => '24120'],
             ['account_type_id' => 2, 'name' => 'WITHHOLDING TAX PAYABLE', 'number' => '21340'],
         ]]);
     }

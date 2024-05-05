@@ -25,7 +25,7 @@ class BalanceForwardedEntriesRelationManager extends RelationManager
                     ->columnSpanFull()
                     ->searchable()
                     ->preload()
-                    ->options(Account::withCode()->whereDoesntHave('children', fn ($q) => $q->whereNull('member_id'))->whereNull('member_id')->pluck('code', 'id')),
+                    ->options(Account::withCode()->whereNull('member_id')->pluck('code', 'id')),
                 TextInput::make('debit')
                     ->prefix('P')
                     ->live(true)
@@ -45,8 +45,8 @@ class BalanceForwardedEntriesRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('account.parent.name')->label('Parent Account'),
                 Tables\Columns\TextColumn::make('account.name')->label('Account Name'),
                 Tables\Columns\TextColumn::make('account.number')->label('Account Number'),
-                Tables\Columns\TextColumn::make('debit'),
-                Tables\Columns\TextColumn::make('credit'),
+                Tables\Columns\TextColumn::make('debit')->numeric(2),
+                Tables\Columns\TextColumn::make('credit')->numeric(2),
             ])
             ->filters([
                 Filter::make('number')
@@ -54,7 +54,7 @@ class BalanceForwardedEntriesRelationManager extends RelationManager
                         Select::make('parent_account')
                             ->searchable()
                             ->preload()
-                            ->options(Account::tree(0)->has('children')->pluck('name', 'id')),
+                            ->options(Account::whereNull('member_id')->has('children')->pluck('name', 'id')),
                         TextInput::make('account_name'),
                         TextInput::make('account_number'),
                     ])

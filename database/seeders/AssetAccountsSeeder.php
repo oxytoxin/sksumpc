@@ -50,13 +50,14 @@ class AssetAccountsSeeder extends Seeder
             ['account_type_id' => 1, 'name' => 'LAND', 'number' => '14100'],
             ['account_type_id' => 1, 'name' => 'LAND IMPROVEMENTS', 'number' => '14110'],
             ['account_type_id' => 1, 'name' => 'ACCU. DEPRECIATION-LAND IMPROVEMENTS', 'number' => '14111'],
-            ['account_type_id' => 1, 'name' => 'BUILDING', 'number' => '14120'],
+            ['account_type_id' => 1, 'name' => 'DORMITORY', 'number' => '14120'],
             ['account_type_id' => 1, 'name' => 'ACCU. DEPRECIATION-BUILDING', 'number' => '14121'],
-            ['account_type_id' => 1, 'name' => 'BUILDING IMPROVEMENTS', 'number' => '14130'],
-            ['account_type_id' => 1, 'name' => 'ACCU. DEPRECIATION-BUILDING IMPROVEMENTS', 'number' => '14131'],
+            ['account_type_id' => 1, 'name' => 'OFFICE BUILDING', 'number' => '14130'],
+            ['account_type_id' => 1, 'name' => 'ACCU. DEPRECIATION-DORMITORY', 'number' => '14131'],
             ['account_type_id' => 1, 'name' => 'FURNITURE, FIXTURES & EQUIPMENT(FFE)', 'number' => '14180'],
             ['account_type_id' => 1, 'name' => 'ACCU. DEPRECIATION-FFE', 'number' => '14181'],
             ['account_type_id' => 1, 'name' => 'OTHER PROPERTY, PLANT AND EQUIPMENT', 'number' => '14290'],
+            ['account_type_id' => 1, 'name' => 'ACCU. DEPRECIATION-BUILDING EXTENSION', 'number' => '14291'],
         ]]);
 
         Account::create(['account_type_id' => 1, 'name' => 'OTHER FUNDS AND DEPOSITS', 'number' => '18200', 'children' => [

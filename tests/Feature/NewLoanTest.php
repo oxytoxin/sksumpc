@@ -41,7 +41,6 @@ it('can create a new loan', function () {
     $accounts = Account::withCode()->find(collect($disclosure_sheet_items)->pluck('account_id'));
     $items = collect($disclosure_sheet_items)->map(function ($item) use ($accounts) {
         $item['name'] = $accounts->find($item['account_id'])->code;
-
         return $item;
     })->toArray();
     $loanData = new LoanData(

@@ -31,6 +31,7 @@ class FinancialStatementProvider
             )->groupByRaw('account_id, balance_forwarded_summary_id')->selectRaw('balance_forwarded_entries.balance_forwarded_summary_id, balance_forwarded_entries.account_id, sum(debit) as debit, sum(credit) as credit');
 
             return Account::tree()
+                ->orderBy('sort')
                 ->leftJoinSub($joinSub, 'balance_forwarded_entries', function ($join) {
                     $join->on('laravel_cte.id', '=', 'balance_forwarded_entries.account_id');
                 })
@@ -91,6 +92,7 @@ class FinancialStatementProvider
             )->groupByRaw('account_id, balance_forwarded_summary_id')->selectRaw('balance_forwarded_entries.balance_forwarded_summary_id, balance_forwarded_entries.account_id, sum(debit) as debit, sum(credit) as credit');
 
             return Account::tree()
+                ->orderBy('sort')
                 ->leftJoinSub($joinSub, 'balance_forwarded_entries', function ($join) {
                     $join->on('laravel_cte.id', '=', 'balance_forwarded_entries.account_id');
                 })
