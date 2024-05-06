@@ -59,7 +59,7 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
     public function mount()
     {
         $this->form->fill();
-        $this->data['transaction_date'] = '01/01/2024';
+        // $this->data['transaction_date'] = '01/01/2024';
     }
 
     #[Computed]
