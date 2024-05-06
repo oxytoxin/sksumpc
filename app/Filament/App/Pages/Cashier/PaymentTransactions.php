@@ -38,6 +38,7 @@ use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Builder\Block;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -64,6 +65,10 @@ class PaymentTransactions extends Component implements HasActions, HasForms
         return $form
             ->statePath('data')
             ->schema([
+                DatePicker::make('transaction_date')
+                    ->native(false)
+                    ->required()
+                    ->default(today()),
                 Select::make('member_id')
                     ->label('Member')
                     ->options(Member::pluck('full_name', 'id'))
@@ -258,6 +263,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                         payment_type_id: $transaction['data']['payment_type_id'],
                                         reference_number: $transaction['data']['reference_number'],
                                         amount: $transaction['data']['amount'],
+                                        transaction_date: $formData['transaction_date'] ?? today(),
                                     ), TransactionType::firstWhere('name', 'CRJ'));
                                     $transactions[] = [
                                         'account_number' => $member->capital_subscription_account->number,
@@ -275,7 +281,8 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                             payment_type_id: $transaction['data']['payment_type_id'],
                                             reference_number: $transaction['data']['reference_number'],
                                             amount: $transaction['data']['amount'],
-                                            savings_account_id: $transaction['data']['savings_account_id']
+                                            savings_account_id: $transaction['data']['savings_account_id'],
+                                            transaction_date: $formData['transaction_date'] ?? today(),
                                         ), TransactionType::firstWhere('name', 'CRJ'));
                                         $savings_account = SavingsAccount::find($transaction['data']['savings_account_id']);
                                         $transactions[] = [
@@ -291,7 +298,8 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                             payment_type_id: $transaction['data']['payment_type_id'],
                                             reference_number: SavingsProvider::WITHDRAWAL_TRANSFER_CODE,
                                             amount: $transaction['data']['amount'],
-                                            savings_account_id: $transaction['data']['savings_account_id']
+                                            savings_account_id: $transaction['data']['savings_account_id'],
+                                            transaction_date: $formData['transaction_date'] ?? today(),
                                         ), TransactionType::firstWhere('name', 'CRJ'));
                                         $savings_account = SavingsAccount::find($transaction['data']['savings_account_id']);
                                         $transactions[] = [
@@ -310,7 +318,8 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                         app(DepositToImprestAccount::class)->handle($member, new ImprestData(
                                             payment_type_id: $transaction['data']['payment_type_id'],
                                             reference_number: $transaction['data']['reference_number'],
-                                            amount: $transaction['data']['amount']
+                                            amount: $transaction['data']['amount'],
+                                            transaction_date: $formData['transaction_date'] ?? today(),
                                         ), TransactionType::firstWhere('name', 'CRJ'));
                                         $imprest_account = $member->imprest_account;
                                         $transactions[] = [
@@ -325,7 +334,8 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                         app(WithdrawFromImprestAccount::class)->handle($member, new ImprestData(
                                             payment_type_id: $transaction['data']['payment_type_id'],
                                             reference_number: ImprestsProvider::WITHDRAWAL_TRANSFER_CODE,
-                                            amount: $transaction['data']['amount']
+                                            amount: $transaction['data']['amount'],
+                                            transaction_date: $formData['transaction_date'] ?? today(),
                                         ), TransactionType::firstWhere('name', 'CRJ'));
                                         $imprest_account = $member->imprest_account;
                                         $transactions[] = [
@@ -345,6 +355,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                             payment_type_id: $transaction['data']['payment_type_id'],
                                             reference_number: $transaction['data']['reference_number'],
                                             amount: $transaction['data']['amount'],
+                                            transaction_date: $formData['transaction_date'] ?? today(),
                                         ), TransactionType::firstWhere('name', 'CRJ'));
                                         $love_gift_account = $member->love_gift_account;
                                         $transactions[] = [
@@ -360,6 +371,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                             payment_type_id: $transaction['data']['payment_type_id'],
                                             reference_number: LoveGiftProvider::WITHDRAWAL_TRANSFER_CODE,
                                             amount: $transaction['data']['amount'],
+                                            transaction_date: $formData['transaction_date'] ?? today(),
                                         ), TransactionType::firstWhere('name', 'CRJ'));
                                         $love_gift_account = $member->love_gift_account;
                                         $transactions[] = [
@@ -380,6 +392,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                         payment_type_id: $transaction['data']['payment_type_id'],
                                         amount: $transaction['data']['amount'],
                                         maturity_amount: TimeDepositsProvider::getMaturityAmount(floatval($transaction['data']['amount'])),
+                                        transaction_date: $formData['transaction_date'] ?? today(),
                                     ), transactionType: TransactionType::firstWhere('name', 'CRJ'));
                                     $time_deposit_account = $td->time_deposit_account;
                                     $transactions[] = [
@@ -398,7 +411,8 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                         payee: $transaction['data']['payee'],
                                         payment_type_id: $transaction['data']['payment_type_id'],
                                         reference_number: $transaction['data']['reference_number'],
-                                        amount: $transaction['data']['amount']
+                                        amount: $transaction['data']['amount'],
+                                        transaction_date: $formData['transaction_date'] ?? today(),
                                     ), TransactionType::firstWhere('name', 'CRJ'));
                                     $transactions[] = [
                                         'account_number' => '',
@@ -417,6 +431,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                         reference_number: $transaction['data']['reference_number'],
                                         amount: $transaction['data']['amount'],
                                         remarks: $transaction['data']['remarks'],
+                                        transaction_date: $formData['transaction_date'] ?? today(),
                                     ), TransactionType::firstWhere('name', 'CRJ'));
                                     $transactions[] = [
                                         'account_number' => $loan_account->number,

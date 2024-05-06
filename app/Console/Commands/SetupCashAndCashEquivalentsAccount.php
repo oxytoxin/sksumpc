@@ -27,29 +27,29 @@ class SetupCashAndCashEquivalentsAccount extends Command
      */
     public function handle()
     {
-        $account = Account::create(['account_type_id' => 1, 'name' => 'CASH AND CASH EQUIVALENTS', 'number' => '11100', 'sort' => 10]);
-        Account::where('id', '<=', 12)->whereNull('parent_id')->update([
-            'parent_id' => $account->id
-        ]);
-        Account::find(2)->update([
-            'show_sum' => false
-        ]);
-        Account::find(31)->update([
-            'sum_description' => 'NET'
-        ]);
-        Account::find(14)->update([
-            'parent_id' => 13,
-            'sort' => 1000
-        ]);
-        Account::find(16)->update([
-            'parent_id' => 15,
-            'sort' => 1000
-        ]);
-        Account::find(13)->update([
-            'sum_description' => 'NET'
-        ]);
-        Account::find(15)->update([
-            'sum_description' => 'NET'
-        ]);
+        // $account = Account::create(['account_type_id' => 1, 'name' => 'CASH AND CASH EQUIVALENTS', 'number' => '11100', 'sort' => 10]);
+        // Account::where('id', '<=', 12)->whereNull('parent_id')->update([
+        //     'parent_id' => $account->id
+        // ]);
+        // Account::find(2)->update([
+        //     'show_sum' => false
+        // ]);
+        // Account::find(31)->update([
+        //     'sum_description' => 'NET'
+        // ]);
+        // Account::find(14)->update([
+        //     'parent_id' => 13,
+        //     'sort' => 1000
+        // ]);
+        // Account::find(16)->update([
+        //     'parent_id' => 15,
+        //     'sort' => 1000
+        // ]);
+        // Account::find(13)->update([
+        //     'sum_description' => 'NET'
+        // ]);
+        // Account::find(15)->update([
+        //     'sum_description' => 'NET'
+        // ]);
     }
 }

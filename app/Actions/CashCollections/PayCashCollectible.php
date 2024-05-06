@@ -24,6 +24,7 @@ class PayCashCollectible
             'reference_number' => $cashCollectiblePaymentData->reference_number,
             'amount' => $cashCollectiblePaymentData->amount,
             'member_id' => $cashCollectiblePaymentData->member_id,
+            'transaction_date' => $cashCollectiblePaymentData->transaction_date
         ]);
         $accounts_receivables_account = Account::whereTag('account_receivables')->whereAccountableType(CashCollectible::class)->whereAccountableId($cashCollectible->id)->first();
 
@@ -34,7 +35,8 @@ class PayCashCollectible
                 reference_number: $payment->reference_number,
                 debit: $payment->amount,
                 member_id: $payment->member_id,
-                remarks: 'Member Payment for '.strtoupper($cashCollectible->name),
+                remarks: 'Member Payment for ' . strtoupper($cashCollectible->name),
+                transaction_date: $cashCollectiblePaymentData->transaction_date
             ));
         }
         if ($cashCollectiblePaymentData->payment_type_id == 4) {
@@ -44,7 +46,8 @@ class PayCashCollectible
                 reference_number: $payment->reference_number,
                 debit: $payment->amount,
                 member_id: $payment->member_id,
-                remarks: 'Member Payment for '.strtoupper($cashCollectible->name),
+                remarks: 'Member Payment for ' . strtoupper($cashCollectible->name),
+                transaction_date: $cashCollectiblePaymentData->transaction_date
             ));
         }
 
@@ -54,7 +57,8 @@ class PayCashCollectible
             reference_number: $payment->reference_number,
             credit: $payment->amount,
             member_id: $payment->member_id,
-            remarks: 'Member Payment for '.strtoupper($cashCollectible->name),
+            remarks: 'Member Payment for ' . strtoupper($cashCollectible->name),
+            transaction_date: $cashCollectiblePaymentData->transaction_date
         ));
         DB::commit();
 

@@ -12,6 +12,8 @@ class CashCollectiblePaymentData extends Data
         public string $reference_number,
         public string $amount,
         public ?string $payee = null,
+        public $transaction_date = null,
     ) {
+        $this->transaction_date ??= today();
     }
 }
