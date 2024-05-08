@@ -12,23 +12,27 @@ class AssetAccountsSeeder extends Seeder
      */
     public function run(): void
     {
-        Account::create(['account_type_id' => 1, 'name' => 'CASH ON HAND', 'number' => '11110', 'tag' => 'cash_on_hand']);
-        Account::create(['account_type_id' => 1, 'name' => 'CASH IN BANK', 'number' => '11130', 'tag' => 'cash_in_bank', 'children' => [
-            ['account_type_id' => 1, 'name' => 'DBP (GENERAL FUND)', 'number' => '11130-0001', 'tag' => 'cash_in_bank_dbp_gf'],
-            ['account_type_id' => 1, 'name' => 'DBP (MSO FUND)', 'number' => '11130-0002', 'tag' => 'cash_in_bank_dbp_mso'],
-            ['account_type_id' => 1, 'name' => 'LBP', 'number' => '11130-0003', 'tag' => 'cash_in_bank_lbp'],
+        Account::create(['account_type_id' => 1, 'name' => 'CASH AND CASH EQUIVALENTS', 'number' => '11100', 'children' => [
+            ['account_type_id' => 1, 'name' => 'CASH ON HAND', 'number' => '11110', 'tag' => 'cash_on_hand'],
+            ['account_type_id' => 1, 'name' => 'CASH IN BANK', 'number' => '11130', 'tag' => 'cash_in_bank', 'show_sum' => false, 'children' => [
+                ['account_type_id' => 1, 'name' => 'DBP (GENERAL FUND)', 'number' => '11130-0001', 'tag' => 'cash_in_bank_dbp_gf'],
+                ['account_type_id' => 1, 'name' => 'DBP (MSO FUND)', 'number' => '11130-0002', 'tag' => 'cash_in_bank_dbp_mso'],
+                ['account_type_id' => 1, 'name' => 'LBP', 'number' => '11130-0003', 'tag' => 'cash_in_bank_lbp'],
+            ]],
+            ['account_type_id' => 1, 'name' => 'CASH IN COOPERATIVE FEDERATION', 'number' => '11140'],
+            ['account_type_id' => 1, 'name' => 'PETTY CASH FUND', 'number' => '11150', 'tag' => 'petty_cash_fund'],
+            ['account_type_id' => 1, 'name' => 'REVOLVING FUND', 'number' => '11160', 'tag' => 'revolving_fund'],
+            ['account_type_id' => 1, 'name' => 'ADVANCES TO OFFICERS, EMPLOYEES AND MEMBERS', 'number' => '11360'],
+            ['account_type_id' => 1, 'name' => 'CHANGE FUND', 'number' => '11170'],
+            ['account_type_id' => 1, 'name' => 'ATM FUND', 'number' => '11180'],
+            ['account_type_id' => 1, 'name' => 'E-WALLET FUND', 'number' => '11190'],
         ]]);
-        Account::create(['account_type_id' => 1, 'name' => 'CASH IN COOPERATIVE FEDERATION', 'number' => '11140']);
-        Account::create(['account_type_id' => 1, 'name' => 'PETTY CASH FUND', 'number' => '11150', 'tag' => 'petty_cash_fund']);
-        Account::create(['account_type_id' => 1, 'name' => 'REVOLVING FUND', 'number' => '11160', 'tag' => 'revolving_fund']);
-        Account::create(['account_type_id' => 1, 'name' => 'ADVANCES TO OFFICERS, EMPLOYEES AND MEMBERS', 'number' => '11360']);
-        Account::create(['account_type_id' => 1, 'name' => 'CHANGE FUND', 'number' => '11170']);
-        Account::create(['account_type_id' => 1, 'name' => 'ATM FUND', 'number' => '11180']);
-        Account::create(['account_type_id' => 1, 'name' => 'E-WALLET FUND', 'number' => '11190']);
-        Account::create(['account_type_id' => 1, 'name' => 'LOAN RECEIVABLES', 'number' => '11210', 'tag' => 'loan_receivables']);
-        Account::create(['account_type_id' => 1, 'name' => 'ALLOWANCE FOR PROBABLE LOSSES-LOANS', 'number' => '11242']);
-        Account::create(['account_type_id' => 1, 'name' => 'ACCOUNT RECEIVABLES', 'number' => '11250', 'tag' => 'account_receivables']);
-        Account::create(['account_type_id' => 1, 'name' => 'ALLOWANCE FOR PROBABLE LOSSES-RECEIVABLES', 'number' => '11281']);
+        Account::create(['account_type_id' => 1, 'name' => 'LOAN RECEIVABLES', 'number' => '11210', 'tag' => 'loan_receivables', 'sum_description' => 'NET', 'children' => [
+            ['account_type_id' => 1, 'name' => 'ALLOWANCE FOR PROBABLE LOSSES-LOANS', 'number' => '11242', 'tag' => 'probable_loss', 'sort' => 1000]
+        ]]);
+        Account::create(['account_type_id' => 1, 'name' => 'ACCOUNT RECEIVABLES', 'number' => '11250', 'tag' => 'account_receivables', 'sum_description' => 'NET', 'children' => [
+            ['account_type_id' => 1, 'name' => 'ALLOWANCE FOR PROBABLE LOSSES-RECEIVABLES', 'number' => '11281', 'tag' => 'probable_loss', 'sort' => 1000]
+        ]]);
         Account::create(['account_type_id' => 1, 'name' => 'MERCHANDISE INVENTORY', 'number' => '11510', 'tag' => 'merchandise_inventory']);
         Account::create(['account_type_id' => 1, 'name' => 'UNUSED SUPPLIES', 'number' => '12150']);
         Account::create(['account_type_id' => 1, 'name' => 'PREPAID EXPENSES', 'number' => '12170']);
@@ -46,17 +50,17 @@ class AssetAccountsSeeder extends Seeder
             ['account_type_id' => 1, 'name' => 'OTHER INVESTMENT-CASH BOND PAL', 'number' => '13550'],
         ]]);
 
-        Account::create(['account_type_id' => 1, 'name' => 'PROPERTY AND EQUIPMENT', 'number' => '14000', 'children' => [
+        Account::create(['account_type_id' => 1, 'name' => 'PROPERTY AND EQUIPMENT', 'number' => '14000', 'sum_description' => 'NET', 'children' => [
             ['account_type_id' => 1, 'name' => 'LAND', 'number' => '14100'],
             ['account_type_id' => 1, 'name' => 'LAND IMPROVEMENTS', 'number' => '14110'],
             ['account_type_id' => 1, 'name' => 'ACCU. DEPRECIATION-LAND IMPROVEMENTS', 'number' => '14111'],
             ['account_type_id' => 1, 'name' => 'DORMITORY', 'number' => '14120'],
-            ['account_type_id' => 1, 'name' => 'ACCU. DEPRECIATION-BUILDING', 'number' => '14121'],
-            ['account_type_id' => 1, 'name' => 'OFFICE BUILDING', 'number' => '14130'],
             ['account_type_id' => 1, 'name' => 'ACCU. DEPRECIATION-DORMITORY', 'number' => '14131'],
             ['account_type_id' => 1, 'name' => 'FURNITURE, FIXTURES & EQUIPMENT(FFE)', 'number' => '14180'],
             ['account_type_id' => 1, 'name' => 'ACCU. DEPRECIATION-FFE', 'number' => '14181'],
-            ['account_type_id' => 1, 'name' => 'OTHER PROPERTY, PLANT AND EQUIPMENT', 'number' => '14290'],
+            ['account_type_id' => 1, 'name' => 'OFFICE BUILDING', 'number' => '14130'],
+            ['account_type_id' => 1, 'name' => 'ACCU. DEPRECIATION-BUILDING', 'number' => '14121'],
+            ['account_type_id' => 1, 'name' => 'OFFICE BUILDING EXTENSION', 'number' => '14290'],
             ['account_type_id' => 1, 'name' => 'ACCU. DEPRECIATION-BUILDING EXTENSION', 'number' => '14291'],
         ]]);
 

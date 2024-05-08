@@ -29,7 +29,7 @@ class LiabilitiesAccountsSeeder extends Seeder
             ['account_type_id' => 2, 'name' => 'PATRONAGE REFUND PAYABLE', 'number' => '21450'],
             ['account_type_id' => 2, 'name' => 'DUE TO UNION/FEDERATION (CETF)', 'number' => '21460'],
             ['account_type_id' => 2, 'name' => 'OTHER CURRENT LIABILITIES', 'number' => '21490', 'children' => [
-                ['account_type_id' => 2, 'name' => 'LOAN INSURANCE', 'number' => '21490-0001'],
+                ['account_type_id' => 2, 'name' => 'LOAN INSURANCE', 'number' => '21490-0001', 'tag' => 'insurance_loans'],
                 ['account_type_id' => 2, 'name' => 'LOAN REFUNDS', 'number' => '21490-0002'],
                 ['account_type_id' => 2, 'name' => 'FAMILY INSURANCE', 'number' => '21490-0003'],
                 ['account_type_id' => 2, 'name' => 'OTHER ACCOUNTS', 'number' => '21490-0004'],

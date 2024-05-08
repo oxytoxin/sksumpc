@@ -14,7 +14,7 @@ class RevenueAccountsSeeder extends Seeder
     {
         Account::create(['account_type_id' => 3, 'name' => 'INTEREST INCOME FROM LOANS', 'number' => '40110', 'tag' => 'loan_interests']);
         Account::create(['account_type_id' => 3, 'name' => 'SERVICE FEES', 'number' => '40120', 'children' => [
-            ['account_type_id' => 3, 'name' => 'LOANS', 'number' => '40120-001'],
+            ['account_type_id' => 3, 'name' => 'LOANS', 'number' => '40120-001', 'tag' => 'service_fee_loans'],
             ['account_type_id' => 3, 'name' => 'OTHERS', 'number' => '40120-001'],
         ]]);
         Account::create(['account_type_id' => 3, 'name' => 'FINES, PENALTIES, SURCHARGES', 'number' => '40140']);

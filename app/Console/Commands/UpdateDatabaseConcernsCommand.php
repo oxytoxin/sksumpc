@@ -6,7 +6,7 @@ use App\Models\Account;
 use Illuminate\Console\Command;
 use Schema;
 
-class SetupCashAndCashEquivalentsAccount extends Command
+class UpdateDatabaseConcernsCommand extends Command
 {
     /**
      * The name and signature of the console command.
@@ -20,7 +20,7 @@ class SetupCashAndCashEquivalentsAccount extends Command
      *
      * @var string
      */
-    protected $description = 'Setup Cash and Cash Equivalents Accounts';
+    protected $description = 'Update database with miscellaneous concerns.';
 
     /**
      * Execute the console command.
@@ -51,5 +51,9 @@ class SetupCashAndCashEquivalentsAccount extends Command
         // Account::find(15)->update([
         //     'sum_description' => 'NET'
         // ]);
+        Account::whereIn('id', [14, 16])
+            ->update([
+                'tag' => 'probable_loss'
+            ]);
     }
 }

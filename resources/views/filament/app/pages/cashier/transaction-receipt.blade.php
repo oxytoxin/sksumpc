@@ -2,7 +2,7 @@
     <div x-ref="print">
         <div class="mb-8 flex flex-col items-center justify-center">
             <img src="{{ asset('images/logo.jpg') }}" alt="logo" class="h-24 print:h-16">
-            <h2 class="text-center font-bold text-lg">SULTAN KUDARAT STATE UNIVERSITY - MULTI-PURPOSE COOPERATIVE
+            <h2 class="text-center text-lg font-bold">SULTAN KUDARAT STATE UNIVERSITY - MULTI-PURPOSE COOPERATIVE
                 (SKSU-MPC)
             </h2>
         </div>
@@ -25,13 +25,13 @@
                         <p>{{ now()->format('m/d/Y H:i:s') }}</p>
                     </div>
                     <p>REFERENCE #: {{ $transaction['reference_number'] }}</p>
+                    <p>TRANSACTION DATE: {{ date_create($this->transaction_date)->format('m/d/Y') }}</p>
                     <p>{{ $transaction['remarks'] }}</p>
                 </div>
             @endforeach
         </div>
     </div>
     <div class="mt-4">
-        <x-filament::button icon="heroicon-o-printer" class="w-full"
-            @click="printOut($refs.print.outerHTML, 'Transaction Receipt')">Print</x-filament::button>
+        <x-filament::button icon="heroicon-o-printer" class="w-full" @click="printOut($refs.print.outerHTML, 'Transaction Receipt')">Print</x-filament::button>
     </div>
 </div>

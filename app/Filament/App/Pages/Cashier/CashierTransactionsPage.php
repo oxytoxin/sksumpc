@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Pages\Cashier;
 
+use App\Models\SystemConfiguration;
 use Filament\Forms\Components\Livewire;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
@@ -9,6 +10,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Pages\Page;
+use Livewire\Attributes\On;
 
 class CashierTransactionsPage extends Page implements HasForms
 {

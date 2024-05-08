@@ -18,7 +18,7 @@ use Livewire\Component;
 
 class BillingTransactions extends Component implements HasForms
 {
-    use InteractsWithForms;
+    use InteractsWithForms, RequiresBookkeeperTransactionDate;
 
     public $data = [];
 

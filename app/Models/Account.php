@@ -56,12 +56,12 @@ class Account extends Model
 
     public static function getServiceFeeLoans()
     {
-        return Account::find(75);
+        return Account::firstWhere('tag', 'service_fee_loans');
     }
 
     public static function getLoanInsurance()
     {
-        return Account::find(65);
+        return Account::firstWhere('tag', 'insurance_loans');
     }
 
     public function scopeWithCode(Builder $query)

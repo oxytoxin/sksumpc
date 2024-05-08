@@ -2,49 +2,50 @@
 
 namespace App\Filament\App\Pages\Cashier;
 
-use App\Actions\CapitalSubscription\PayCapitalSubscription;
-use App\Actions\CashCollections\PayCashCollectible;
-use App\Actions\Imprests\DepositToImprestAccount;
-use App\Actions\Imprests\WithdrawFromImprestAccount;
-use App\Actions\Loans\PayLoan;
-use App\Actions\LoveGifts\DepositToLoveGiftsAccount;
-use App\Actions\LoveGifts\WithdrawFromLoveGiftsAccount;
-use App\Actions\Savings\CreateNewSavingsAccount;
-use App\Actions\Savings\DepositToSavingsAccount;
-use App\Actions\Savings\WithdrawFromSavingsAccount;
-use App\Actions\TimeDeposits\CreateTimeDeposit;
-use App\Models\CapitalSubscription;
-use App\Models\CashCollectible;
-use App\Models\LoanAccount;
 use App\Models\Member;
-use App\Models\SavingsAccount;
-use App\Models\TransactionType;
-use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionPaymentData;
-use App\Oxytoxin\DTO\CashCollectibles\CashCollectiblePaymentData;
-use App\Oxytoxin\DTO\Loan\LoanPaymentData;
-use App\Oxytoxin\DTO\MSO\Accounts\SavingsAccountData;
-use App\Oxytoxin\DTO\MSO\ImprestData;
-use App\Oxytoxin\DTO\MSO\LoveGiftData;
-use App\Oxytoxin\DTO\MSO\SavingsData;
-use App\Oxytoxin\DTO\MSO\TimeDepositData;
-use App\Oxytoxin\Providers\ImprestsProvider;
-use App\Oxytoxin\Providers\LoveGiftProvider;
-use App\Oxytoxin\Providers\SavingsProvider;
-use App\Oxytoxin\Providers\TimeDepositsProvider;
-use Filament\Actions\Action;
-use Filament\Forms\Components\Actions\Action as FormAction;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use App\Models\LoanAccount;
+use Filament\Actions\Action;
+use App\Actions\Loans\PayLoan;
+use App\Models\SavingsAccount;
+use App\Models\CashCollectible;
+use App\Models\TransactionType;
 use Filament\Support\Colors\Color;
+use App\Models\CapitalSubscription;
+use App\Models\SystemConfiguration;
+use App\Oxytoxin\DTO\MSO\ImprestData;
+use App\Oxytoxin\DTO\MSO\SavingsData;
+use Filament\Forms\Components\Select;
+use App\Oxytoxin\DTO\MSO\LoveGiftData;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
+use App\Oxytoxin\DTO\MSO\TimeDepositData;
+use Filament\Forms\Components\DatePicker;
+use App\Oxytoxin\DTO\Loan\LoanPaymentData;
+use Filament\Forms\Components\Placeholder;
 use Illuminate\Contracts\Support\Htmlable;
-
+use App\Oxytoxin\Providers\SavingsProvider;
 use function Filament\Support\format_money;
+use App\Oxytoxin\Providers\ImprestsProvider;
+use App\Oxytoxin\Providers\LoveGiftProvider;
+use App\Actions\TimeDeposits\CreateTimeDeposit;
+use App\Actions\Savings\CreateNewSavingsAccount;
+use App\Actions\Savings\DepositToSavingsAccount;
+use App\Oxytoxin\Providers\TimeDepositsProvider;
+use App\Actions\Imprests\DepositToImprestAccount;
+use App\Actions\CashCollections\PayCashCollectible;
+use App\Actions\Savings\WithdrawFromSavingsAccount;
+use App\Actions\Imprests\WithdrawFromImprestAccount;
+use App\Actions\LoveGifts\DepositToLoveGiftsAccount;
+use App\Oxytoxin\DTO\MSO\Accounts\SavingsAccountData;
+use App\Actions\LoveGifts\WithdrawFromLoveGiftsAccount;
+use App\Actions\CapitalSubscription\PayCapitalSubscription;
+use Filament\Forms\Components\Actions\Action as FormAction;
+
+use App\Oxytoxin\DTO\CashCollectibles\CashCollectiblePaymentData;
+use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionPaymentData;
 
 class TransactionsPage extends Page
 {
@@ -65,6 +66,16 @@ class TransactionsPage extends Page
     public function getHeading(): string|Htmlable
     {
         return 'Transaction';
+    }
+
+    public $transaction_date;
+
+    public function boot()
+    {
+        $this->transaction_date = SystemConfiguration::config('Transaction Date')?->content['transaction_date'];
+        if (!$this->transaction_date) {
+            return;
+        }
     }
 
     public function payCbu(): Action
@@ -115,12 +126,20 @@ class TransactionsPage extends Page
                     return $cbu?->monthly_payment ?? 0;
                 }),
                 TextInput::make('remarks'),
-                DatePicker::make('transaction_date')->default(today())->native(false)->label('Date'),
             ])
             ->action(function ($data) {
                 $record = CapitalSubscription::find($data['capital_subscription_id']);
                 unset($data['member_id'], $data['capital_subscription_id']);
-                app(PayCapitalSubscription::class)->handle($record, CapitalSubscriptionPaymentData::from($data), TransactionType::firstWhere('name', 'CRJ'));
+                app(PayCapitalSubscription::class)->handle(
+                    $record,
+                    new CapitalSubscriptionPaymentData(
+                        payment_type_id: $data['payment_type_id'],
+                        reference_number: $data['reference_number'],
+                        amount: $data['amount'],
+                        transaction_date: $this->transaction_date,
+                    ),
+                    TransactionType::firstWhere('name', 'CRJ')
+                );
                 Notification::make()->title('Payment made for capital subscription!')->success()->send();
             });
     }
@@ -191,14 +210,16 @@ class TransactionsPage extends Page
                         payment_type_id: $data['payment_type_id'],
                         reference_number: $data['reference_number'],
                         amount: $data['amount'],
-                        savings_account_id: $data['savings_account_id']
+                        savings_account_id: $data['savings_account_id'],
+                        transaction_date: $this->transaction_date
                     ), TransactionType::firstWhere('name', 'CRJ'));
                 } else {
                     app(WithdrawFromSavingsAccount::class)->handle($member, new SavingsData(
                         payment_type_id: $data['payment_type_id'],
                         reference_number: SavingsProvider::WITHDRAWAL_TRANSFER_CODE,
                         amount: $data['amount'],
-                        savings_account_id: $data['savings_account_id']
+                        savings_account_id: $data['savings_account_id'],
+                        transaction_date: $this->transaction_date
                     ), TransactionType::firstWhere('name', 'CRJ'));
                 }
                 Notification::make()->title('Savings transaction completed!')->success()->send();
@@ -248,12 +269,14 @@ class TransactionsPage extends Page
                         payment_type_id: $data['payment_type_id'],
                         reference_number: $data['reference_number'],
                         amount: $data['amount'],
+                        transaction_date: $this->transaction_date
                     ), TransactionType::firstWhere('name', 'CRJ'));
                 } else {
                     app(WithdrawFromLoveGiftsAccount::class)->handle($member, new LoveGiftData(
                         payment_type_id: $data['payment_type_id'],
                         reference_number: LoveGiftProvider::WITHDRAWAL_TRANSFER_CODE,
                         amount: $data['amount'],
+                        transaction_date: $this->transaction_date
                     ), TransactionType::firstWhere('name', 'CRJ'));
                 }
                 Notification::make()->title('Love Gift transaction completed!')->success()->send();
@@ -301,13 +324,15 @@ class TransactionsPage extends Page
                     app(DepositToImprestAccount::class)->handle($member, new ImprestData(
                         payment_type_id: $data['payment_type_id'],
                         reference_number: $data['reference_number'],
-                        amount: $data['amount']
+                        amount: $data['amount'],
+                        transaction_date: $this->transaction_date
                     ), TransactionType::firstWhere('name', 'CRJ'));
                 } else {
                     app(WithdrawFromImprestAccount::class)->handle($member, new ImprestData(
                         payment_type_id: $data['payment_type_id'],
                         reference_number: ImprestsProvider::WITHDRAWAL_TRANSFER_CODE,
-                        amount: $data['amount']
+                        amount: $data['amount'],
+                        transaction_date: $this->transaction_date
                     ), TransactionType::firstWhere('name', 'CRJ'));
                 }
                 Notification::make()->title('Imprests transaction completed!')->success()->send();
@@ -353,6 +378,7 @@ class TransactionsPage extends Page
                     payment_type_id: $data['payment_type_id'],
                     amount: $data['amount'],
                     maturity_amount: TimeDepositsProvider::getMaturityAmount(floatval($data['amount'])),
+                    transaction_date: $this->transaction_date
                 ), transactionType: TransactionType::firstWhere('name', 'CRJ'));
                 Notification::make()->title('Time deposit transaction completed!')->success()->send();
             });
@@ -399,6 +425,7 @@ class TransactionsPage extends Page
                     reference_number: $data['reference_number'],
                     amount: $data['amount'],
                     remarks: $data['remarks'],
+                    transaction_date: $this->transaction_date
                 ), TransactionType::firstWhere('name', 'CRJ'));
                 Notification::make()->title('Payment made for loan!')->success()->send();
             });
@@ -432,8 +459,6 @@ class TransactionsPage extends Page
                 TextInput::make('reference_number')->required()
                     ->unique('cash_collectible_payments'),
                 TextInput::make('amount')->required()->moneymask(),
-                DatePicker::make('transaction_date')->default(today())->native(false)->label('Date'),
-
             ])
             ->action(function ($data) {
                 $cashCollectible = CashCollectible::find($data['cash_collectible_id']);
@@ -442,7 +467,8 @@ class TransactionsPage extends Page
                     payee: $data['payee'],
                     payment_type_id: $data['payment_type_id'],
                     reference_number: $data['reference_number'],
-                    amount: $data['amount']
+                    amount: $data['amount'],
+                    transaction_date: $this->transaction_date
                 ), TransactionType::firstWhere('name', 'CRJ'));
                 Notification::make()->title('Payment made for ' . $cashCollectible->name . '!')->success()->send();
             });

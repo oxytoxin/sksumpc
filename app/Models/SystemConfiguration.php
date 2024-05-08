@@ -15,4 +15,9 @@ class SystemConfiguration extends Model
     protected $casts = [
         'content' => 'array',
     ];
+
+    public static function config($key)
+    {
+        return self::firstWhere('name', $key);
+    }
 }
