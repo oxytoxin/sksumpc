@@ -1,5 +1,8 @@
 <x-filament-panels::page>
     @if ($transaction_date)
+        <div class="mb-4">
+            <h3>Current Transaction Date: {{ date_create($transaction_date)->format('m/d/Y') }}</h3>
+        </div>
         <div class="grid grid-cols-4 place-items-center gap-16">
             <button class="border-primary-500 flex h-32 w-40 flex-col border-2 duration-150 hover:scale-105" wire:loading.attr="disabled" wire:click="mountAction('payCbu')">
                 <div class="grid w-full flex-1 place-items-center">

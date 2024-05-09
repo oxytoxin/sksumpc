@@ -66,6 +66,8 @@ class PaymentTransactions extends Component implements HasActions, HasForms
         return $form
             ->statePath('data')
             ->schema([
+                Placeholder::make('transaction_date')
+                    ->content(date_create($this->transaction_date)->format('m/d/Y')),
                 Select::make('member_id')
                     ->label('Member')
                     ->options(Member::pluck('full_name', 'id'))
