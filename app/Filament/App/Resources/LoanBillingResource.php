@@ -42,11 +42,9 @@ class LoanBillingResource extends Resource
                     ->default(null)
                     ->selectablePlaceholder(true),
                 DatePicker::make('date')
-                    ->date()
-                    // ->afterOrEqual(today())
-                    // ->validationMessages([
-                    //     'after_or_equal' => 'The date must be after or equal to today.',
-                    // ])
+                    ->disabled()
+                    ->dehydrated()
+                    ->default(config('app.transaction_date'))
                     ->required()
                     ->native(false),
             ]);
@@ -58,7 +56,7 @@ class LoanBillingResource extends Resource
             ->columns([
                 TextColumn::make('loan_type.name'),
                 TextColumn::make('billable_date'),
-                TextColumn::make('created_at')->date('m/d/Y')->label('Date Generated'),
+                TextColumn::make('date')->date('m/d/Y')->label('Date Generated'),
                 TextColumn::make('reference_number'),
                 IconColumn::make('or_number')
                     ->label('OR Approved')

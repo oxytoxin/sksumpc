@@ -2,21 +2,25 @@
 
 namespace App\Providers\Filament;
 
-use Filament\Http\Middleware\Authenticate;
-use Filament\Http\Middleware\DisableBladeIconComponents;
-use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Navigation\NavigationGroup;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use App\Models\SystemConfiguration;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Support\Facades\Vite;
+use Illuminate\Support\Facades\Blade;
+use Filament\Navigation\NavigationGroup;
+use Filament\Http\Middleware\Authenticate;
+use Filament\Support\Facades\FilamentView;
+use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
-use Illuminate\Session\Middleware\StartSession;
-use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\Vite;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Filament\Http\Middleware\DisableBladeIconComponents;
+use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use App\Http\Middleware\EnsurePresentBookkeeperTransactionDate;
 
 class AppPanelProvider extends PanelProvider
 {
@@ -26,7 +30,16 @@ class AppPanelProvider extends PanelProvider
             $customcss = Vite::asset('resources/css/filament/app/theme.css');
         } catch (\Throwable $th) {
         }
-
+        $transaction_date = SystemConfiguration::transaction_date();
+        config(['app.transaction_date' => $transaction_date]);
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::TOPBAR_START,
+            fn () => Blade::render('<strong>Transaction Date: ' . $transaction_date?->format('m/d/Y') . '</strong>')
+        );
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::CONTENT_START,
+            fn () => Blade::render("@livewire('bookkeeper-transaction-date-checker')")
+        );
         return $panel
             ->id('app')
             ->path('/')
@@ -56,6 +69,9 @@ class AppPanelProvider extends PanelProvider
             ->discoverPages(in: app_path('Filament/App/Pages'), for: 'App\\Filament\\App\\Pages')
             ->discoverWidgets(in: app_path('Filament/App/Widgets'), for: 'App\\Filament\\App\\Widgets')
             ->maxContentWidth('full')
+            ->middleware([
+                EnsurePresentBookkeeperTransactionDate::class
+            ], true)
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

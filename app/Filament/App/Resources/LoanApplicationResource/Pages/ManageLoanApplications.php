@@ -3,6 +3,7 @@
 namespace App\Filament\App\Resources\LoanApplicationResource\Pages;
 
 use App\Actions\LoanApplications\CreateNewLoanApplication;
+use App\Filament\App\Pages\Cashier\RequiresBookkeeperTransactionDate;
 use App\Filament\App\Resources\LoanApplicationResource;
 use App\Models\LoanType;
 use App\Oxytoxin\DTO\Loan\LoanApplicationData;
@@ -13,6 +14,8 @@ use Filament\Resources\Pages\ManageRecords;
 
 class ManageLoanApplications extends ManageRecords
 {
+    use RequiresBookkeeperTransactionDate;
+
     protected static string $resource = LoanApplicationResource::class;
 
     protected function getHeaderActions(): array
@@ -28,7 +31,8 @@ class ManageLoanApplications extends ManageRecords
                         desired_amount: $data['desired_amount'],
                         monthly_payment: LoansProvider::computeMonthlyPayment($data['desired_amount'], LoanType::find($data['loan_type_id']), $data['number_of_terms'], today()),
                         purpose: $data['purpose'],
-                        comakers: $data['comakers']
+                        comakers: $data['comakers'],
+                        transaction_date: config('app.transaction_date')
                     );
                     app(CreateNewLoanApplication::class)->handle($loan_application_data);
                     Notification::make()->title('New loan application created.')->success()->send();

@@ -171,7 +171,7 @@ class LoanResource extends Resource
                                 credit: $item['credit'],
                             ));
                             unset($item['member_id'], $item['code'], $item['name'], $item['readonly'], $item['loan_id']);
-                            $dv->disbursement_voucher_items()->create($item);
+                            $dv->disbursement_voucher_items()->createQuietly($item);
                         }
                         $record->update([
                             'disbursement_voucher_id' => $dv->id,

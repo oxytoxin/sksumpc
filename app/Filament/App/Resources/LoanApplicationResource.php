@@ -104,8 +104,10 @@ class LoanApplicationResource extends Resource
                             ->label('Name')
                             ->options(Member::pluck('full_name', 'id'))
                             ->searchable()
+                            ->required()
                             ->preload(),
                     ])
+                    ->default([])
                     ->hideLabels(),
             ]);
     }
@@ -141,7 +143,7 @@ class LoanApplicationResource extends Resource
                 Action::make('CIBI')->label('CIBI')->button()->url(fn ($record) => route('filament.app.resources.loan-applications.credit-and-background-investigation-form', ['loan_application' => $record])),
                 Action::make('Approve')
                     ->action(function (LoanApplication $record) {
-                        app(ApproveLoanApplication::class)->handle($record);
+                        app(ApproveLoanApplication::class)->handle($record, config('app.transaction_date'));
                         Notification::make()->title('Loan application approved!')->success()->send();
                     })
                     ->requiresConfirmation()
@@ -161,7 +163,8 @@ class LoanApplicationResource extends Resource
                             loan_application: $record,
                             disapproval_reason_id: $data['disapproval_reason_id'],
                             priority_number: $data['priority_number'],
-                            remarks: $data['remarks']
+                            remarks: $data['remarks'],
+                            disapproval_date: config('app.transaction_date')
                         );
                         Notification::make()->title('Loan application disapproved!')->success()->send();
                     })
@@ -179,8 +182,8 @@ class LoanApplicationResource extends Resource
                             'gross_amount' => $record->desired_amount,
                             'number_of_terms' => $record->number_of_terms,
                             'priority_number' => $record->priority_number,
-                            'transaction_date' => today(),
-                            'release_date' => today(),
+                            'transaction_date' => config('app.transaction_date'),
+                            'release_date' => config('app.transaction_date'),
                             'disclosure_sheet_items' => $disclosure_sheet_items,
                         ];
                     })

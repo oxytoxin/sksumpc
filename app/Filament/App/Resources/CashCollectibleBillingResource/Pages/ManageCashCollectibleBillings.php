@@ -52,11 +52,9 @@ class ManageCashCollectibleBillings extends ManageRecords
                         ->default(null)
                         ->selectablePlaceholder(true),
                     DatePicker::make('date')
-                        ->date()
-                        // ->afterOrEqual(today())
-                        // ->validationMessages([
-                        //     'after_or_equal' => 'The date must be after or equal to today.',
-                        // ])
+                        ->disabled()
+                        ->dehydrated()
+                        ->default(config('app.transaction_date'))
                         ->required()
                         ->native(false),
                     Select::make('member_id')

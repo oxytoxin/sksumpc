@@ -29,6 +29,11 @@ class Account extends Model
         ];
     }
 
+    public function member()
+    {
+        return $this->belongsTo(Member::class);
+    }
+
     public static function getCashOnHand()
     {
         return Account::firstWhere('tag', 'cash_on_hand');

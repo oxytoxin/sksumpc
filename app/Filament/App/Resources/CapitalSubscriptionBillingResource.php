@@ -43,11 +43,9 @@ class CapitalSubscriptionBillingResource extends Resource
                     ->default(null)
                     ->selectablePlaceholder(true),
                 DatePicker::make('date')
-                    ->date()
-                    // ->afterOrEqual(today())
-                    // ->validationMessages([
-                    //     'after_or_equal' => 'The date must be after or equal to today.',
-                    // ])
+                    ->disabled()
+                    ->dehydrated()
+                    ->default(config('app.transaction_date'))
                     ->required()
                     ->native(false),
             ]);
@@ -58,7 +56,7 @@ class CapitalSubscriptionBillingResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('billable_date'),
-                TextColumn::make('created_at')->date('m/d/Y')->label('Date Generated'),
+                TextColumn::make('date')->date('m/d/Y')->label('Date Generated'),
                 TextColumn::make('reference_number'),
                 TextColumn::make('or_number')
                     ->label('OR Approved'),

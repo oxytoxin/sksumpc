@@ -14,7 +14,7 @@ class LoanPaymentData extends Data
         public string $amount,
         public bool $buy_out = false,
         public ?string $remarks = null,
-        public Carbon|CarbonImmutable|null $transaction_date = null,
+        public $transaction_date = null,
     ) {
         $this->transaction_date = $transaction_date ?? today();
     }

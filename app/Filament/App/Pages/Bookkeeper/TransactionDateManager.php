@@ -42,9 +42,9 @@ class TransactionDateManager extends Page implements HasActions, HasForms
                 Action::make('set')
                     ->action(function () {
                         $this->form->validate();
-                        SystemConfiguration::firstOrCreate([
-                            'name' => 'Transaction Date'
-                        ], [
+                        SystemConfiguration::where('name', 'Transaction Date')->delete();
+                        SystemConfiguration::create([
+                            'name' => 'Transaction Date',
                             'content' => [
                                 'transaction_date' => $this->transaction_date
                             ]

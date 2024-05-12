@@ -3,6 +3,7 @@
 namespace App\Filament\App\Resources\CapitalSubscriptionBillingResource\Pages;
 
 use App\Actions\CapitalSubscriptionBilling\CreateIndividualBilling;
+use App\Filament\App\Pages\Cashier\RequiresBookkeeperTransactionDate;
 use Filament\Actions;
 use Livewire\Attributes\Computed;
 use Filament\Forms\Components\Select;
@@ -15,6 +16,7 @@ use Filament\Notifications\Notification;
 class ManageCapitalSubscriptionBillings extends ManageRecords
 {
     protected static string $resource = CapitalSubscriptionBillingResource::class;
+    use RequiresBookkeeperTransactionDate;
 
     #[Computed]
     public function UserIsCashier()
@@ -42,11 +44,9 @@ class ManageCapitalSubscriptionBillings extends ManageRecords
                         ->default(null)
                         ->selectablePlaceholder(true),
                     DatePicker::make('date')
-                        ->date()
-                        // ->afterOrEqual(today())
-                        // ->validationMessages([
-                        //     'after_or_equal' => 'The date must be after or equal to today.',
-                        // ])
+                        ->disabled()
+                        ->dehydrated()
+                        ->default(config('app.transaction_date'))
                         ->required()
                         ->native(false),
                     Select::make('member_id')

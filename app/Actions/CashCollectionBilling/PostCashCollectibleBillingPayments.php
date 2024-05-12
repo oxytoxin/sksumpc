@@ -31,6 +31,7 @@ class PostCashCollectibleBillingPayments
                     reference_number: $cashCollectibleBilling->or_number,
                     amount: $payment->amount_paid,
                     payee: $payment->payee,
+                    transaction_date: $cashCollectibleBilling->date
                 ),
                 transactionType: $transaction_type
             );
