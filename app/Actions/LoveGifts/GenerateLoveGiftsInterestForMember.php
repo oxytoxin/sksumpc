@@ -26,7 +26,7 @@ class GenerateLoveGiftsInterestForMember
                     days: $i->days_till_next_transaction,
                     minimum_amount: LoveGiftProvider::MINIMUM_AMOUNT_FOR_INTEREST
                 ),
-                'interest_date' => today(),
+                'interest_date' => config('app.transaction_date') ?? today(),
             ]);
         });
 

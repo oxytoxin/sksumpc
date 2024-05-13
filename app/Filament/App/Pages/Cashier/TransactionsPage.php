@@ -49,6 +49,7 @@ use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionPaymentData;
 
 class TransactionsPage extends Page
 {
+    use RequiresBookkeeperTransactionDate;
 
     protected static string $view = 'filament.app.pages.transactions-page';
 
@@ -69,14 +70,6 @@ class TransactionsPage extends Page
     }
 
     public $transaction_date;
-
-    public function boot()
-    {
-        $this->transaction_date = SystemConfiguration::config('Transaction Date')?->content['transaction_date'];
-        if (!$this->transaction_date) {
-            return;
-        }
-    }
 
     public function payCbu(): Action
     {

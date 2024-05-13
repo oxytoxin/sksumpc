@@ -58,8 +58,10 @@ class TransactionsList extends Page implements HasForms, HasTable
         if ($month && $year) {
             $date = CarbonImmutable::create(month: $month, year: $year);
             $this->date_range = $date->format('m/d/Y') . ' - ' . $date->endOfMonth()->format('m/d/Y');
-            data_set($this, 'tableFilters.transaction_date.transaction_date', $this->date_range);
-        };
+        } else {
+            $this->date_range = (config('app.transaction_date')->format('m/d/Y') ?? today()->format('m/d/Y')) . ' - ' . config('app.transaction_date')->format('m/d/Y') ?? today()->format('m/d/Y');
+        }
+        data_set($this, 'tableFilters.transaction_date.transaction_date', $this->date_range);
     }
 
     public function table(Table $table): Table
@@ -74,7 +76,7 @@ class TransactionsList extends Page implements HasForms, HasTable
             )
             ->filters([
                 DateRangeFilter::make('transaction_date')
-                    ->default("01/01/2024 - 01/01/2024")
+                    ->format('m/d/Y')
                     ->displayFormat('MM/DD/YYYY'),
                 SelectFilter::make('transaction_type')
                     ->relationship('transaction_type', 'name')

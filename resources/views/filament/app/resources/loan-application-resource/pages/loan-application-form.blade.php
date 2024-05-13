@@ -112,7 +112,7 @@
                             </span>
                         </h4>
                         <h4>
-                            Date: <span class="min-w-[8rem] border-b border-black px-4">{{ today()->format('F d, Y') }}</span>
+                            Date: <span class="min-w-[8rem] border-b border-black px-4">{{ config('app.transaction_date')?->format('F d, Y') }}</span>
                         </h4>
                         <h4>
                             Station: <span class="inline-block min-w-[8rem] border-b border-black px-4">{{ $loan_application->member->division?->name }}</span>
@@ -177,7 +177,7 @@
                                 <p>Loan Officer</p>
                             </div>
                             <div class="mt-8 flex flex-col items-center">
-                                <p>{{ today()->format('m/d/Y') }}</p>
+                                <p>{{ config('app.transaction_date')?->format('m/d/Y') }}</p>
                                 <p>Date</p>
                             </div>
                         </div>

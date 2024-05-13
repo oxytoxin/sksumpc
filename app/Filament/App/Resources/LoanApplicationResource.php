@@ -265,8 +265,8 @@ class LoanApplicationResource extends Resource
                                 loanType: $loanType,
                                 number_of_terms: $data['number_of_terms'],
                             ),
-                            release_date: today(),
-                            transaction_date: today(),
+                            release_date: config('app.transaction_date'),
+                            transaction_date: config('app.transaction_date'),
                         );
                         app(CreateNewLoan::class)->handle($record, $loanData);
                         Notification::make()->title('New loan created.')->success()->send();

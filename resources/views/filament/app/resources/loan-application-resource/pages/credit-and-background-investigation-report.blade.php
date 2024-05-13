@@ -349,10 +349,9 @@
                 </tr>
                 <tr>
                     <td colspan="3" class="border border-black px-2 text-left">Date request received: {{ $cibi->loan_application->transaction_date->format('m/d/Y') }}</td>
-                    <td colspan="3" class="border border-black px-2 text-left">Date of Report: {{ today()->format('m/d/Y') }}</td>
+                    <td colspan="3" class="border border-black px-2 text-left">Date of Report: {{ config('app.transaction_date')?->format('m/d/Y') }}</td>
                 </tr>
             </table>
+        </x-app.cashier.reports.report-layout>
     @endif
-
-    </x-app.cashier.reports.report-layout>
 </x-filament-panels::page>

@@ -22,6 +22,11 @@ class CashCollectiblesReport extends Page implements HasTable
 
     public $report_title;
 
+    public function mount()
+    {
+        data_set($this, 'tableFilters.transaction_date.transaction_date', (config('app.transaction_date')->format('m/d/Y') ?? today()->format('m/d/Y')) . ' - ' . config('app.transaction_date')->format('m/d/Y') ?? today()->format('m/d/Y'));
+    }
+
     public function table(Table $table): Table
     {
         return $table
@@ -33,7 +38,6 @@ class CashCollectiblesReport extends Page implements HasTable
             ->filters([
                 DateRangeFilter::make('transaction_date')
                     ->format('m/d/Y')
-                    ->defaultToday()
                     ->displayFormat('MM/DD/YYYY'),
                 SelectFilter::make('cash_collectible_id')
                     ->options(CashCollectible::pluck('name', 'id'))

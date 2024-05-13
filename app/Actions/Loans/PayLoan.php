@@ -35,7 +35,8 @@ class PayLoan
                 reference_number: $loanPaymentData->reference_number,
                 debit: $loanPaymentData->amount,
                 member_id: $loan->member_id,
-                remarks: 'Member Loan Payment'
+                remarks: 'Member Loan Payment',
+                transaction_date: $loanPaymentData->transaction_date,
             ));
         }
         if ($loanPaymentData->payment_type_id == 4) {
@@ -45,7 +46,8 @@ class PayLoan
                 reference_number: $loanPaymentData->reference_number,
                 debit: $loanPaymentData->amount,
                 member_id: $loan->member_id,
-                remarks: 'Member Loan Payment'
+                remarks: 'Member Loan Payment',
+                transaction_date: $loanPaymentData->transaction_date,
             ));
         }
 
@@ -55,7 +57,8 @@ class PayLoan
             reference_number: $loanPaymentData->reference_number,
             credit: $principal_payment,
             member_id: $loan->member_id,
-            remarks: 'Member Loan Payment Principal'
+            remarks: 'Member Loan Payment Principal',
+            transaction_date: $loanPaymentData->transaction_date,
         ));
         app(CreateTransaction::class)->handle(new TransactionData(
             account_id: $loan_interests_account->id,
@@ -63,7 +66,8 @@ class PayLoan
             reference_number: $loanPaymentData->reference_number,
             credit: $interest_payment,
             member_id: $loan->member_id,
-            remarks: 'Member Loan Payment Interest'
+            remarks: 'Member Loan Payment Interest',
+            transaction_date: $loanPaymentData->transaction_date
         ));
 
         return $loan->payments()->create([

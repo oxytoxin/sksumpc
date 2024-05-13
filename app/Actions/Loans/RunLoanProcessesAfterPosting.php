@@ -38,13 +38,14 @@ class RunLoanProcessesAfterPosting
                     'par_value' => $member->member_type->par_value,
                     'is_common' => false,
                     'code' => Str::random(12),
-                    'transaction_date' => today(),
+                    'transaction_date' => $loan->transaction_date,
                 ]);
             }
             app(PayCapitalSubscription::class)->handle($cbu, new CapitalSubscriptionPaymentData(
                 payment_type_id: 2,
                 reference_number: $loan->reference_number,
-                amount: $loan->cbu_amount
+                amount: $loan->cbu_amount,
+                transaction_date: $loan->transaction_date
             ), TransactionType::firstWhere('name', 'CDJ'), false);
         }
 
@@ -53,6 +54,7 @@ class RunLoanProcessesAfterPosting
                 payment_type_id: 1,
                 reference_number: $loan->reference_number,
                 amount: $loan->imprest_amount,
+                transaction_date: $loan->transaction_date
             ), TransactionType::firstWhere('name', 'CDJ'), false);
         }
         if ($loan->loan_buyout_id) {
@@ -62,6 +64,7 @@ class RunLoanProcessesAfterPosting
                 payment_type_id: 2,
                 reference_number: $loan->reference_number,
                 amount: $loan->loan_buyout_principal + $loan->loan_buyout_interest,
+                transaction_date: $loan->transaction_date
             ), transactionType: TransactionType::firstWhere('name', 'CDJ'));
         }
         DB::commit();

@@ -6,7 +6,7 @@
         @endif
         @isset($title)
             <h4 wire:ignore class="mt-4 text-center text-xl font-bold">{{ $title }}</h4>
-            <p class="text-center font-bold">{{ today()->format('l, F d, Y') }}</p>
+            <p class="text-center font-bold">{{ (config('app.transaction_date') ?? today())->format('l, F d, Y') }}</p>
         @endisset
 
         <div class="my-4 text-sm print:text-[10pt]">

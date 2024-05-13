@@ -25,11 +25,15 @@ trait HasReport
             ->filters([
                 DateRangeFilter::make('transaction_date')
                     ->format('m/d/Y')
-                    ->defaultToday()
                     ->displayFormat('MM/DD/YYYY'),
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
             ->paginated(false);
+    }
+
+    public function mountHasReport()
+    {
+        data_set($this, 'tableFilters.transaction_date.transaction_date', (config('app.transaction_date')->format('m/d/Y') ?? today()->format('m/d/Y')) . ' - ' . config('app.transaction_date')->format('m/d/Y') ?? today()->format('m/d/Y'));
     }
 
     private function getReportQuery()
