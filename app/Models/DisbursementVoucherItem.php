@@ -2,21 +2,29 @@
 
 namespace App\Models;
 
-use App\Actions\CapitalSubscription\PayCapitalSubscription;
-use App\Actions\Imprests\DepositToImprestAccount;
-use App\Actions\Imprests\WithdrawFromImprestAccount;
+use App\Models\Account;
+use App\Models\LoanAccount;
 use App\Actions\Loans\PayLoan;
-use App\Actions\LoveGifts\DepositToLoveGiftsAccount;
-use App\Actions\LoveGifts\WithdrawFromLoveGiftsAccount;
-use App\Actions\Savings\DepositToSavingsAccount;
-use App\Actions\Savings\WithdrawFromSavingsAccount;
-use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionPaymentData;
-use App\Oxytoxin\DTO\Loan\LoanPaymentData;
+use App\Models\TransactionType;
+use App\Models\DisbursementVoucher;
+use App\Models\SystemConfiguration;
 use App\Oxytoxin\DTO\MSO\ImprestData;
-use App\Oxytoxin\DTO\MSO\LoveGiftData;
 use App\Oxytoxin\DTO\MSO\SavingsData;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Oxytoxin\DTO\MSO\LoveGiftData;
 use Illuminate\Database\Eloquent\Model;
+use App\Oxytoxin\DTO\Loan\LoanPaymentData;
+use App\Actions\Transactions\CreateTransaction;
+use App\Actions\Savings\DepositToSavingsAccount;
+use App\Actions\Imprests\DepositToImprestAccount;
+use App\Oxytoxin\DTO\Transactions\TransactionData;
+use App\Actions\Savings\WithdrawFromSavingsAccount;
+use App\Actions\Imprests\WithdrawFromImprestAccount;
+use App\Actions\LoveGifts\DepositToLoveGiftsAccount;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Actions\LoveGifts\WithdrawFromLoveGiftsAccount;
+use App\Actions\CapitalSubscription\PayCapitalSubscription;
+use App\Actions\Loans\PayLegacyLoan;
+use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionPaymentData;
 
 /**
  * @mixin IdeHelperDisbursementVoucherItem
@@ -28,6 +36,7 @@ class DisbursementVoucherItem extends Model
     protected $casts = [
         'credit' => 'decimal:4',
         'debit' => 'decimal:4',
+        'details' => 'array'
     ];
 
     public function disbursement_voucher()
@@ -44,7 +53,7 @@ class DisbursementVoucherItem extends Model
     {
         static::creating(function (DisbursementVoucherItem $disbursementVoucherItem) {
             $account = Account::find($disbursementVoucherItem->account_id);
-            $transaction_date = SystemConfiguration::transaction_date();
+            $transaction_date = SystemConfiguration::transaction_date() ?? today();
             $transactionType = TransactionType::firstWhere('name', 'CDJ');
             if (in_array($account->tag, ['member_common_cbu_paid', 'member_preferred_cbu_paid', 'member_laboratory_cbu_paid'])) {
                 app(PayCapitalSubscription::class)
@@ -58,8 +67,7 @@ class DisbursementVoucherItem extends Model
                         ),
                         transactionType: $transactionType
                     );
-            }
-            if (in_array($account->tag, ['regular_savings'])) {
+            } else if (in_array($account->tag, ['regular_savings'])) {
                 if ($disbursementVoucherItem->credit) {
                     app(DepositToSavingsAccount::class)->handle(
                         member: $account->member,
@@ -86,9 +94,7 @@ class DisbursementVoucherItem extends Model
                         transactionType: $transactionType
                     );
                 }
-            }
-
-            if (in_array($account->tag, ['imprest_savings'])) {
+            } else if (in_array($account->tag, ['imprest_savings'])) {
                 if ($disbursementVoucherItem->credit) {
                     app(DepositToImprestAccount::class)->handle(
                         member: $account->member,
@@ -113,9 +119,7 @@ class DisbursementVoucherItem extends Model
                         transactionType: $transactionType
                     );
                 }
-            }
-
-            if (in_array($account->tag, ['love_gift_savings'])) {
+            } else if (in_array($account->tag, ['love_gift_savings'])) {
                 if ($disbursementVoucherItem->credit) {
                     app(DepositToLoveGiftsAccount::class)->handle(
                         member: $account->member,
@@ -140,49 +144,42 @@ class DisbursementVoucherItem extends Model
                         transactionType: $transactionType
                     );
                 }
-            }
-
-            if (in_array($account->tag, ['imprest_savings'])) {
-                if ($disbursementVoucherItem->credit) {
-                    app(DepositToImprestAccount::class)->handle(
-                        member: $account->member,
-                        data: new ImprestData(
-                            payment_type_id: 4,
-                            reference_number: $disbursementVoucherItem->disbursement_voucher->reference_number,
-                            amount: $disbursementVoucherItem->credit,
-                            transaction_date: $transaction_date
-                        ),
-                        transactionType: $transactionType
-                    );
-                }
-                if ($disbursementVoucherItem->debit) {
-                    app(WithdrawFromImprestAccount::class)->handle(
-                        member: $account->member,
-                        data: new ImprestData(
-                            payment_type_id: 4,
-                            reference_number: $disbursementVoucherItem->disbursement_voucher->reference_number,
-                            amount: $disbursementVoucherItem->debit,
-                            transaction_date: $transaction_date
-                        ),
-                        transactionType: $transactionType
-                    );
-                }
-            }
-
-            if (in_array($account->tag, ['member_loans_receivable'])) {
+            } else if (in_array($account->tag, ['member_loans_receivable'])) {
                 $loan_account = LoanAccount::find($account->id);
                 if ($disbursementVoucherItem->credit) {
-                    app(PayLoan::class)->handle(
-                        loan: $loan_account->loan,
-                        loanPaymentData: new LoanPaymentData(
-                            payment_type_id: 4,
-                            reference_number: $disbursementVoucherItem->disbursement_voucher->reference_number,
-                            amount: $disbursementVoucherItem->credit,
-                            transaction_date: $transaction_date
-                        ),
-                        transactionType: $transactionType
-                    );
+                    if ($disbursementVoucherItem->disbursement_voucher->is_legacy) {
+                        app(PayLegacyLoan::class)
+                            ->handle(
+                                loanAccount: $loan_account,
+                                principal: $disbursementVoucherItem->details['principal'],
+                                interest: $disbursementVoucherItem->details['interest'],
+                                reference_number: $disbursementVoucherItem->disbursement_voucher->reference_number,
+                                transaction_date: $transaction_date,
+                                transactionType: $transactionType
+                            );
+                    } else {
+                        app(PayLoan::class)->handle(
+                            loan: $loan_account->loan,
+                            loanPaymentData: new LoanPaymentData(
+                                payment_type_id: 4,
+                                reference_number: $disbursementVoucherItem->disbursement_voucher->reference_number,
+                                amount: $disbursementVoucherItem->credit,
+                                transaction_date: $transaction_date
+                            ),
+                            transactionType: $transactionType
+                        );
+                    }
                 }
+            } else {
+                app(CreateTransaction::class)->handle(new TransactionData(
+                    member_id: $account->member_id,
+                    account_id: $account->id,
+                    transactionType: $transactionType,
+                    reference_number: $disbursementVoucherItem->disbursement_voucher->reference_number,
+                    debit: $disbursementVoucherItem->debit,
+                    credit: $disbursementVoucherItem->credit,
+                    transaction_date: $transaction_date
+                ));
             }
         });
     }

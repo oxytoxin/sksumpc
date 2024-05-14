@@ -4,6 +4,7 @@ namespace App\Filament\App\Pages\Bookkeeper;
 
 use App\Actions\Loans\PayLegacyLoan;
 use App\Models\LoanAccount;
+use App\Models\TransactionType;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
@@ -56,6 +57,7 @@ class LegacyLoanPayments extends Page
                         ->requiresConfirmation()
                         ->action(function () {
                             $data = $this->form->getState();
+                            $transactionType = TransactionType::firstWhere('name', 'CRJ');
                             app(PayLegacyLoan::class)
                                 ->handle(
                                     loanAccount: LoanAccount::find($data['loan_account_id']),
@@ -63,6 +65,7 @@ class LegacyLoanPayments extends Page
                                     interest: $data['interest'],
                                     reference_number: $data['reference_number'],
                                     transaction_date: $data['transaction_date'],
+                                    transactionType: $transactionType
                                 );
                             Notification::make()->title('Legacy loan payment posted!')->success()->send();
                             $this->reset();

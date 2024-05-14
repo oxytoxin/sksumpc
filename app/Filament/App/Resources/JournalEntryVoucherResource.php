@@ -43,6 +43,7 @@ class JournalEntryVoucherResource extends Resource
                 TextInput::make('name')->required(),
                 TextInput::make('address')->required(),
                 TextInput::make('reference_number')->required(),
+                TextInput::make('voucher_number')->required(),
                 Textarea::make('description')->columnSpanFull()->required(),
                 TableRepeater::make('journal_entry_voucher_items')
                     ->hideLabels()

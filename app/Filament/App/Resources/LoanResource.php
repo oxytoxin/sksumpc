@@ -32,6 +32,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
+use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 
 class LoanResource extends Resource
 {
@@ -79,22 +80,9 @@ class LoanResource extends Resource
                         true => 'Posted',
                         false => 'Pending',
                     ]),
-                Filter::make('date_applied')
-                    ->form([
-                        DatePicker::make('applied_from')->native(false),
-                        DatePicker::make('applied_until')->native(false),
-                    ])
-                    ->query(function (Builder $query, array $data): Builder {
-                        return $query
-                            ->when(
-                                $data['applied_from'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('transaction_date', '>=', $date),
-                            )
-                            ->when(
-                                $data['applied_until'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('transaction_date', '<=', $date),
-                            );
-                    }),
+                DateRangeFilter::make('transaction_date')
+                    ->format('m/d/Y')
+                    ->displayFormat('MM/DD/YYYY'),
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
             ->actions([
@@ -155,6 +143,7 @@ class LoanResource extends Resource
                         $items = $data['disbursement_voucher_items'];
                         unset($data['disbursement_voucher_items'], $data['member_id']);
                         $data['voucher_type_id'] = 1;
+                        $data['transaction_date'] = config('app.transaction_date') ?? today();
                         $dv = DisbursementVoucher::create($data);
                         $new_disclosure_sheet_items = [];
                         $accounts = Account::withCode()->find(collect($items)->pluck('account_id'));
@@ -162,16 +151,8 @@ class LoanResource extends Resource
                             $account = $accounts->find($item['account_id']);
                             $item['name'] = $account->code;
                             $new_disclosure_sheet_items[] = $item;
-                            app(CreateTransaction::class)->handle(new TransactionData(
-                                member_id: $item['member_id'],
-                                account_id: $account->id,
-                                transactionType: $transactionType,
-                                reference_number: $dv->reference_number,
-                                debit: $item['debit'],
-                                credit: $item['credit'],
-                            ));
                             unset($item['member_id'], $item['code'], $item['name'], $item['readonly'], $item['loan_id']);
-                            $dv->disbursement_voucher_items()->createQuietly($item);
+                            $dv->disbursement_voucher_items()->create($item);
                         }
                         $record->update([
                             'disbursement_voucher_id' => $dv->id,

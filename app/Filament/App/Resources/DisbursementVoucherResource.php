@@ -16,8 +16,10 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
+use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 
 class DisbursementVoucherResource extends Resource
 {
@@ -86,9 +88,11 @@ class DisbursementVoucherResource extends Resource
                 TextColumn::make('description'),
             ])
             ->filters([
-                Filter::make('transaction_date')
-                    ->dateRange('transaction_date'),
+                DateRangeFilter::make('transaction_date')
+                    ->format('m/d/Y')
+                    ->displayFormat('MM/DD/YYYY'),
             ])
+            ->filtersLayout(FiltersLayout::AboveContent)
             ->actions([
                 Action::make('view')
                     ->button()

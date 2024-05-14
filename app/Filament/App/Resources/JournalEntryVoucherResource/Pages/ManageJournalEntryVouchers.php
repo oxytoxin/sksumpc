@@ -24,16 +24,9 @@ class ManageJournalEntryVouchers extends ManageRecords
                     $transactionType = TransactionType::firstWhere('name', 'CDJ');
                     $items = $data['journal_entry_voucher_items'];
                     unset($data['journal_entry_voucher_items'], $data['member_id']);
+                    $data['transaction_date'] = config('app.transaction_date') ?? today();
                     $jev = JournalEntryVoucher::create($data);
                     foreach ($items as $item) {
-                        app(CreateTransaction::class)->handle(new TransactionData(
-                            member_id: $item['member_id'],
-                            account_id: $item['account_id'],
-                            transactionType: $transactionType,
-                            reference_number: $jev->reference_number,
-                            debit: $item['debit'],
-                            credit: $item['credit'],
-                        ));
                         unset($item['member_id']);
                         $jev->journal_entry_voucher_items()->create($item);
                     }

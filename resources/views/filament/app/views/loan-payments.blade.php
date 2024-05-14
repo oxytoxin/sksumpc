@@ -12,7 +12,7 @@
         @forelse ($loan->payments as $payment)
             <tr class="border-2 border-black">
                 <td class="border-2 border-black">
-                    {{ $payment->created_at->format('m/d/Y') }}
+                    {{ $payment->transaction_date->format('m/d/Y') }}
                 </td>
                 <td class="border-2 border-black">
                     {{ $payment->reference_number }}

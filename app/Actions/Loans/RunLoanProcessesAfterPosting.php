@@ -28,45 +28,6 @@ class RunLoanProcessesAfterPosting
         $member = $loan->member;
         $amortization_schedule = LoansProvider::generateAmortizationSchedule($loan);
         $loan->loan_amortizations()->createMany($amortization_schedule);
-        if (floatval($loan->cbu_amount)) {
-            $cbu = $member->capital_subscriptions_common;
-            if (!$cbu) {
-                $cbu = $member->capital_subscriptions()->create([
-                    'number_of_terms' => 0,
-                    'number_of_shares' => $loan->cbu_amount / $member->member_type->par_value,
-                    'amount_subscribed' => $loan->cbu_amount,
-                    'par_value' => $member->member_type->par_value,
-                    'is_common' => false,
-                    'code' => Str::random(12),
-                    'transaction_date' => $loan->transaction_date,
-                ]);
-            }
-            app(PayCapitalSubscription::class)->handle($cbu, new CapitalSubscriptionPaymentData(
-                payment_type_id: 2,
-                reference_number: $loan->reference_number,
-                amount: $loan->cbu_amount,
-                transaction_date: $loan->transaction_date
-            ), TransactionType::firstWhere('name', 'CDJ'), false);
-        }
-
-        if (floatval($loan->imprest_amount)) {
-            app(DepositToImprestAccount::class)->handle($member, new ImprestData(
-                payment_type_id: 1,
-                reference_number: $loan->reference_number,
-                amount: $loan->imprest_amount,
-                transaction_date: $loan->transaction_date
-            ), TransactionType::firstWhere('name', 'CDJ'), false);
-        }
-        if ($loan->loan_buyout_id) {
-            $existing = $member->loans()->find($loan->loan_buyout_id);
-            app(PayLoan::class)->handle(loan: $existing, loanPaymentData: new LoanPaymentData(
-                buy_out: true,
-                payment_type_id: 2,
-                reference_number: $loan->reference_number,
-                amount: $loan->loan_buyout_principal + $loan->loan_buyout_interest,
-                transaction_date: $loan->transaction_date
-            ), transactionType: TransactionType::firstWhere('name', 'CDJ'));
-        }
         DB::commit();
     }
 }

@@ -40,7 +40,7 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
     {
         return $form->schema([
             DatePicker::make('transaction_date')
-                ->default(today())
+                ->default(config('app.transaction_date') ?? today())
                 ->native(false)
                 ->reactive(),
             Select::make('mode')
