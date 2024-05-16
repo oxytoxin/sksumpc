@@ -50,6 +50,18 @@ class JournalEntryVoucherResource extends Resource
                     ->rule(new BalancedBookkeepingEntries)
                     ->columnSpanFull()
                     ->columnWidths(['account_id' => '13rem', 'member_id' => '13rem'])
+                    ->reactive()
+                    ->afterStateUpdated(function ($set, $state) {
+                        $items = collect($state);
+                        $cib = Account::getCashInBankGF();
+                        $net_amount = $items->firstWhere('account_id', $cib?->id);
+                        if ($net_amount) {
+                            $items = $items->filter(fn ($i) => $i['account_id'] != $net_amount['account_id']);
+                            $net_amount['credit'] = $items->sum('debit') - $items->sum('credit');
+                            $items->push($net_amount);
+                        }
+                        $set('journal_entry_voucher_items', $items->toArray());
+                    })
                     ->schema([
                         Select::make('member_id')
                             ->options(Member::pluck('full_name', 'id'))

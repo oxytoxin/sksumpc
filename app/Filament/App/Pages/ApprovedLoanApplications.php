@@ -26,6 +26,11 @@ class ApprovedLoanApplications extends Page implements HasTable
         return auth()->user()->can('manage loans');
     }
 
+    public function mount(): void
+    {
+        data_set($this, 'tableFilters.transaction_date.transaction_date', (config('app.transaction_date')->format('m/d/Y') ?? today()->format('m/d/Y')) . ' - ' . config('app.transaction_date')->format('m/d/Y') ?? today()->format('m/d/Y'));
+    }
+
     public function table(Table $table): Table
     {
         return $table

@@ -162,7 +162,6 @@
                                             {{ format_money($loan->outstanding_balance, 'PHP') }}
                                         </td>
                                         <td class="border border-black px-2">
-                                            {{ $loan->loan_application->posted ? 'Approved' : 'On Process' }}
                                         </td>
                                     </tr>
                                 @endforeach

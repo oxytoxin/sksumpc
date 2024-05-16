@@ -24,15 +24,16 @@ class PayLegacyLoan
         $loan_receivables_account = $loan->loan_account;
         $loan_interests_account = Account::whereAccountableType(LoanType::class)->whereAccountableId($loan->loan_type_id)->whereTag('loan_interests')->first();
 
-        app(CreateTransaction::class)->handle(new TransactionData(
-            account_id: Account::getCashOnHand()->id,
-            transactionType: $transactionType,
-            reference_number: $reference_number,
-            debit: $principal + $interest,
-            member_id: $loan->member_id,
-            remarks: 'Member Loan Payment',
-            transaction_date: $transaction_date
-        ));
+        if ($transactionType->name == 'CRJ')
+            app(CreateTransaction::class)->handle(new TransactionData(
+                account_id: Account::getCashOnHand()->id,
+                transactionType: $transactionType,
+                reference_number: $reference_number,
+                debit: $principal + $interest,
+                member_id: $loan->member_id,
+                remarks: 'Member Loan Payment',
+                transaction_date: $transaction_date
+            ));
 
         app(CreateTransaction::class)->handle(new TransactionData(
             account_id: $loan_receivables_account->id,

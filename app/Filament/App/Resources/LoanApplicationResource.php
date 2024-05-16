@@ -207,10 +207,10 @@ class LoanApplicationResource extends Resource
                             ->hideLabels()
                             ->columnSpanFull()
                             ->reactive()
-                            ->afterStateUpdated(function ($get, $set, $state) {
+                            ->afterStateUpdated(function ($set, $state) {
                                 $items = collect($state);
                                 $net_amount = $items->firstWhere('code', 'net_amount');
-                                $items = $items->filter(fn ($i) => $i['code'] != 'net_amount');
+                                $items = $items->filter(fn ($i) => ($i['code'] ?? "") != 'net_amount');
                                 $net_amount['credit'] = $items->sum('debit') - $items->sum('credit');
                                 $items->push($net_amount);
                                 $set('disclosure_sheet_items', $items->toArray());

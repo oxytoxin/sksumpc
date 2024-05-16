@@ -4,6 +4,7 @@ namespace App\Filament\App\Pages\Bookkeeper;
 
 use App\Actions\Loans\PayLegacyLoan;
 use App\Models\LoanAccount;
+use App\Models\Member;
 use App\Models\TransactionType;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
@@ -34,13 +35,19 @@ class LegacyLoanPayments extends Page
     {
         return $form
             ->schema([
+                Select::make('member_id')
+                    ->dehydrated(false)
+                    ->label('Member')
+                    ->searchable()
+                    ->preload()
+                    ->options(Member::pluck('full_name', 'id'))
+                    ->reactive(),
                 Select::make('loan_account_id')
-                    ->options(LoanAccount::pluck('number', 'id'))
+                    ->options(fn ($get) => LoanAccount::when($get('member_id'), fn ($q, $v) => $q->where('member_id', $v))->pluck('number', 'id'))
                     ->searchable()
                     ->reactive()
                     ->label('Loan Account')
                     ->preload(),
-                Placeholder::make('member')->content(fn ($get) => LoanAccount::find($get('loan_account_id'))?->member?->full_name),
                 TextInput::make('reference_number')
                     ->required(),
                 TextInput::make('principal')

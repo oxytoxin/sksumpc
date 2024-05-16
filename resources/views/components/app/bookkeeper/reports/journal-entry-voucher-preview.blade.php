@@ -1,35 +1,35 @@
 <div x-data>
-    <table x-ref="print" class="w-full font-serif border-2 border-black">
+    <table x-ref="print" class="w-full border-2 border-black font-serif">
         <thead>
             <tr>
                 <td colspan="6">&nbsp</td>
             </tr>
             <tr>
-                <td colspan="6" class="text-center font-bold text-sm">SULTAN KUDARAT STATE UNIVERSITY MULTI - PURPOSE
+                <td colspan="6" class="text-center text-sm font-bold">SULTAN KUDARAT STATE UNIVERSITY MULTI - PURPOSE
                     COOPERATIVE</td>
             </tr>
             <tr>
-                <td colspan="6" class="text-center font-bold text-sm">ACCESS E.J.C. Montilla, Tacurong City</td>
+                <td colspan="6" class="text-center text-sm font-bold">ACCESS E.J.C. Montilla, Tacurong City</td>
             </tr>
             <tr>
-                <td colspan="6" class="text-center font-bold text-sm">TIN 005-811-330 NON - VAT</td>
+                <td colspan="6" class="text-center text-sm font-bold">TIN 005-811-330 NON - VAT</td>
             </tr>
             <tr>
                 <td colspan="6">&nbsp</td>
             </tr>
         </thead>
-        <tbody class="text-xs mt-4">
-            <tr class="border-t-2 border-x-2 border-black">
-                <td class="border-black border-r px-2 w-1/6">NAME:</td>
+        <tbody class="mt-4 text-xs">
+            <tr class="border-x-2 border-t-2 border-black">
+                <td class="w-1/6 border-r border-black px-2">NAME:</td>
                 <td colspan="2" class="border-t border-black px-2">{{ $journal_entry_voucher->name }}</td>
-                <td class="border-black border-x border-t px-2 w-1/6"> DATE:</td>
+                <td class="w-1/6 border-x border-t border-black px-2"> DATE:</td>
                 <td colspan="2" class="border-t border-black px-2">
                     {{ $journal_entry_voucher->transaction_date->format('m/d/Y') }}</td>
             </tr>
-            <tr class="border-b-2 border-x-2 border-black">
-                <td class="border-black border-r border-t px-2 w-1/6">ADDRESS:</td>
+            <tr class="border-x-2 border-b-2 border-black">
+                <td class="w-1/6 border-r border-t border-black px-2">ADDRESS:</td>
                 <td colspan="2" class="border-t border-black px-2">{{ $journal_entry_voucher->address }}</td>
-                <td class="border-black border-x border-t px-2 w-1/6"> JEV#:</td>
+                <td class="w-1/6 border-x border-t border-black px-2"> JEV#:</td>
                 <td colspan="2" class="border-t border-black px-2">{{ $journal_entry_voucher->reference_number }}
                 </td>
             </tr>
@@ -37,10 +37,10 @@
                 <td colspan="6">&nbsp</td>
             </tr>
             <tr>
-                <td colspan="6" class="text-center border-2 border-black">DESCRIPTION</td>
+                <td colspan="6" class="border-2 border-black text-center">DESCRIPTION</td>
             </tr>
             <tr>
-                <td colspan="6" class="text-justify border-2 whitespace-pre-line border-black px-2">
+                <td colspan="6" class="whitespace-pre-line border-2 border-black px-2 text-justify">
                     {{ $journal_entry_voucher->description }}
                 </td>
             </tr>
@@ -58,21 +58,21 @@
             @endphp
             @foreach ($journal_entry_items as $item)
                 <tr>
-                    <td colspan="2" class="border border-black uppercase text-center w-1/2">
+                    <td colspan="2" class="w-1/2 border border-black px-2 text-justify uppercase">
                         {{ $item->account->fullname }}</td>
-                    <td colspan="2" class="border border-black text-center w-1/6">{{ $item->account->number }}
+                    <td colspan="2" class="w-1/6 border border-black text-center">{{ $item->account->number }}
                     </td>
-                    <td class="border border-black text-right w-1/6">
+                    <td class="w-1/6 border border-black text-right">
                         {{ $item->debit ? number_format($item->debit, 2) : '' }}
                     </td>
-                    <td class="border border-black text-right w-1/6">
+                    <td class="w-1/6 border border-black text-right">
                         {{ $item->credit ? number_format($item->credit, 2) : '' }}
                     </td>
                 </tr>
             @endforeach
             <tr>
                 <td colspan="2" class="border border-black uppercase"></td>
-                <td colspan="2" class="border border-black font-bold px-2">TOTAL:</td>
+                <td colspan="2" class="border border-black px-2 font-bold">TOTAL:</td>
                 <td class="border border-black text-right">
                     {{ $journal_entry_items->sum('debit') ? number_format($journal_entry_items->sum('debit'), 2) : '' }}
                 </td>
@@ -84,25 +84,24 @@
                 <td class="border-b border-black" colspan="6">&nbsp</td>
             </tr>
             <tr>
-                <td colspan="2" class="border-r px-2 border-black">PREPARED BY:</td>
-                <td colspan="2" class="border-r px-2 border-black">NOTED:</td>
+                <td colspan="2" class="border-r border-black px-2">PREPARED BY:</td>
+                <td colspan="2" class="border-r border-black px-2">NOTED:</td>
                 <td colspan="2" class="">APPROVED BY:</td>
             </tr>
             <tr>
-                <td colspan="2" class="pt-8 font-bold text-center border-r px-2 border-black">JOANA MONA R. PRIMACIO
+                <td colspan="2" class="border-r border-black px-2 pt-8 text-center font-bold">JOANA MONA R. PRIMACIO
                 </td>
-                <td colspan="2" class="pt-8 font-bold text-center border-r px-2 border-black">LOVINA P. COGOLLO</td>
-                <td colspan="2" class="pt-8 font-bold text-center ">FLORA C. DAMANDAMAN</td>
+                <td colspan="2" class="border-r border-black px-2 pt-8 text-center font-bold">LOVINA P. COGOLLO</td>
+                <td colspan="2" class="pt-8 text-center font-bold">FLORA C. DAMANDAMAN</td>
             </tr>
             <tr>
-                <td colspan="2" class="text-center border-r px-2 border-black">Bookkeeper</td>
-                <td colspan="2" class="text-center border-r px-2 border-black">Audit Committee Chairman</td>
-                <td colspan="2" class="text-center ">Manager</td>
+                <td colspan="2" class="border-r border-black px-2 text-center">Bookkeeper</td>
+                <td colspan="2" class="border-r border-black px-2 text-center">Audit Committee Chairman</td>
+                <td colspan="2" class="text-center">Manager</td>
             </tr>
         </tbody>
     </table>
-    <div class="p-4 flex justify-end">
-        <x-filament::button icon="heroicon-o-printer"
-            @click="printOut($refs.print.outerHTML, 'Journal Entry Voucher')">Print</x-filament::button>
+    <div class="flex justify-end p-4">
+        <x-filament::button icon="heroicon-o-printer" @click="printOut($refs.print.outerHTML, 'Journal Entry Voucher')">Print</x-filament::button>
     </div>
 </div>

@@ -63,6 +63,18 @@ class LegacyLoanVoucherPayments extends Page
                     ->columnWidths(['account_id' => '13rem', 'member_id' => '13rem'])
                     ->rule(new BalancedBookkeepingEntries)
                     ->reactive()
+                    ->reactive()
+                    ->afterStateUpdated(function ($set, $state) {
+                        $items = collect($state);
+                        $cib = Account::getCashInBankGF();
+                        $net_amount = $items->firstWhere('account_id', $cib?->id);
+                        if ($net_amount) {
+                            $items = $items->filter(fn ($i) => $i['account_id'] != $net_amount['account_id']);
+                            $net_amount['credit'] = $items->sum('debit') - $items->sum('credit');
+                            $items->push($net_amount);
+                        }
+                        $set('disbursement_voucher_items', $items->toArray());
+                    })
                     ->schema(function ($get) {
                         return [
                             Select::make('member_id')

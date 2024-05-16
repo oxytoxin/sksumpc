@@ -17,7 +17,7 @@ class BalancedBookkeepingEntries implements ValidationRule
         $debit_total = collect($value)->map(fn ($v) => floatval($v['debit']))->sum();
         $credit_total = collect($value)->map(fn ($v) => floatval($v['credit']))->sum();
         if ($credit_total !== $debit_total) {
-            $fail('JEV items have unbalanced credit vs debit total.');
+            $fail('Items have unbalanced credit vs debit total.');
         }
     }
 }
