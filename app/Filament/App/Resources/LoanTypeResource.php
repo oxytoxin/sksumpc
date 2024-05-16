@@ -5,6 +5,7 @@ namespace App\Filament\App\Resources;
 use App\Filament\App\Resources\LoanTypeResource\Pages;
 use App\Models\LoanType;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -60,6 +61,9 @@ class LoanTypeResource extends Resource
                     ->required()
                     ->numeric()
                     ->default(0.0000),
+                Toggle::make('has_monthly_amortization')
+                    ->default(true)
+                    ->required()
             ]);
     }
 
@@ -73,36 +77,28 @@ class LoanTypeResource extends Resource
                     ->searchable(),
                 TextColumn::make('interest_rate')
                     ->numeric()
-                    ->formatStateUsing(fn ($state) => $state * 100 .'%')
+                    ->formatStateUsing(fn ($state) => $state * 100 . '%')
                     ->sortable(),
                 TextColumn::make('surcharge_rate')
                     ->numeric()
-                    ->formatStateUsing(fn ($state) => $state * 100 .'%')
+                    ->formatStateUsing(fn ($state) => $state * 100 . '%')
                     ->sortable(),
                 TextColumn::make('service_fee')
                     ->numeric()
-                    ->formatStateUsing(fn ($state) => $state * 100 .'%')
+                    ->formatStateUsing(fn ($state) => $state * 100 . '%')
                     ->sortable(),
                 TextColumn::make('cbu_common')
                     ->numeric()
-                    ->formatStateUsing(fn ($state) => $state * 100 .'%')
+                    ->formatStateUsing(fn ($state) => $state * 100 . '%')
                     ->sortable(),
                 TextColumn::make('imprest')
                     ->numeric()
-                    ->formatStateUsing(fn ($state) => $state * 100 .'%')
+                    ->formatStateUsing(fn ($state) => $state * 100 . '%')
                     ->sortable(),
                 TextColumn::make('insurance')
                     ->numeric(4)
-                    ->formatStateUsing(fn ($state) => $state * 100 .'%')
+                    ->formatStateUsing(fn ($state) => $state * 100 . '%')
                     ->sortable(),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //

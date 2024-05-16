@@ -80,6 +80,7 @@ class LoanTypeSeeder extends Seeder
             'cbu_common' => 0.02,
             'imprest' => 0.01,
             'insurance' => 0.0192,
+            'has_monthly_amortization' => true,
         ]);
         LoanType::create([
             'code' => 'FNPL',

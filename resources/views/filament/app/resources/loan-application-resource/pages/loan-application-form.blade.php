@@ -52,7 +52,11 @@
                     </div>
                     <div class="flex space-x-4">
                         <h4 class="font-bold">MONTHLY AMORTIZATION:</h4>
-                        <h4 class="min-w-[8rem] border-b border-black px-4"> {{ format_money($loan_application->monthly_payment, 'PHP') }}</h4>
+                        <h4 class="min-w-[8rem] border-b border-black px-4">
+                            @if ($loan_application->loan_type->has_monthly_amortization)
+                                {{ format_money($loan_application->monthly_payment, 'PHP') }}
+                            @endif
+                        </h4>
                     </div>
                     <div class="flex space-x-4">
                         <h4 class="font-bold">TYPE OF LOAN:</h4>
@@ -61,6 +65,10 @@
                     <div class="flex space-x-4">
                         <h4 class="font-bold">TERMS APPLIED:</h4>
                         <h4 class="min-w-[8rem] border-b border-black px-4">{{ $loan_application->number_of_terms }} </h4>
+                    </div>
+                    <div class="flex space-x-4">
+                        <h4 class="font-bold">CAPITAL SHARE:</h4>
+                        <h4 class="min-w-[8rem] border-b border-black px-4">{{ renumber_format($loan_application->cbu_amount) }} </h4>
                     </div>
                 </div>
                 <div class="mt-8 flex flex-col items-center print:leading-[0]">
@@ -124,7 +132,6 @@
                             <thead>
                                 <tr>
                                     <th class="border border-black px-2">Date</th>
-                                    <th class="border border-black px-2">Capital Share</th>
                                     <th class="border border-black px-2">Particulars</th>
                                     <th class="border border-black px-2">Date Granted</th>
                                     <th class="border border-black px-2">Amount Granted</th>
@@ -134,10 +141,23 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @foreach ($loans as $loan)
+                                    <tr>
+                                        <td class="border border-black px-2">{{ $loan->transaction_date->format('m/d/Y') }}</td>
+                                        <td class="border border-black px-2">{{ $loan->loan_type->name }}</td>
+                                        <td class="border border-black px-2">{{ $loan->release_date?->format('m/d/Y') }}</td>
+                                        <td class="border border-black px-2">{{ format_money($loan->gross_amount, 'PHP') }}</td>
+                                        <td class="border border-black px-2">{{ format_money($loan->monthly_payment, 'PHP') }} </td>
+                                        <td class="border border-black px-2">
+                                            {{ format_money($loan->outstanding_balance, 'PHP') }}
+                                        </td>
+                                        <td class="border border-black px-2">
+                                        </td>
+                                    </tr>
+                                @endforeach
                                 @forelse ($loan_applications as $la)
                                     <tr>
                                         <td class="border border-black px-2">{{ $la->transaction_date->format('m/d/Y') }}</td>
-                                        <td class="border border-black px-2">{{ format_money($la->cbu_amount, 'PHP') }}</td>
                                         <td class="border border-black px-2">{{ $la->loan_type->name }}</td>
                                         <td class="border border-black px-2"></td>
                                         <td class="border border-black px-2">{{ format_money($la->desired_amount, 'PHP') }}</td>
@@ -150,21 +170,6 @@
                                         <td colspan="8" class="border border-black px-2 text-center">No loan applications found.</td>
                                     </tr>
                                 @endforelse
-                                @foreach ($loans as $loan)
-                                    <tr>
-                                        <td class="border border-black px-2">{{ $loan->transaction_date->format('m/d/Y') }}</td>
-                                        <td class="border border-black px-2">{{ format_money($loan->loan_application->cbu_amount, 'PHP') }}</td>
-                                        <td class="border border-black px-2">{{ $loan->loan_type->name }}</td>
-                                        <td class="border border-black px-2">{{ $loan->release_date?->format('m/d/Y') }}</td>
-                                        <td class="border border-black px-2">{{ format_money($loan->gross_amount, 'PHP') }}</td>
-                                        <td class="border border-black px-2">{{ format_money($loan->monthly_payment, 'PHP') }} </td>
-                                        <td class="border border-black px-2">
-                                            {{ format_money($loan->outstanding_balance, 'PHP') }}
-                                        </td>
-                                        <td class="border border-black px-2">
-                                        </td>
-                                    </tr>
-                                @endforeach
                             </tbody>
                         </table>
                     </div>
@@ -204,7 +209,11 @@
                     <p class="indent-8">
                         For the value received, I/We jointly and severally, promise to pay the SKSU - MPC or order the sum of <span class="border-b border-black px-4 uppercase">{{ $loan_application->desired_amount_in_words }} pesos only (P{{ renumber_format($loan_application->desired_amount, 2) }})</span>
                         payable in <span class="border-b border-black px-4">{{ $loan_application->number_of_terms }} months</span>
-                        equal installment of <span class="border-b border-black px-4">(P {{ renumber_format($loan_application->monthly_payment, 2) }})</span> the first payment to
+                        equal installment of <span class="inline-block min-w-[8rem] border-b border-black px-4">
+                            @if ($loan_application->loan_type->has_monthly_amortization)
+                                (P {{ renumber_format($loan_application->monthly_payment, 2) }})
+                            @endif
+                        </span> the first payment to
                         be made on <span class="inline-block min-w-[8rem] border-b border-black px-4 text-center indent-0">{{ $loan_application->payment_start_date?->format('F d, Y') }}</span>
                         and every payday thereafter until the full amount has been paid.
                     </p>
