@@ -55,7 +55,8 @@ class DepositToLoveGiftsAccount
             reference_number: $love_gift->reference_number,
             credit: $love_gift->amount,
             member_id: $member->id,
-            remarks: 'Member Deposit to Love Gifts'
+            remarks: 'Member Deposit to Love Gifts',
+            tag: 'member_love_gift_deposit',
         ));
         DB::commit();
 

@@ -60,6 +60,7 @@ class DepositToSavingsAccount
             credit: $savings->amount,
             member_id: $member->id,
             remarks: 'Member Deposit to Savings',
+            tag: 'member_savings_deposit',
             transaction_date: $data->transaction_date,
         ));
         DB::commit();

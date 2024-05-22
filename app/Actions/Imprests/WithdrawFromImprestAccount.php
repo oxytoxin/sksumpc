@@ -67,6 +67,7 @@ class WithdrawFromImprestAccount
             member_id: $member->id,
             remarks: 'Member Withdrawal from Imprest',
             transaction_date: $data->transaction_date,
+            tag: 'member_imprest_withdrawal',
         ));
         DB::commit();
 

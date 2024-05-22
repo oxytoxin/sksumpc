@@ -4,6 +4,7 @@
             <tr>
                 <th class="border border-black text-center">NO.</th>
                 <th class="border border-black text-center">MEMBER NAME</th>
+                <th class="border border-black text-center">ACCOUNT NUMBER</th>
                 <th class="border border-black text-center">REFERENCE #</th>
                 <th class="border border-black text-center">DEPOSIT</th>
                 <th class="border border-black text-center">WITHDRAWAL</th>
@@ -18,6 +19,9 @@
                         {{ $record->member->full_name }}
                     </td>
                     <td class="whitespace-nowrap border border-black px-2 text-center">
+                        {{ $record instanceof App\Models\Saving ? $record->savings_account->number : $record->member->imprest_account->number }}
+                    </td>
+                    <td class="whitespace-nowrap border border-black px-2 text-center">
                         {{ $record->reference_number }}
                     </td>
                     <td class="border border-black text-center">
@@ -29,11 +33,11 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="5" class="border border-black text-center">No transactions today.</td>
+                    <td colspan="7" class="border border-black text-center">No transactions today.</td>
                 </tr>
             @endforelse
             <tr>
-                <th colspan="3" class="border border-black text-center">GRAND TOTAL</th>
+                <th colspan="4" class="border border-black text-center">GRAND TOTAL</th>
                 <td class="border border-black text-center">
                     {{ renumber_format($this->table->getRecords()->sum('deposit'), 2) }}</td>
                 <td class="border border-black text-center">

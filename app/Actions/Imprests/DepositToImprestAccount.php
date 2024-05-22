@@ -59,6 +59,7 @@ class DepositToImprestAccount
                 credit: $imprest->amount,
                 member_id: $member->id,
                 remarks: 'Member Deposit to Imprest',
+                tag: 'member_imprest_deposit',
                 transaction_date: $data->transaction_date,
             ));
         }

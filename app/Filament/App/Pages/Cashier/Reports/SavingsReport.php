@@ -16,6 +16,6 @@ class SavingsReport extends Page implements HasTable
 
     private function getReportQuery()
     {
-        return Saving::query();
+        return Saving::query()->with('savings_account');
     }
 }

@@ -24,7 +24,7 @@ class CashCollectiblesReport extends Page implements HasTable
 
     public function mount()
     {
-        data_set($this, 'tableFilters.transaction_date.transaction_date', (config('app.transaction_date')->format('m/d/Y') ?? today()->format('m/d/Y')) . ' - ' . config('app.transaction_date')->format('m/d/Y') ?? today()->format('m/d/Y'));
+        data_set($this, 'tableFilters.transaction_date.transaction_date', (config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')) . ' - ' . (config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')));
     }
 
     public function table(Table $table): Table

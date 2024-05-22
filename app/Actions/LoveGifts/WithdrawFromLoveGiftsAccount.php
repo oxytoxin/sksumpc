@@ -65,7 +65,8 @@ class WithdrawFromLoveGiftsAccount
             reference_number: $love_gift->reference_number,
             debit: $love_gift->amount,
             member_id: $member->id,
-            remarks: 'Member Withdrawal from Love Gift'
+            remarks: 'Member Withdrawal from Love Gift',
+            tag: 'member_love_gift_withdrawal',
         ));
         DB::commit();
 

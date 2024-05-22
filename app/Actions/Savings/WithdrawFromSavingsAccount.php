@@ -70,6 +70,7 @@ class WithdrawFromSavingsAccount
             member_id: $member->id,
             remarks: 'Member Withdrawal from Savings',
             transaction_date: $data->transaction_date,
+            tag: 'member_savings_withdrawal',
         ));
         DB::commit();
 
