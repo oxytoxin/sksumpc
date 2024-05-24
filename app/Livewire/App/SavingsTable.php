@@ -74,6 +74,7 @@ class SavingsTable extends Component implements HasForms, HasTable
                         app(CreateNewSavingsAccount::class)->handle(new SavingsAccountData(
                             member_id: $this->member_id,
                             name: $data['name'],
+                            number: $data['number'],
                         ));
                         Notification::make()->title('Savings account created!')->success()->send();
                     })

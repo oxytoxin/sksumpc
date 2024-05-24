@@ -14,8 +14,7 @@ class CashProof extends Page
 
     use HasSignatories;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
-
+    protected static bool $shouldRegisterNavigation = false;
     protected static string $view = 'filament.app.pages.cashier.reports.cash-proof';
 
     public $data = [];

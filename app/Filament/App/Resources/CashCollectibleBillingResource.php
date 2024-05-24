@@ -41,7 +41,6 @@ class CashCollectibleBillingResource extends Resource
                     ->required(),
                 Select::make('payment_type_id')
                     ->paymenttype()
-                    ->options(PaymentType::whereIn('id', [1, 3, 4])->pluck('name', 'id'))
                     ->default(null)
                     ->selectablePlaceholder(true),
                 DatePicker::make('date')
