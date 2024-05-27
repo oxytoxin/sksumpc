@@ -35,16 +35,16 @@ class CashProof extends Page
     #[Computed]
     public function TotalDeposits()
     {
-        $total_savings_deposit = Saving::query()->whereIn('payment_type_id', [1, 3, 4])->when($this->data['transaction_date'], fn ($q, $v) => $q->whereBetween('transaction_date', explode(' - ', $v)))->sum('deposit');
-        $total_imprest_deposit = Imprest::query()->whereIn('payment_type_id', [1, 3, 4])->when($this->data['transaction_date'], fn ($q, $v) => $q->whereBetween('transaction_date', explode(' - ', $v)))->sum('deposit');
+        $total_savings_deposit = Saving::query()->whereIn('payment_type_id', [1, 3, 4])->when($this->data['transaction_date'] ?? today()->format('m/d/Y - m/d/Y'), fn ($q, $v) => $q->whereBetween('transaction_date', explode(' - ', $v)))->sum('deposit');
+        $total_imprest_deposit = Imprest::query()->whereIn('payment_type_id', [1, 3, 4])->when($this->data['transaction_date'] ?? today()->format('m/d/Y - m/d/Y'), fn ($q, $v) => $q->whereBetween('transaction_date', explode(' - ', $v)))->sum('deposit');
         return $total_savings_deposit + $total_imprest_deposit;
     }
 
     #[Computed]
     public function TotalWithdrawals()
     {
-        $total_savings_withdrawal = Saving::query()->whereIn('payment_type_id', [1, 3, 4])->when($this->data['transaction_date'], fn ($q, $v) => $q->whereBetween('transaction_date', explode(' - ', $v)))->sum('withdrawal');
-        $total_imprest_withdrawal = Imprest::query()->whereIn('payment_type_id', [1, 3, 4])->when($this->data['transaction_date'], fn ($q, $v) => $q->whereBetween('transaction_date', explode(' - ', $v)))->sum('withdrawal');
+        $total_savings_withdrawal = Saving::query()->whereIn('payment_type_id', [1, 3, 4])->when($this->data['transaction_date'] ?? today()->format('m/d/Y - m/d/Y'), fn ($q, $v) => $q->whereBetween('transaction_date', explode(' - ', $v)))->sum('withdrawal');
+        $total_imprest_withdrawal = Imprest::query()->whereIn('payment_type_id', [1, 3, 4])->when($this->data['transaction_date'] ?? today()->format('m/d/Y - m/d/Y'), fn ($q, $v) => $q->whereBetween('transaction_date', explode(' - ', $v)))->sum('withdrawal');
         return $total_savings_withdrawal + $total_imprest_withdrawal;
     }
 
