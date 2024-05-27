@@ -31,9 +31,9 @@
                             {{ $record->transaction_date->format('m/d/Y') }}</th>
                         <td class="border-2 border-black px-4 text-left">{{ $record->reference_number }}</td>
                         <td class="border-2 border-black px-4 text-right">
-                            {{ renumber_format($record->debit, 2) }}</td>
+                            {{ renumber_format($record->withdrawal, 2) }}</td>
                         <td class="border-2 border-black px-4 text-right">
-                            {{ renumber_format($record->credit, 2) }}</td>
+                            {{ renumber_format($record->deposit, 2) }}</td>
                         @php
                             $total += $record->amount;
                         @endphp

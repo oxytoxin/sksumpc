@@ -4,6 +4,7 @@ namespace App\Filament\App\Resources\MemberResource\Pages;
 
 use App\Filament\App\Pages\Cashier\Reports\HasSignatories;
 use App\Filament\App\Resources\MemberResource;
+use App\Models\Saving;
 use App\Models\SavingsAccount;
 use App\Models\Transaction;
 use App\Models\User;
@@ -51,7 +52,7 @@ class SavingsSubsidiaryLedger extends Page implements HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->query(Transaction::whereBelongsTo($this->savings_account, 'account'))
+            ->query(Saving::whereBelongsTo($this->savings_account, 'savings_account'))
             ->content(fn () => view('filament.app.views.savings-sl', ['savings_account' => $this->savings_account, 'signatories' => $this->signatories]))
             ->filters([
                 DateRangeFilter::make('transaction_date')
