@@ -2,9 +2,10 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Account;
-use Illuminate\Console\Command;
 use Schema;
+use App\Models\Account;
+use App\Models\PaymentType;
+use Illuminate\Console\Command;
 
 class UpdateDatabaseConcernsCommand extends Command
 {
@@ -51,9 +52,12 @@ class UpdateDatabaseConcernsCommand extends Command
         // Account::find(15)->update([
         //     'sum_description' => 'NET'
         // ]);
-        Account::whereIn('id', [14, 16])
-            ->update([
-                'tag' => 'probable_loss'
-            ]);
+        // Account::whereIn('id', [14, 16])
+        //     ->update([
+        //         'tag' => 'probable_loss'
+        //     ]);
+        PaymentType::create([
+            'name' => 'DEPOSIT SLIP',
+        ]);
     }
 }

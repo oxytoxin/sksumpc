@@ -24,5 +24,8 @@ class PaymentTypesSeeder extends Seeder
         PaymentType::create([
             'name' => 'ADA/ADV',
         ]);
+        PaymentType::create([
+            'name' => 'DEPOSIT SLIP',
+        ]);
     }
 }
