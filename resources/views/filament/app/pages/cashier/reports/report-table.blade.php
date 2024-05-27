@@ -42,7 +42,7 @@
                     {{ renumber_format($this->table->getRecords()->sum('deposit'), 2) }}</td>
                 <td class="border border-black text-center">
                     {{ renumber_format($this->table->getRecords()->sum('withdrawal'), 2) }}</td>
-                <td class="border border-black text-center"></td>
+                <td class="border border-black text-center">{{ renumber_format($this->table->getRecords()->sum('amount'), 2) }}</td>
             </tr>
         </tbody>
     </table>
