@@ -23,10 +23,12 @@ use App\Models\Religion;
 use App\Oxytoxin\Providers\OverrideProvider;
 use App\Oxytoxin\Providers\ShareCapitalProvider;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
+use Carbon\Carbon;
 use DB;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -214,7 +216,10 @@ class MemberResource extends Resource
                         DatePicker::make('dob')
                             ->before(today()->subYearsNoOverflow(10))
                             ->validationAttribute('Date of Birth')
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(fn ($set, $state) => $set('age', Carbon::make($state)?->diffInYears(today())))
                             ->label('Date of Birth'),
+                        TextInput::make('age')->readOnly()->dehydrated(false)->formatStateUsing(fn ($record) => $record?->age),
                         TextInput::make('place_of_birth')
                             ->label('Place of Birth'),
                         Section::make('Address')

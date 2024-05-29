@@ -4,6 +4,7 @@ namespace App\Filament\App\Pages;
 
 use App\Filament\App\Pages\Cashier\Reports\CashProof;
 use App\Filament\App\Pages\Cashier\Reports\CashCollectiblesReport;
+use App\Filament\App\Pages\Cashier\Reports\DailyCollectionsReport;
 use App\Filament\App\Pages\Cashier\Reports\ImprestsReport;
 use App\Filament\App\Pages\Cashier\Reports\LoanPaymentsReport;
 use App\Filament\App\Pages\Cashier\Reports\LoveGiftsReport;
@@ -37,7 +38,7 @@ class Reports extends Page implements HasForms
     {
         return $form->schema([
             Tabs::make()
-                ->activeTab(1)
+                ->activeTab(9)
                 ->schema([
                     Tab::make('Share Capital')
                         ->schema([
@@ -70,6 +71,10 @@ class Reports extends Page implements HasForms
                     Tab::make('Cash Proof')
                         ->schema([
                             Livewire::make(CashProof::class),
+                        ]),
+                    Tab::make('Daily Collections')
+                        ->schema([
+                            Livewire::make(DailyCollectionsReport::class),
                         ]),
                 ]),
         ]);
