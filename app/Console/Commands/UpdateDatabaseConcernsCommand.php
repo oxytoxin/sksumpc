@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Schema;
 use App\Models\Account;
+use App\Models\MemberType;
 use App\Models\PaymentType;
 use Illuminate\Console\Command;
 
@@ -58,6 +59,16 @@ class UpdateDatabaseConcernsCommand extends Command
         //     ]);
         PaymentType::create([
             'name' => 'DEPOSIT SLIP',
+        ]);
+        MemberType::create([
+            'name' => 'ORGANIZATION',
+            'minimum_initial_payment' => 6500,
+            'default_amount_subscribed' => 25000,
+            'default_number_of_shares' => 50,
+            'par_value' => 500,
+            'surcharge_rate' => 0.01,
+            'initial_number_of_terms' => 12,
+            'additional_number_of_terms' => 36,
         ]);
     }
 }

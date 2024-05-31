@@ -26,6 +26,7 @@ class Member extends Model implements HasMedia
         'dependents' => DataCollection::class . ':' . MemberDependent::class,
         'other_income_sources' => 'array',
         'annual_income' => 'decimal:4',
+        'member_ids' => 'array',
     ];
 
     protected static function booted(): void
@@ -38,6 +39,10 @@ class Member extends Model implements HasMedia
         });
     }
 
+    public function getMembersAttribute()
+    {
+        return Member::findMany($this->member_ids);
+    }
     public function accounts()
     {
         return $this->hasMany(Account::class);

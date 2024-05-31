@@ -32,7 +32,7 @@ class LoanPaymentsReport extends Page implements HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->query(LoanPayment::query())
+            ->query(LoanPayment::query()->with(['loan.loan_account']))
             ->content(fn () => view('filament.app.pages.cashier.reports.loan-payments-report-table', [
                 'signatories' => $this->signatories,
                 'report_title' => $this->report_title,
