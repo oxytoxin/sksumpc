@@ -13,6 +13,7 @@ use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 
 class TransactionDateManager extends Page implements HasActions, HasForms
@@ -49,12 +50,14 @@ class TransactionDateManager extends Page implements HasActions, HasForms
                                 'transaction_date' => $this->transaction_date
                             ]
                         ]);
+                        Notification::make()->title('Transaction date set!')->success()->send();
                     })
                     ->color('success'),
                 Action::make('clear')
                     ->action(function () {
                         SystemConfiguration::config('Transaction Date')?->delete();
                         $this->reset();
+                        Notification::make()->title('Transaction date cleared!')->success()->send();
                     })
                     ->requiresConfirmation()
                     ->color('danger')
