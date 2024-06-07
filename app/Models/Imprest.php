@@ -27,6 +27,7 @@ class Imprest extends Model
         'accrued' => 'boolean',
         'transaction_date' => 'immutable_date',
         'interest_date' => 'immutable_date',
+        'transaction_datetime' => 'immutable_datetime',
     ];
 
     public function member(): BelongsTo

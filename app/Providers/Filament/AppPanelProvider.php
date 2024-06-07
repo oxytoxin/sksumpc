@@ -43,6 +43,7 @@ class AppPanelProvider extends PanelProvider
         return $panel
             ->id('app')
             ->path('/')
+            ->spa()
             ->domain(config('app.url'))
             ->colors([
                 'primary' => '#3F9FEB',

@@ -19,7 +19,15 @@
                         {{ $record->member->full_name }}
                     </td>
                     <td class="whitespace-nowrap border border-black px-2 text-center">
-                        {{ $record instanceof App\Models\Saving ? $record->savings_account->number : $record->member->imprest_account->number }}
+                        @if ($record instanceof App\Models\Saving)
+                            {{ $record->savings_account?->number }}
+                        @endif
+                        @if ($record instanceof App\Models\Imprest)
+                            {{ $record->member->imprest_account?->number }}
+                        @endif
+                        @if ($record instanceof App\Models\CapitalSubscriptionPayment)
+                            {{ $record->member->capital_subscription_account?->number }}
+                        @endif
                     </td>
                     <td class="whitespace-nowrap border border-black px-2 text-center">
                         {{ $record->reference_number }}
