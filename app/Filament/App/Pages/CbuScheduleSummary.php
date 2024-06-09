@@ -44,7 +44,11 @@ class CbuScheduleSummary extends Page
     #[Computed]
     public function DateRange()
     {
-        return implode(' - ', collect(explode(' - ', $this->data['transaction_date']))->map(fn ($d) => date_create($d)->format('F d, Y'))->toArray());
+        $dates = collect(explode(' - ', $this->data['transaction_date']))->map(fn ($d) => date_create($d)->format('F d, Y'))->toArray();
+        if (count($dates) == 2 && $dates[0] == $dates[1]) {
+            return $dates[0];
+        }
+        return implode(' - ', $dates);
     }
 
     #[Computed]
@@ -53,7 +57,7 @@ class CbuScheduleSummary extends Page
         $memberType = MemberType::find(4);
         $amount_paid = CapitalSubscriptionPayment::whereHas('capital_subscription', function ($q) {
             return $q->whereRelation('member', 'member_type_id', 4);
-        })->when($this->data['transaction_date'], fn ($q, $v) => $q->whereBetween('transaction_date', explode(' - ', $v)))
+        })->when($this->data['transaction_date'], fn ($q, $v) => $q->whereBetween('transaction_date', collect(explode(' - ', $v))->map(fn ($d) => date_create_immutable($d)->format('Y-m-d'))->toArray()))
             ->sum('amount');
 
         return $this->getAmounts($amount_paid, $memberType);
@@ -66,13 +70,13 @@ class CbuScheduleSummary extends Page
         $amount_paid = CapitalSubscriptionPayment::whereHas('capital_subscription', function ($q) {
             return $q->whereHas('member', fn ($qu) => $qu->where('member_type_id', 1));
         })
-            ->when($this->data['transaction_date'], fn ($q, $v) => $q->whereBetween('transaction_date', explode(' - ', $v)))
+            ->when($this->data['transaction_date'], fn ($q, $v) => $q->whereBetween('transaction_date', collect(explode(' - ', $v))->map(fn ($d) => date_create_immutable($d)->format('Y-m-d'))->toArray()))
             ->sum('amount');
         $amounts1 = $this->getAmounts($amount_paid, $memberType);
         $memberType = MemberType::find(2);
         $amount_paid = CapitalSubscriptionPayment::whereHas('capital_subscription', function ($q) {
             return $q->whereHas('member', fn ($qu) => $qu->where('member_type_id', 2));
-        })->when($this->data['transaction_date'], fn ($q, $v) => $q->whereBetween('transaction_date', explode(' - ', $v)))
+        })->when($this->data['transaction_date'], fn ($q, $v) => $q->whereBetween('transaction_date', collect(explode(' - ', $v))->map(fn ($d) => date_create_immutable($d)->format('Y-m-d'))->toArray()))
             ->sum('amount');
         $amounts2 = $this->getAmounts($amount_paid, $memberType);
 
@@ -90,7 +94,7 @@ class CbuScheduleSummary extends Page
         $amount_paid = CapitalSubscriptionPayment::whereHas('capital_subscription', function ($q) {
             return $q->whereRelation('member', 'member_type_id', 3);
         })
-            ->when($this->data['transaction_date'], fn ($q, $v) => $q->whereBetween('transaction_date', explode(' - ', $v)))
+            ->when($this->data['transaction_date'], fn ($q, $v) => $q->whereBetween('transaction_date', collect(collect(explode(' - ', $v))->map(fn ($d) => date_create_immutable($d)->format('Y-m-d'))->toArray())->map(fn ($d) => date_create_immutable($d)->format('Y-m-d'))->toArray()))
             ->sum('amount');
 
         return $this->getAmounts($amount_paid, $memberType);

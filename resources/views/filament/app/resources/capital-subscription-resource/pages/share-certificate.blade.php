@@ -91,29 +91,8 @@
                 </div>
             </div>
         </div>
-        <div class="mt-24 flex break-before-page gap-8 print:mt-0">
-            <div class="w-60">
-                <div style="writing-mode:vertical-rl; transform:rotate(180deg);" class="max-h-96 text-xs">
-                    <p>For value received <strong class="underline">{{ number_format($capital_subscription->amount_subscribed, 2) }}</strong> hereby sell, assign and transfer unto <strong class="underline">{{ $capital_subscription->member->full_name }}</strong> Shares of the Share Capital represented by the herewith Certificate and do hereby irrevocably constitute and appoint ______________ to transfer the said shares on the books of the within named Cooperative with full power of substitution in the premises. </p>
-                    <p class="mr-8">Dated {{ $capital_subscription->transaction_date->format('F d, Y') }}. </p>
-                    <p> In the presence of</p>
-                    <div class="mr-8 flex justify-between">
-                        <div class="flex flex-col items-center">
-                            <p>________________________</p>
-                            <p>Witness</p>
-                        </div>
-                        <div class="flex flex-col items-center">
-                            <p class="underline">{{ $capital_subscription->member->full_name }}</p>
-                            <p>Share Capital Owner</p>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <p class="mt-4 text-justify text-xs">
-                        NOTICE: THE SIGNATURE OF THE ASSIGNMENT MUST CORRESPOND WITH THE NAME AS WRITTEN UPON THE FACE OF THE CERTIFICATE IN EVERY PARTICULAR, WITHOUT ALTERATION OR ENLARGEMENT OR ANY CHANGES WHATSOEVER.
-                    </p>
-                </div>
-            </div>
+        <div class="mt-24 break-before-page gap-8 print:mt-0">
+
             <div class="flex flex-1 flex-col items-center gap-4 border-2 border-green-700 p-4">
                 <h2 class="text-2xl font-bold">SHARE CERTIFICATE</h2>
                 <p>FOR</p>
@@ -128,6 +107,28 @@
                 <div class="mt-8 text-center">
                     <p class="underline">{{ $capital_subscription->transaction_date->format('F d, Y') }}</p>
                     <p>Date</p>
+                </div>
+            </div>
+            <div>
+                <div class="mt-4 max-h-96 text-xs">
+                    <p>For value received <strong class="underline">{{ number_format($capital_subscription->amount_subscribed, 2) }}</strong> hereby sell, assign and transfer unto <strong class="underline">{{ $capital_subscription->member->full_name }}</strong> Shares of the Share Capital represented by the herewith Certificate and do hereby irrevocably constitute and appoint ______________ to transfer the said shares on the books of the within named Cooperative with full power of substitution in the premises. </p>
+                    <p class="mr-8">Dated {{ $capital_subscription->transaction_date->format('F d, Y') }}. </p>
+                    <p> In the presence of</p>
+                    <div class="mr-8 flex justify-center gap-32">
+                        <div class="flex flex-col items-center">
+                            <p class="inline-block min-w-[16rem] border-b border-black">&nbsp;</p>
+                            <p>Witness</p>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <p class="inline-block min-w-[16rem] border-b border-black text-center">{{ $capital_subscription->member->full_name }}</p>
+                            <p>Share Capital Owner</p>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <p class="mt-4 text-justify text-xs">
+                        NOTICE: THE SIGNATURE OF THE ASSIGNMENT MUST CORRESPOND WITH THE NAME AS WRITTEN UPON THE FACE OF THE CERTIFICATE IN EVERY PARTICULAR, WITHOUT ALTERATION OR ENLARGEMENT OR ANY CHANGES WHATSOEVER.
+                    </p>
                 </div>
             </div>
         </div>
