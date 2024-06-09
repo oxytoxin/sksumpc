@@ -57,9 +57,9 @@ class UpdateDatabaseConcernsCommand extends Command
         //     ->update([
         //         'tag' => 'probable_loss'
         //     ]);
-        PaymentType::create([
-            'name' => 'DEPOSIT SLIP',
-        ]);
+        // PaymentType::create([
+        //     'name' => 'DEPOSIT SLIP',
+        // ]);
         MemberType::create([
             'name' => 'ORGANIZATION',
             'minimum_initial_payment' => 6500,
