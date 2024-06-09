@@ -59,28 +59,6 @@ class SavingsTable extends Component implements HasForms, HasTable
                 DeleteAction::make(),
             ])
             ->headerActions([
-                CreateAction::make('NewAccount')
-                    ->label('New Account')
-                    ->modalHeading('New Savings Account')
-                    ->form([
-                        TextInput::make('name')
-                            ->default(Member::find($this->member_id)->full_name)
-                            ->required(),
-                        TextInput::make('number')
-                            ->default(app(GenerateAccountNumber::class)->handle(member_type_id: Member::find($this->member_id)->member_type_id))
-                            ->required(),
-                    ])
-                    ->action(function ($data) {
-                        app(CreateNewSavingsAccount::class)->handle(new SavingsAccountData(
-                            member_id: $this->member_id,
-                            name: $data['name'],
-                            number: $data['number'],
-                        ));
-                        Notification::make()->title('Savings account created!')->success()->send();
-                    })
-                    ->visible(auth()->user()->can('manage mso'))
-                    ->color(Color::Emerald)
-                    ->createAnother(false),
                 ViewAction::make('subsidiary_ledger')
                     ->icon('heroicon-o-clipboard-document-list')
                     ->label('Subsidiary Ledger')

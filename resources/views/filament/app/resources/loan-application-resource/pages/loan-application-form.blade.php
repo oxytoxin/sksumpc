@@ -177,7 +177,7 @@
                         <p>Certified Correct:</p>
                         <div class="flex justify-around">
                             <div class="mt-8 flex flex-col items-center">
-                                <p class="font-bold uppercase">{{ $loan_application->processor->name }}</p>
+                                <p class="font-bold uppercase">{{ $loan_application->processor?->name }}</p>
                                 <p>Loan Officer</p>
                             </div>
                             <div class="mt-8 flex flex-col items-center">

@@ -73,19 +73,18 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                     ->options(Member::pluck('full_name', 'id'))
                     ->searchable()
                     ->afterStateUpdated(fn ($set) => $set('transactions', []))
-                    ->required()
                     ->reactive(),
                 Placeholder::make('member_type')
                     ->content(fn ($get) => Member::find($get('member_id'))?->member_type->name),
                 Builder::make('transactions')
                     ->required()
-                    ->disabled(fn ($get) => !$get('member_id'))
                     ->collapsible()
                     ->addBetweenAction(
                         fn (Action $action) => $action->visible(false),
                     )
                     ->blocks([
                         Block::make('savings')
+                            ->visible(fn ($get) => $get('../member_id'))
                             ->columns(2)
                             ->schema(fn () => [
                                 Section::make('')
@@ -135,6 +134,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                             ]),
                         Block::make('imprest')
                             ->columns(2)
+                            ->visible(fn ($get) => $get('../member_id'))
                             ->schema([
                                 Section::make('')
                                     ->extraAttributes(['data-transaction' => 'imprest'])
@@ -160,6 +160,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                             ]),
                         Block::make('love_gift')
                             ->columns(2)
+                            ->visible(fn ($get) => $get('../member_id'))
                             ->schema([
                                 Section::make('')
                                     ->extraAttributes(['data-transaction' => 'love-gifts'])
@@ -185,6 +186,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                             ]),
                         Block::make('time_deposit')
                             ->columns(2)
+                            ->visible(fn ($get) => $get('../member_id'))
                             ->schema([
                                 Section::make('')
                                     ->extraAttributes(['data-transaction' => 'time-deposit'])
@@ -226,6 +228,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                             ]),
                         Block::make('loan')
                             ->columns(2)
+                            ->visible(fn ($get) => $get('../member_id'))
                             ->schema([
                                 Section::make('')
                                     ->extraAttributes(['data-transaction' => 'loan'])
@@ -238,6 +241,8 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                             ->afterStateUpdated(fn ($set, $state) => $set('amount', LoanAccount::find($state)?->loan?->monthly_payment))
                                             ->required()
                                             ->preload(),
+                                        Placeholder::make('loan_type')
+                                            ->content(fn ($get) => LoanAccount::find($get('loan_account_id'))?->loan?->loan_type?->name),
                                         Select::make('payment_type_id')
                                             ->paymenttype()
                                             ->required(),
@@ -406,7 +411,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                 if ($transaction['type'] == 'cash_collection') {
                                     $cashCollectible = CashCollectible::find($transaction['data']['cash_collectible_id']);
                                     app(PayCashCollectible::class)->handle($cashCollectible, new CashCollectiblePaymentData(
-                                        member_id: $member->id,
+                                        member_id: $member?->id,
                                         payee: $transaction['data']['payee'],
                                         payment_type_id: $transaction['data']['payment_type_id'],
                                         reference_number: $transaction['data']['reference_number'],
