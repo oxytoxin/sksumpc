@@ -17,6 +17,7 @@ use App\Livewire\App\LoansTable;
 use App\Livewire\App\MsoTable;
 use App\Models\Member;
 use App\Models\MembershipStatus;
+use App\Models\MemberSubtype;
 use App\Models\MemberType;
 use App\Models\Occupation;
 use App\Models\Religion;
@@ -169,12 +170,6 @@ class MemberResource extends Resource
                                     ->live()
                                     ->afterStateUpdated(function ($state, $set) {
                                         $member_type = MemberType::find($state);
-                                        if ($member_type?->id == 2) {
-                                            $set('number_of_shares', $member_type->default_number_of_shares);
-                                            $set('amount_subscribed', $member_type->default_amount_subscribed);
-
-                                            return;
-                                        }
                                         if ($member_type?->id == 1) {
                                             $set('present_employer', 'SKSU-Sultan Kudarat State University');
                                             $set('number_of_shares', $member_type->default_number_of_shares);
@@ -182,9 +177,15 @@ class MemberResource extends Resource
 
                                             return;
                                         }
+                                        $set('member_subtype_id', null);
                                         $set('present_employer', '');
                                     })
                                     ->required(),
+                                Select::make('member_subtype_id')
+                                    ->relationship('member_subtype', 'name')
+                                    ->options(fn($get) => MemberSubtype::whereMemberTypeId($get('member_type_id'))->pluck('name', 'id'))
+                                    ->required(fn($get) => $get('member_type_id') == 1)
+                                    ->live(),
                                 Select::make('division_id')
                                     ->relationship('division', 'name'),
                                 Select::make('patronage_status_id')

@@ -72,18 +72,12 @@ class CbuScheduleSummary extends Page
         })
             ->when($this->data['transaction_date'], fn ($q, $v) => $q->whereBetween('transaction_date', collect(explode(' - ', $v))->map(fn ($d) => date_create_immutable($d)->format('Y-m-d'))->toArray()))
             ->sum('amount');
-        $amounts1 = $this->getAmounts($amount_paid, $memberType);
-        $memberType = MemberType::find(2);
-        $amount_paid = CapitalSubscriptionPayment::whereHas('capital_subscription', function ($q) {
-            return $q->whereHas('member', fn ($qu) => $qu->where('member_type_id', 2));
-        })->when($this->data['transaction_date'], fn ($q, $v) => $q->whereBetween('transaction_date', collect(explode(' - ', $v))->map(fn ($d) => date_create_immutable($d)->format('Y-m-d'))->toArray()))
-            ->sum('amount');
-        $amounts2 = $this->getAmounts($amount_paid, $memberType);
+        $amounts = $this->getAmounts($amount_paid, $memberType);
 
         return [
-            'shares_paid' => $amounts1['shares_paid'] + $amounts2['shares_paid'],
-            'shares_deposit' => $amounts1['shares_deposit'] + $amounts2['shares_deposit'],
-            'amount_paid' => $amounts1['amount_paid'] + $amounts2['amount_paid'],
+            'shares_paid' => $amounts['shares_paid'],
+            'shares_deposit' => $amounts['shares_deposit'],
+            'amount_paid' => $amounts['amount_paid'],
         ];
     }
 
