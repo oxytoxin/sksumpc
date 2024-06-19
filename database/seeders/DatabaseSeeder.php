@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->call(MemberSubtypesSeeder::class);
         $this->call(SystemConfigurationSeeder::class);
         $this->call(UserRoleSeeder::class);
         $this->call(DisapprovalReasonSeeder::class);

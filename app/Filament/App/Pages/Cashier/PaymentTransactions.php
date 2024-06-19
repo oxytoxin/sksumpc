@@ -13,6 +13,7 @@ use App\Actions\Savings\CreateNewSavingsAccount;
 use App\Actions\Savings\DepositToSavingsAccount;
 use App\Actions\Savings\WithdrawFromSavingsAccount;
 use App\Actions\TimeDeposits\CreateTimeDeposit;
+use App\Filament\App\Pages\Cashier\Traits\HasReceipt;
 use App\Models\CashCollectible;
 use App\Models\LoanAccount;
 use App\Models\Member;
@@ -57,7 +58,7 @@ use function Filament\Support\format_money;
 
 class PaymentTransactions extends Component implements HasActions, HasForms
 {
-    use InteractsWithActions, InteractsWithForms, RequiresBookkeeperTransactionDate;
+    use InteractsWithActions, InteractsWithForms, RequiresBookkeeperTransactionDate, HasReceipt;
 
     public $data = [];
 
@@ -456,18 +457,6 @@ class PaymentTransactions extends Component implements HasActions, HasForms
             ]);
     }
 
-    public function receipt(): ActionsAction
-    {
-        return ActionsAction::make('receipt')
-            ->requiresConfirmation()
-            ->modalContent(fn ($arguments) => view('filament.app.pages.cashier.transaction-receipt', ['transactions' => $arguments['transactions']]))
-            ->modalWidth(MaxWidth::FourExtraLarge)
-            ->modalCancelAction(false)
-            ->modalHeading(false)
-            ->closeModalByClickingAway(false)
-            ->action(function ($arguments) {
-            });
-    }
 
     public function mount()
     {

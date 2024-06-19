@@ -357,6 +357,8 @@ class MemberResource extends Resource
             ->filters([
                 SelectFilter::make('member_type')
                     ->relationship('member_type', 'name'),
+                SelectFilter::make('member_subtype')
+                    ->relationship('member_subtype', 'name'),
                 SelectFilter::make('gender')
                     ->relationship('gender', 'name'),
                 SelectFilter::make('patronage_status')

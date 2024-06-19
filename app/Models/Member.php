@@ -64,6 +64,11 @@ class Member extends Model implements HasMedia
         return $this->belongsTo(MemberType::class);
     }
 
+    public function member_subtype(): BelongsTo
+    {
+       return $this->belongsTo(MemberSubtype::class);
+    }
+
     public function gender(): BelongsTo
     {
         return $this->belongsTo(Gender::class);

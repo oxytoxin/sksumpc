@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Member;
 use Schema;
 use App\Models\Account;
 use App\Models\MemberType;
@@ -29,6 +30,7 @@ class UpdateDatabaseConcernsCommand extends Command
      */
     public function handle()
     {
+        \DB::beginTransaction();
         // $account = Account::create(['account_type_id' => 1, 'name' => 'CASH AND CASH EQUIVALENTS', 'number' => '11100', 'sort' => 10]);
         // Account::where('id', '<=', 12)->whereNull('parent_id')->update([
         //     'parent_id' => $account->id
@@ -60,15 +62,35 @@ class UpdateDatabaseConcernsCommand extends Command
         // PaymentType::create([
         //     'name' => 'DEPOSIT SLIP',
         // ]);
-        MemberType::create([
-            'name' => 'ORGANIZATION',
-            'minimum_initial_payment' => 6500,
-            'default_amount_subscribed' => 25000,
-            'default_number_of_shares' => 50,
-            'par_value' => 500,
-            'surcharge_rate' => 0.01,
-            'initial_number_of_terms' => 12,
-            'additional_number_of_terms' => 36,
+//        MemberType::create([
+//            'name' => 'ORGANIZATION',
+//            'minimum_initial_payment' => 6500,
+//            'default_amount_subscribed' => 25000,
+//            'default_number_of_shares' => 50,
+//            'par_value' => 500,
+//            'surcharge_rate' => 0.01,
+//            'initial_number_of_terms' => 12,
+//            'additional_number_of_terms' => 36,
+//        ]);
+        MemberType::find(1)->update([
+            'name' => 'REGULAR'
         ]);
+        Member::whereMemberTypeId(1)->update([
+            'member_subtype_id' => 1,
+        ]);
+        Member::whereMemberTypeId(2)->update([
+            'member_subtype_id' => 2,
+            'member_type_id' => 1
+        ]);
+        Member::whereMemberTypeId(6)->update([
+            'member_subtype_id' => 3,
+            'member_type_id' => 1
+        ]);
+        Member::whereMemberTypeId(5)->update([
+            'member_subtype_id' => 4,
+            'member_type_id' => 1
+        ]);
+        MemberType::whereIn('id', [2, 5, 6])->delete();
+        \DB::commit();
     }
 }
