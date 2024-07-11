@@ -13,6 +13,10 @@ use App\Actions\Savings\CreateNewSavingsAccount;
 use App\Actions\Savings\DepositToSavingsAccount;
 use App\Actions\Savings\WithdrawFromSavingsAccount;
 use App\Actions\TimeDeposits\CreateTimeDeposit;
+use App\Filament\App\Pages\Cashier\Actions\CashierTransactionsPageCbuPayment;
+use App\Filament\App\Pages\Cashier\Actions\CashierTransactionsPageImprests;
+use App\Filament\App\Pages\Cashier\Actions\CashierTransactionsPageLoveGifts;
+use App\Filament\App\Pages\Cashier\Actions\CashierTransactionsPageSavings;
 use App\Filament\App\Pages\Cashier\Traits\HasReceipt;
 use App\Models\CashCollectible;
 use App\Models\LoanAccount;
@@ -73,37 +77,55 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                     ->label('Member')
                     ->options(Member::pluck('full_name', 'id'))
                     ->searchable()
-                    ->afterStateUpdated(fn ($set) => $set('transactions', []))
+                    ->afterStateUpdated(fn($set) => $set('transactions', []))
                     ->reactive(),
                 Placeholder::make('member_type')
-                    ->content(fn ($get) => Member::find($get('member_id'))?->member_type->name),
+                    ->content(fn($get) => Member::find($get('member_id'))?->member_type->name),
                 Builder::make('transactions')
                     ->required()
                     ->collapsible()
                     ->addBetweenAction(
-                        fn (Action $action) => $action->visible(false),
+                        fn(Action $action) => $action->visible(false),
                     )
                     ->blocks([
-                        Block::make('savings')
-                            ->visible(fn ($get) => $get('../member_id'))
+                        Block::make('cbu')
+                            ->label('CBU')
                             ->columns(2)
-                            ->schema(fn () => [
+                            ->visible(fn($get) => $get('../member_id'))
+                            ->schema([
+                                Section::make('')
+                                    ->extraAttributes(['data-transaction' => 'cbu'])
+                                    ->schema([
+                                        Select::make('payment_type_id')
+                                            ->paymenttype()
+                                            ->required(),
+                                        TextInput::make('reference_number')->required()
+                                            ->unique('capital_subscription_payments'),
+                                        TextInput::make('amount')
+                                            ->required()
+                                            ->moneymask(),
+                                    ]),
+                            ]),
+                        Block::make('savings')
+                            ->visible(fn($get) => $get('../member_id'))
+                            ->columns(2)
+                            ->schema(fn() => [
                                 Section::make('')
                                     ->extraAttributes(['data-transaction' => 'savings'])
                                     ->schema([
                                         Select::make('savings_account_id')
-                                            ->options(fn ($get) => SavingsAccount::whereMemberId($get('../../../member_id'))->pluck('number', 'id'))
+                                            ->options(fn($get) => SavingsAccount::whereMemberId($get('../../../member_id'))->pluck('number', 'id'))
                                             ->label('Account')
                                             ->required()
                                             ->suffixAction(
-                                                fn ($get) => Action::make('NewAccount')
+                                                fn($get) => Action::make('NewAccount')
                                                     ->label('New Account')
                                                     ->modalHeading('New Savings Account')
                                                     ->form([
                                                         TextInput::make('name')
                                                             ->required(),
                                                     ])
-                                                    ->visible(fn ($get) => $get('../../../member_id'))
+                                                    ->visible(fn($get) => $get('../../../member_id'))
                                                     ->action(function ($data, $get) {
                                                         app(CreateNewSavingsAccount::class)->handle(new SavingsAccountData(
                                                             member_id: $get('../../../member_id'),
@@ -126,7 +148,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                             ->paymenttype()
                                             ->required(),
                                         TextInput::make('reference_number')->required()
-                                            ->visible(fn ($get) => $get('action') == '1')
+                                            ->visible(fn($get) => $get('action') == '1')
                                             ->unique('savings'),
                                         TextInput::make('amount')
                                             ->required()
@@ -135,7 +157,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                             ]),
                         Block::make('imprest')
                             ->columns(2)
-                            ->visible(fn ($get) => $get('../member_id'))
+                            ->visible(fn($get) => $get('../member_id'))
                             ->schema([
                                 Section::make('')
                                     ->extraAttributes(['data-transaction' => 'imprest'])
@@ -152,7 +174,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                             ->paymenttype()
                                             ->required(),
                                         TextInput::make('reference_number')->required()
-                                            ->visible(fn ($get) => $get('action') == '1')
+                                            ->visible(fn($get) => $get('action') == '1')
                                             ->unique('imprests'),
                                         TextInput::make('amount')
                                             ->required()
@@ -161,7 +183,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                             ]),
                         Block::make('love_gift')
                             ->columns(2)
-                            ->visible(fn ($get) => $get('../member_id'))
+                            ->visible(fn($get) => $get('../member_id'))
                             ->schema([
                                 Section::make('')
                                     ->extraAttributes(['data-transaction' => 'love-gifts'])
@@ -178,7 +200,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                             ->paymenttype()
                                             ->required(),
                                         TextInput::make('reference_number')->required()
-                                            ->visible(fn ($get) => $get('action') == '1')
+                                            ->visible(fn($get) => $get('action') == '1')
                                             ->unique('love_gifts'),
                                         TextInput::make('amount')
                                             ->required()
@@ -187,7 +209,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                             ]),
                         Block::make('time_deposit')
                             ->columns(2)
-                            ->visible(fn ($get) => $get('../member_id'))
+                            ->visible(fn($get) => $get('../member_id'))
                             ->schema([
                                 Section::make('')
                                     ->extraAttributes(['data-transaction' => 'time-deposit'])
@@ -200,11 +222,11 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                         TextInput::make('amount')
                                             ->required()
                                             ->moneymask()
-                                            ->afterStateUpdated(fn ($set, $state) => $set('maturity_amount', TimeDepositsProvider::getMaturityAmount(floatval($state))))
+                                            ->afterStateUpdated(fn($set, $state) => $set('maturity_amount', TimeDepositsProvider::getMaturityAmount(floatval($state))))
                                             ->minValue(TimeDepositsProvider::MINIMUM_DEPOSIT)->default(TimeDepositsProvider::MINIMUM_DEPOSIT),
                                         Placeholder::make('number_of_days')->content(TimeDepositsProvider::NUMBER_OF_DAYS),
                                         Placeholder::make('maturity_date')->content(TimeDepositsProvider::getMaturityDate(today())->format('F d, Y')),
-                                        Placeholder::make('maturity_amount')->content(fn ($get) => format_money(TimeDepositsProvider::getMaturityAmount(floatval($get('amount'))), 'PHP')),
+                                        Placeholder::make('maturity_amount')->content(fn($get) => format_money(TimeDepositsProvider::getMaturityAmount(floatval($get('amount'))), 'PHP')),
                                     ]),
                             ]),
                         Block::make('cash_collection')
@@ -229,21 +251,21 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                             ]),
                         Block::make('loan')
                             ->columns(2)
-                            ->visible(fn ($get) => $get('../member_id'))
+                            ->visible(fn($get) => $get('../member_id'))
                             ->schema([
                                 Section::make('')
                                     ->extraAttributes(['data-transaction' => 'loan'])
                                     ->schema([
                                         Select::make('loan_account_id')
                                             ->label('Loan Account')
-                                            ->options(fn ($get) => LoanAccount::whereMemberId($get('../../../member_id'))->whereHas('loan', fn ($q) => $q->where('posted', true)->where('outstanding_balance', '>', 0))->pluck('number', 'id'))
+                                            ->options(fn($get) => LoanAccount::whereMemberId($get('../../../member_id'))->whereHas('loan', fn($q) => $q->where('posted', true)->where('outstanding_balance', '>', 0))->pluck('number', 'id'))
                                             ->searchable()
                                             ->live()
-                                            ->afterStateUpdated(fn ($set, $state) => $set('amount', LoanAccount::find($state)?->loan?->monthly_payment))
+                                            ->afterStateUpdated(fn($set, $state) => $set('amount', LoanAccount::find($state)?->loan?->monthly_payment))
                                             ->required()
                                             ->preload(),
                                         Placeholder::make('loan_type')
-                                            ->content(fn ($get) => LoanAccount::find($get('loan_account_id'))?->loan?->loan_type?->name),
+                                            ->content(fn($get) => LoanAccount::find($get('loan_account_id'))?->loan?->loan_type?->name),
                                         Select::make('payment_type_id')
                                             ->paymenttype()
                                             ->required(),
@@ -262,132 +284,58 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                             $member = Member::find($formData['member_id']);
                             $transactions = [];
                             $payment_types = PaymentType::get();
+                            $transaction_type = TransactionType::firstWhere('name', 'CRJ');
                             foreach ($formData['transactions'] as $key => $transaction) {
                                 if ($transaction['type'] == 'cbu') {
-                                    app(PayCapitalSubscription::class)->handle($member->capital_subscriptions_common, new CapitalSubscriptionPaymentData(
-                                        payment_type_id: $transaction['data']['payment_type_id'],
+                                    $transactions[] = CashierTransactionsPageCbuPayment::handle(
+                                        member: $member,
+                                        transaction_type: $transaction_type,
+                                        reference_number: $transaction['data']['reference_number'],
+                                        payment_type: $payment_types->firstWhere('id', $transaction['data']['payment_type_id']),
+                                        amount: $transaction['data']['amount'],
+                                        transaction_date: $this->transaction_date
+                                    );
+                                }
+                                if ($transaction['type'] == 'savings') {
+                                    $is_deposit = $transaction['data']['action'] == 1;
+                                    $savings_account = SavingsAccount::find($transaction['data']['savings_account_id']);
+                                    $transactions[] = CashierTransactionsPageSavings::handle(
+                                        is_deposit: $is_deposit,
+                                        member: $member,
+                                        savings_account: $savings_account,
+                                        transaction_type: $transaction_type,
+                                        payment_type: $payment_types->firstWhere('id', $transaction['data']['payment_type_id']),
                                         reference_number: $transaction['data']['reference_number'],
                                         amount: $transaction['data']['amount'],
                                         transaction_date: $this->transaction_date,
-                                    ), TransactionType::firstWhere('name', 'CRJ'));
-                                    $transactions[] = [
-                                        'account_number' => $member->capital_subscription_account->number,
-                                        'account_name' => $member->capital_subscription_account->name,
-                                        'reference_number' => $transaction['data']['reference_number'],
-                                        'amount' => $transaction['data']['amount'],
-                                        'payment_type' => $payment_types->firstWhere('id', $transaction['data']['payment_type_id'])?->name ?? 'CASH',
-                                        'remarks' => 'CBU PAYMENT'
-                                    ];
-                                }
-                                if ($transaction['type'] == 'savings') {
-                                    $isDeposit = $transaction['data']['action'] == 1;
-                                    if ($isDeposit) {
-                                        app(DepositToSavingsAccount::class)->handle($member, new SavingsData(
-                                            payment_type_id: $transaction['data']['payment_type_id'],
-                                            reference_number: $transaction['data']['reference_number'],
-                                            amount: $transaction['data']['amount'],
-                                            savings_account_id: $transaction['data']['savings_account_id'],
-                                            transaction_date: $this->transaction_date,
-                                        ), TransactionType::firstWhere('name', 'CRJ'));
-                                        $savings_account = SavingsAccount::find($transaction['data']['savings_account_id']);
-                                        $transactions[] = [
-                                            'account_number' => $savings_account->number,
-                                            'account_name' => $savings_account->name,
-                                            'reference_number' => $transaction['data']['reference_number'],
-                                            'amount' => $transaction['data']['amount'],
-                                            'payment_type' => $payment_types->firstWhere('id', $transaction['data']['payment_type_id'])?->name ?? 'CASH',
-                                            'remarks' => 'SAVINGS DEPOSIT'
-                                        ];
-                                    } else {
-                                        app(WithdrawFromSavingsAccount::class)->handle($member, new SavingsData(
-                                            payment_type_id: $transaction['data']['payment_type_id'],
-                                            reference_number: SavingsProvider::WITHDRAWAL_TRANSFER_CODE,
-                                            amount: $transaction['data']['amount'],
-                                            savings_account_id: $transaction['data']['savings_account_id'],
-                                            transaction_date: $this->transaction_date,
-                                        ), TransactionType::firstWhere('name', 'CRJ'));
-                                        $savings_account = SavingsAccount::find($transaction['data']['savings_account_id']);
-                                        $transactions[] = [
-                                            'account_number' => $savings_account->number,
-                                            'account_name' => $savings_account->name,
-                                            'reference_number' => $transaction['data']['reference_number'],
-                                            'amount' => $transaction['data']['amount'],
-                                            'payment_type' => $payment_types->firstWhere('id', $transaction['data']['payment_type_id'])?->name ?? 'CASH',
-                                            'remarks' => 'SAVINGS WITHDRAWAL'
-                                        ];
-                                    }
+                                    );
                                 }
                                 if ($transaction['type'] == 'imprest') {
-                                    $isDeposit = $transaction['data']['action'] == 1;
-                                    if ($isDeposit) {
-                                        app(DepositToImprestAccount::class)->handle($member, new ImprestData(
-                                            payment_type_id: $transaction['data']['payment_type_id'],
-                                            reference_number: $transaction['data']['reference_number'],
-                                            amount: $transaction['data']['amount'],
-                                            transaction_date: $this->transaction_date,
-                                        ), TransactionType::firstWhere('name', 'CRJ'));
-                                        $imprest_account = $member->imprest_account;
-                                        $transactions[] = [
-                                            'account_number' => $imprest_account->number,
-                                            'account_name' => $imprest_account->name,
-                                            'reference_number' => $transaction['data']['reference_number'],
-                                            'amount' => $transaction['data']['amount'],
-                                            'payment_type' => $payment_types->firstWhere('id', $transaction['data']['payment_type_id'])?->name ?? 'CASH',
-                                            'remarks' => 'IMPREST DEPOSIT'
-                                        ];
-                                    } else {
-                                        app(WithdrawFromImprestAccount::class)->handle($member, new ImprestData(
-                                            payment_type_id: $transaction['data']['payment_type_id'],
-                                            reference_number: ImprestsProvider::WITHDRAWAL_TRANSFER_CODE,
-                                            amount: $transaction['data']['amount'],
-                                            transaction_date: $this->transaction_date,
-                                        ), TransactionType::firstWhere('name', 'CRJ'));
-                                        $imprest_account = $member->imprest_account;
-                                        $transactions[] = [
-                                            'account_number' => $imprest_account->number,
-                                            'account_name' => $imprest_account->name,
-                                            'reference_number' => $transaction['data']['reference_number'],
-                                            'amount' => $transaction['data']['amount'],
-                                            'payment_type' => $payment_types->firstWhere('id', $transaction['data']['payment_type_id'])?->name ?? 'CASH',
-                                            'remarks' => 'IMPREST WITHDRAWAL'
-                                        ];
-                                    }
+                                    $is_deposit = $transaction['data']['action'] == 1;
+                                    $imprest_account = $member->imprest_account;
+                                    $transactions[] = CashierTransactionsPageImprests::handle(
+                                        is_deposit: $is_deposit,
+                                        member: $member,
+                                        imprest_account: $imprest_account,
+                                        transaction_type: $transaction_type,
+                                        payment_type: $payment_types->firstWhere('id', $transaction['data']['payment_type_id']),
+                                        reference_number: $transaction['data']['reference_number'],
+                                        amount: $transaction['data']['amount'],
+                                        transaction_date: $this->transaction_date,
+                                    );
                                 }
                                 if ($transaction['type'] == 'love_gift') {
-                                    $isDeposit = $transaction['data']['action'] == 1;
-                                    if ($isDeposit) {
-                                        app(DepositToLoveGiftsAccount::class)->handle($member, new LoveGiftData(
-                                            payment_type_id: $transaction['data']['payment_type_id'],
-                                            reference_number: $transaction['data']['reference_number'],
-                                            amount: $transaction['data']['amount'],
-                                            transaction_date: $this->transaction_date,
-                                        ), TransactionType::firstWhere('name', 'CRJ'));
-                                        $love_gift_account = $member->love_gift_account;
-                                        $transactions[] = [
-                                            'account_number' => $love_gift_account->number,
-                                            'account_name' => $love_gift_account->name,
-                                            'reference_number' => $transaction['data']['reference_number'],
-                                            'amount' => $transaction['data']['amount'],
-                                            'payment_type' => $payment_types->firstWhere('id', $transaction['data']['payment_type_id'])?->name ?? 'CASH',
-                                            'remarks' => 'LOVE GIFT DEPOSIT'
-                                        ];
-                                    } else {
-                                        app(WithdrawFromLoveGiftsAccount::class)->handle($member, new LoveGiftData(
-                                            payment_type_id: $transaction['data']['payment_type_id'],
-                                            reference_number: LoveGiftProvider::WITHDRAWAL_TRANSFER_CODE,
-                                            amount: $transaction['data']['amount'],
-                                            transaction_date: $this->transaction_date,
-                                        ), TransactionType::firstWhere('name', 'CRJ'));
-                                        $love_gift_account = $member->love_gift_account;
-                                        $transactions[] = [
-                                            'account_number' => $love_gift_account->number,
-                                            'account_name' => $love_gift_account->name,
-                                            'reference_number' => $transaction['data']['reference_number'],
-                                            'amount' => $transaction['data']['amount'],
-                                            'payment_type' => $payment_types->firstWhere('id', $transaction['data']['payment_type_id'])?->name ?? 'CASH',
-                                            'remarks' => 'LOVE GIFT WITHDRAWAL'
-                                        ];
-                                    }
+                                    $is_deposit = $transaction['data']['action'] == 1;
+                                    CashierTransactionsPageLoveGifts::handle(
+                                        is_deposit: $is_deposit,
+                                        member: $member,
+                                        love_gift_account: $member->love_gift_account,
+                                        transaction_type: $transaction_type,
+                                        payment_type: $payment_types->firstWhere('id', $transaction['data']['payment_type_id']),
+                                        reference_number: $transaction['data']['reference_number'],
+                                        amount: $transaction['data']['amount'],
+                                        transaction_date: $this->transaction_date,
+                                    );
                                 }
                                 if ($transaction['type'] == 'time_deposit') {
                                     $td = app(CreateTimeDeposit::class)->handle(timeDepositData: new TimeDepositData(

@@ -56,6 +56,9 @@ class CbuSchedule extends Page implements HasTable
                 SelectFilter::make('member_type_id')
                     ->relationship('member_type', 'name')
                     ->label('Member Type'),
+                SelectFilter::make('gender_id')
+                    ->relationship('gender', 'name')
+                    ->label('Gender'),
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
             ->actions([
