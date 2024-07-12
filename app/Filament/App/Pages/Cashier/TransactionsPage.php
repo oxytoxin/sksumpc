@@ -61,6 +61,7 @@ class TransactionsPage extends Page
 
     public static function shouldRegisterNavigation(): bool
     {
+        return false;
         return auth()->user()->can('manage payments');
     }
 
@@ -87,11 +88,11 @@ class TransactionsPage extends Page
                     ->required()
                     ->preload(),
                 Placeholder::make('member_type')
-                    ->content(fn ($get) => Member::find($get('member_id'))?->member_type->name),
+                    ->content(fn($get) => Member::find($get('member_id'))?->member_type->name),
                 Select::make('capital_subscription_id')
                     ->label('Capital Subscription')
                     ->reactive()
-                    ->options(fn ($get) => CapitalSubscription::whereMemberId($get('member_id'))->where('outstanding_balance', '>', 0)->pluck('code', 'id'))
+                    ->options(fn($get) => CapitalSubscription::whereMemberId($get('member_id'))->where('outstanding_balance', '>', 0)->pluck('code', 'id'))
                     ->afterStateUpdated(function ($state, $set) {
                         $cbu = CapitalSubscription::find($state);
                         if ($cbu) {
@@ -153,18 +154,18 @@ class TransactionsPage extends Page
                     ->required()
                     ->preload(),
                 Select::make('savings_account_id')
-                    ->options(fn ($get) => SavingsAccount::whereMemberId($get('member_id'))->pluck('number', 'id'))
+                    ->options(fn($get) => SavingsAccount::whereMemberId($get('member_id'))->pluck('number', 'id'))
                     ->label('Account')
                     ->required()
                     ->suffixAction(
-                        fn ($get) => FormAction::make('NewAccount')
+                        fn($get) => FormAction::make('NewAccount')
                             ->label('New Account')
                             ->modalHeading('New Savings Account')
                             ->form([
                                 TextInput::make('name')
                                     ->required(),
                             ])
-                            ->visible(fn ($get) => $get('member_id'))
+                            ->visible(fn($get) => $get('member_id'))
                             ->action(function ($data, $get) {
                                 app(CreateNewSavingsAccount::class)->handle(new SavingsAccountData(
                                     member_id: $get('member_id'),
@@ -176,7 +177,7 @@ class TransactionsPage extends Page
                             ->color(Color::Emerald),
                     ),
                 Placeholder::make('member_type')
-                    ->content(fn ($get) => Member::find($get('member_id'))?->member_type->name),
+                    ->content(fn($get) => Member::find($get('member_id'))?->member_type->name),
                 Select::make('action')
                     ->options([
                         '-1' => 'Withdraw',
@@ -189,7 +190,7 @@ class TransactionsPage extends Page
                     ->paymenttype()
                     ->required(),
                 TextInput::make('reference_number')->required()
-                    ->visible(fn ($get) => $get('action') == '1')
+                    ->visible(fn($get) => $get('action') == '1')
                     ->unique('savings'),
                 TextInput::make('amount')
                     ->required()
@@ -235,7 +236,7 @@ class TransactionsPage extends Page
                     ->required()
                     ->preload(),
                 Placeholder::make('member_type')
-                    ->content(fn ($get) => Member::find($get('member_id'))?->member_type->name),
+                    ->content(fn($get) => Member::find($get('member_id'))?->member_type->name),
                 Select::make('action')
                     ->options([
                         '-1' => 'Withdraw',
@@ -248,7 +249,7 @@ class TransactionsPage extends Page
                     ->paymenttype()
                     ->required(),
                 TextInput::make('reference_number')->required()
-                    ->visible(fn ($get) => $get('action') == '1')
+                    ->visible(fn($get) => $get('action') == '1')
                     ->unique('love_gifts'),
                 TextInput::make('amount')
                     ->required()
@@ -291,7 +292,7 @@ class TransactionsPage extends Page
                     ->required()
                     ->preload(),
                 Placeholder::make('member_type')
-                    ->content(fn ($get) => Member::find($get('member_id'))?->member_type->name),
+                    ->content(fn($get) => Member::find($get('member_id'))?->member_type->name),
                 Select::make('action')
                     ->options([
                         '-1' => 'Withdraw',
@@ -304,7 +305,7 @@ class TransactionsPage extends Page
                     ->paymenttype()
                     ->required(),
                 TextInput::make('reference_number')->required()
-                    ->visible(fn ($get) => $get('action') == '1')
+                    ->visible(fn($get) => $get('action') == '1')
                     ->unique('imprests'),
                 TextInput::make('amount')
                     ->required()
@@ -347,8 +348,8 @@ class TransactionsPage extends Page
                     ->required()
                     ->preload(),
                 Placeholder::make('member_type')
-                    ->content(fn ($get) => Member::find($get('member_id'))?->member_type->name),
-                DatePicker::make('transaction_date')->required()->default(today())->native(false)->live()->afterStateUpdated(fn (Set $set, $state) => $set('maturity_date', TimeDepositsProvider::getMaturityDate($state))),
+                    ->content(fn($get) => Member::find($get('member_id'))?->member_type->name),
+                DatePicker::make('transaction_date')->required()->default(today())->native(false)->live()->afterStateUpdated(fn(Set $set, $state) => $set('maturity_date', TimeDepositsProvider::getMaturityDate($state))),
                 Placeholder::make('maturity_date')->content(TimeDepositsProvider::getMaturityDate(today())->format('F d, Y')),
                 Select::make('payment_type_id')
                     ->paymenttype()
@@ -358,10 +359,10 @@ class TransactionsPage extends Page
                 TextInput::make('amount')
                     ->required()
                     ->moneymask()
-                    ->afterStateUpdated(fn (Set $set, $state) => $set('maturity_amount', TimeDepositsProvider::getMaturityAmount(floatval($state))))
+                    ->afterStateUpdated(fn(Set $set, $state) => $set('maturity_amount', TimeDepositsProvider::getMaturityAmount(floatval($state))))
                     ->minValue(TimeDepositsProvider::MINIMUM_DEPOSIT)->default(TimeDepositsProvider::MINIMUM_DEPOSIT),
                 Placeholder::make('number_of_days')->content(TimeDepositsProvider::NUMBER_OF_DAYS),
-                Placeholder::make('maturity_amount')->content(fn (Get $get) => format_money(TimeDepositsProvider::getMaturityAmount(floatval($get('amount'))), 'PHP')),
+                Placeholder::make('maturity_amount')->content(fn(Get $get) => format_money(TimeDepositsProvider::getMaturityAmount(floatval($get('amount'))), 'PHP')),
             ])
             ->action(function ($data) {
                 app(CreateTimeDeposit::class)->handle(timeDepositData: new TimeDepositData(
@@ -392,13 +393,13 @@ class TransactionsPage extends Page
                     ->required()
                     ->preload(),
                 Placeholder::make('member_type')
-                    ->content(fn ($get) => Member::find($get('member_id'))?->member_type->name),
+                    ->content(fn($get) => Member::find($get('member_id'))?->member_type->name),
                 Select::make('loan_account_id')
                     ->label('Loan Account')
-                    ->options(fn ($get) => LoanAccount::whereMemberId($get('member_id'))->whereHas('loan', fn ($q) => $q->where('posted', true)->where('outstanding_balance', '>', 0))->pluck('number', 'id'))
+                    ->options(fn($get) => LoanAccount::whereMemberId($get('member_id'))->whereHas('loan', fn($q) => $q->where('posted', true)->where('outstanding_balance', '>', 0))->pluck('number', 'id'))
                     ->searchable()
                     ->live()
-                    ->afterStateUpdated(fn ($set, $state) => $set('amount', LoanAccount::find($state)?->loan?->monthly_payment))
+                    ->afterStateUpdated(fn($set, $state) => $set('amount', LoanAccount::find($state)?->loan?->monthly_payment))
                     ->required()
                     ->preload(),
                 Select::make('payment_type_id')
@@ -440,10 +441,10 @@ class TransactionsPage extends Page
                     ->options(Member::pluck('full_name', 'id'))
                     ->searchable()
                     ->live()
-                    ->afterStateUpdated(fn ($state, $set) => $set('payee', Member::find($state)?->full_name))
+                    ->afterStateUpdated(fn($state, $set) => $set('payee', Member::find($state)?->full_name))
                     ->preload(),
                 Placeholder::make('member_type')
-                    ->content(fn ($get) => Member::find($get('member_id'))?->member_type->name),
+                    ->content(fn($get) => Member::find($get('member_id'))?->member_type->name),
                 TextInput::make('payee')
                     ->required(),
                 Select::make('payment_type_id')
