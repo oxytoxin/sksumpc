@@ -16,8 +16,10 @@ use App\Actions\TimeDeposits\CreateTimeDeposit;
 use App\Filament\App\Pages\Cashier\Actions\CashierTransactionsPageCbuPayment;
 use App\Filament\App\Pages\Cashier\Actions\CashierTransactionsPageImprests;
 use App\Filament\App\Pages\Cashier\Actions\CashierTransactionsPageLoveGifts;
+use App\Filament\App\Pages\Cashier\Actions\CashierTransactionsPageOthers;
 use App\Filament\App\Pages\Cashier\Actions\CashierTransactionsPageSavings;
 use App\Filament\App\Pages\Cashier\Traits\HasReceipt;
+use App\Models\Account;
 use App\Models\CashCollectible;
 use App\Models\LoanAccount;
 use App\Models\Member;
@@ -99,6 +101,30 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                         Select::make('payment_type_id')
                                             ->paymenttype()
                                             ->required(),
+                                        TextInput::make('reference_number')->required()
+                                            ->unique('capital_subscription_payments'),
+                                        TextInput::make('amount')
+                                            ->required()
+                                            ->moneymask(),
+                                    ]),
+                            ]),
+                        Block::make('others')
+                            ->label('Others')
+                            ->columns(2)
+                            ->schema([
+                                Section::make('')
+                                    ->extraAttributes(['data-transaction' => 'others'])
+                                    ->schema([
+                                        Select::make('payment_type_id')
+                                            ->paymenttype()
+                                            ->required(),
+                                        Select::make('account_id')
+                                            ->options(
+                                                fn($get) => Account::withCode()->whereDoesntHave('children', fn($q) => $q->whereNull('member_id'))->where('member_id', $get('member_id') ?? null)->pluck('code', 'id')
+                                            )
+                                            ->searchable()
+                                            ->required()
+                                            ->label('Account'),
                                         TextInput::make('reference_number')->required()
                                             ->unique('capital_subscription_payments'),
                                         TextInput::make('amount')
@@ -276,6 +302,9 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                     ]),
                             ]),
                     ]),
+                Placeholder::make('transaction-selector')
+                    ->label(false)
+                    ->content(fn($get) => view('filament.app.pages.cashier.transaction-selector', ['member' => $get('member_id')])),
                 Actions::make([
                     Action::make('submit')
                         ->action(function () {
@@ -289,6 +318,17 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                 if ($transaction['type'] == 'cbu') {
                                     $transactions[] = CashierTransactionsPageCbuPayment::handle(
                                         member: $member,
+                                        transaction_type: $transaction_type,
+                                        reference_number: $transaction['data']['reference_number'],
+                                        payment_type: $payment_types->firstWhere('id', $transaction['data']['payment_type_id']),
+                                        amount: $transaction['data']['amount'],
+                                        transaction_date: $this->transaction_date
+                                    );
+                                }
+                                if ($transaction['type'] == 'others') {
+                                    $transactions[] = CashierTransactionsPageOthers::handle(
+                                        member_id: $member?->id,
+                                        account: Account::find($transaction['data']['account_id']),
                                         transaction_type: $transaction_type,
                                         reference_number: $transaction['data']['reference_number'],
                                         payment_type: $payment_types->firstWhere('id', $transaction['data']['payment_type_id']),
@@ -405,6 +445,10 @@ class PaymentTransactions extends Component implements HasActions, HasForms
             ]);
     }
 
+    public function addTransaction($block)
+    {
+        $this->mountFormComponentAction('data.transactions', 'add', ['block' => $block]);
+    }
 
     public function mount()
     {

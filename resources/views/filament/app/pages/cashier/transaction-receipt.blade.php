@@ -22,7 +22,6 @@
                     <div class="flex gap-4">
                         <strong>{{ $transaction['payment_type'] }}</strong>
                         <p>{{ renumber_format($transaction['amount'], 2) }}</p>
-                        <p>{{ now()->format('m/d/Y H:i:s') }}</p>
                     </div>
                     <p>REFERENCE #: {{ $transaction['reference_number'] }}</p>
                     <p>TRANSACTION DATE: {{ date_create($this->transaction_date)->format('m/d/Y') }}</p>

@@ -46,15 +46,6 @@ class CashierTransactionsPage extends Page implements HasForms
                         Tab::make('General Payments')->schema([
                             Livewire::make(PaymentTransactions::class),
                         ]),
-                        Tab::make('Rice')->schema([
-                            Livewire::make(RiceAndGroceriesTransactions::class),
-                        ]),
-                        Tab::make('Dormitory')->schema([
-                            Livewire::make(DormitoryTransactions::class),
-                        ]),
-                        Tab::make('Others')->schema([
-                            Livewire::make(OtherTransactions::class),
-                        ]),
                         Tab::make('Billings')
                             ->schema([
                                 Livewire::make(BillingTransactions::class),
