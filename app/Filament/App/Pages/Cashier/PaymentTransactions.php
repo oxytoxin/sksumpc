@@ -120,7 +120,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                             ->required(),
                                         Select::make('account_id')
                                             ->options(
-                                                fn($get) => Account::withCode()->whereDoesntHave('children', fn($q) => $q->whereNull('member_id'))->where('member_id', $get('member_id') ?? null)->pluck('code', 'id')
+                                                fn($get) => Account::withCode()->whereDoesntHave('children', fn($q) => $q->whereNull('member_id'))->where('member_id', $get('../../../member_id') ?? null)->pluck('code', 'id')
                                             )
                                             ->searchable()
                                             ->required()
