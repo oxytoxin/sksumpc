@@ -30,15 +30,18 @@ class AppPanelProvider extends PanelProvider
             $customcss = Vite::asset('resources/css/filament/app/theme.css');
         } catch (\Throwable $th) {
         }
-        $transaction_date = SystemConfiguration::transaction_date();
-        config(['app.transaction_date' => $transaction_date]);
+        try {
+            $transaction_date = SystemConfiguration::transaction_date();
+        } catch (\Exception $e) {
+        }
+        config(['app.transaction_date' => $transaction_date ?? null]);
         FilamentView::registerRenderHook(
             PanelsRenderHook::TOPBAR_START,
-            fn () => Blade::render('<strong>Transaction Date: ' . $transaction_date?->format('m/d/Y') . '</strong>')
+            fn() => Blade::render('<strong>Transaction Date: ' . $transaction_date?->format('m/d/Y') . '</strong>')
         );
         FilamentView::registerRenderHook(
             PanelsRenderHook::CONTENT_START,
-            fn () => Blade::render("@livewire('bookkeeper-transaction-date-checker')")
+            fn() => Blade::render("@livewire('bookkeeper-transaction-date-checker')")
         );
         return $panel
             ->id('app')
@@ -92,7 +95,7 @@ class AppPanelProvider extends PanelProvider
             ->darkMode(false)
             ->renderHook(
                 'panels::body.end',
-                fn (): string => Blade::render("
+                fn(): string => Blade::render("
                 <div x-data='{
                 init(){
                     Livewire.hook(`commit`, ({ succeed }) => {

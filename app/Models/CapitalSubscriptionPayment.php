@@ -30,7 +30,6 @@ class CapitalSubscriptionPayment extends Model
         static::creating(function (CapitalSubscriptionPayment $cbu_payment) {
             $cbu_payment->cashier_id = auth()->id();
             $cbu_payment->running_balance = $cbu_payment->capital_subscription->outstanding_balance - $cbu_payment->amount;
-            dd($cbu_payment->running_balance);
         });
     }
 
