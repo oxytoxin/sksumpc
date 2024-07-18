@@ -51,6 +51,7 @@ use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
@@ -118,9 +119,11 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                         Select::make('payment_type_id')
                                             ->paymenttype()
                                             ->required(),
+                                        Toggle::make('member_accounts'),
+                                        TextInput::make('payee')->required()->default(fn($get) => Member::find($get('../../../member_id'))?->full_name),
                                         Select::make('account_id')
                                             ->options(
-                                                fn($get) => Account::withCode()->whereDoesntHave('children', fn($q) => $q->whereNull('member_id'))->where('member_id', $get('../../../member_id') ?? null)->pluck('code', 'id')
+                                                fn($get) => Account::withCode()->whereDoesntHave('children', fn($q) => $q->whereNull('member_id'))->where('member_id', $get('member_accounts') ? $get('../../../member_id') : null)->pluck('code', 'id')
                                             )
                                             ->searchable()
                                             ->required()
@@ -328,6 +331,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                 if ($transaction['type'] == 'others') {
                                     $transactions[] = CashierTransactionsPageOthers::handle(
                                         member_id: $member?->id,
+                                        payee: $transaction['data']['payee'],
                                         account: Account::find($transaction['data']['account_id']),
                                         transaction_type: $transaction_type,
                                         reference_number: $transaction['data']['reference_number'],
@@ -440,7 +444,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                             Notification::make()->title('Transactions successful!')->success()->send();
                             $this->form->fill();
                             $this->replaceMountedAction('receipt', ['transactions' => $transactions]);
-                        }),
+                        })->requiresConfirmation(),
                 ]),
             ]);
     }

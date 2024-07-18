@@ -13,7 +13,7 @@ use App\Oxytoxin\Providers\SavingsProvider;
 
 class CashierTransactionsPageOthers
 {
-    public static function handle($member_id, Account $account, TransactionType $transaction_type, $payment_type, $reference_number, $amount, $transaction_date)
+    public static function handle($member_id, Account $account, TransactionType $transaction_type, $payment_type, $reference_number, $amount, $transaction_date, $payee)
     {
         if (in_array($account->tag, ['member_common_cbu_paid', 'member_preferred_cbu_paid', 'member_laboratory_cbu_paid'])) {
             app(PayCapitalSubscription::class)
@@ -32,6 +32,7 @@ class CashierTransactionsPageOthers
                 account_id: Account::getCashOnHand()->id,
                 transactionType: $transaction_type,
                 reference_number: $reference_number,
+                payee: $payee,
                 debit: $amount,
                 member_id: $member_id,
                 remarks: 'Cashier Transaction for Other Accounts',
@@ -41,6 +42,7 @@ class CashierTransactionsPageOthers
                 account_id: $account->id,
                 transactionType: $transaction_type,
                 reference_number: $reference_number,
+                payee: $payee,
                 credit: $amount,
                 member_id: $member_id,
                 remarks: 'Cashier Transaction for Other Accounts',

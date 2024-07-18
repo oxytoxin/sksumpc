@@ -32,4 +32,13 @@ class Transaction extends Model
     {
         return $this->belongsTo(TransactionType::class);
     }
+
+    protected static function booted()
+    {
+        static::created(function ($transaction) {
+            if (blank($transaction->payee)) {
+                $transaction->payee = $transaction->member?->full_name ?? 'SKSU-MPC';
+            }
+        });
+    }
 }

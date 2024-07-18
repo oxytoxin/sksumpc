@@ -2,20 +2,19 @@
 
 namespace App\Filament\App\Pages\Cashier\Traits;
 
-use Filament\Actions\Action as ActionsAction;
+use Filament\Actions\Action;
 use Filament\Support\Enums\MaxWidth;
 
 trait HasReceipt
 {
-    public function receipt(): ActionsAction
+    public function receipt(): Action
     {
-        return ActionsAction::make('receipt')
-            ->requiresConfirmation()
-            ->modalContent(fn ($arguments) => view('filament.app.pages.cashier.transaction-receipt', ['transactions' => $arguments['transactions']]))
+        return Action::make('receipt')
+            ->modalContent(fn($arguments) => view('filament.app.pages.cashier.transaction-receipt', ['transactions' => $arguments['transactions']]))
             ->modalWidth(MaxWidth::FourExtraLarge)
+            ->modalSubmitAction(false)
+            ->modalHeading('Transaction Receipt')
             ->modalCancelAction(false)
-            ->modalHeading(false)
-            ->closeModalByClickingAway(false)
             ->action(function ($arguments) {
             });
     }

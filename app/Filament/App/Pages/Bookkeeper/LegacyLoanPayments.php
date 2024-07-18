@@ -43,18 +43,20 @@ class LegacyLoanPayments extends Page
                     ->options(Member::pluck('full_name', 'id'))
                     ->reactive(),
                 Select::make('loan_account_id')
-                    ->options(fn ($get) => LoanAccount::when($get('member_id'), fn ($q, $v) => $q->where('member_id', $v))->pluck('number', 'id'))
+                    ->options(fn($get) => LoanAccount::when($get('member_id'), fn($q, $v) => $q->where('member_id', $v))->pluck('number', 'id'))
                     ->searchable()
                     ->reactive()
                     ->label('Loan Account')
                     ->preload(),
+                Placeholder::make('loan_type')
+                    ->content(fn($get) => LoanAccount::find($get('loan_account_id'))?->loan?->loan_type?->name),
                 TextInput::make('reference_number')
                     ->required(),
                 TextInput::make('principal')
                     ->moneymask(),
                 TextInput::make('interest')
                     ->moneymask(),
-                Placeholder::make('total')->content(fn ($get) => floatval($get('principal')) + floatval($get('interest'))),
+                Placeholder::make('total')->content(fn($get) => floatval($get('principal')) + floatval($get('interest'))),
                 DatePicker::make('transaction_date')
                     ->default(config('app.transaction_date') ?? today())
                     ->native(false)
