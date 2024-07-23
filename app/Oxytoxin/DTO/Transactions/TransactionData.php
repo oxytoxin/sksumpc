@@ -2,6 +2,7 @@
 
 namespace App\Oxytoxin\DTO\Transactions;
 
+use App\Models\Member;
 use App\Models\TransactionType;
 use Spatie\LaravelData\Data;
 
@@ -21,5 +22,10 @@ class TransactionData extends Data
     )
     {
         $this->transaction_date ??= today();
+        if ($this->member_id) {
+            $this->payee = Member::find($this->member_id)->full_name;
+        } else {
+            $this->payee = 'SKSU-MPC';
+        }
     }
 }
