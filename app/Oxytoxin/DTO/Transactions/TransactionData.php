@@ -22,10 +22,8 @@ class TransactionData extends Data
     )
     {
         $this->transaction_date ??= today();
-        if ($this->member_id) {
-            $this->payee = Member::find($this->member_id)->full_name;
-        } else {
-            $this->payee = 'SKSU-MPC';
+        if (!$this->payee) {
+            $this->payee = $this->member_id ? Member::find($this->member_id)->full_name : 'SKSU-MPC';
         }
     }
 }
