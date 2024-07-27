@@ -44,8 +44,9 @@ class WithdrawFromSavingsAccount
             app(CreateTransaction::class)->handle(new TransactionData(
                 account_id: Account::getCashOnHand()->id,
                 transactionType: $transactionType,
+                payment_type_id: $data->payment_type_id,
                 reference_number: $savings->reference_number,
-                credit: $savings->amount,
+                credit: $data->amount,
                 member_id: $savings->member_id,
                 remarks: 'Member Withdrawal from Savings',
                 transaction_date: $data->transaction_date,
@@ -55,8 +56,9 @@ class WithdrawFromSavingsAccount
             app(CreateTransaction::class)->handle(new TransactionData(
                 account_id: Account::getCashInBankMSO()->id,
                 transactionType: $transactionType,
+                payment_type_id: $data->payment_type_id,
                 reference_number: $savings->reference_number,
-                credit: $savings->amount,
+                credit: $data->amount,
                 member_id: $savings->member_id,
                 remarks: 'Member Withdrawal from Savings',
                 transaction_date: $data->transaction_date,
@@ -65,8 +67,9 @@ class WithdrawFromSavingsAccount
         app(CreateTransaction::class)->handle(new TransactionData(
             account_id: $savings_account->id,
             transactionType: $transactionType,
+            payment_type_id: $data->payment_type_id,
             reference_number: $savings->reference_number,
-            debit: $savings->amount,
+            debit: $data->amount,
             member_id: $member->id,
             remarks: 'Member Withdrawal from Savings',
             transaction_date: $data->transaction_date,

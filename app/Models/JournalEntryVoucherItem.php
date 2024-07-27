@@ -60,7 +60,7 @@ class JournalEntryVoucherItem extends Model
                     ->handle(
                         cbu: $account->member->capital_subscriptions_common,
                         data: new CapitalSubscriptionPaymentData(
-                            payment_type_id: 4,
+                            payment_type_id: 2,
                             reference_number: $journalEntryVoucherItem->journal_entry_voucher->reference_number,
                             amount: $journalEntryVoucherItem->credit,
                             transaction_date: $transaction_date
@@ -72,7 +72,7 @@ class JournalEntryVoucherItem extends Model
                     app(DepositToSavingsAccount::class)->handle(
                         member: $account->member,
                         data: new SavingsData(
-                            payment_type_id: 4,
+                            payment_type_id: 2,
                             reference_number: $journalEntryVoucherItem->journal_entry_voucher->reference_number,
                             amount: $journalEntryVoucherItem->credit,
                             savings_account_id: $account->id,
@@ -85,7 +85,7 @@ class JournalEntryVoucherItem extends Model
                     app(WithdrawFromSavingsAccount::class)->handle(
                         member: $account->member,
                         data: new SavingsData(
-                            payment_type_id: 4,
+                            payment_type_id: 2,
                             reference_number: $journalEntryVoucherItem->journal_entry_voucher->reference_number,
                             amount: $journalEntryVoucherItem->debit,
                             savings_account_id: $account->id,
@@ -99,7 +99,7 @@ class JournalEntryVoucherItem extends Model
                     app(DepositToImprestAccount::class)->handle(
                         member: $account->member,
                         data: new ImprestData(
-                            payment_type_id: 4,
+                            payment_type_id: 2,
                             reference_number: $journalEntryVoucherItem->journal_entry_voucher->reference_number,
                             amount: $journalEntryVoucherItem->credit,
                             transaction_date: $transaction_date
@@ -111,7 +111,7 @@ class JournalEntryVoucherItem extends Model
                     app(WithdrawFromImprestAccount::class)->handle(
                         member: $account->member,
                         data: new ImprestData(
-                            payment_type_id: 4,
+                            payment_type_id: 2,
                             reference_number: $journalEntryVoucherItem->journal_entry_voucher->reference_number,
                             amount: $journalEntryVoucherItem->debit,
                             transaction_date: $transaction_date
@@ -124,7 +124,7 @@ class JournalEntryVoucherItem extends Model
                     app(DepositToLoveGiftsAccount::class)->handle(
                         member: $account->member,
                         data: new LoveGiftData(
-                            payment_type_id: 4,
+                            payment_type_id: 2,
                             reference_number: $journalEntryVoucherItem->journal_entry_voucher->reference_number,
                             amount: $journalEntryVoucherItem->credit,
                             transaction_date: $transaction_date
@@ -136,7 +136,7 @@ class JournalEntryVoucherItem extends Model
                     app(WithdrawFromLoveGiftsAccount::class)->handle(
                         member: $account->member,
                         data: new LoveGiftData(
-                            payment_type_id: 4,
+                            payment_type_id: 2,
                             reference_number: $journalEntryVoucherItem->journal_entry_voucher->reference_number,
                             amount: $journalEntryVoucherItem->debit,
                             transaction_date: $transaction_date
@@ -153,6 +153,7 @@ class JournalEntryVoucherItem extends Model
                                 loanAccount: $loan_account,
                                 principal: $journalEntryVoucherItem->details['principal'],
                                 interest: $journalEntryVoucherItem->details['interest'],
+                                payment_type_id: 2,
                                 reference_number: $journalEntryVoucherItem->journal_entry_voucher->reference_number,
                                 transaction_date: $transaction_date,
                                 transactionType: $transactionType
@@ -161,7 +162,7 @@ class JournalEntryVoucherItem extends Model
                         app(PayLoan::class)->handle(
                             loan: $loan_account->loan,
                             loanPaymentData: new LoanPaymentData(
-                                payment_type_id: 4,
+                                payment_type_id: 2,
                                 reference_number: $journalEntryVoucherItem->journal_entry_voucher->reference_number,
                                 amount: $journalEntryVoucherItem->credit,
                                 transaction_date: $transaction_date
@@ -175,6 +176,7 @@ class JournalEntryVoucherItem extends Model
                     member_id: $account->member_id,
                     account_id: $account->id,
                     transactionType: $transactionType,
+                    payment_type_id: 2,
                     reference_number: $journalEntryVoucherItem->journal_entry_voucher->reference_number,
                     debit: $journalEntryVoucherItem->debit,
                     credit: $journalEntryVoucherItem->credit,

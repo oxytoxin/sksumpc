@@ -18,7 +18,7 @@ class PayLegacyLoan
 {
     use AsAction;
 
-    public function handle(LoanAccount $loanAccount, $principal, $interest, $reference_number, $transaction_date, $transactionType): LoanPayment
+    public function handle(LoanAccount $loanAccount, $principal, $interest, $payment_type_id, $reference_number, $transaction_date, $transactionType): LoanPayment
     {
         $loan = $loanAccount->loan;
         $loan_receivables_account = $loan->loan_account;
@@ -28,6 +28,7 @@ class PayLegacyLoan
             app(CreateTransaction::class)->handle(new TransactionData(
                 account_id: Account::getCashOnHand()->id,
                 transactionType: $transactionType,
+                payment_type_id: $payment_type_id,
                 reference_number: $reference_number,
                 debit: $principal + $interest,
                 member_id: $loan->member_id,
@@ -38,6 +39,7 @@ class PayLegacyLoan
         app(CreateTransaction::class)->handle(new TransactionData(
             account_id: $loan_receivables_account->id,
             transactionType: $transactionType,
+            payment_type_id: $payment_type_id,
             reference_number: $reference_number,
             credit: $principal,
             member_id: $loan->member_id,
@@ -48,6 +50,7 @@ class PayLegacyLoan
         app(CreateTransaction::class)->handle(new TransactionData(
             account_id: $loan_interests_account->id,
             transactionType: $transactionType,
+            payment_type_id: $payment_type_id,
             reference_number: $reference_number,
             credit: $interest,
             member_id: $loan->member_id,
@@ -57,7 +60,7 @@ class PayLegacyLoan
 
         return $loan->payments()->create([
             'member_id' => $loan->member_id,
-            'payment_type_id' => 1,
+            'payment_type_id' => $payment_type_id,
             'amount' => $principal + $interest,
             'interest_payment' => $interest,
             'principal_payment' => $principal,

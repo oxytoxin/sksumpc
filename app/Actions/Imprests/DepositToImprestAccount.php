@@ -34,6 +34,7 @@ class DepositToImprestAccount
                 app(CreateTransaction::class)->handle(new TransactionData(
                     account_id: Account::getCashOnHand()->id,
                     transactionType: $transactionType,
+                    payment_type_id: $data->payment_type_id,
                     reference_number: $imprest->reference_number,
                     debit: $imprest->amount,
                     member_id: $imprest->member_id,
@@ -45,6 +46,7 @@ class DepositToImprestAccount
                 app(CreateTransaction::class)->handle(new TransactionData(
                     account_id: Account::getCashInBankMSO()->id,
                     transactionType: $transactionType,
+                    payment_type_id: $data->payment_type_id,
                     reference_number: $imprest->reference_number,
                     debit: $imprest->amount,
                     member_id: $imprest->member_id,
@@ -55,6 +57,7 @@ class DepositToImprestAccount
             app(CreateTransaction::class)->handle(new TransactionData(
                 account_id: $imprest_account->id,
                 transactionType: $transactionType,
+                payment_type_id: $data->payment_type_id,
                 reference_number: $imprest->reference_number,
                 credit: $imprest->amount,
                 member_id: $member->id,

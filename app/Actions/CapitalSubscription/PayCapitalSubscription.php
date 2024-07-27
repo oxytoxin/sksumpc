@@ -32,6 +32,7 @@ class PayCapitalSubscription
                 app(CreateTransaction::class)->handle(new TransactionData(
                     account_id: Account::getCashOnHand()->id,
                     transactionType: $transactionType,
+                    payment_type_id: $data->payment_type_id,
                     reference_number: $payment->reference_number,
                     debit: $payment->amount,
                     member_id: $cbu->member->id,
@@ -43,6 +44,7 @@ class PayCapitalSubscription
                 app(CreateTransaction::class)->handle(new TransactionData(
                     account_id: Account::getCashInBankGF()->id,
                     transactionType: $transactionType,
+                    payment_type_id: $data->payment_type_id,
                     reference_number: $payment->reference_number,
                     debit: $payment->amount,
                     member_id: $cbu->member->id,
@@ -53,6 +55,7 @@ class PayCapitalSubscription
             app(CreateTransaction::class)->handle(new TransactionData(
                 account_id: $cbu->member->capital_subscription_account->id,
                 transactionType: $transactionType,
+                payment_type_id: $data->payment_type_id,
                 reference_number: $payment->reference_number,
                 credit: $payment->amount,
                 member_id: $cbu->member->id,

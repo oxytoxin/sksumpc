@@ -42,8 +42,9 @@ class WithdrawFromLoveGiftsAccount
             app(CreateTransaction::class)->handle(new TransactionData(
                 account_id: Account::getCashOnHand()->id,
                 transactionType: $transactionType,
+                payment_type_id: $data->payment_type_id,
                 reference_number: $love_gift->reference_number,
-                credit: $love_gift->amount,
+                credit: $data->amount,
                 member_id: $love_gift->member_id,
                 remarks: 'Member Withdrawal from Love Gift',
             ));
@@ -52,8 +53,9 @@ class WithdrawFromLoveGiftsAccount
             app(CreateTransaction::class)->handle(new TransactionData(
                 account_id: Account::getCashInBankMSO()->id,
                 transactionType: $transactionType,
+                payment_type_id: $data->payment_type_id,
                 reference_number: $love_gift->reference_number,
-                credit: $love_gift->amount,
+                credit: $data->amount,
                 member_id: $love_gift->member_id,
                 remarks: 'Member Withdrawal from Love Gift',
             ));
@@ -62,8 +64,9 @@ class WithdrawFromLoveGiftsAccount
         app(CreateTransaction::class)->handle(new TransactionData(
             account_id: $love_gift_account->id,
             transactionType: $transactionType,
+            payment_type_id: $data->payment_type_id,
             reference_number: $love_gift->reference_number,
-            debit: $love_gift->amount,
+            debit: $data->amount,
             member_id: $member->id,
             remarks: 'Member Withdrawal from Love Gift',
             tag: 'member_love_gift_withdrawal',

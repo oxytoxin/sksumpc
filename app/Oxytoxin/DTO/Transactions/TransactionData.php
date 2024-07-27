@@ -12,6 +12,7 @@ class TransactionData extends Data
         public int             $account_id,
         public TransactionType $transactionType,
         public string          $reference_number,
+        public int             $payment_type_id,
         public ?string         $debit = null,
         public ?string         $credit = null,
         public ?int            $member_id = null,

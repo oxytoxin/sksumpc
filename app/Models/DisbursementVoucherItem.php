@@ -153,6 +153,7 @@ class DisbursementVoucherItem extends Model
                                 loanAccount: $loan_account,
                                 principal: $disbursementVoucherItem->details['principal'],
                                 interest: $disbursementVoucherItem->details['interest'],
+                                payment_type_id: 4,
                                 reference_number: $disbursementVoucherItem->disbursement_voucher->reference_number,
                                 transaction_date: $transaction_date,
                                 transactionType: $transactionType
@@ -175,6 +176,7 @@ class DisbursementVoucherItem extends Model
                     member_id: $account->member_id,
                     account_id: $account->id,
                     transactionType: $transactionType,
+                    payment_type_id: 4,
                     reference_number: $disbursementVoucherItem->disbursement_voucher->reference_number,
                     debit: $disbursementVoucherItem->debit,
                     credit: $disbursementVoucherItem->credit,

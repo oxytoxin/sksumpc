@@ -45,6 +45,7 @@ class CreateTimeDeposit
             app(CreateTransaction::class)->handle(new TransactionData(
                 account_id: Account::getCashOnHand()->id,
                 transactionType: $transactionType,
+                payment_type_id: $timeDepositData->payment_type_id,
                 reference_number: $td->reference_number,
                 debit: $td->amount,
                 member_id: $td->member_id,
@@ -56,6 +57,7 @@ class CreateTimeDeposit
             app(CreateTransaction::class)->handle(new TransactionData(
                 account_id: Account::getCashInBankMSO()->id,
                 transactionType: $transactionType,
+                payment_type_id: $timeDepositData->payment_type_id,
                 reference_number: $td->reference_number,
                 debit: $td->amount,
                 member_id: $td->member_id,
@@ -66,6 +68,7 @@ class CreateTimeDeposit
         app(CreateTransaction::class)->handle(new TransactionData(
             account_id: $tda->id,
             transactionType: $transactionType,
+            payment_type_id: $timeDepositData->payment_type_id,
             reference_number: $td->reference_number,
             credit: $td->amount,
             member_id: $td->member_id,

@@ -33,6 +33,7 @@ class DepositToLoveGiftsAccount
             app(CreateTransaction::class)->handle(new TransactionData(
                 account_id: Account::getCashOnHand()->id,
                 transactionType: $transactionType,
+                payment_type_id: $data->payment_type_id,
                 reference_number: $love_gift->reference_number,
                 debit: $love_gift->amount,
                 member_id: $love_gift->member_id,
@@ -43,6 +44,7 @@ class DepositToLoveGiftsAccount
             app(CreateTransaction::class)->handle(new TransactionData(
                 account_id: Account::getCashInBankMSO()->id,
                 transactionType: $transactionType,
+                payment_type_id: $data->payment_type_id,
                 reference_number: $love_gift->reference_number,
                 debit: $love_gift->amount,
                 member_id: $love_gift->member_id,
@@ -52,6 +54,7 @@ class DepositToLoveGiftsAccount
         app(CreateTransaction::class)->handle(new TransactionData(
             account_id: $love_gift_account->id,
             transactionType: $transactionType,
+            payment_type_id: $data->payment_type_id,
             reference_number: $love_gift->reference_number,
             credit: $love_gift->amount,
             member_id: $member->id,

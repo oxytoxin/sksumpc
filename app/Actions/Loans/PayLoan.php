@@ -32,6 +32,7 @@ class PayLoan
             app(CreateTransaction::class)->handle(new TransactionData(
                 account_id: Account::getCashOnHand()->id,
                 transactionType: $transactionType,
+                payment_type_id: $loanPaymentData->payment_type_id,
                 reference_number: $loanPaymentData->reference_number,
                 debit: $loanPaymentData->amount,
                 member_id: $loan->member_id,
@@ -43,6 +44,7 @@ class PayLoan
             app(CreateTransaction::class)->handle(new TransactionData(
                 account_id: Account::getCashInBankGF()->id,
                 transactionType: $transactionType,
+                payment_type_id: $loanPaymentData->payment_type_id,
                 reference_number: $loanPaymentData->reference_number,
                 debit: $loanPaymentData->amount,
                 member_id: $loan->member_id,
@@ -54,6 +56,7 @@ class PayLoan
         app(CreateTransaction::class)->handle(new TransactionData(
             account_id: $loan_receivables_account->id,
             transactionType: $transactionType,
+            payment_type_id: $loanPaymentData->payment_type_id,
             reference_number: $loanPaymentData->reference_number,
             credit: $principal_payment,
             member_id: $loan->member_id,
@@ -63,6 +66,7 @@ class PayLoan
         app(CreateTransaction::class)->handle(new TransactionData(
             account_id: $loan_interests_account->id,
             transactionType: $transactionType,
+            payment_type_id: $loanPaymentData->payment_type_id,
             reference_number: $loanPaymentData->reference_number,
             credit: $interest_payment,
             member_id: $loan->member_id,
@@ -70,7 +74,8 @@ class PayLoan
             transaction_date: $loanPaymentData->transaction_date
         ));
 
-        return $loan->payments()->create([
+        return LoanPayment::create([
+            'loan_id' => $loan->id,
             'member_id' => $loan->member_id,
             'buy_out' => $loanPaymentData->buy_out,
             'payment_type_id' => $loanPaymentData->payment_type_id,

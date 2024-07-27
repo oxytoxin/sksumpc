@@ -6,6 +6,7 @@ use App\Models\Account;
 use App\Models\Saving;
 use App\Models\Imprest;
 use App\Models\LoveGift;
+use App\Models\Transaction;
 use Filament\Pages\Page;
 use App\Models\LoanPayment;
 use App\Models\TimeDeposit;
@@ -92,6 +93,14 @@ class DailyCollectionsReport extends Page
         $cash_collectibles = CashCollectiblePayment::query()
             ->selectRaw(
                 "sum(amount) as total_amount, 'Cash Collectibles' as name, payment_type_id"
+            )
+            ->whereDate('transaction_date', config('app.transaction_date'))
+            ->groupBy("payment_type_id");
+
+        $cash_collectibles = Transaction::query()
+            ->whereRelation('account', fn($query) => $query->whereIn('parent_id', [16, 18, 91]))
+            ->selectRaw(
+                "sum(credit) as total_amount, 'Cash Collectibles' as name, payment_type_id"
             )
             ->whereDate('transaction_date', config('app.transaction_date'))
             ->groupBy("payment_type_id");

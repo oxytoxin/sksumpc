@@ -32,6 +32,7 @@ class CashierTransactionsPageOthers
                 account_id: Account::getCashOnHand()->id,
                 transactionType: $transaction_type,
                 reference_number: $reference_number,
+                payment_type_id: $payment_type->id,
                 payee: $payee,
                 debit: $amount,
                 member_id: $member_id,
@@ -41,6 +42,7 @@ class CashierTransactionsPageOthers
             app(CreateTransaction::class)->handle(new TransactionData(
                 account_id: $account->id,
                 transactionType: $transaction_type,
+                payment_type_id: $payment_type->id,
                 reference_number: $reference_number,
                 payee: $payee,
                 credit: $amount,

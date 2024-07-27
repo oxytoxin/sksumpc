@@ -20,6 +20,7 @@ class ClaimTimeDeposit
             account_id: Account::getCashInBankMSO()->id,
             transactionType: TransactionType::firstWhere('name', 'CRJ'),
             reference_number: $timeDeposit->reference_number,
+            payment_type_id: 1,
             credit: $timeDeposit->maturity_amount,
             member_id: $timeDeposit->member_id,
             remarks: 'Member Time Deposit Claim'
@@ -28,6 +29,7 @@ class ClaimTimeDeposit
         app(CreateTransaction::class)->handle(new TransactionData(
             account_id: $timeDeposit->time_deposit_account_id,
             transactionType: TransactionType::firstWhere('name', 'CRJ'),
+            payment_type_id: 1,
             reference_number: $timeDeposit->reference_number,
             debit: $timeDeposit->maturity_amount,
             member_id: $timeDeposit->member_id,

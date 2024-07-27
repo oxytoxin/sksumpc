@@ -32,6 +32,7 @@ class PayCashCollectible
             app(CreateTransaction::class)->handle(new TransactionData(
                 account_id: Account::getCashOnHand()->id,
                 transactionType: $transactionType,
+                payment_type_id: $cashCollectiblePaymentData->payment_type_id,
                 reference_number: $payment->reference_number,
                 debit: $payment->amount,
                 member_id: $payment->member_id,
@@ -43,6 +44,7 @@ class PayCashCollectible
             app(CreateTransaction::class)->handle(new TransactionData(
                 account_id: Account::getCashInBankGF()->id,
                 transactionType: $transactionType,
+                payment_type_id: $cashCollectiblePaymentData->payment_type_id,
                 reference_number: $payment->reference_number,
                 debit: $payment->amount,
                 member_id: $payment->member_id,
@@ -54,6 +56,7 @@ class PayCashCollectible
         app(CreateTransaction::class)->handle(new TransactionData(
             account_id: $accounts_receivables_account->id,
             transactionType: $transactionType,
+            payment_type_id: $cashCollectiblePaymentData->payment_type_id,
             reference_number: $payment->reference_number,
             credit: $payment->amount,
             member_id: $payment->member_id,

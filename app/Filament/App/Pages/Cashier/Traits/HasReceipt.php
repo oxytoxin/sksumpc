@@ -3,6 +3,7 @@
 namespace App\Filament\App\Pages\Cashier\Traits;
 
 use Filament\Actions\Action;
+use Filament\Actions\StaticAction;
 use Filament\Support\Enums\MaxWidth;
 
 trait HasReceipt
@@ -11,11 +12,18 @@ trait HasReceipt
     {
         return Action::make('receipt')
             ->modalContent(fn($arguments) => view('filament.app.pages.cashier.transaction-receipt', ['transactions' => $arguments['transactions']]))
-            ->modalWidth(MaxWidth::FourExtraLarge)
-            ->modalSubmitAction(false)
-            ->modalHeading('Transaction Receipt')
             ->modalCancelAction(false)
-            ->action(function ($arguments) {
+            ->closeModalByClickingAway(false)
+            ->modalCloseButton(false)
+            ->modalSubmitAction(function (StaticAction $action) {
+                $action
+                    ->label('Close')
+                    ->extraAttributes(['class' => 'w-full !-mt-4'], true);
+            })
+            ->modalWidth(MaxWidth::FourExtraLarge)
+            ->modalHeading('Transaction Receipt')
+            ->action(function () {
+                $this->js("setTimeout(() => document.querySelector('html').style = '', 10)");
             });
     }
 }

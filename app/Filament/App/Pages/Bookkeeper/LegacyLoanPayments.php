@@ -50,6 +50,9 @@ class LegacyLoanPayments extends Page
                     ->preload(),
                 Placeholder::make('loan_type')
                     ->content(fn($get) => LoanAccount::find($get('loan_account_id'))?->loan?->loan_type?->name),
+                Select::make('payment_type_id')
+                    ->paymenttype()
+                    ->required(),
                 TextInput::make('reference_number')
                     ->required(),
                 TextInput::make('principal')
@@ -72,6 +75,7 @@ class LegacyLoanPayments extends Page
                                     loanAccount: LoanAccount::find($data['loan_account_id']),
                                     principal: $data['principal'],
                                     interest: $data['interest'],
+                                    payment_type_id: $data['payment_type_id'],
                                     reference_number: $data['reference_number'],
                                     transaction_date: $data['transaction_date'],
                                     transactionType: $transactionType

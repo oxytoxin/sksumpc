@@ -93,12 +93,12 @@ class ImportExistingLoan
         $loan->posted = true;
         $loan->save();
 
-        $balance_forwarded = $balance_forwarded;
         $principal_payment = $loan->gross_amount - $balance_forwarded;
         $transactionType = TransactionType::firstWhere('name', 'CRJ');
         app(CreateTransaction::class)->handle(new TransactionData(
             account_id: Account::getCashOnHand()->id,
             transactionType: $transactionType,
+            payment_type_id: 1,
             reference_number: '#BALANCEFORWARDEDPAYMENT',
             debit: $principal_payment,
             member_id: $loan->member_id,
@@ -109,6 +109,7 @@ class ImportExistingLoan
         app(CreateTransaction::class)->handle(new TransactionData(
             account_id: $loan->loan_account->id,
             transactionType: $transactionType,
+            payment_type_id: 1,
             reference_number: '#BALANCEFORWARDEDPAYMENT',
             credit: $principal_payment,
             member_id: $loan->member_id,

@@ -15,6 +15,7 @@ class CreateTransaction
         return Transaction::create([
             'account_id' => $transactionData->account_id,
             'member_id' => $transactionData->member_id,
+            'payment_type_id' => $transactionData->payment_type_id,
             'reference_number' => $transactionData->reference_number,
             'debit' => $transactionData->debit,
             'credit' => $transactionData->credit,

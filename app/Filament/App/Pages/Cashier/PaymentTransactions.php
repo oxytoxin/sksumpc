@@ -254,7 +254,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                             ->afterStateUpdated(fn($set, $state) => $set('maturity_amount', TimeDepositsProvider::getMaturityAmount(floatval($state))))
                                             ->minValue(TimeDepositsProvider::MINIMUM_DEPOSIT)->default(TimeDepositsProvider::MINIMUM_DEPOSIT),
                                         Placeholder::make('number_of_days')->content(TimeDepositsProvider::NUMBER_OF_DAYS),
-                                        Placeholder::make('maturity_date')->content(TimeDepositsProvider::getMaturityDate(today())->format('F d, Y')),
+                                        Placeholder::make('maturity_date')->content(TimeDepositsProvider::getMaturityDate($this->transaction_date)->format('F d, Y')),
                                         Placeholder::make('maturity_amount')->content(fn($get) => format_money(TimeDepositsProvider::getMaturityAmount(floatval($get('amount'))), 'PHP')),
                                     ]),
                             ]),
