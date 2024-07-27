@@ -2,8 +2,10 @@
 
 namespace App\Filament\App\Pages\Cashier\Reports;
 
+use App\Models\Account;
 use App\Models\CashCollectible;
 use App\Models\CashCollectiblePayment;
+use App\Models\Transaction;
 use Filament\Pages\Page;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -30,8 +32,11 @@ class CashCollectiblesReport extends Page implements HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->query(CashCollectiblePayment::query())
-            ->content(fn () => view('filament.app.pages.cashier.reports.cash-collectible-payments-report-table', [
+            ->query(
+                Transaction::query()
+                    ->whereRelation('account', fn($query) => $query->whereIn('parent_id', [16, 18, 91]))
+            )
+            ->content(fn() => view('filament.app.pages.cashier.reports.cash-collectible-payments-report-table', [
                 'signatories' => $this->signatories,
                 'report_title' => $this->report_title,
             ]))
@@ -39,10 +44,9 @@ class CashCollectiblesReport extends Page implements HasTable
                 DateRangeFilter::make('transaction_date')
                     ->format('m/d/Y')
                     ->displayFormat('MM/DD/YYYY'),
-                SelectFilter::make('cash_collectible_id')
-                    ->options(CashCollectible::pluck('name', 'id'))
+                SelectFilter::make('account_id')
+                    ->options(Account::withCode()->whereIn('parent_id', [16, 18, 91])->pluck('code', 'id'))
                     ->multiple()
-                    ->query(fn ($query, $state) => $query->when(count($state['values'] ?? []), fn ($q) => $q->whereIn('cash_collectible_id', $state['values'])))
                     ->label('Cash Collectible'),
             ])
             ->filtersLayout(FiltersLayout::AboveContent)

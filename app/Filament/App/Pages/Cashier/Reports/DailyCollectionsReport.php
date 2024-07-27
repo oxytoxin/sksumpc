@@ -90,13 +90,6 @@ class DailyCollectionsReport extends Page
             ->whereDate('transaction_date', config('app.transaction_date'))
             ->groupBy("payment_type_id");
 
-        $cash_collectibles = CashCollectiblePayment::query()
-            ->selectRaw(
-                "sum(amount) as total_amount, 'Cash Collectibles' as name, payment_type_id"
-            )
-            ->whereDate('transaction_date', config('app.transaction_date'))
-            ->groupBy("payment_type_id");
-
         $cash_collectibles = Transaction::query()
             ->whereRelation('account', fn($query) => $query->whereIn('parent_id', [16, 18, 91]))
             ->selectRaw(
@@ -104,7 +97,7 @@ class DailyCollectionsReport extends Page
             )
             ->whereDate('transaction_date', config('app.transaction_date'))
             ->groupBy("payment_type_id");
-
+        
         return $savings
             ->union($share_capital)
             ->union($imprests)
