@@ -3,6 +3,7 @@
 namespace App\Filament\App\Resources\MemberResource\Pages;
 
 use App\Actions\Memberships\CreateMemberInitialAccounts;
+use App\Filament\App\Pages\Cashier\RequiresBookkeeperTransactionDate;
 use App\Filament\App\Resources\MemberResource;
 use App\Models\MemberType;
 use DB;
@@ -11,6 +12,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class CreateMember extends CreateRecord
 {
+    use RequiresBookkeeperTransactionDate;
+    
     protected static string $resource = MemberResource::class;
 
     protected function handleRecordCreation(array $data): Model
