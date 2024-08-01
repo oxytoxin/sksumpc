@@ -105,11 +105,13 @@ class MemberResource extends Resource
                         TextEntry::make('tin')->extraAttributes(['class' => 'font-semibold'])->inlineLabel()->label('TIN'),
                         TextEntry::make('member_type.name')->extraAttributes(['class' => 'font-semibold'])->inlineLabel()->label('Member Type'),
                         TextEntry::make('division.name')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
+                        TextEntry::make('grade')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
+                        TextEntry::make('section')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                     ]),
                     InfolistSection::make()
                         ->schema([
                             TextEntry::make('occupation.name')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
-                            TextEntry::make('present_employer')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
+                            TextEntry::make('occupation_description')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                             TextEntry::make('annual_income')->money('PHP')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                             TextEntry::make('other_income_sources')->money('PHP')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                         ]),
@@ -120,7 +122,7 @@ class MemberResource extends Resource
                         ]),
                     InfolistSection::make('Initial Capital Subscription')
                         ->schema([
-                            TextEntry::make('membership_acceptance.effectivity_date')->label('Date Accepted')->date('F d, Y')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
+                            TextEntry::make('membership_acceptance.effectivity_date')->label('Membership Date')->date('F d, Y')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                             TextEntry::make('membership_acceptance.bod_resolution')->label('BOD Resolution')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                             TextEntry::make('member_type.name')->label('Type of Member')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                             TextEntry::make('initial_capital_subscription.number_of_shares')->label('# of Shares Subscribed')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
@@ -185,9 +187,15 @@ class MemberResource extends Resource
                                     ->relationship('member_subtype', 'name')
                                     ->options(fn($get) => MemberSubtype::whereMemberTypeId($get('member_type_id'))->pluck('name', 'id'))
                                     ->required(fn($get) => $get('member_type_id') == 1)
+                                    ->visible(fn($get) => $get('member_type_id') == 1)
                                     ->live(),
                                 Select::make('division_id')
+                                    ->visible(fn($get) => $get('member_type_id') != 4)
                                     ->relationship('division', 'name'),
+                                TextInput::make('grade')
+                                    ->visible(fn($get) => $get('member_type_id') == 4),
+                                TextInput::make('section')
+                                    ->visible(fn($get) => $get('member_type_id') == 4),
                                 Select::make('patronage_status_id')
                                     ->label('Patronage Status')
                                     ->default(1)
@@ -267,6 +275,8 @@ class MemberResource extends Resource
                                 'WIFE' => 'WIFE',
                                 'SON' => 'SON',
                                 'DAUGHTER' => 'DAUGHTER',
+                                'BROTHER' => 'BROTHER',
+                                'SISTER' => 'SISTER',
                                 'COUSIN' => 'COUSIN',
                                 'OTHERS' => 'OTHERS',
                             ])->required(),
@@ -276,18 +286,18 @@ class MemberResource extends Resource
                 Select::make('occupation_id')
                     ->relationship('occupation', 'name')
                     ->options(Occupation::pluck('name', 'id')),
+                TextInput::make('occupation_description'),
                 TextInput::make('highest_educational_attainment')
                     ->maxLength(125),
                 TextInput::make('present_employer'),
                 TextInput::make('annual_income')
                     ->moneymask()
                     ->minValue(0),
-                TextInput::make('other_income_sources')
-                    ->moneymask(),
+                TextInput::make('other_income_sources'),
                 Section::make('Membership Acceptance')
                     ->schema([
-                        TextInput::make('bod_resolution')->numeric(),
-                        DatePicker::make('effectivity_date')->required()->default(fn($livewire) => $livewire->transaction_date),
+                        TextInput::make('bod_resolution'),
+                        DatePicker::make('effectivity_date')->native(false)->label('Membership Date')->required()->default(fn($livewire) => $livewire->transaction_date),
                         Hidden::make('type')->default(MembershipStatus::ACCEPTANCE),
                     ])->relationship('membership_acceptance'),
                 Section::make('Initial Capital Subscription')

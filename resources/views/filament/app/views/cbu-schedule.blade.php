@@ -1,7 +1,7 @@
 <div x-data>
     <div class="p-4 print:w-full print:text-[10pt] print:leading-tight" x-ref="print">
         <x-app.cashier.reports.report-heading/>
-        <h4 class="mt-4 text-center text-xl font-bold uppercase print:text-[12pt]">CBU SUMMARY SCHEDULE AS OF
+        <h4 class="mt-4 text-center text-xl font-bold uppercase print:text-[12pt]">{{ $this->gender }} {{ $this->member_type }} CBU SUMMARY SCHEDULE AS OF
             {{ today()->format('F d, Y') }}</h4>
         <h5 class="text-center font-bold uppercase">
             {{ App\Models\MemberType::find($this->tableFilters['member_type_id']['value'])?->name }}</h5>
