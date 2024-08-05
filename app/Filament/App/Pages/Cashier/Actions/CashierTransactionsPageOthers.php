@@ -16,9 +16,10 @@ class CashierTransactionsPageOthers
     public static function handle($member_id, Account $account, TransactionType $transaction_type, $payment_type, $reference_number, $amount, $transaction_date, $payee)
     {
         if (in_array($account->tag, ['member_common_cbu_paid', 'member_preferred_cbu_paid', 'member_laboratory_cbu_paid'])) {
+            $member = Member::find($member_id);
             app(PayCapitalSubscription::class)
                 ->handle(
-                    cbu: $account->member->capital_subscriptions_common,
+                    cbu: $member->capital_subscriptions_common,
                     data: new CapitalSubscriptionPaymentData(
                         payment_type_id: 4,
                         reference_number: $reference_number,

@@ -8,6 +8,7 @@
         <table class="mt-4 w-full print:text-[8pt]">
             <thead>
             <tr>
+                <th class="border border-black text-center">No.</th>
                 <th class="border border-black text-center">Name</th>
                 <th class="border border-black text-center">No. of Shares Subscribed</th>
                 <th class="border border-black text-center">Amount of Shares Subscribed</th>
@@ -30,6 +31,7 @@
             @endphp
             @foreach ($this->table->getRecords() as $record)
                 <tr wire:loading.remove>
+                    <td class="whitespace-nowrap border border-black px-4 text-center">{{ $loop->iteration }}</td>
                     <td class="whitespace-nowrap border border-black px-4 text-left">{{ $record->alt_full_name }}
                     </td>
                     <td class="whitespace-nowrap border border-black px-4 text-center">

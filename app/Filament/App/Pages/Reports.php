@@ -8,6 +8,8 @@ use App\Filament\App\Pages\Cashier\Reports\DailyCollectionsReport;
 use App\Filament\App\Pages\Cashier\Reports\ImprestsReport;
 use App\Filament\App\Pages\Cashier\Reports\LoanPaymentsReport;
 use App\Filament\App\Pages\Cashier\Reports\LoveGiftsReport;
+use App\Filament\App\Pages\Cashier\Reports\MsoTransactions;
+use App\Filament\App\Pages\Cashier\Reports\PaymentTransactions;
 use App\Filament\App\Pages\Cashier\Reports\SavingsReport;
 use App\Filament\App\Pages\Cashier\Reports\ShareCapitalPaymentsReport;
 use App\Filament\App\Pages\Cashier\Reports\TimeDepositsReport;
@@ -38,41 +40,49 @@ class Reports extends Page implements HasForms
     {
         return $form->schema([
             Tabs::make()
-                ->activeTab(1)
+                ->activeTab(2)
                 ->schema([
-                    Tab::make('Share Capital')
+//                    Tab::make('Share Capital')
+//                        ->schema([
+//                            Livewire::make(ShareCapitalPaymentsReport::class, ['report_title' => "REPORT ON MEMBERS' CBU"]),
+//                        ]),
+//                    Tab::make('Savings')
+//                        ->schema([
+//                            Livewire::make(SavingsReport::class, ['report_title' => "REPORT ON MEMBERS' SAVINGS"]),
+//                        ]),
+//                    Tab::make('Imprests')
+//                        ->schema([
+//                            Livewire::make(ImprestsReport::class, ['report_title' => "REPORT ON MEMBERS' IMPRESTS"]),
+//                        ]),
+//                    Tab::make('Love Gift')
+//                        ->schema([
+//                            Livewire::make(LoveGiftsReport::class, ['report_title' => "REPORT ON MEMBERS' LOVE GIFT"]),
+//                        ]),
+//                    Tab::make('Time Deposits')
+//                        ->schema([
+//                            Livewire::make(TimeDepositsReport::class, [' report_title' => "REPORT ON MEMBERS' TIME DEPOSITS"]),
+//                        ]),
+//                    Tab::make('Cash Collectibles')
+//                        ->schema([
+//                            Livewire::make(CashCollectiblesReport::class, ['report_title' => "REPORT ON MEMBERS' CASH COLLECTIONS"]),
+//                        ]),
+//                    Tab::make('Loan')
+//                        ->schema([
+//                            Livewire::make(LoanPaymentsReport::class, ['report_title' => "REPORT ON MEMBERS' LOAN PAYMENTS"]),
+//                        ]),
+                    Tab::make('MSO TRANSACTIONS')
                         ->schema([
-                            Livewire::make(ShareCapitalPaymentsReport::class, ['report_title' => "REPORT ON MEMBERS' CBU"]),
+                            Livewire::make(MsoTransactions::class),
                         ]),
-                    Tab::make('Savings')
+                    Tab::make('PAYMENT TRANSACTIONS')
                         ->schema([
-                            Livewire::make(SavingsReport::class, ['report_title' => "REPORT ON MEMBERS' SAVINGS"]),
+                            Livewire::make(PaymentTransactions::class),
                         ]),
-                    Tab::make('Imprests')
-                        ->schema([
-                            Livewire::make(ImprestsReport::class, ['report_title' => "REPORT ON MEMBERS' IMPRESTS"]),
-                        ]),
-                    Tab::make('Love Gift')
-                        ->schema([
-                            Livewire::make(LoveGiftsReport::class, ['report_title' => "REPORT ON MEMBERS' LOVE GIFT"]),
-                        ]),
-                    Tab::make('Time Deposits')
-                        ->schema([
-                            Livewire::make(TimeDepositsReport::class, ['report_title' => "REPORT ON MEMBERS' TIME DEPOSITS"]),
-                        ]),
-                    Tab::make('Cash Collectibles')
-                        ->schema([
-                            Livewire::make(CashCollectiblesReport::class, ['report_title' => "REPORT ON MEMBERS' CASH COLLECTIONS"]),
-                        ]),
-                    Tab::make('Loan')
-                        ->schema([
-                            Livewire::make(LoanPaymentsReport::class, ['report_title' => "REPORT ON MEMBERS' LOAN PAYMENTS"]),
-                        ]),
-                    Tab::make('Cash Proof')
+                    Tab::make('CASH PROOF')
                         ->schema([
                             Livewire::make(CashProof::class),
                         ]),
-                    Tab::make('Daily Collections')
+                    Tab::make('DAILY COLLECTIONS')
                         ->schema([
                             Livewire::make(DailyCollectionsReport::class),
                         ]),

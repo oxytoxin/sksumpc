@@ -113,7 +113,7 @@ class MemberResource extends Resource
                             TextEntry::make('occupation.name')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                             TextEntry::make('occupation_description')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                             TextEntry::make('annual_income')->money('PHP')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
-                            TextEntry::make('other_income_sources')->money('PHP')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
+                            TextEntry::make('other_income_sources')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                         ]),
                     InfolistSection::make()
                         ->schema([
@@ -125,7 +125,7 @@ class MemberResource extends Resource
                             TextEntry::make('membership_acceptance.effectivity_date')->label('Membership Date')->date('F d, Y')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                             TextEntry::make('membership_acceptance.bod_resolution')->label('BOD Resolution')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                             TextEntry::make('member_type.name')->label('Type of Member')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
-                            TextEntry::make('initial_capital_subscription.number_of_shares')->label('# of Shares Subscribed')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
+                            TextEntry::make('initial_capital_subscription.number_of_shares')->formatStateUsing(fn($state) => round($state, 0))->label('# of Shares Subscribed')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                             TextEntry::make('initial_capital_subscription.amount_subscribed')->label('Amount Subscribed')->money('PHP')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                         ]),
                     Actions::make([
@@ -178,6 +178,16 @@ class MemberResource extends Resource
                                             $set('amount_subscribed', $member_type->default_amount_subscribed);
 
                                             return;
+                                        }
+                                        if ($member_type?->id == 4) {
+                                            $set('dependents', [
+                                                [
+                                                    'relationship' => 'FATHER',
+                                                ],
+                                                [
+                                                    'relationship' => 'MOTHER',
+                                                ]
+                                            ]);
                                         }
                                         $set('member_subtype_id', null);
                                         $set('present_employer', '');
@@ -264,9 +274,10 @@ class MemberResource extends Resource
                     ]),
                 TableRepeater::make('dependents')
                     ->default([])
+                    ->label(fn($get) => $get('member_type_id') == 4 ? 'Parents' : 'Dependents')
                     ->schema([
                         TextInput::make('name')->required(),
-                        DatePicker::make('dob')->label('Date of Birth')->format('Y-m-d')->required(),
+                        DatePicker::make('dob')->label('Date of Birth')->format('Y-m-d')->native(false),
                         Select::make('relationship')
                             ->options([
                                 'FATHER' => 'FATHER',
@@ -296,7 +307,7 @@ class MemberResource extends Resource
                 TextInput::make('other_income_sources'),
                 Section::make('Membership Acceptance')
                     ->schema([
-                        TextInput::make('bod_resolution'),
+                        TextInput::make('bod_resolution')->label('BOD Resolution'),
                         DatePicker::make('effectivity_date')->native(false)->label('Membership Date')->required()->default(fn($livewire) => $livewire->transaction_date),
                         Hidden::make('type')->default(MembershipStatus::ACCEPTANCE),
                     ])->relationship('membership_acceptance'),
