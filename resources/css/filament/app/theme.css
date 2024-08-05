@@ -1,6 +1,11 @@
 @import '../../../../vendor/filament/filament/resources/css/theme.css';
 @import '../../../../vendor/awcodes/filament-table-repeater/resources/css/plugin.css';
+
 @config './tailwind.config.js';
+
+button[wire\:click="resetTableFiltersForm"] {
+    display: none;
+}
 
 .fi-sidebar-header {
     @apply h-24 flex justify-center ring-0 !shadow-none;
@@ -18,7 +23,7 @@
     @apply outline outline-2 outline-gray-500 bg-white p-4;
 }
 
-.fi-topbar>nav {
+.fi-topbar > nav {
     @apply bg-primary-600 text-white;
 }
 
@@ -30,11 +35,11 @@
     @apply text-white hover:text-gray-300;
 }
 
-.fi-tabs-item-active{
+.fi-tabs-item-active {
     @apply bg-primary-200 underline decoration-2 underline-offset-4 decoration-primary-400;
 }
 
-.fi-in-image{
+.fi-in-image {
     @apply justify-center;
 }
 
@@ -42,40 +47,46 @@
     @apply sm:grid-cols-4;
 }
 
-.fi-in-component-ctn{
+.fi-in-component-ctn {
     @apply gap-1;
 }
 
-.fi-fo-builder-block-picker > .fi-dropdown-panel{
+.fi-fo-builder-block-picker > .fi-dropdown-panel {
     @apply !bg-primary-300 font-bold;
-} 
+}
 
 [data-transaction="cbu"] {
     @apply !bg-blue-100;
 }
+
 [data-transaction="savings"] {
     @apply !bg-green-100;
 }
+
 [data-transaction="time-deposit"] {
     @apply !bg-yellow-100;
 }
+
 [data-transaction="imprest"] {
     @apply !bg-orange-100;
 }
+
 [data-transaction="loan"] {
     @apply !bg-amber-900 bg-opacity-30;
 }
+
 [data-transaction="love-gift"] {
     @apply !bg-pink-100;
 }
+
 [data-transaction="cash-collection"] {
     @apply !bg-violet-100;
 }
 
-.fs-row-data{
+.fs-row-data {
     @apply whitespace-nowrap border border-black px-2 text-right text-xs uppercase hover:bg-green-300;
 }
 
-.fs-row-header{
+.fs-row-header {
     @apply whitespace-nowrap border border-black px-2 text-base font-bold uppercase hover:bg-green-300;
 }
