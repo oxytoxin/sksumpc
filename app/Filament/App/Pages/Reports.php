@@ -40,7 +40,7 @@ class Reports extends Page implements HasForms
     {
         return $form->schema([
             Tabs::make()
-                ->activeTab(2)
+                ->activeTab(1)
                 ->schema([
 //                    Tab::make('Share Capital')
 //                        ->schema([
