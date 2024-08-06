@@ -62,7 +62,7 @@
                 @endphp
             @endforeach
             <tr wire:loading.remove>
-                <td class="whitespace-nowrap border border-black px-4 text-left font-bold">TOTAL</td>
+                <td colspan="2" class="whitespace-nowrap border border-black px-4 text-left font-bold">TOTAL</td>
                 <td class="whitespace-nowrap border border-black px-4 text-center font-bold">{{ round($totals['capital_subscriptions_sum_number_of_shares'], 0) }}</td>
                 <td class="whitespace-nowrap border border-black px-4 text-right font-bold">{{ renumber_format($totals['capital_subscriptions_sum_amount_subscribed'], 2) }}</td>
                 <td class="whitespace-nowrap border border-black px-4 text-center font-bold">{{ round($totals['number_of_shares_paid'], 0) }}</td>
@@ -73,8 +73,8 @@
                 <td class="whitespace-nowrap border border-black px-4 text-right font-bold">{{ renumber_format($totals['amount_shares_paid'], 2) }}</td>
                 <td class="whitespace-nowrap border border-black px-4 text-right font-bold">{{ renumber_format($totals['capital_subscriptions_sum_deposit'], 2) }}</td>
             </tr>
-            <tr>
-                <td colspan="8" class="whitespace-nowrap border border-black px-4 text-right font-bold">Loading data...</td>
+            <tr class="hidden" wire:loading.class.remove="hidden">
+                <td colspan="9" class="whitespace-nowrap border border-black px-4 text-center font-bold">Loading data...</td>
             </tr>
             </tbody>
         </table>

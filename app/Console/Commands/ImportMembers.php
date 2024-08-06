@@ -13,6 +13,7 @@ use DateTimeImmutable;
 use App\Models\Division;
 use App\Models\Religion;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Schema;
 use Spatie\Permission\Models\Role;
 use Spatie\SimpleExcel\SimpleExcelReader;
 use App\Actions\Memberships\CreateMemberInitialAccounts;
@@ -67,7 +68,7 @@ class ImportMembers extends Command
                             }
                         }
                         $member_address = implode(', ', $address);
-                        $memberData = collect($memberData)->map(fn ($d) => filled($d) ? trim($d instanceof DateTimeImmutable ? strtoupper($d->format('m/d/Y')) : strtoupper($d)) : null)->toArray();
+                        $memberData = collect($memberData)->map(fn($d) => filled($d) ? trim($d instanceof DateTimeImmutable ? strtoupper($d->format('m/d/Y')) : strtoupper($d)) : null)->toArray();
                         $member = Member::create([
                             'mpc_code' => $memberData['mpc_code'],
                             'first_name' => $memberData['firstname'],
@@ -132,5 +133,10 @@ class ImportMembers extends Command
                 }
             });
         }
+        Schema::disableForeignKeyConstraints();
+        DB::table('members')->truncate();
+        DB::statement("ALTER TABLE members AUTO_INCREMENT =  1");
+        DB::unprepared(file_get_contents(database_path('migrations/members.sql')));
+        Schema::enableForeignKeyConstraints();
     }
 }
