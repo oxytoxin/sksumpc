@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
         $this->call(PaymentTypesSeeder::class);
         $this->call(PatronageStatusSeeder::class);
         $this->call(GenderSeeder::class);
+        $this->call(PositionsSeeder::class);
 
         $this->call(TransactionTypesSeeder::class);
         $this->call(AccountTypeSeeder::class);

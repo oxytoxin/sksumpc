@@ -20,6 +20,8 @@ use App\Models\MembershipStatus;
 use App\Models\MemberSubtype;
 use App\Models\MemberType;
 use App\Models\Occupation;
+use App\Models\OfficersList;
+use App\Models\Position;
 use App\Models\Religion;
 use App\Oxytoxin\Providers\OverrideProvider;
 use App\Oxytoxin\Providers\ShareCapitalProvider;
@@ -27,6 +29,7 @@ use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 use Carbon\Carbon;
 use DB;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Placeholder;
@@ -167,6 +170,15 @@ class MemberResource extends Resource
                             ->columnSpan(1),
                         Section::make()
                             ->schema([
+                                Fieldset::make('Officership')
+                                    ->schema([
+                                        Select::make('officers_list_id')
+                                            ->label('Year')
+                                            ->options(OfficersList::pluck('year', 'id')),
+                                        Select::make('position_id')
+                                            ->label('Position')
+                                            ->options(Position::pluck('name', 'id')),
+                                    ]),
                                 Select::make('member_type_id')
                                     ->relationship('member_type', 'name')
                                     ->live()
@@ -186,7 +198,7 @@ class MemberResource extends Resource
                                                 ],
                                                 [
                                                     'relationship' => 'MOTHER',
-                                                ]
+                                                ],
                                             ]);
                                         }
                                         $set('member_subtype_id', null);
@@ -338,6 +350,7 @@ class MemberResource extends Resource
     {
         return $table
             ->columns([
+                TextColumn::make('id'),
                 TextColumn::make('mpc_code')
                     ->label('Code')
                     ->sortable()
@@ -351,23 +364,28 @@ class MemberResource extends Resource
                 TextColumn::make('middle_initial')
                     ->label('MI')
                     ->alignCenter(),
+                TextColumn::make('division.name')
+                    ->sortable(),
                 TextColumn::make('dob')
                     ->label('Date of Birth')
                     ->date('F d, Y')
                     ->sortable(),
                 TextColumn::make('age')
                     ->numeric()
-                    ->alignCenter()
-                    ->sortable(),
+                    ->alignCenter(),
                 TextColumn::make('civil_status.name')
                     ->alignCenter(),
                 TextColumn::make('gender.name')
+                    ->sortable()
                     ->alignCenter(),
                 TextColumn::make('tin')
                     ->label('TIN')
                     ->alignCenter()
                     ->searchable(),
                 TextColumn::make('member_type.name')
+                    ->sortable(),
+                TextColumn::make('member_subtype.name')
+                    ->visible(fn($livewire) => $livewire->tableFilters['member_type']['member_type'] == 1)
                     ->sortable(),
                 TextColumn::make('terminated_at')
                     ->date('m/d/Y')
@@ -378,12 +396,26 @@ class MemberResource extends Resource
                     ->date('F d, Y'),
             ])
             ->filters([
-                SelectFilter::make('member_type')
-                    ->relationship('member_type', 'name'),
-                SelectFilter::make('member_subtype')
-                    ->relationship('member_subtype', 'name'),
+                Tables\Filters\Filter::make('member_type')
+                    ->form([
+                        Select::make('member_type')
+                            ->relationship('member_type', 'name')
+                            ->placeholder('All')
+                            ->afterStateUpdated(fn($set) => $set('member_subtype', null)),
+                        Select::make('member_subtype')
+                            ->visible(fn($get) => $get('member_type') == 1)
+                            ->placeholder('All')
+                            ->relationship('member_subtype', 'name'),
+                    ])
+                    ->query(
+                        fn($state, $query) => $query
+                            ->when($state['member_type'], fn($q, $v) => $q->whereMemberTypeId($v))
+                            ->when($state['member_subtype'], fn($q, $v) => $q->whereMemberSubtypeId($v))
+                    ),
                 SelectFilter::make('gender')
                     ->relationship('gender', 'name'),
+                SelectFilter::make('division')
+                    ->relationship('division', 'name'),
                 SelectFilter::make('patronage_status')
                     ->relationship('patronage_status', 'name'),
                 SelectFilter::make('status')
@@ -397,7 +429,7 @@ class MemberResource extends Resource
                             ->when($state['value'] == 1, fn($q) => $q->whereNull('terminated_at'))
                             ->when($state['value'] == 2, fn($q) => $q->whereNotNull('terminated_at'))
                     ),
-                DateRangeFilter::make('created_at')
+                DateRangeFilter::make('membership_date')
                     ->displayFormat('MM/DD/YYYY')
                     ->label('Date of Membership'),
             ])
@@ -410,7 +442,22 @@ class MemberResource extends Resource
                     ->color(Color::Amber)
                     ->visible(auth()->user()->can('manage members'))
                     ->hidden(fn($record) => $record->terminated_at)
-                    ->action(fn($record) => $record->update(['terminated_at' => now()])),
+                    ->form([
+                        TextInput::make('bod_resolution')->label('BOD Resolution')->required(),
+                        DatePicker::make('termination_date')->default(config('app.transaction_date') ?? today())->native(false)->required(),
+                    ])
+                    ->action(function ($record, $data) {
+                        DB::beginTransaction();
+                        MembershipStatus::create([
+                            'member_id' => $record->id,
+                            'type' => MembershipStatus::TERMINATION,
+                            'bod_resolution' => $data['bod_resolution'],
+                            'effectivity_date' => $data['termination_date'],
+                        ]);
+                        $record->update(['terminated_at' => config('app.transaction_date') ?? now()]);
+                        DB::commit();
+                        Notification::make()->title('Member terminated.')->success()->send();
+                    }),
                 Tables\Actions\EditAction::make()
                     ->hidden(fn($record) => $record->terminated_at)
                     ->visible(auth()->user()->can('manage members')),
@@ -446,7 +493,6 @@ class MemberResource extends Resource
             ->bulkActions([])
             ->emptyStateActions([])
             ->recordUrl(fn(Member $record) => MemberResource::getUrl('view', ['record' => $record]))
-            ->defaultSort('last_name')
             ->paginated([10, 25, 50]);
     }
 

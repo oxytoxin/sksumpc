@@ -43,6 +43,7 @@ class Member extends Model implements HasMedia
     {
         return Member::findMany($this->member_ids);
     }
+
     public function accounts()
     {
         return $this->hasMany(Account::class);
@@ -66,7 +67,7 @@ class Member extends Model implements HasMedia
 
     public function member_subtype(): BelongsTo
     {
-       return $this->belongsTo(MemberSubtype::class);
+        return $this->belongsTo(MemberSubtype::class);
     }
 
     public function gender(): BelongsTo
@@ -228,5 +229,10 @@ class Member extends Model implements HasMedia
     public function barangay()
     {
         return $this->belongsTo(Barangay::class);
+    }
+
+    public function officers_list()
+    {
+        return $this->belongsToMany(OfficersList::class);
     }
 }

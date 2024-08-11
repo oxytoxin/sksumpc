@@ -6,8 +6,8 @@
             <th class="border border-black text-center">MEMBER NAME</th>
             <th class="border border-black text-center">ACCOUNT NUMBER</th>
             <th class="border border-black text-center">REFERENCE #</th>
-            <th class="border border-black text-center">DEBIT</th>
-            <th class="border border-black text-center">CREDIT</th>
+            <th class="border border-black text-center px-2">DEBIT</th>
+            <th class="border border-black text-center px-2">CREDIT</th>
             <th class="border border-black text-center">DATE</th>
         </tr>
         </thead>

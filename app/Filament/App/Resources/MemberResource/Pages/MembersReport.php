@@ -20,22 +20,33 @@ class MembersReport extends Page
     public function members()
     {
         return Member::query()
-            ->when(filled($this->filters['member_type'] ?? null), fn ($q) => $q->whereMemberTypeId($this->filters['member_type']))
-            ->when(filled($this->filters['patronage_status'] ?? null), fn ($q) => $q->wherePatronageStatusId($this->filters['patronage_status']))
-            ->when(filled($this->filters['gender'] ?? null), fn ($q) => $q->whereGenderId($this->filters['gender']))
-            ->when(filled($this->filters['created_at'] ?? null), fn ($q) => $q->whereBetween('members.created_at', collect(explode(' - ', $this->filters['created_at']))->map(fn ($d) => Carbon::createFromFormat('d/m/Y', $d)->format('Y-m-d'))->toArray()))
-            ->when(($this->filters['status'] ?? null) == 1, fn ($q) => $q->whereNull('terminated_at'))
-            ->when(($this->filters['status'] ?? null) == 2, fn ($q) => $q->whereNotNull('terminated_at'))
-            ->with(['patronage_status', 'civil_status', 'gender', 'member_type'])
-            ->orderBy('last_name')
-            ->cursor();
+            ->when(filled($this->filters['tableFilters']['member_type']['member_type'] ?? null), fn($q) => $q->whereMemberTypeId($this->filters['tableFilters']['member_type']['member_type']))
+            ->when(filled($this->filters['tableFilters']['member_type']['member_subtype'] ?? null), fn($q) => $q->whereMemberSubtypeId($this->filters['tableFilters']['member_type']['member_subtype']))
+            ->when(filled($this->filters['tableFilters']['patronage_status']['value'] ?? null), fn($q) => $q->wherePatronageStatusId($this->filters['tableFilters']['patronage_status']['value']))
+            ->when(filled($this->filters['tableFilters']['gender']['value'] ?? null), fn($q) => $q->whereGenderId($this->filters['tableFilters']['gender']['value']))
+            ->when(filled($this->filters['tableFilters']['division']['value'] ?? null), fn($q) => $q->whereDivisionId($this->filters['tableFilters']['division']['value']))
+            ->when(filled($this->filters['tableFilters']['membership_date']['value'] ?? null), fn($q) => $q->whereBetween('members.membership_date', collect(explode(' - ', $this->filters['tableFilters']['membership_date']['value']))->map(fn($d) => Carbon::createFromFormat('d/m/Y', $d)->format('Y-m-d'))->toArray()))
+            ->when(($this->filters['tableFilters']['status']['value'] ?? null) == 1, fn($q) => $q->whereNull('terminated_at'))
+            ->when(($this->filters['tableFilters']['status']['value'] ?? null) == 2, fn($q) => $q->whereNotNull('terminated_at'))
+            ->when($this->filters['tableSortColumn'] ?? null, fn($q, $v) => $q->orderBy(
+                match ($this->filters['tableSortColumn'] ?? null) {
+                    'gender.name' => 'gender_name',
+                    'division.name' => 'division_name',
+                    'member_type.name' => 'member_type_name',
+                    default => $this->filters['tableSortColumn']
+                }, $this->filters['tableSortDirection']
+            ))
+            ->with(['patronage_status', 'civil_status', 'gender', 'member_type', 'division'])
+            ->leftJoin('member_types', 'member_types.id', '=', 'members.member_type_id')
+            ->leftJoin('genders', 'genders.id', '=', 'members.gender_id')
+            ->leftJoin('divisions', 'divisions.id', '=', 'members.division_id')
+            ->selectRaw("members.*, member_types.name as member_type_name, genders.name as gender_name, divisions.name as division_name")
+            ->get();
     }
 
     public function mount()
     {
-
-        $filters = [];
-        parse_str(request()->query('filters'), $filters);
-        $this->filters = $filters;
+//        dd(request()->query('query'));
+        $this->filters = request()->query('query');
     }
 }
