@@ -33,8 +33,8 @@ class OfficersListResource extends Resource
                 TextInput::make('year'),
                 TableRepeater::make('officers')
                     ->schema([
-                        Select::make('member_id')->options(Member::pluck('full_name', 'id'))->searchable()->label('Name'),
-                        Select::make('position_id')->options(Position::pluck('name', 'id'))->searchable()->label('Position'),
+                        Select::make('member_id')->options(Member::pluck('full_name', 'id'))->searchable()->label('Name')->required(),
+                        Select::make('position_id')->options(Position::pluck('name', 'id'))->searchable()->label('Position')->required(),
                     ])->hideLabels()
             ])
             ->columns(1);
