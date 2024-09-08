@@ -184,11 +184,10 @@ class MemberResource extends Resource
                                     ->live()
                                     ->afterStateUpdated(function ($state, $set) {
                                         $member_type = MemberType::find($state);
+                                        $set('number_of_shares', round($member_type->default_number_of_shares, 0));
+                                        $set('amount_subscribed', round($member_type->default_amount_subscribed, 0));
                                         if ($member_type?->id == 1) {
                                             $set('present_employer', 'SKSU-Sultan Kudarat State University');
-                                            $set('number_of_shares', $member_type->default_number_of_shares);
-                                            $set('amount_subscribed', $member_type->default_amount_subscribed);
-
                                             return;
                                         }
                                         if ($member_type?->id == 4) {
@@ -333,7 +332,7 @@ class MemberResource extends Resource
                             ->afterStateUpdated(function ($set, $state, $get) {
                                 $memberType = MemberType::find($get('member_type_id'));
                                 $data = ShareCapitalProvider::fromNumberOfShares($state, $memberType->initial_number_of_terms, $memberType->par_value);
-                                $set('amount_subscribed', number_format($data['amount_subscribed'], 2));
+                                $set('amount_subscribed', $data['amount_subscribed']);
                             }),
                         TextInput::make('amount_subscribed')
                             ->moneymask()->default(0)

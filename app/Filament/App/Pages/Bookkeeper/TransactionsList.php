@@ -69,10 +69,10 @@ class TransactionsList extends Page implements HasForms, HasTable
         return $table
             ->query(
                 Transaction::query()
-                    ->when($this->account_id, fn ($q) => $q->whereIn('account_id', Account::find($this->account_id)->descendantsAndSelf()->pluck('id')))
-                    ->when($this->transaction_type, fn ($q) => $q->where('transaction_type_id', $this->transaction_type))
-                    ->when($this->payment_mode == 1, fn ($q) => $q->whereNotNull('debit'))
-                    ->when($this->payment_mode == -1, fn ($q) => $q->whereNotNull('credit'))
+                    ->when($this->account_id, fn($q) => $q->whereIn('account_id', Account::find($this->account_id)->descendantsAndSelf()->pluck('id')))
+                    ->when($this->transaction_type, fn($q) => $q->where('transaction_type_id', $this->transaction_type))
+                    ->when($this->payment_mode == 1, fn($q) => $q->whereNotNull('debit'))
+                    ->when($this->payment_mode == -1, fn($q) => $q->whereNotNull('credit'))
             )
             ->filters([
                 DateRangeFilter::make('transaction_date')
@@ -86,11 +86,11 @@ class TransactionsList extends Page implements HasForms, HasTable
             ->columns([
                 TextColumn::make('#')->state(
                     static function (HasTable $livewire, stdClass $rowLoop): string {
-                        return (string) (
+                        return (string)(
                             $rowLoop->iteration +
                             ($livewire->getTableRecordsPerPage() * (
-                                $livewire->getTablePage() - 1
-                            ))
+                                    $livewire->getTablePage() - 1
+                                ))
                         );
                     }
                 ),
@@ -99,8 +99,9 @@ class TransactionsList extends Page implements HasForms, HasTable
                 TextColumn::make('member.full_name')->label('Member'),
                 TextColumn::make('account.name')->label('Account Name'),
                 TextColumn::make('account.number')->label('Account Number'),
-                TextColumn::make('debit'),
-                TextColumn::make('credit'),
+                TextColumn::make('debit')->formatStateUsing(fn($state) => renumber_format($state, 4)),
+                TextColumn::make('credit')->formatStateUsing(fn($state) => renumber_format($state, 4)),
+                TextColumn::make('running_balance')->formatStateUsing(fn($record) => 2),
                 TextColumn::make('transaction_type.name'),
             ]);
     }

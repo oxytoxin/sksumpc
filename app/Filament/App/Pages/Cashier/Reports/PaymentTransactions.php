@@ -57,7 +57,22 @@ class PaymentTransactions extends Page implements HasTable
                         })
                         ->where('transaction_type_id', 1);
                 }
-                return Transaction::query()->where('transaction_type_id', 1);
+                return Transaction::whereDoesntHave("account", function ($query) {
+                    return $query->whereHas(
+                        "rootAncestor",
+                        fn($q) => $q->whereIn("id", [14, 75, 151, 80, 94, 157, 81, 101, 105])
+                    );
+                })
+                    ->whereNotIn("tag", [
+                        "member_savings_deposit",
+                        "member_savings_withdrawal",
+                        "member_imprest_deposit",
+                        "member_imprest_withdrawal",
+                        "member_love_gift_deposit",
+                        "member_love_gift_withdrawal",
+                        "member_time_deposit"
+                    ])
+                    ->where("transaction_type_id", 1);
             })
             ->content(function ($livewire) {
                 $type = $livewire->tableFilters['transaction_type']['transaction_type'];

@@ -54,6 +54,7 @@ class DisbursementVoucherItem extends Model
         static::creating(function (DisbursementVoucherItem $disbursementVoucherItem) {
             $account = Account::find($disbursementVoucherItem->account_id);
             $transaction_date = SystemConfiguration::transaction_date() ?? today();
+            $disbursementVoucherItem->transaction_date = $transaction_date;
             $transactionType = TransactionType::firstWhere('name', 'CDJ');
             if (in_array($account->tag, ['member_common_cbu_paid', 'member_preferred_cbu_paid', 'member_laboratory_cbu_paid'])) {
                 app(PayCapitalSubscription::class)
