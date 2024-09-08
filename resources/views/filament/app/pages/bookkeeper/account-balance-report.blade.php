@@ -9,10 +9,10 @@
         <x-app.cashier.reports.report-layout>
             <table class="w-full text-sm border border-black px-4">
                 <thead class="border border-black px-4">
-                <tr class="border border-black table-row-group px-4">
+                <tr class="border border-black px-4">
                     <th colspan="5">CASH ON HAND</th>
                 </tr>
-                <tr class="border border-black table-row-group px-4">
+                <tr class="border border-black px-4">
                     <th colspan="5">{{ $year }}</th>
                 </tr>
                 <tr>

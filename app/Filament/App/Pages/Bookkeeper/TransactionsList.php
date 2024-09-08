@@ -6,6 +6,7 @@ use App\Models\Account;
 use App\Models\Transaction;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
+use Filament\Actions\Action;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
@@ -46,6 +47,14 @@ class TransactionsList extends Page implements HasForms, HasTable
     public function account()
     {
         return Account::find($this->account_id);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('account_balance')
+                ->url(AccountBalanceReport::getUrl())
+        ];
     }
 
     public function mount()
