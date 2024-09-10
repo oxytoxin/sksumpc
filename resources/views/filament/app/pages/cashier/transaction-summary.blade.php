@@ -12,7 +12,7 @@
                 <p>REFERENCE #: {{ $transaction['data']['reference_number'] }}</p>
                 <div class="flex gap-4">
                     <strong>{{ $payment_types->find($transaction['data']['payment_type_id'])?->name }}</strong>
-                    <p>{{ \Filament\Support\format_money($transaction['data']['amount'], 'PHP') }}</p>
+                    <p>{{ \Filament\Support\format_money($transaction['data']['amount'] ?? 0, 'PHP') }}</p>
                 </div>
             </div>
         @endforeach
