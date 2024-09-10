@@ -48,7 +48,8 @@ class CapitalSubscriptionBilling extends Model
                 ->where('is_common', true)
                 ->where('outstanding_balance', '>', 0)
                 ->withCount('payments')
-                ->when($capitalSubscriptionBilling->member_type_id, fn ($query, $value) => $query->whereRelation('member', 'member_type_id', $value))
+                ->when($capitalSubscriptionBilling->member_type_id, fn($query, $value) => $query->whereRelation('member', 'member_type_id', $value))
+                ->when($capitalSubscriptionBilling->member_subtype_id, fn($query, $value) => $query->whereRelation('member', 'member_subtype_id', $value))
                 ->each(function ($cbu) use ($capitalSubscriptionBilling) {
                     $amount_due = $cbu->payments_count > 0 ? $cbu->monthly_payment : $cbu->initial_amount_paid;
                     CapitalSubscriptionBillingPayment::firstOrCreate([

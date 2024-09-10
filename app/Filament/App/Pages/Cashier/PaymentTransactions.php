@@ -69,6 +69,8 @@ class PaymentTransactions extends Component implements HasActions, HasForms
 
     public $data = [];
 
+    private $transactions = [];
+
     public function form(Form $form): Form
     {
         return $form
@@ -319,7 +321,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                             $transaction_type = TransactionType::firstWhere('name', 'CRJ');
                             foreach ($formData['transactions'] as $key => $transaction) {
                                 if ($transaction['type'] == 'cbu') {
-                                    $transactions[] = CashierTransactionsPageCbuPayment::handle(
+                                    $transaction_data = CashierTransactionsPageCbuPayment::handle(
                                         member: $member,
                                         transaction_type: $transaction_type,
                                         reference_number: $transaction['data']['reference_number'],
@@ -327,9 +329,11 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                         amount: $transaction['data']['amount'],
                                         transaction_date: $this->transaction_date
                                     );
+                                    $transaction_data['payee'] = $member->full_name;
+                                    $transactions[] = $transaction_data;
                                 }
                                 if ($transaction['type'] == 'others') {
-                                    $transactions[] = CashierTransactionsPageOthers::handle(
+                                    $transaction_data = CashierTransactionsPageOthers::handle(
                                         member_id: $member?->id,
                                         payee: $transaction['data']['payee'],
                                         account: Account::find($transaction['data']['account_id']),
@@ -339,11 +343,13 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                         amount: $transaction['data']['amount'],
                                         transaction_date: $this->transaction_date
                                     );
+                                    $transaction_data['payee'] = $transaction['data']['payee'];
+                                    $transactions[] = $transaction_data;
                                 }
                                 if ($transaction['type'] == 'savings') {
                                     $is_deposit = $transaction['data']['action'] == 1;
                                     $savings_account = SavingsAccount::find($transaction['data']['savings_account_id']);
-                                    $transactions[] = CashierTransactionsPageSavings::handle(
+                                    $transaction_data = CashierTransactionsPageSavings::handle(
                                         is_deposit: $is_deposit,
                                         member: $member,
                                         savings_account: $savings_account,
@@ -353,11 +359,13 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                         amount: $transaction['data']['amount'],
                                         transaction_date: $this->transaction_date,
                                     );
+                                    $transaction_data['payee'] = $member->full_name;
+                                    $transactions[] = $transaction_data;
                                 }
                                 if ($transaction['type'] == 'imprest') {
                                     $is_deposit = $transaction['data']['action'] == 1;
                                     $imprest_account = $member->imprest_account;
-                                    $transactions[] = CashierTransactionsPageImprests::handle(
+                                    $transaction_data = CashierTransactionsPageImprests::handle(
                                         is_deposit: $is_deposit,
                                         member: $member,
                                         imprest_account: $imprest_account,
@@ -367,10 +375,12 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                         amount: $transaction['data']['amount'],
                                         transaction_date: $this->transaction_date,
                                     );
+                                    $transaction_data['payee'] = $member->full_name;
+                                    $transactions[] = $transaction_data;
                                 }
                                 if ($transaction['type'] == 'love_gift') {
                                     $is_deposit = $transaction['data']['action'] == 1;
-                                    CashierTransactionsPageLoveGifts::handle(
+                                    $transaction_data = CashierTransactionsPageLoveGifts::handle(
                                         is_deposit: $is_deposit,
                                         member: $member,
                                         love_gift_account: $member->love_gift_account,
@@ -380,6 +390,8 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                         amount: $transaction['data']['amount'],
                                         transaction_date: $this->transaction_date,
                                     );
+                                    $transaction_data['payee'] = $member->full_name;
+                                    $transactions[] = $transaction_data;
                                 }
                                 if ($transaction['type'] == 'time_deposit') {
                                     $td = app(CreateTimeDeposit::class)->handle(timeDepositData: new TimeDepositData(
@@ -393,6 +405,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                     ), transactionType: TransactionType::firstWhere('name', 'CRJ'));
                                     $time_deposit_account = $td->time_deposit_account;
                                     $transactions[] = [
+                                        'payee' => $member->full_name,
                                         'account_number' => $time_deposit_account->number,
                                         'account_name' => $time_deposit_account->name,
                                         'reference_number' => $transaction['data']['reference_number'],
@@ -412,6 +425,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                         transaction_date: $this->transaction_date,
                                     ), TransactionType::firstWhere('name', 'CRJ'));
                                     $transactions[] = [
+                                        'payee' => $transaction['data']['payee'],
                                         'account_number' => '',
                                         'account_name' => '',
                                         'reference_number' => $transaction['data']['reference_number'],
@@ -431,6 +445,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                         transaction_date: $this->transaction_date,
                                     ), TransactionType::firstWhere('name', 'CRJ'));
                                     $transactions[] = [
+                                        'payee' => $member->full_name,
                                         'account_number' => $loan_account->number,
                                         'account_name' => $loan_account->name,
                                         'reference_number' => $transaction['data']['reference_number'],
@@ -440,11 +455,14 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                     ];
                                 }
                             }
+                            $this->transactions = $transactions;
                             DB::commit();
                             Notification::make()->title('Transactions successful!')->success()->send();
                             $this->form->fill();
                             $this->replaceMountedAction('receipt', ['transactions' => $transactions]);
-                        })->requiresConfirmation(),
+                        })
+                        ->modalContent(fn($action) => view('filament.app.pages.cashier.transaction-summary', ['data' => $this->data]))
+                        ->requiresConfirmation(),
                 ]),
             ]);
     }

@@ -3,7 +3,7 @@
 @endphp
 <div x-data>
     <div class="p-4 text-sm print:w-full print:text-[10pt] print:leading-tight" x-ref="print">
-        <x-app.cashier.reports.report-heading />
+        <x-app.cashier.reports.report-heading/>
         <h4 class="mt-4 text-center text-3xl font-bold print:text-[14pt]">TOTAL LOAN RELEASED</h4>
         @if ($this->tableFilters['release_date']['from'])
             <h5 class="text-center uppercase">{{ date_create($this->tableFilters['release_date']['from'])->format('F d, Y') }} to {{ date_create($this->tableFilters['release_date']['to'] ?? today())->format('F d, Y') }}</h5>
@@ -12,61 +12,51 @@
         @endif
         <table class="w-full overflow-auto print:text-[8pt]">
             <thead>
-                <tr>
-                    <th rowspan="2" class="border-2 border-black text-center">No.</th>
-                    <th rowspan="2" class="border-2 border-black text-center">Name of Borrower</th>
-                    <th colspan="{{ $loan_types->count() + 1 }}" class="border-2 border-black text-center">GROSS AMOUNT</th>
-                    <th colspan="{{ $loan_types->count() + 1 }}" class="border-2 border-black text-center">NET PROCEEDS</th>
-                </tr>
-                <tr>
-                    <th class="whitespace-nowrap border-2 border-black px-4 text-center">GROSS TOTAL</th>
-                    @foreach ($loan_types as $loan_type)
-                        <th class="whitespace-nowrap border-2 border-black px-4 text-center">{{ $loan_type->code }}</th>
-                    @endforeach
-                    @foreach ($loan_types as $loan_type)
-                        <th class="whitespace-nowrap border-2 border-black px-4 text-center">{{ $loan_type->code }}</th>
-                    @endforeach
-                    <th class="whitespace-nowrap border-2 border-black px-4 text-center">NET TOTAL</th>
-                </tr>
+            <tr>
+                <th rowspan="2" class="border-2 border-black text-center">No.</th>
+                <th rowspan="2" class="border-2 border-black text-center">Name of Borrower</th>
+                <th colspan="{{ $loan_types->count() + 1 }}" class="border-2 border-black text-center">GROSS AMOUNT</th>
+                <th rowspan="2" class="border-2 border-black text-center">NET PROCEEDS</th>
+            </tr>
+            <tr>
+                <th class="whitespace-nowrap border-2 border-black px-4 text-center">GROSS TOTAL</th>
+                @foreach ($loan_types as $loan_type)
+                    <th class="whitespace-nowrap border-2 border-black px-4 text-center">{{ $loan_type->code }}</th>
+                @endforeach
+            </tr>
             </thead>
             <tbody>
-                @php
-                    $records = $this->table->getRecords();
-                    $members = $records->groupBy('member.alt_full_name')->ksort();
-                    $gross_amount = $records->sum('gross_amount');
-                    $net_amount = $records->sum('net_amount');
-                @endphp
-                @foreach ($members as $member => $loans)
-                    <tr>
-                        <th class="whitespace-nowrap border-2 border-black px-4 text-center">{{ $loop->iteration }}</th>
-                        <td class="whitespace-nowrap border-2 border-black px-4 text-left">{{ $member }}</td>
-                        <td class="whitespace-nowrap border-2 border-black px-4 text-right">{{ number_format($loans->sum('gross_amount'), 2) }}</td>
-                        @foreach ($loan_types as $loan_type)
-                            <td class="whitespace-nowrap border-2 border-black px-4 text-right">{{ $loans->where('loan_type_id', $loan_type->id)->sum('gross_amount') ? number_format($loans->where('loan_type_id', $loan_type->id)->sum('gross_amount'), 2) : '' }}</td>
-                        @endforeach
-                        @foreach ($loan_types as $loan_type)
-                            <td class="whitespace-nowrap border-2 border-black px-4 text-right">{{ $loans->where('loan_type_id', $loan_type->id)->sum('net_amount') ? number_format($loans->where('loan_type_id', $loan_type->id)->sum('net_amount'), 2) : '' }}</td>
-                        @endforeach
-                        <td class="whitespace-nowrap border-2 border-black px-4 text-right">{{ number_format($loans->sum('net_amount'), 2) }}</td>
-                    </tr>
-                @endforeach
+            @php
+                $records = $this->table->getRecords();
+                $members = $records->groupBy('member.alt_full_name')->ksort();
+                $gross_amount = $records->sum('gross_amount');
+                $net_amount = $records->sum('net_amount');
+            @endphp
+            @foreach ($members as $member => $loans)
                 <tr>
-                    <th class="whitespace-nowrap border-2 border-black px-4 text-center">&nbsp;</td>
-                    <th class="whitespace-nowrap border-2 border-black px-4 text-center">&nbsp;</td>
-                    <th class="whitespace-nowrap border-2 border-black px-4 text-right">{{ number_format($gross_amount, 2) }}</th>
+                    <th class="whitespace-nowrap border-2 border-black px-4 text-center">{{ $loop->iteration }}</th>
+                    <td class="whitespace-nowrap border-2 border-black px-4 text-left">{{ $member }}</td>
+                    <td class="whitespace-nowrap border-2 border-black px-4 text-right">{{ number_format($loans->sum('gross_amount'), 2) }}</td>
                     @foreach ($loan_types as $loan_type)
-                        <th class="whitespace-nowrap border-2 border-black px-4 text-right">{{ $records->where('loan_type_id', $loan_type->id)->sum('gross_amount') ? number_format($records->where('loan_type_id', $loan_type->id)->sum('gross_amount'), 2) : '' }}</th>
+                        <td class="whitespace-nowrap border-2 border-black px-4 text-right">{{ $loans->where('loan_type_id', $loan_type->id)->sum('gross_amount') ? number_format($loans->where('loan_type_id', $loan_type->id)->sum('gross_amount'), 2) : '' }}</td>
                     @endforeach
-                    @foreach ($loan_types as $loan_type)
-                        <th class="whitespace-nowrap border-2 border-black px-4 text-right">{{ $records->where('loan_type_id', $loan_type->id)->sum('net_amount') ? number_format($records->where('loan_type_id', $loan_type->id)->sum('net_amount'), 2) : '' }}</th>
-                    @endforeach
-                    <th class="whitespace-nowrap border-2 border-black px-4 text-right">{{ number_format($net_amount, 2) }}</th>
+                    <td class="whitespace-nowrap border-2 border-black px-4 text-right">{{ number_format($loans->sum('net_amount'), 2) }}</td>
                 </tr>
+            @endforeach
+            <tr>
+                <td class="whitespace-nowrap border-2 border-black px-4 text-center">&nbsp;</td>
+                <td class="whitespace-nowrap border-2 border-black px-4 text-center">&nbsp;</td>
+                <td class="whitespace-nowrap border-2 border-black px-4 text-right">{{ number_format($gross_amount, 2) }}</td>
+                @foreach ($loan_types as $loan_type)
+                    <th class="whitespace-nowrap border-2 border-black px-4 text-right">{{ $records->where('loan_type_id', $loan_type->id)->sum('gross_amount') ? number_format($records->where('loan_type_id', $loan_type->id)->sum('gross_amount'), 2) : '' }}</th>
+                @endforeach
+                <th class="whitespace-nowrap border-2 border-black px-4 text-right">{{ number_format($net_amount, 2) }}</th>
+            </tr>
             </tbody>
         </table>
-        <x-app.cashier.reports.signatories :signatories="$signatories" />
+        <x-app.cashier.reports.signatories :signatories="$signatories"/>
     </div>
     <div class="flex justify-end p-4">
-        <x-filament::button icon="heroicon-o-printer" @click="printOut($refs.print.outerHTML, 'CBU Subsidiary Ledger')">Print</x-filament::button>
+        <x-filament::button icon="heroicon-o-printer" @click="printOut($refs.print.outerHTML, 'TOTAL LOAN RELEASED')">Print</x-filament::button>
     </div>
 </div>
