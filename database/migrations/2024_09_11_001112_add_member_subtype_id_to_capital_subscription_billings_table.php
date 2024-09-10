@@ -11,7 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('capital_subscription_billings', function (Blueprint $table) {
-            $table->foreignId('member_subtype_id')->after('member_type_id')->constrained();
+            $table->foreignId('member_subtype_id')->after('member_type_id')->constrained()->nullable();
         });
     }
 
