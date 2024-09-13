@@ -45,7 +45,7 @@ class CapitalSubscriptionBillingPayments extends ListRecords
                         ->storeFiles(false)
                         ->acceptedFileTypes(['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/octet-stream']),
                 ])
-                ->disabled(fn () => $this->capital_subscription_billing->posted)
+                ->disabled(fn() => $this->capital_subscription_billing->posted)
                 ->action(function ($data) {
                     $payments = $this->capital_subscription_billing->capital_subscription_billing_payments()->join('members', 'capital_subscription_billing_payments.member_id', 'members.id')
                         ->selectRaw('capital_subscription_billing_payments.*, members.mpc_code as member_code')
@@ -118,25 +118,25 @@ class CapitalSubscriptionBillingPayments extends ListRecords
             )
             ->columns([
                 TextColumn::make('member.alt_full_name')->label('Member')->searchable(),
-                TextColumn::make('amount_due')->money('PHP'),
-                TextColumn::make('amount_paid')->money('PHP'),
+                TextColumn::make('amount_due')->money('PHP')->summarize(Sum::make()->label('')),
+                TextColumn::make('amount_paid')->money('PHP')->summarize(Sum::make()->label('')),
             ])
             ->filters([
                 SelectFilter::make('member.member_type_id')
                     ->relationship('member.member_type', 'name')
-                    ->query(fn ($query, $livewire) => $query->when($livewire->tableFilters['member']['member_type_id']['value'] ?? null, fn ($q, $v) => $q->whereRelation('member', 'member_type_id', $v)))
+                    ->query(fn($query, $livewire) => $query->when($livewire->tableFilters['member']['member_type_id']['value'] ?? null, fn($q, $v) => $q->whereRelation('member', 'member_type_id', $v)))
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
             ->actions([
                 EditAction::make()
                     ->form([
                         TextInput::make('amount_paid')
-                            ->default(fn ($record) => $record->amount_paid)
+                            ->default(fn($record) => $record->amount_paid)
                             ->moneymask(),
                     ])
-                    ->visible(fn ($record) => !$record->posted),
+                    ->visible(fn($record) => !$record->posted),
                 DeleteAction::make()
-                    ->visible(fn ($record) => !$record->posted),
+                    ->visible(fn($record) => !$record->posted),
             ]);
     }
 }

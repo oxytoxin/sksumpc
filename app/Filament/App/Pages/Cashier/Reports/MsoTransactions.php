@@ -28,7 +28,15 @@ class MsoTransactions extends Page implements HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->query(Transaction::query())
+            ->query(
+                Transaction::query()
+                    ->select("*")
+                    ->addSelect(
+                        \DB::raw(
+                            "SUM(debit) OVER (ORDER BY id ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) as running_debit, SUM(credit) OVER (ORDER BY id ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) as running_credit"
+                        )
+                    )
+            )
             ->content(fn() => view('filament.app.pages.cashier.reports.mso-transactions-report-table', [
                 'signatories' => $this->signatories,
                 'report_title' => $this->report_title,

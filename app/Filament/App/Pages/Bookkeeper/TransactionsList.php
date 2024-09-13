@@ -106,6 +106,7 @@ class TransactionsList extends Page implements HasForms, HasTable
                 TextColumn::make('transaction_date')->date('F d, Y'),
                 TextColumn::make('reference_number'),
                 TextColumn::make('member.full_name')->label('Member'),
+                TextColumn::make('payee')->label('Payee'),
                 TextColumn::make('account.name')->label('Account Name'),
                 TextColumn::make('account.number')->label('Account Number'),
                 TextColumn::make('debit')->formatStateUsing(fn($state) => renumber_format($state, 4)),
