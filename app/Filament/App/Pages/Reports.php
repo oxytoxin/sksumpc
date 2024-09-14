@@ -6,6 +6,7 @@ use App\Filament\App\Pages\Cashier\Reports\CashProof;
 use App\Filament\App\Pages\Cashier\Reports\DailyCollectionsReport;
 use App\Filament\App\Pages\Cashier\Reports\MsoTransactions;
 use App\Filament\App\Pages\Cashier\Reports\PaymentTransactions;
+use App\Filament\App\Pages\Cashier\RequiresBookkeeperTransactionDate;
 use Filament\Forms\Components\Livewire;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
@@ -16,7 +17,7 @@ use Filament\Pages\Page;
 
 class Reports extends Page implements HasForms
 {
-    use InteractsWithForms;
+    use InteractsWithForms, RequiresBookkeeperTransactionDate;
 
     protected static string $view = 'filament.app.pages.reports';
 

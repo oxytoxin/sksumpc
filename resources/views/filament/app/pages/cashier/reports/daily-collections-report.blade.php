@@ -43,7 +43,7 @@
                 </div>
                 <div class="flex w-1/2 flex-col items-center border-2 border-blue-700 p-4">
                     <h3 class="font-bold">CASH DEPOSITS</h3>
-                    <h4>{{ config('app.transaction_date')->format('m/d/Y') }}</h4>
+                    <h4>{{ config('app.transaction_date')?->format('m/d/Y') }}</h4>
                     <div class="mt-8 w-2/3">
                         <div class="flex justify-between">
                             <h4>GEN FUND</h4>

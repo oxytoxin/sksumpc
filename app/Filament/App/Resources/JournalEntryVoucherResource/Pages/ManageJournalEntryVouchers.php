@@ -22,6 +22,7 @@ class ManageJournalEntryVouchers extends ManageRecords
                 ->action(function ($data) {
                     DB::beginTransaction();
                     $transactionType = TransactionType::firstWhere('name', 'CDJ');
+                    $data['voucher_type_id'] = 6;
                     $items = $data['journal_entry_voucher_items'];
                     unset($data['journal_entry_voucher_items'], $data['member_id']);
                     $data['transaction_date'] = config('app.transaction_date') ?? today();

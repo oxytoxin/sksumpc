@@ -93,11 +93,11 @@ class DailyCollectionsReport extends Page
         $cash_collectibles = Transaction::query()
             ->whereRelation('account', fn($query) => $query->whereIn('parent_id', [16, 18, 91]))
             ->selectRaw(
-                "sum(credit) as total_amount, 'Cash Collectibles' as name, payment_type_id"
+                "sum(credit) as total_amount, 'Others' as name, payment_type_id"
             )
             ->whereDate('transaction_date', config('app.transaction_date'))
             ->groupBy("payment_type_id");
-        
+
         return $savings
             ->union($share_capital)
             ->union($imprests)
