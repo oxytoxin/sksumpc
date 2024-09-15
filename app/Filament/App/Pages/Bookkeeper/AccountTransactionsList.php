@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Pages\Bookkeeper;
 
+use App\Filament\App\Pages\Cashier\RequiresBookkeeperTransactionDate;
 use App\Models\Account;
 use App\Models\BalanceForwardedSummary;
 use App\Models\Transaction;
@@ -20,7 +21,7 @@ use Livewire\Attributes\Computed;
 
 class AccountTransactionsList extends Page implements HasForms, HasTable
 {
-    use InteractsWithForms, InteractsWithTable;
+    use InteractsWithForms, InteractsWithTable, RequiresBookkeeperTransactionDate;
 
     protected static ?int $navigationSort = 3;
 
@@ -72,7 +73,11 @@ class AccountTransactionsList extends Page implements HasForms, HasTable
 
     public function table(Table $table): Table
     {
-        return $table->query(Transaction::query()->whereAccountId($this->account))
+        return $table->query(
+            Transaction::query()
+                ->whereAccountId($this->account)
+                ->whereYear('transaction_date', config('app.transaction_date')?->year)
+        )
             ->content(view('filament.app.pages.bookkeeper.account-transactions-list-table'))
             ->columns([
                 TextColumn::make('member.name'),
