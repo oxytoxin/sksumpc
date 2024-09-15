@@ -54,14 +54,56 @@ function sum_no_children_recursive(Collection|Model $items, string $key): float
     return $sum;
 }
 
+function filterRecursive($collection, $callback)
+{
+    return $collection->flatMap(function ($item) use ($callback) {
+        // Initialize an empty collection for matching items
+        $results = collect([]);
+
+        // Check if the item itself should be included
+        if ($callback($item)) {
+            $results->push($item);
+        }
+
+        // Recursively filter children and merge results
+        if ($item->children->count() > 0) {
+            $children = filterRecursive($item->children, $callback);
+            $results = $results->merge($children);
+        }
+
+        return $results;
+    });
+}
+
+function findRecursive($collection, $callback)
+{
+    return $collection->flatMap(function ($item) use ($callback) {
+        // Initialize an empty collection for matching items
+        $results = collect([]);
+
+        // Check if the item itself should be included
+        if ($callback($item)) {
+            $results->push($item);
+        }
+
+        // Recursively filter children and merge results
+        if ($item->children->count() > 0) {
+            $children = filterRecursive($item->children, $callback);
+            $results = $results->merge($children);
+        }
+
+        return $results;
+    })[0] ?? null;
+}
+
 function oxy_get_month_range(): array
 {
-    return collect(range(1, 12))->mapWithKeys(fn ($m) => [$m => Carbon::create(null, $m)->format('F')])->toArray();
+    return collect(range(1, 12))->mapWithKeys(fn($m) => [$m => Carbon::create(null, $m)->format('F')])->toArray();
 }
 
 function oxy_get_year_range(): array
 {
-    return collect(range(today()->addYears(10)->year, 2000))->mapWithKeys(fn ($y) => [$y => $y])->toArray();
+    return collect(range(today()->addYears(10)->year, 2000))->mapWithKeys(fn($y) => [$y => $y])->toArray();
 }
 
 function renumber_format($number, $decimals = 2)
