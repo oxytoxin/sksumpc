@@ -36,7 +36,7 @@ class PaymentTransactions extends Page implements HasTable
                 $type = $livewire->tableFilters['transaction_type']['transaction_type'];
                 $loan_type_id = $livewire->tableFilters['transaction_type']['loan_type_id'];
                 if ($type == 'loan') {
-                    $loan_query = LoanPayment::query()->with(['loan.loan_account'])->whereIn('payment_type_id', [1, 3, 5]);
+                    $loan_query = LoanPayment::query()->with(['loan.loan_account'])->whereIn('payment_type_id', [1, 3, 4, 5]);
                     if ($loan_type_id)
                         $loan_query->whereRelation('loan', 'loan_type_id', $loan_type_id);
                     return $loan_query;
