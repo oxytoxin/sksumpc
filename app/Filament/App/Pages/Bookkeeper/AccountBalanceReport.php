@@ -2,6 +2,8 @@
 
 namespace App\Filament\App\Pages\Bookkeeper;
 
+use App\Enums\MsoTransactionTag;
+use App\Enums\OthersTransactionExcludedAccounts;
 use App\Models\JournalEntryVoucherItem;
 use App\Models\LoanPayment;
 use App\Models\Transaction;
@@ -55,7 +57,7 @@ class AccountBalanceReport extends Page implements HasForms
     public function Loans()
     {
         return LoanPayment::query()
-            ->whereIn("payment_type_id", [1, 3, 5])
+            ->whereIn("payment_type_id", [1, 3, 4, 5])
             ->selectRaw(
                 "sum(amount) as credit, 0 as debit, MONTHNAME(transaction_date) as month_name, MONTH(transaction_date) as month, YEAR(transaction_date) as year"
             )
@@ -69,7 +71,7 @@ class AccountBalanceReport extends Page implements HasForms
     public function Rice()
     {
         return Transaction::query()
-            ->whereIn("account_id", [151])
+            ->whereIn("account_id", [OthersTransactionExcludedAccounts::RICE->value])
             ->where("transaction_type_id", 1)
             ->selectRaw(
                 "sum(debit) as credit, sum(credit) as debit, MONTHNAME(transaction_date) as month_name, MONTH(transaction_date) as month, YEAR(transaction_date) as year"
@@ -84,7 +86,7 @@ class AccountBalanceReport extends Page implements HasForms
     public function Dormitory()
     {
         return Transaction::query()
-            ->whereIn("account_id", [80, 94, 157])
+            ->whereIn("account_id", [OthersTransactionExcludedAccounts::RESERVATION_FEES_DORM->value, OthersTransactionExcludedAccounts::DORMITORY, OthersTransactionExcludedAccounts::RESERVATION->value])
             ->where("transaction_type_id", 1)
             ->selectRaw(
                 "sum(debit) as credit, sum(credit) as debit, MONTHNAME(transaction_date) as month_name, MONTH(transaction_date) as month, YEAR(transaction_date) as year"
@@ -100,7 +102,7 @@ class AccountBalanceReport extends Page implements HasForms
     {
         return Transaction::query()
             ->where(function ($query) {
-                $query->whereIn("account_id", [81])->orWhere(
+                $query->whereIn("account_id", [OthersTransactionExcludedAccounts::RICE->value])->orWhere(
                     fn($query) => $query->whereRelation("account", function ($query) {
                         return $query->whereRelation(
                             "parent",
@@ -123,15 +125,7 @@ class AccountBalanceReport extends Page implements HasForms
     #[Computed]
     public function Mso()
     {
-        return Transaction::whereIn("tag", [
-            "member_savings_deposit",
-            "member_savings_withdrawal",
-            "member_imprest_deposit",
-            "member_imprest_withdrawal",
-            "member_love_gift_deposit",
-            "member_love_gift_withdrawal",
-            "member_time_deposit"
-        ])
+        return Transaction::whereIn("tag", MsoTransactionTag::get())
             ->where("transaction_type_id", 1)
             ->selectRaw(
                 "sum(debit) as credit, sum(credit) as debit, MONTHNAME(transaction_date) as month_name, MONTH(transaction_date) as month, YEAR(transaction_date) as year"
@@ -148,18 +142,10 @@ class AccountBalanceReport extends Page implements HasForms
         return Transaction::whereDoesntHave("account", function ($query) {
             return $query->whereHas(
                 "rootAncestor",
-                fn($q) => $q->whereIn("id", [14, 75, 151, 80, 94, 157, 81, 101, 105])
+                fn($q) => $q->whereIn("id", OthersTransactionExcludedAccounts::get())
             );
         })
-            ->whereNotIn("tag", [
-                "member_savings_deposit",
-                "member_savings_withdrawal",
-                "member_imprest_deposit",
-                "member_imprest_withdrawal",
-                "member_love_gift_deposit",
-                "member_love_gift_withdrawal",
-                "member_time_deposit"
-            ])
+            ->withoutMso()
             ->where("transaction_type_id", 1)
             ->selectRaw(
                 "sum(debit) as credit, sum(credit) as debit, MONTHNAME(transaction_date) as month_name, MONTH(transaction_date) as month, YEAR(transaction_date) as year"

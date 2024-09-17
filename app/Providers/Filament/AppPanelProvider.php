@@ -43,6 +43,10 @@ class AppPanelProvider extends PanelProvider
             PanelsRenderHook::CONTENT_START,
             fn() => Blade::render("@livewire('bookkeeper-transaction-date-checker')")
         );
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::CONTENT_START,
+            fn() => Blade::render("@livewire('cashier-revolving-fund-replenishment-checker')")
+        );
         return $panel
             ->id('app')
             ->path('/')

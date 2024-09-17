@@ -90,3 +90,11 @@ button[wire\:click="resetTableFiltersForm"] {
 .fs-row-header {
     @apply whitespace-nowrap border border-black px-2 text-base font-bold uppercase hover:bg-green-300;
 }
+
+.fi-ta-summary-row {
+    @apply bg-green-200 font-semibold;
+}
+
+.fi-ta-text-summary > span {
+    @apply text-black;
+}

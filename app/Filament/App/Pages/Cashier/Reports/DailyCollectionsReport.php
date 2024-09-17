@@ -2,6 +2,8 @@
 
 namespace App\Filament\App\Pages\Cashier\Reports;
 
+use App\Enums\MsoTransactionTag;
+use App\Enums\OthersTransactionExcludedAccounts;
 use App\Models\Account;
 use App\Models\Saving;
 use App\Models\Imprest;
@@ -10,8 +12,6 @@ use App\Models\Transaction;
 use Filament\Pages\Page;
 use App\Models\LoanPayment;
 use App\Models\TimeDeposit;
-use App\Models\CashCollectiblePayment;
-use App\Models\CapitalSubscriptionPayment;
 use App\Models\PaymentType;
 use Livewire\Attributes\Computed;
 
@@ -47,42 +47,60 @@ class DailyCollectionsReport extends Page
     #[Computed]
     public function DailyCollections()
     {
-        $dormitory = Transaction::query()->whereIn('account_id', [80, 94, 157])
+        $dormitory = Transaction::query()->whereIn('account_id', [OthersTransactionExcludedAccounts::RESERVATION_FEES_DORM->value, OthersTransactionExcludedAccounts::DORMITORY, OthersTransactionExcludedAccounts::RESERVATION->value])
             ->selectRaw(
                 "sum(credit) as total_amount, 'Dormitory' as name, payment_type_id"
             )
             ->whereDate('transaction_date', config('app.transaction_date'))
             ->groupBy("payment_type_id");
-        $rice_and_groceries = Transaction::query()->whereIn('account_id', [151])->where('transaction_type_id', 1)
+        $rice_and_groceries = Transaction::query()->whereIn('account_id', [OthersTransactionExcludedAccounts::RICE->value])->where('transaction_type_id', 1)
             ->selectRaw(
                 "sum(credit) as total_amount, 'Rice and Groceries' as name, payment_type_id"
             )
             ->whereDate('transaction_date', config('app.transaction_date'))
             ->groupBy("payment_type_id");
 
+
+        $savings = Saving::query()
+            ->withoutGlobalScopes()
+            ->selectRaw(
+                "sum(deposit) as total_amount, 'Savings' as name, payment_type_id"
+            )
+            ->whereDate('transaction_date', config('app.transaction_date'))
+            ->groupBy("payment_type_id");
+
+        $imprests = Imprest::query()
+            ->withoutGlobalScopes()
+            ->selectRaw(
+                "sum(deposit) as total_amount, 'Imprests' as name, payment_type_id"
+            )
+            ->whereDate('transaction_date', config('app.transaction_date'))
+            ->groupBy("payment_type_id");
+
+        $love_gifts = LoveGift::query()
+            ->withoutGlobalScopes()
+            ->selectRaw(
+                "sum(deposit) as total_amount, 'Love Gift' as name, payment_type_id"
+            )
+            ->whereDate('transaction_date', config('app.transaction_date'))
+            ->groupBy("payment_type_id");
+
+        $time_deposits = TimeDeposit::query()
+            ->selectRaw(
+                "sum(amount) as total_amount, 'Time Deposit' as name, payment_type_id"
+            )
+            ->whereDate('transaction_date', config('app.transaction_date'))
+            ->groupBy("payment_type_id");
+
         $laboratory = Transaction::query()
             ->where(function ($query) {
-                $query->whereIn('account_id', [81])
+                $query->whereIn('account_id', [OthersTransactionExcludedAccounts::MEMBERSHIP_FEES->value])
                     ->orWhere(fn($query) => $query->whereRelation('account', function ($query) {
                         return $query->whereRelation('parent', 'tag', 'member_laboratory_cbu_paid');
                     }));
             })
             ->selectRaw(
                 "sum(credit) as total_amount, 'Laboratory' as name, payment_type_id"
-            )
-            ->whereDate('transaction_date', config('app.transaction_date'))
-            ->groupBy("payment_type_id");
-        $mso = Transaction::whereIn("tag", [
-            "member_savings_deposit",
-            "member_savings_withdrawal",
-            "member_imprest_deposit",
-            "member_imprest_withdrawal",
-            "member_love_gift_deposit",
-            "member_love_gift_withdrawal",
-            "member_time_deposit"
-        ])
-            ->selectRaw(
-                "sum(credit) as total_amount, 'MSO' as name, payment_type_id"
             )
             ->whereDate('transaction_date', config('app.transaction_date'))
             ->groupBy("payment_type_id");
@@ -95,18 +113,10 @@ class DailyCollectionsReport extends Page
         $others = Transaction::whereDoesntHave("account", function ($query) {
             return $query->whereHas(
                 "rootAncestor",
-                fn($q) => $q->whereIn("id", [14, 75, 151, 80, 94, 157, 81, 101, 105])
+                fn($q) => $q->whereIn("id", OthersTransactionExcludedAccounts::get())
             );
         })
-            ->whereNotIn("tag", [
-                "member_savings_deposit",
-                "member_savings_withdrawal",
-                "member_imprest_deposit",
-                "member_imprest_withdrawal",
-                "member_love_gift_deposit",
-                "member_love_gift_withdrawal",
-                "member_time_deposit"
-            ])
+            ->withoutMso()
             ->selectRaw(
                 "sum(credit) as total_amount, 'Others' as name, payment_type_id"
             )
@@ -115,8 +125,11 @@ class DailyCollectionsReport extends Page
 
         return $dormitory
             ->union($rice_and_groceries)
+            ->union($savings)
+            ->union($imprests)
+            ->union($love_gifts)
+            ->union($time_deposits)
             ->union($laboratory)
-            ->union($mso)
             ->union($loans)
             ->union($others)
             ->get()

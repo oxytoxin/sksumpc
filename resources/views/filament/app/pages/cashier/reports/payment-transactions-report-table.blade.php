@@ -4,6 +4,8 @@
         <tr>
             <th class="border border-black text-center">NO.</th>
             <th class="border border-black text-left px-2">MEMBER NAME</th>
+            <th class="border border-black text-left px-2">PAYEE</th>
+            <th class="border border-black text-center">ACCOUNT NAME</th>
             <th class="border border-black text-center">ACCOUNT NUMBER</th>
             <th class="border border-black text-center">REFERENCE #</th>
             <th class="border border-black text-center">DEBIT</th>
@@ -26,7 +28,13 @@
             <tr>
                 <th class="border border-black text-center">{{ $loop->iteration }}</th>
                 <td class="whitespace-nowrap border border-black px-2 text-left">
-                    {{ $record->member?->full_name ?? $record->payee }}
+                    {{ $record->member?->full_name }}
+                </td>
+                <td class="whitespace-nowrap border border-black px-2 text-left">
+                    {{ $record->payee }}
+                </td>
+                <td class="whitespace-nowrap border border-black px-2 text-center">
+                    {{ $record->account->name }}
                 </td>
                 <td class="whitespace-nowrap border border-black px-2 text-center">
                     {{ $record->account->number }}
@@ -44,11 +52,11 @@
             </tr>
         @empty
             <tr>
-                <td colspan="7" class="border border-black text-center">No transactions today.</td>
+                <td colspan="9" class="border border-black text-center">No transactions today.</td>
             </tr>
         @endforelse
         <tr>
-            <th colspan="4" class="border border-black text-center">GRAND TOTAL</th>
+            <th colspan="6" class="border border-black text-center">GRAND TOTAL</th>
             <td class="border border-black text-center">
                 {{ renumber_format($total_debit, 2) }}</td>
             <td class="border border-black text-center">

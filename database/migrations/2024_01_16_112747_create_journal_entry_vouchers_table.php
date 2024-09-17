@@ -14,7 +14,7 @@ return new class extends Migration {
     {
         Schema::create('journal_entry_vouchers', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(VoucherType::class)->constrained()->nullable();
+            $table->foreignIdFor(VoucherType::class)->nullable()->constrained();
             $table->string('name');
             $table->string('address')->nullable();
             $table->string('reference_number');

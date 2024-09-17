@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Pages\Cashier\Reports;
 
+use App\Enums\OthersTransactionExcludedAccounts;
 use App\Models\Account;
 use App\Models\LoanPayment;
 use App\Models\LoanType;
@@ -42,15 +43,15 @@ class PaymentTransactions extends Page implements HasTable
                     return $loan_query;
                 }
                 if ($type == 'rice') {
-                    return Transaction::query()->whereIn('account_id', [151])->where('transaction_type_id', 1);
+                    return Transaction::query()->whereIn('account_id', [OthersTransactionExcludedAccounts::RICE->value])->where('transaction_type_id', 1);
                 }
                 if ($type == 'dormitory') {
-                    return Transaction::query()->whereIn('account_id', [80, 94, 157])->where('transaction_type_id', 1);
+                    return Transaction::query()->whereIn('account_id', [OthersTransactionExcludedAccounts::RESERVATION_FEES_DORM->value, OthersTransactionExcludedAccounts::DORMITORY, OthersTransactionExcludedAccounts::RESERVATION->value])->where('transaction_type_id', 1);
                 }
                 if ($type == 'laboratory') {
                     return Transaction::query()
                         ->where(function ($query) {
-                            $query->whereIn('account_id', [81])
+                            $query->whereIn('account_id', [OthersTransactionExcludedAccounts::MEMBERSHIP_FEES->value])
                                 ->orWhere(fn($query) => $query->whereRelation('account', function ($query) {
                                     return $query->whereRelation('parent', 'tag', 'member_laboratory_cbu_paid');
                                 }));
@@ -60,18 +61,10 @@ class PaymentTransactions extends Page implements HasTable
                 return Transaction::whereDoesntHave("account", function ($query) {
                     return $query->whereHas(
                         "rootAncestor",
-                        fn($q) => $q->whereIn("id", [14, 75, 151, 80, 94, 157, 81, 101, 105])
+                        fn($q) => $q->whereIn("id", OthersTransactionExcludedAccounts::get())
                     );
                 })
-                    ->whereNotIn("tag", [
-                        "member_savings_deposit",
-                        "member_savings_withdrawal",
-                        "member_imprest_deposit",
-                        "member_imprest_withdrawal",
-                        "member_love_gift_deposit",
-                        "member_love_gift_withdrawal",
-                        "member_time_deposit"
-                    ])
+                    ->withoutMso()
                     ->where("transaction_type_id", 1);
             })
             ->content(function ($livewire) {

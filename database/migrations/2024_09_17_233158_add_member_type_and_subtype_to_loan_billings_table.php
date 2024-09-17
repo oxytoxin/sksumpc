@@ -10,7 +10,10 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::table('capital_subscription_billings', function (Blueprint $table) {
+        Schema::table('loan_billings', function (Blueprint $table) {
+            $table->foreignId('member_type_id')->after('payment_type_id')->nullable()->constrained();
+        });
+        Schema::table('loan_billings', function (Blueprint $table) {
             $table->foreignId('member_subtype_id')->after('member_type_id')->nullable()->constrained();
         });
     }
@@ -20,9 +23,7 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::table('capital_subscription_billings', function (Blueprint $table) {
-            $table->dropForeign('capital_subscription_billings_member_subtype_id_foreign');
-            $table->dropColumn('member_subtype_id');
+        Schema::table('loan_billings', function (Blueprint $table) {
         });
     }
 };

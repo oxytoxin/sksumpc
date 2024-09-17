@@ -21,7 +21,7 @@ class CashierTransactionsPageOthers
                 ->handle(
                     cbu: $member->capital_subscriptions_common,
                     data: new CapitalSubscriptionPaymentData(
-                        payment_type_id: 4,
+                        payment_type_id: $payment_type->id,
                         reference_number: $reference_number,
                         amount: $amount,
                         transaction_date: $transaction_date
