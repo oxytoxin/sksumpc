@@ -3,7 +3,6 @@
 namespace App\Livewire;
 
 use App\Models\RevolvingFund;
-use App\Models\RevolvingFundReplenishment;
 use Livewire\Component;
 
 class CashierRevolvingFundReplenishmentChecker extends Component

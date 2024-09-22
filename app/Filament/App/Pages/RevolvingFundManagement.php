@@ -6,7 +6,6 @@ use App\Models\RevolvingFund;
 use Filament\Pages\Page;
 use Filament\Tables\Table;
 use Filament\Tables\Contracts\HasTable;
-use App\Models\RevolvingFundReplenishment;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
