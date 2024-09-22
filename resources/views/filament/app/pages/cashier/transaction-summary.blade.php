@@ -18,7 +18,7 @@
 @endphp
 <div>
     <div>
-        @foreach ($transactions as $transaction)
+        @forelse ($transactions as $transaction)
             <div class="border border-black p-2">
                 <p class="uppercase"><strong>TRANSACTION: </strong> {{ $transaction['type'] }}</p>
                 <p><strong>ACCOUNT NAME: </strong> {{ $accounts->find($transaction['account_id'])?->name }}</p>
@@ -30,9 +30,15 @@
                     <p>{{ \Filament\Support\format_money($transaction['data']['amount'] ?? 0, 'PHP') }}</p>
                 </div>
             </div>
-        @endforeach
-        <div class="border border-black p-2">
-            <p><strong>TOTAL AMOUNT:</strong> {{ \Filament\Support\format_money(collect($transactions)->sum('data.amount'), 'PHP') }}</p>
-        </div>
+        @empty
+            <div class="border border-black p-2">
+                <p class="uppercase"><strong>No transactions added.</strong></p>
+            </div>
+        @endforelse
+        @if(count($transactions) ?? [])
+            <div class="border border-black p-2">
+                <p><strong>TOTAL AMOUNT:</strong> {{ \Filament\Support\format_money(collect($transactions)->sum('data.amount'), 'PHP') }}</p>
+            </div>
+        @endif
     </div>
 </div>

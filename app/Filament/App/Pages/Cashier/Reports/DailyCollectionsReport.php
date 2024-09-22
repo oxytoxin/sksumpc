@@ -47,13 +47,22 @@ class DailyCollectionsReport extends Page
     #[Computed]
     public function DailyCollections()
     {
-        $dormitory = Transaction::query()->whereIn('account_id', [OthersTransactionExcludedAccounts::RESERVATION_FEES_DORM->value, OthersTransactionExcludedAccounts::DORMITORY, OthersTransactionExcludedAccounts::RESERVATION->value])
+        $dormitory = Transaction::query()->whereIn('account_id', [
+            OthersTransactionExcludedAccounts::RESERVATION_FEES_DORM->value,
+            OthersTransactionExcludedAccounts::DORMITORY->value,
+            OthersTransactionExcludedAccounts::RESERVATION->value,
+            OthersTransactionExcludedAccounts::OTHER_INCOME_ELECTRICITY->value,
+            OthersTransactionExcludedAccounts::OTHER_INCOME_ELECTRICITY->value,
+        ])
             ->selectRaw(
                 "sum(credit) as total_amount, 'Dormitory' as name, payment_type_id"
             )
             ->whereDate('transaction_date', config('app.transaction_date'))
             ->groupBy("payment_type_id");
-        $rice_and_groceries = Transaction::query()->whereIn('account_id', [OthersTransactionExcludedAccounts::RICE->value])->where('transaction_type_id', 1)
+        $rice_and_groceries = Transaction::query()->whereIn('account_id', [
+            OthersTransactionExcludedAccounts::RICE->value,
+            OthersTransactionExcludedAccounts::GROCERIES->value
+        ])->where('transaction_type_id', 1)
             ->selectRaw(
                 "sum(credit) as total_amount, 'Rice and Groceries' as name, payment_type_id"
             )

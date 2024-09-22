@@ -31,9 +31,9 @@ class RevenueAccountsSeeder extends Seeder
         ]]);
         Account::create(['account_type_id' => 3, 'name' => 'INTEREST INCOME FROM TREASURY BILLS', 'number' => '40640']);
         Account::create(['account_type_id' => 3, 'name' => 'OTHER INCOME', 'number' => '40600', 'tag' => 'other_income', 'children' => [
-            ['account_type_id' => 3, 'name' => 'INVESTMENT', 'number' => '40600-0001'],
-            ['account_type_id' => 3, 'name' => 'PORTA CEILI', 'number' => '40600-0002'],
-            ['account_type_id' => 3, 'name' => 'DORMITORY', 'number' => '40600-0003'],
+            ['account_type_id' => 3, 'name' => 'INVESTMENT', 'number' => '40600-1001'],
+            ['account_type_id' => 3, 'name' => 'PORTA CEILI', 'number' => '40600-1002'],
+            ['account_type_id' => 3, 'name' => 'DORMITORY', 'number' => '40600-1003'],
         ]]);
         Account::create(['account_type_id' => 3, 'name' => 'FILING FEES', 'number' => '40130']);
         Account::create(['account_type_id' => 3, 'name' => 'SERVICE INCOME', 'number' => '40210']);

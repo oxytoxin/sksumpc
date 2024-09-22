@@ -51,20 +51,22 @@ class RevolvingFund extends Page implements HasTable
                     $savings = Saving::query()
                         ->withoutGlobalScopes()
                         ->whereNotNull("withdrawal")
-                        ->where('transaction_date', config('app.transaction_date'))
-                        ->select(["id", "reference_number", "deposit", "withdrawal", "transaction_date",  "transaction_datetime"]);
-
+                        ->whereCashierId(auth()->id())
+                        ->whereMonth('transaction_date', config('app.transaction_date')->month)
+                        ->select(["id", "reference_number", "deposit", "withdrawal", "transaction_date", "transaction_datetime"]);
                     $imprests = $savings->union(
                         Imprest::query()
                             ->withoutGlobalScopes()
                             ->whereNotNull("withdrawal")
-                            ->where('transaction_date', config('app.transaction_date'))
-                            ->select(["id", "reference_number", "deposit", "withdrawal", "transaction_date",  "transaction_datetime"])
+                            ->whereCashierId(auth()->id())
+                            ->whereMonth('transaction_date', config('app.transaction_date')->month)
+                            ->select(["id", "reference_number", "deposit", "withdrawal", "transaction_date", "transaction_datetime"])
                     );
 
                     $revolving_fund_replenishments = RevolvingFundReplenishment::query()
+                        ->whereCashierId(auth()->id())
                         ->selectRaw("id,reference_number, amount as deposit, null as withdrawal, transaction_date,  transaction_datetime")
-                        ->where('transaction_date', config('app.transaction_date'))
+                        ->whereMonth('transaction_date', config('app.transaction_date')->month)
                         ->union($imprests);
 
                     return $revolving_fund_replenishments;

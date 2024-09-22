@@ -461,7 +461,9 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                             $this->form->fill();
                             $this->replaceMountedAction('receipt', ['transactions' => $transactions]);
                         })
-                        ->modalContent(fn($action) => view('filament.app.pages.cashier.transaction-summary', ['data' => $this->data]))
+                        ->modalContent(function ($action) {
+                            return view('filament.app.pages.cashier.transaction-summary', ['data' => $this->data]);
+                        })
                         ->requiresConfirmation(),
                 ]),
             ]);
