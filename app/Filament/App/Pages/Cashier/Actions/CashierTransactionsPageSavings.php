@@ -25,14 +25,21 @@ class CashierTransactionsPageSavings
             ), $transaction_type);
 
         } else {
-            app(WithdrawFromSavingsAccount::class)->handle($member, new SavingsData(
+            $savings = app(WithdrawFromSavingsAccount::class)->handle($member, new SavingsData(
                 payment_type_id: $payment_type->id,
                 reference_number: SavingsProvider::WITHDRAWAL_TRANSFER_CODE,
                 amount: $amount,
                 savings_account_id: $savings_account->id,
                 transaction_date: $transaction_date,
             ), $transaction_type);
+            $savings->revolving_fund()->create([
+                'reference_number' => $savings->reference_number,
+                'withdrawal' => $amount,
+                'transaction_date' => $savings->transaction_date,
+            ]);
         }
+
+
         return [
             'account_number' => $savings_account->number,
             'account_name' => $savings_account->name,

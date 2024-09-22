@@ -20,7 +20,7 @@
                 $balance -= $record->withdrawal;
             @endphp
             <tr>
-                <td class="border border-black text-center">{{ $record->transaction_datetime }}</td>
+                <td class="border border-black text-center">{{ $record->transaction_date->format('m/d/Y') }}</td>
                 <td class="border border-black text-center">
                     {{ $record->withdrawal ? 'WITHDRAWAL' : 'REPLENISHMENT' }}
                 </td>

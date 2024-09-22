@@ -24,13 +24,20 @@ class CashierTransactionsPageImprests
                 transaction_date: $transaction_date,
             ), $transaction_type);
         } else {
-            app(WithdrawFromImprestAccount::class)->handle($member, new ImprestData(
+            $imprest = app(WithdrawFromImprestAccount::class)->handle($member, new ImprestData(
                 payment_type_id: $payment_type->id,
                 reference_number: ImprestsProvider::WITHDRAWAL_TRANSFER_CODE,
                 amount: $amount,
                 transaction_date: $transaction_date,
             ), $transaction_type);
+            $imprest->revolving_fund()->create([
+                'reference_number' => $imprest->reference_number,
+                'withdrawal' => $amount,
+                'transaction_date' => $imprest->transaction_date,
+            ]);
         }
+
+
         return [
             'account_number' => $imprest_account->number,
             'account_name' => $imprest_account->name,

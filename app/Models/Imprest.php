@@ -74,4 +74,9 @@ class Imprest extends Model
             $imprest->save();
         });
     }
+
+    public function revolving_fund()
+    {
+        return $this->morphOne(RevolvingFund::class, 'withdrawable');
+    }
 }
