@@ -3,7 +3,7 @@
 @endphp
 <x-filament-panels::page>
     <div>
-        <div class="p-4 print:text-[10pt] print:leading-tight print:w-full" x-ref="print">
+        <div class="p-4 print:w-full print:text-[10pt] print:leading-tight" x-ref="print">
             <x-app.cashier.reports.report-heading />
             <div>
                 <h3>Member's Name: {{ $cbu->member->full_name }}</h3>
@@ -11,7 +11,7 @@
                 <h3>Transaction Date: {{ $cbu->transaction_date->format('M d, Y') }}</h3>
                 <h3>Terms of Payment: {{ $cbu->number_of_terms }}</h3>
             </div>
-            <table class="w-full mt-4">
+            <table class="mt-4 w-full">
                 <thead>
                     <tr>
                         <th class="border border-black px-2 text-left">No.</th>
@@ -25,7 +25,7 @@
                 <tbody>
                     <tr>
                         <td class="border border-black px-2"></td>
-                        <td class="border whitespace-nowrap border-black px-2">Initial Payment</td>
+                        <td class="whitespace-nowrap border border-black px-2">Initial Payment</td>
                         <td class="border border-black px-2 text-right">{{ format_money($cbu->initial_amount_paid, 'PHP') }}</td>
                         <td class="border border-black px-2 text-right"></td>
                         <td class="border border-black px-2 text-right"></td>
@@ -34,7 +34,7 @@
                     @foreach ($cbu->capital_subscription_amortizations as $amortization)
                         <tr>
                             <td class="border border-black px-2">{{ $amortization->term }}</td>
-                            <td class="border whitespace-nowrap border-black px-2">{{ $amortization->due_date->format('F Y') }}</td>
+                            <td class="whitespace-nowrap border border-black px-2">{{ $amortization->due_date->format('F Y') }}</td>
                             <td class="border border-black px-2 text-right">{{ format_money($amortization->amount, 'PHP') }}</td>
                             <td class="border border-black px-2 text-right">{{ format_money($amortization->amount_paid ?? 0, 'PHP') }}</td>
                             <td class="border border-black px-2 text-right">{{ format_money($amortization->arrears ?? 0, 'PHP') }}</td>

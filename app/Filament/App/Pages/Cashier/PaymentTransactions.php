@@ -13,6 +13,8 @@ use App\Actions\Savings\CreateNewSavingsAccount;
 use App\Actions\Savings\DepositToSavingsAccount;
 use App\Actions\Savings\WithdrawFromSavingsAccount;
 use App\Actions\TimeDeposits\CreateTimeDeposit;
+use App\Enums\OtherPaymentTransactionExcludedAccounts;
+use App\Enums\PaymentTypes;
 use App\Filament\App\Pages\Cashier\Actions\CashierTransactionsPageCbuPayment;
 use App\Filament\App\Pages\Cashier\Actions\CashierTransactionsPageImprests;
 use App\Filament\App\Pages\Cashier\Actions\CashierTransactionsPageLoveGifts;
@@ -121,11 +123,14 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                         Select::make('payment_type_id')
                                             ->paymenttype()
                                             ->required(),
-                                        Toggle::make('member_accounts'),
+                                        // Toggle::make('member_accounts'),
                                         TextInput::make('payee')->required()->default(fn($get) => Member::find($get('../../../member_id'))?->full_name),
                                         Select::make('account_id')
                                             ->options(
-                                                fn($get) => Account::withCode()->whereDoesntHave('children', fn($q) => $q->whereNull('member_id'))->where('member_id', $get('member_accounts') ? $get('../../../member_id') : null)->pluck('code', 'id')
+                                                fn($get) => Account::withCode()->whereDoesntHave('children', fn($q) => $q->whereNull('member_id'))
+                                                    ->whereDoesntHave('ancestorsAndSelf', fn($q) => $q->whereIn('id', OtherPaymentTransactionExcludedAccounts::get()))
+                                                    ->where('member_id', $get('member_accounts') ? $get('../../../member_id') : null)
+                                                    ->pluck('code', 'id')
                                             )
                                             ->searchable()
                                             ->required()
@@ -179,7 +184,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                             ->paymenttype()
                                             ->required(),
                                         TextInput::make('reference_number')->required()
-                                            ->visible(fn($get) => $get('action') == '1')
+                                            ->visible(fn($get) => $get('action') == '1' && $get('payment_type_id') != PaymentTypes::DEPOSIT_SLIP->value)
                                             ->unique('savings'),
                                         TextInput::make('amount')
                                             ->required()
@@ -205,7 +210,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                             ->paymenttype()
                                             ->required(),
                                         TextInput::make('reference_number')->required()
-                                            ->visible(fn($get) => $get('action') == '1')
+                                            ->visible(fn($get) => $get('action') == '1' && $get('payment_type_id') != PaymentTypes::DEPOSIT_SLIP->value)
                                             ->unique('imprests'),
                                         TextInput::make('amount')
                                             ->required()
@@ -231,7 +236,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                             ->paymenttype()
                                             ->required(),
                                         TextInput::make('reference_number')->required()
-                                            ->visible(fn($get) => $get('action') == '1')
+                                            ->visible(fn($get) => $get('action') == '1' && $get('payment_type_id') != PaymentTypes::DEPOSIT_SLIP->value)
                                             ->unique('love_gifts'),
                                         TextInput::make('amount')
                                             ->required()
@@ -349,6 +354,9 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                 if ($transaction['type'] == 'savings') {
                                     $is_deposit = $transaction['data']['action'] == 1;
                                     $savings_account = SavingsAccount::find($transaction['data']['savings_account_id']);
+                                    if ($transaction['data']['payment_type_id'] == PaymentTypes::DEPOSIT_SLIP->value) {
+                                        $transaction['data']['reference_number'] = str('SLIP')->append(config('app.transaction_date', today())->format('Y') . '-')->append(str_pad(random_int(1, 100000), 6, '0', STR_PAD_LEFT));
+                                    }
                                     $transaction_data = CashierTransactionsPageSavings::handle(
                                         is_deposit: $is_deposit,
                                         member: $member,
@@ -365,6 +373,9 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                 if ($transaction['type'] == 'imprest') {
                                     $is_deposit = $transaction['data']['action'] == 1;
                                     $imprest_account = $member->imprest_account;
+                                    if ($transaction['data']['payment_type_id'] == PaymentTypes::DEPOSIT_SLIP->value) {
+                                        $transaction['data']['reference_number'] = str('SLIP')->append(config('app.transaction_date', today())->format('Y') . '-')->append(str_pad(random_int(1, 100000), 6, '0', STR_PAD_LEFT));
+                                    }
                                     $transaction_data = CashierTransactionsPageImprests::handle(
                                         is_deposit: $is_deposit,
                                         member: $member,
@@ -380,6 +391,9 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                 }
                                 if ($transaction['type'] == 'love_gift') {
                                     $is_deposit = $transaction['data']['action'] == 1;
+                                    if ($transaction['data']['payment_type_id'] == PaymentTypes::DEPOSIT_SLIP->value) {
+                                        $transaction['data']['reference_number'] = str('SLIP')->append(config('app.transaction_date', today())->format('Y') . '-')->append(str_pad(random_int(1, 100000), 6, '0', STR_PAD_LEFT));
+                                    }
                                     $transaction_data = CashierTransactionsPageLoveGifts::handle(
                                         is_deposit: $is_deposit,
                                         member: $member,

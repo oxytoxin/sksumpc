@@ -69,7 +69,7 @@ class Saving extends Model
             };
 
             if ($prefix) {
-                $saving->reference_number = str($prefix)->append(today()->format('Y') . '-')->append(str_pad($saving->id, 6, '0', STR_PAD_LEFT));
+                $saving->reference_number = str($prefix)->append(config('app.transaction_date', today())->format('Y') . '-')->append(str_pad($saving->id, 6, '0', STR_PAD_LEFT));
             }
 
             $saving->save();

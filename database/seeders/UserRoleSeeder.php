@@ -133,5 +133,13 @@ class UserRoleSeeder extends Seeder
             'name' => 'view own member profile',
         ]);
         $role->givePermissionTo($permission);
+
+        $permission = Permission::create([
+            'name' => 'handle clerical tasks',
+        ]);
+        $role = Role::create([
+            'name' => 'clerk',
+        ]);
+        $role->givePermissionTo($permission);
     }
 }

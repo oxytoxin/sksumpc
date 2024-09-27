@@ -1,11 +1,9 @@
 <x-filament-panels::page>
     <x-app.cashier.reports.report-layout>
         <div class="flex gap-4">
-            <img class="w-24 h-24"
-                src="{{ $member->profile_photo ?? 'https://ui-avatars.com/api/?name=' . $member->full_name }}"
-                alt="profile photo">
+            <img class="h-24 w-24" src="{{ $member->profile_photo ?? 'https://ui-avatars.com/api/?name=' . $member->full_name }}" alt="profile photo">
             <div class="flex-1">
-                <table class="w-full border print:text-[7pt] border-black">
+                <table class="w-full border border-black print:text-[7pt]">
                     <tr>
                         <td class="border border-black px-4">NAME</td>
                         <td class="border border-black px-4">{{ $member->full_name }}</td>
@@ -94,18 +92,15 @@
                     </tr>
                     <tr>
                         <td class="border border-black px-4">EFFECTIVITY DATE</td>
-                        <td class="border border-black px-4">
-                            {{ $member->membership_acceptance?->effectivity_date?->format('F d, Y') }}</td>
+                        <td class="border border-black px-4">{{ $member->membership_acceptance?->effectivity_date?->format('F d, Y') }}</td>
                     </tr>
                     <tr>
                         <td class="border border-black px-4">INITIAL NUMBER OF SHARES</td>
-                        <td class="border border-black px-4">
-                            {{ $member->initial_capital_subscription?->number_of_shares }}</td>
+                        <td class="border border-black px-4">{{ $member->initial_capital_subscription?->number_of_shares }}</td>
                     </tr>
                     <tr>
                         <td class="border border-black px-4">INITIAL AMOUNT SUBSCRIBED</td>
-                        <td class="border border-black px-4">
-                            {{ $member->initial_capital_subscription?->amount_subscribed }}</td>
+                        <td class="border border-black px-4">{{ $member->initial_capital_subscription?->amount_subscribed }}</td>
                     </tr>
                 </table>
             </div>

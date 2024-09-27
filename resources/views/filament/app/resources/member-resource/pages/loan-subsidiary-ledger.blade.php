@@ -7,7 +7,7 @@
             <h1 class="font-bold">SKSU-MULTI-PURPOSE COOPERATIVE</h1>
             <h2>Access Campus, EJC Montilla, Tacurong City</h2>
         </div>
-        <h2 class="text-center font-bold my-4">SUBSIDIARY LEDGER FOR LOAN</h2>
+        <h2 class="my-4 text-center font-bold">SUBSIDIARY LEDGER FOR LOAN</h2>
         <div class="grid grid-cols-2">
             <div class="leading-4">
                 <p>Account Number: <strong>{{ $loan->loan_account->number }}</strong></p>
@@ -25,7 +25,7 @@
             </div>
         </div>
         <div class="mt-4">
-            <table class="print:text-[8pt] w-full">
+            <table class="w-full print:text-[8pt]">
                 <thead>
                     <tr>
                         <th class="border border-black px-4">Date</th>
@@ -47,17 +47,17 @@
                             $running_balance -= $payment->principal_payment;
                         @endphp
                         <tr>
-                            <td class="border border-black px-4 whitespace-nowrap">
+                            <td class="whitespace-nowrap border border-black px-4">
                                 {{ $payment->transaction_date->format('F d, Y') }}</td>
                             <td class="border border-black px-4 text-center">{{ $payment->reference_number }}</td>
-                            <td class="border border-black px-4 text-right whitespace-nowrap">
+                            <td class="whitespace-nowrap border border-black px-4 text-right">
                                 {{ number_format($payment->amount, 2) }}</td>
-                            <td class="border border-black px-4 text-right whitespace-nowrap"></td>
-                            <td class="border border-black px-4 text-right whitespace-nowrap">
+                            <td class="whitespace-nowrap border border-black px-4 text-right"></td>
+                            <td class="whitespace-nowrap border border-black px-4 text-right">
                                 {{ number_format($payment->interest_payment, 2) }}</td>
-                            <td class="border border-black px-4 text-right whitespace-nowrap">
+                            <td class="whitespace-nowrap border border-black px-4 text-right">
                                 {{ number_format($payment->principal_payment, 2) }}</td>
-                            <td class="border border-black px-4 text-right whitespace-nowrap">
+                            <td class="whitespace-nowrap border border-black px-4 text-right">
                                 {{ number_format($running_balance, 2) }}</td>
                             <td class="border border-black px-4">{{ $payment->remarks }}</td>
                         </tr>
@@ -82,15 +82,15 @@
                 </tbody>
             </table>
         </div>
-        <div class="flex justify-between mt-4">
+        <div class="mt-4 flex justify-between">
             <div class="flex">
                 <p>Prepared by:</p>
-                <div class="flex flex-col items-center mt-12 ml-4">
+                <div class="ml-4 mt-12 flex flex-col items-center">
                     <p class="font-bold uppercase">{{ auth()->user()->name }}</p>
                     <p>Loan Officer</p>
                 </div>
             </div>
-            <div class="grid grid-cols-2 gap-x-4 mt-4 mr-8 leading-4">
+            <div class="mr-8 mt-4 grid grid-cols-2 gap-x-4 leading-4">
                 <p>PRINCIPAL</p>
                 <p class="text-right">{{ number_format($loan->payments->sum('principal_payment'), 2) }}</p>
                 <p>INTEREST</p>
@@ -98,16 +98,12 @@
                 <p>SURCHARGE</p>
                 <p class="text-right">{{ number_format(0, 2) }}</p>
                 <p>&nbsp;</p>
-                <p class="border-t-2 border-black text-right">
-                    {{ number_format($loan->payments->sum('principal_payment') + $loan->payments->sum('interest_payment') + 0, 2) }}
-                </p>
+                <p class="border-t-2 border-black text-right">{{ number_format($loan->payments->sum('principal_payment') + $loan->payments->sum('interest_payment') + 0, 2) }}</p>
             </div>
         </div>
     </div>
     <div class="flex justify-end gap-2">
-        <x-filament::button wire:ignore href="{{ back()->getTargetUrl() }}" outlined
-            tag="a">Back</x-filament::button>
-        <x-filament::button icon="heroicon-o-printer"
-            @click="printOut($refs.print.outerHTML, 'CBU Subsidiary Ledger')">Print</x-filament::button>
+        <x-filament::button wire:ignore href="{{ back()->getTargetUrl() }}" outlined tag="a">Back</x-filament::button>
+        <x-filament::button icon="heroicon-o-printer" @click="printOut($refs.print.outerHTML, 'CBU Subsidiary Ledger')">Print</x-filament::button>
     </div>
 </x-filament-panels::page>

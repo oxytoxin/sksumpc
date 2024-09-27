@@ -32,15 +32,16 @@ class TransactionDateManager extends Page implements HasActions, HasForms
     {
         return $form->schema([
             Placeholder::make('current_transaction_date')
-                ->content(fn () => SystemConfiguration::config('Transaction Date')?->content['transaction_date']),
+                ->content(fn() => SystemConfiguration::config('Transaction Date')?->content['transaction_date']),
             Placeholder::make('note')
-                ->content(fn ($get) => $get('transaction_date') ? "All transactions date will be set to " . Carbon::create($get('transaction_date'))->format('m/d/Y') : "No transaction date set for today's transactions."),
+                ->content(fn($get) => $get('transaction_date') ? "All transactions date will be set to " . Carbon::create($get('transaction_date'))->format('m/d/Y') : "No transaction date set for today's transactions."),
             DatePicker::make('transaction_date')
                 ->native(false)
                 ->required()
                 ->live(),
             Actions::make([
                 Action::make('set')
+                    ->label('Set Date')
                     ->action(function () {
                         $this->form->validate();
                         SystemConfiguration::where('name', 'Transaction Date')->delete();
@@ -54,6 +55,7 @@ class TransactionDateManager extends Page implements HasActions, HasForms
                     })
                     ->color('success'),
                 Action::make('clear')
+                    ->label('Close Date')
                     ->action(function () {
                         SystemConfiguration::config('Transaction Date')?->delete();
                         $this->reset();

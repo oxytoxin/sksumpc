@@ -19,7 +19,7 @@
     <div x-data class="mx-auto">
         <div class="p-4 print:w-full print:text-[8pt] print:leading-tight" x-ref="print">
             <div>
-                <x-app.cashier.reports.report-heading/>
+                <x-app.cashier.reports.report-heading />
                 <h4 class="text-center text-xl font-bold print:text-[10pt]">APPLICATION FORM</h4>
                 <div class="my-2 grid grid-cols-2 print:text-[8pt]">
                     <div class="flex space-x-4">
@@ -130,45 +130,45 @@
                     <div>
                         <table class="w-full print:text-[9pt]">
                             <thead>
-                            <tr>
-                                <th class="border border-black px-2">Date</th>
-                                <th class="border border-black px-2">Particulars</th>
-                                <th class="border border-black px-2">Date Granted</th>
-                                <th class="border border-black px-2">Amount Granted</th>
-                                <th class="border border-black px-2">Monthly Amortization</th>
-                                <th class="border border-black px-2">Balance</th>
-                                <th class="border border-black px-2">Remarks</th>
-                            </tr>
+                                <tr>
+                                    <th class="border border-black px-2">Date</th>
+                                    <th class="border border-black px-2">Particulars</th>
+                                    <th class="border border-black px-2">Date Granted</th>
+                                    <th class="border border-black px-2">Amount Granted</th>
+                                    <th class="border border-black px-2">Monthly Amortization</th>
+                                    <th class="border border-black px-2">Balance</th>
+                                    <th class="border border-black px-2">Remarks</th>
+                                </tr>
                             </thead>
                             <tbody>
-                            @foreach ($loans as $loan)
+                                @foreach ($loans as $loan)
+                                    <tr>
+                                        <td class="border border-black px-2">{{ $loan->transaction_date->format('m/d/Y') }}</td>
+                                        <td class="border border-black px-2">{{ $loan->loan_type->name }}</td>
+                                        <td class="border border-black px-2">{{ $loan->release_date?->format('m/d/Y') }}</td>
+                                        <td class="border border-black px-2">{{ format_money($loan->gross_amount, 'PHP') }}</td>
+                                        <td class="border border-black px-2">{{ format_money($loan->monthly_payment, 'PHP') }} </td>
+                                        <td class="border border-black px-2">
+                                            {{ format_money($loan->outstanding_balance, 'PHP') }}
+                                        </td>
+                                        <td class="border border-black px-2">
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                @foreach ($loan_applications as $la)
+                                    <tr>
+                                        <td class="border border-black px-2">{{ $la->transaction_date->format('m/d/Y') }}</td>
+                                        <td class="border border-black px-2">{{ $la->loan_type->name }}</td>
+                                        <td class="border border-black px-2"></td>
+                                        <td class="border border-black px-2">{{ format_money($la->desired_amount, 'PHP') }}</td>
+                                        <td class="border border-black px-2">{{ format_money($la->monthly_payment, 'PHP') }}</td>
+                                        <td class="border border-black px-2"></td>
+                                        <td class="border border-black px-2">{{ $la->status_name }}</td>
+                                    </tr>
+                                @endforeach
                                 <tr>
-                                    <td class="border border-black px-2">{{ $loan->transaction_date->format('m/d/Y') }}</td>
-                                    <td class="border border-black px-2">{{ $loan->loan_type->name }}</td>
-                                    <td class="border border-black px-2">{{ $loan->release_date?->format('m/d/Y') }}</td>
-                                    <td class="border border-black px-2">{{ format_money($loan->gross_amount, 'PHP') }}</td>
-                                    <td class="border border-black px-2">{{ format_money($loan->monthly_payment, 'PHP') }} </td>
-                                    <td class="border border-black px-2">
-                                        {{ format_money($loan->outstanding_balance, 'PHP') }}
-                                    </td>
-                                    <td class="border border-black px-2">
-                                    </td>
+                                    <td colspan="8" class="border border-black px-2 text-center">Nothing follows.</td>
                                 </tr>
-                            @endforeach
-                            @foreach ($loan_applications as $la)
-                                <tr>
-                                    <td class="border border-black px-2">{{ $la->transaction_date->format('m/d/Y') }}</td>
-                                    <td class="border border-black px-2">{{ $la->loan_type->name }}</td>
-                                    <td class="border border-black px-2"></td>
-                                    <td class="border border-black px-2">{{ format_money($la->desired_amount, 'PHP') }}</td>
-                                    <td class="border border-black px-2">{{ format_money($la->monthly_payment, 'PHP') }}</td>
-                                    <td class="border border-black px-2"></td>
-                                    <td class="border border-black px-2">{{ $la->status_name }}</td>
-                                </tr>
-                            @endforeach
-                            <tr>
-                                <td colspan="8" class="border border-black px-2 text-center">Nothing follows.</td>
-                            </tr>
                             </tbody>
                         </table>
                     </div>
@@ -189,7 +189,7 @@
             </div>
             <div class="break-before-page">
                 <div class="hidden print:block">
-                    <x-app.cashier.reports.report-heading/>
+                    <x-app.cashier.reports.report-heading />
                 </div>
                 <h1 class="my-8 text-center font-bold">PROMISSORY NOTE</h1>
                 <div class="mb-4 flex">
@@ -205,14 +205,13 @@
                 </div>
                 <div class="flex flex-col gap-y-1">
                     <p class="indent-8">
-                        For the value received, I/We jointly and severally, promise to pay the SKSU - MPC or order the sum of <span class="border-b border-black px-4 uppercase">{{ $loan_application->desired_amount_in_words }} pesos only (P{{ renumber_format($loan_application->desired_amount, 2) }})</span>
-                        payable in <span class="border-b border-black px-4">{{ $loan_application->number_of_terms }} months</span>
+                        For the value received, I/We jointly and severally, promise to pay the SKSU - MPC or order the sum of <span class="border-b border-black px-4 uppercase">{{ $loan_application->desired_amount_in_words }} pesos only (P{{ renumber_format($loan_application->desired_amount, 2) }})</span> payable in
+                        <span class="border-b border-black px-4">{{ $loan_application->number_of_terms }} months</span>
                         equal installment of <span class="inline-block min-w-[8rem] border-b border-black px-4">
                             @if ($loan_application->loan_type->has_monthly_amortization)
                                 (P {{ renumber_format($loan_application->monthly_payment, 2) }})
                             @endif
-                        </span> the first payment to
-                        be made on <span class="inline-block min-w-[8rem] border-b border-black px-4 text-center indent-0">{{ $loan_application->payment_start_date?->format('F d, Y') }}</span>
+                        </span> the first payment to be made on <span class="inline-block min-w-[8rem] border-b border-black px-4 text-center indent-0">{{ $loan_application->payment_start_date?->format('F d, Y') }}</span>
                         and every payday thereafter until the full amount has been paid.
                     </p>
                     <p class="indent-8">Collateral: Monthly/Semi-monthly salary PAYROLL DEDUCTION</p>

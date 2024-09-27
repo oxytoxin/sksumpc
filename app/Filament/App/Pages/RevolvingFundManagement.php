@@ -47,8 +47,9 @@ class RevolvingFundManagement extends Page implements HasTable
             ->query(
                 RevolvingFund::query()
                     ->whereCashierId(auth()->id())
-                    ->whereMonth('transaction_date', config('app.transaction_date')->month)
-                    ->whereYear('transaction_date', config('app.transaction_date')->year)
+                    ->whereDate('transaction_date', config('app.transaction_date'))
+                // ->whereMonth('transaction_date', config('app.transaction_date')->month)
+                // ->whereYear('transaction_date', config('app.transaction_date')->year)
             );
     }
 }

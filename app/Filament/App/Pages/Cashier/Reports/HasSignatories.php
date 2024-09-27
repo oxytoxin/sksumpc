@@ -30,7 +30,7 @@ trait HasSignatories
                             ->label('')
                             ->addActionLabel('Add Signatory'),
                     ];
-                })->action(fn ($data) => $this->signatories = $data['signatories']),
+                })->action(fn($data) => $this->signatories = $data['signatories']),
         ];
     }
 
@@ -63,7 +63,7 @@ trait HasSignatories
         ];
     }
 
-    public function mount()
+    public function mountHasSignatories()
     {
         $this->getSignatories();
     }

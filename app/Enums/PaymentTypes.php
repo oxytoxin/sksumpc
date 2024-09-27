@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum PaymentTypes
+enum PaymentTypes: int
 {
-
+    case DEPOSIT_SLIP = 5;
 }

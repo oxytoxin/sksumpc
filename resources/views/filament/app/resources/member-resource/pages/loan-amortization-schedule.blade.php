@@ -3,7 +3,7 @@
 @endphp
 <x-filament-panels::page>
     <div>
-        <div class="p-4 print:text-[10pt] print:leading-tight print:w-full" x-ref="print">
+        <div class="p-4 print:w-full print:text-[10pt] print:leading-tight" x-ref="print">
             <x-app.cashier.reports.report-heading />
             <div>
                 <h3>Member's Name: {{ $loan->member->full_name }}</h3>
@@ -14,7 +14,7 @@
                 <h3>Terms of Payment: {{ $loan->number_of_terms }}</h3>
                 <h3>Interest Rate: {{ $loan->interest_rate * 100 }}%</h3>
             </div>
-            <table class="w-full mt-4">
+            <table class="mt-4 w-full">
                 <thead>
                     <tr>
                         <th class="border border-black px-2 text-left">No.</th>
@@ -48,17 +48,12 @@
                         @endphp
                         <tr>
                             <td class="border border-black px-2">{{ $loan_amortization['term'] }}</td>
-                            <td class="border whitespace-nowrap border-black px-2">
-                                {{ $loan_amortization['date']->format('F Y') }}</td>
+                            <td class="whitespace-nowrap border border-black px-2">{{ $loan_amortization['date']->format('F Y') }}</td>
                             <td class="border border-black px-2 text-center">{{ $loan_amortization['days'] }}</td>
-                            <td class="border border-black px-2 text-right">
-                                {{ number_format($loan_amortization['amortization'], 4) }}</td>
-                            <td class="border border-black px-2 text-right">
-                                {{ number_format($loan_amortization['interest'], 4) }}</td>
-                            <td class="border border-black px-2 text-right">
-                                {{ number_format($loan_amortization['principal'], 4) }}</td>
-                            <td class="border border-black px-2 text-right">
-                                {{ number_format($loan_amortization['outstanding_balance'] ?? $ob, 4) }}</td>
+                            <td class="border border-black px-2 text-right">{{ number_format($loan_amortization['amortization'], 4) }}</td>
+                            <td class="border border-black px-2 text-right">{{ number_format($loan_amortization['interest'], 4) }}</td>
+                            <td class="border border-black px-2 text-right">{{ number_format($loan_amortization['principal'], 4) }}</td>
+                            <td class="border border-black px-2 text-right">{{ number_format($loan_amortization['outstanding_balance'] ?? $ob, 4) }}</td>
                             <td class="border border-black px-2"></td>
                         </tr>
                     @endforeach
@@ -66,25 +61,19 @@
                         <td class="border border-black px-2"></td>
                         <td class="border border-black px-2">TOTAL</td>
                         <td class="border border-black px-2 text-center"></td>
-                        <td class="border border-black px-2 text-right">
-                            {{ number_format(collect($amortizations)->sum('amortization'), 4) }}</td>
-                        <td class="border border-black px-2 text-right">
-                            {{ number_format(collect($amortizations)->sum('interest'), 4) }}</td>
-                        <td class="border border-black px-2 text-right">
-                            {{ number_format(collect($amortizations)->sum('principal'), 4) }}</td>
+                        <td class="border border-black px-2 text-right">{{ number_format(collect($amortizations)->sum('amortization'), 4) }}</td>
+                        <td class="border border-black px-2 text-right">{{ number_format(collect($amortizations)->sum('interest'), 4) }}</td>
+                        <td class="border border-black px-2 text-right">{{ number_format(collect($amortizations)->sum('principal'), 4) }}</td>
                         <td class="border border-black px-2 text-right"></td>
                         <td class="border border-black px-2"></td>
                     </tr>
                 </tbody>
             </table>
             <x-app.cashier.reports.signatories :signatories="$signatories" />
-
         </div>
         <div class="flex justify-end space-x-2">
-            <x-filament::button wire:ignore href="{{ back()->getTargetUrl() }}" outlined
-                tag="a">Back</x-filament::button>
-            <x-filament::button icon="heroicon-o-printer"
-                @click="printOut($refs.print.outerHTML, 'Loan Amortization Schedule')">Print</x-filament::button>
+            <x-filament::button wire:ignore href="{{ back()->getTargetUrl() }}" outlined tag="a">Back</x-filament::button>
+            <x-filament::button icon="heroicon-o-printer" @click="printOut($refs.print.outerHTML, 'Loan Amortization Schedule')">Print</x-filament::button>
         </div>
     </div>
 </x-filament-panels::page>

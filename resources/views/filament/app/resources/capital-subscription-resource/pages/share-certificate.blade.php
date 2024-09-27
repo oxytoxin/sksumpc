@@ -69,11 +69,7 @@
                     </p>
                     <p class="mt-4 px-12">transferable only on the books of the Cooperative by the holder hereof in person or Attorney-In-Fact, upon surrender of this Share Certificate properly endorsed.</p>
                     <p class="mt-4 italic">
-                        <strong class="text-base font-semibold not-italic">
-                            In Witness Whereof,
-                        </strong>
-                        the said Cooperative has caused this Share Certificate to be signed by its duly authorized officers and to be sealed with the Seal of the Cooperative this
-                        <em class="underline">{{ $capital_subscription->transaction_date->format('jS \d\a\y \o\f\ F, Y') }}</em>
+                        <strong class="text-base font-semibold not-italic"> In Witness Whereof, </strong> the said Cooperative has caused this Share Certificate to be signed by its duly authorized officers and to be sealed with the Seal of the Cooperative this <em class="underline">{{ $capital_subscription->transaction_date->format('jS \d\a\y \o\f\ F, Y') }}</em>
                     </p>
                 </div>
                 <div class="mt-8 flex items-center">
@@ -92,12 +88,10 @@
             </div>
         </div>
         <div class="mt-24 break-before-page gap-8 print:mt-0">
-
             <div class="flex flex-1 flex-col items-center gap-4 border-2 border-green-700 p-4">
                 <h2 class="text-2xl font-bold">SHARE CERTIFICATE</h2>
                 <p>FOR</p>
-                <p><strong class="underline">{{ round($capital_subscription->number_of_shares, 0) }}</strong> SHARES
-                </p>
+                <p><strong class="underline">{{ round($capital_subscription->number_of_shares, 0) }}</strong> SHARES</p>
                 <div class="text-center italic">
                     <p>OF</p>
                     <p>Share Capital</p>

@@ -32,12 +32,9 @@
                     <td class="whitespace-nowrap border border-black px-2 text-center">
                         {{ $record->reference_number }}
                     </td>
-                    <td class="border border-black text-center">
-                        {{ renumber_format($record->deposit, 2) }}</td>
-                    <td class="border border-black text-center">
-                        {{ renumber_format($record->withdrawal, 2) }}</td>
-                    <td class="border border-black text-center">
-                        {{ $record->transaction_date?->format('m/d/Y') }}</td>
+                    <td class="border border-black text-center">{{ renumber_format($record->deposit, 2) }}</td>
+                    <td class="border border-black text-center">{{ renumber_format($record->withdrawal, 2) }}</td>
+                    <td class="border border-black text-center">{{ $record->transaction_date?->format('m/d/Y') }}</td>
                 </tr>
             @empty
                 <tr>
@@ -46,10 +43,8 @@
             @endforelse
             <tr>
                 <th colspan="4" class="border border-black text-center">GRAND TOTAL</th>
-                <td class="border border-black text-center">
-                    {{ renumber_format($this->table->getRecords()->sum('deposit'), 2) }}</td>
-                <td class="border border-black text-center">
-                    {{ renumber_format($this->table->getRecords()->sum('withdrawal'), 2) }}</td>
+                <td class="border border-black text-center">{{ renumber_format($this->table->getRecords()->sum('deposit'), 2) }}</td>
+                <td class="border border-black text-center">{{ renumber_format($this->table->getRecords()->sum('withdrawal'), 2) }}</td>
                 <td class="border border-black text-center">{{ renumber_format($this->table->getRecords()->sum('amount'), 2) }}</td>
             </tr>
         </tbody>

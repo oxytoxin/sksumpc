@@ -30,18 +30,11 @@
                     <td class="border border-black text-center">
                         {{ $record->reference_number }}
                     </td>
-                    <td class="border border-black text-center">
-                        {{ renumber_format($record->amount, 2) }}</td>
-                    <td class="border border-black text-center">
-                        {{ renumber_format($record->principal_payment, 2) }}</td>
-                    <td class="border border-black text-center">
-                        {{ renumber_format($record->interest_payment, 2) }}</td>
-                    <td class="border border-black text-center">
-                        {{ renumber_format($record->surcharge_payment, 2) }}</td>
-                    <td class="border border-black text-center">
-                        {{ $record->transaction_date?->format('m/d/Y') }}
-                    </td>
-
+                    <td class="border border-black text-center">{{ renumber_format($record->amount, 2) }}</td>
+                    <td class="border border-black text-center">{{ renumber_format($record->principal_payment, 2) }}</td>
+                    <td class="border border-black text-center">{{ renumber_format($record->interest_payment, 2) }}</td>
+                    <td class="border border-black text-center">{{ renumber_format($record->surcharge_payment, 2) }}</td>
+                    <td class="border border-black text-center">{{ $record->transaction_date?->format('m/d/Y') }}</td>
                 </tr>
             @empty
                 <tr>

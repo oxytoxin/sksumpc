@@ -2,14 +2,11 @@
     <div x-ref="print">
         <div class="mb-8 flex flex-col items-center justify-center">
             <img src="{{ asset('images/logo.jpg') }}" alt="logo" class="h-24 print:h-16">
-            <h2 class="text-center text-lg font-bold">SULTAN KUDARAT STATE UNIVERSITY - MULTI-PURPOSE COOPERATIVE (SKSU-MPC)
-            </h2>
+            <h2 class="text-center text-lg font-bold">SULTAN KUDARAT STATE UNIVERSITY - MULTI-PURPOSE COOPERATIVE (SKSU-MPC)</h2>
         </div>
         <div class="border border-black">
             <p class="border border-black p-2">This Deposit / payment is subject to the Terms and Conditions covering this account</p>
-            <h3 class="border border-black p-2">
-                &nbsp;
-            </h3>
+            <h3 class="border border-black p-2">&nbsp;</h3>
             <div class="border border-black p-2">
                 <strong>TELLER'S VALIDATION</strong>
                 <p>(THIS IS YOUR RECEIPT WHEN SYSTEM VALIDATED)</p>

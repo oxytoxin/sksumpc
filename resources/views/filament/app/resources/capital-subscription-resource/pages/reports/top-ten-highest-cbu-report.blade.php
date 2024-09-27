@@ -9,26 +9,26 @@
             </div>
             <table class="w-full">
                 <thead>
-                <tr>
-                    <th class="border border-black px-4">NO.</th>
-                    <th class="border border-black text-left px-4">NAME</th>
-                    <th class="border border-black text-right px-4">AMOUNT</th>
-                    <th class="border border-black px-4">NO.</th>
-                </tr>
+                    <tr>
+                        <th class="border border-black px-4">NO.</th>
+                        <th class="border border-black px-4 text-left">NAME</th>
+                        <th class="border border-black px-4 text-right">AMOUNT</th>
+                        <th class="border border-black px-4">NO.</th>
+                    </tr>
                 </thead>
                 <tbody>
-                @forelse ($this->contributors as $contributor)
-                    <tr>
-                        <td class="border border-black px-4 text-center">{{ $loop->iteration }}</td>
-                        <td class="border border-black px-4">{{ $contributor->alt_full_name }}</td>
-                        <td class="border border-black px-4 text-right">{{ number_format($contributor->capital_subscription_payments_sum_amount, 2) }}</td>
-                        <td class="border border-black px-4 text-center">{{ $loop->iteration }}</td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="4" class="border border-black text-center">No contributors found.</td>
-                    </tr>
-                @endforelse
+                    @forelse ($this->contributors as $contributor)
+                        <tr>
+                            <td class="border border-black px-4 text-center">{{ $loop->iteration }}</td>
+                            <td class="border border-black px-4">{{ $contributor->alt_full_name }}</td>
+                            <td class="border border-black px-4 text-right">{{ number_format($contributor->capital_subscription_payments_sum_amount, 2) }}</td>
+                            <td class="border border-black px-4 text-center">{{ $loop->iteration }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="border border-black text-center">No contributors found.</td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </x-app.cashier.reports.report-layout>

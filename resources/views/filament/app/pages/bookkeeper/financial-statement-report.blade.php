@@ -1,6 +1,5 @@
 <x-filament-panels::page>
     {{ $this->form }}
-
     {{-- {{ $this->downloadTrialBalance }} --}}
     <div x-data="{ activeTab: 'trial_balance' }">
         <x-filament::tabs>
@@ -24,5 +23,4 @@
             @include('livewire.app.bookkeeper.reports.financial-operation-report')
         </div>
     </div>
-
 </x-filament-panels::page>

@@ -1,7 +1,7 @@
 @php
     $member = \App\Models\Member::with(['imprest_account', 'love_gift_account', 'capital_subscription_account'])->find($data['member_id']);
-    $transactions = collect($data['transactions'])->map(function($t) use($member){
-        $t['account_id'] =  match($t['type']){
+    $transactions = collect($data['transactions'])->map(function ($t) use ($member) {
+        $t['account_id'] = match ($t['type']) {
             'cbu' => $member->capital_subscription_account->id,
             'savings' => $t['data']['savings_account_id'],
             'imprest' => $member->imprest_account->id,
@@ -23,7 +23,7 @@
                 <p class="uppercase"><strong>TRANSACTION: </strong> {{ $transaction['type'] }}</p>
                 <p><strong>ACCOUNT NAME: </strong> {{ $accounts->find($transaction['account_id'])?->name }}</p>
                 <p><strong>ACCOUNT NUMBER: </strong> {{ $accounts->find($transaction['account_id'])?->number }}</p>
-                <p><strong>Payee:</strong> {{ $transaction['data']['payee'] ?? $member?->full_name  }}</p>
+                <p><strong>Payee:</strong> {{ $transaction['data']['payee'] ?? $member?->full_name }}</p>
                 <p>REFERENCE #: {{ $transaction['data']['reference_number'] }}</p>
                 <div class="flex gap-4">
                     <strong>{{ $payment_types->find($transaction['data']['payment_type_id'])?->name }}</strong>
@@ -35,7 +35,7 @@
                 <p class="uppercase"><strong>No transactions added.</strong></p>
             </div>
         @endforelse
-        @if(count($transactions) ?? [])
+        @if (count($transactions) ?? [])
             <div class="border border-black p-2">
                 <p><strong>TOTAL AMOUNT:</strong> {{ \Filament\Support\format_money(collect($transactions)->sum('data.amount'), 'PHP') }}</p>
             </div>
