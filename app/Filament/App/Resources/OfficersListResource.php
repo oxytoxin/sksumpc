@@ -26,6 +26,11 @@ class OfficersListResource extends Resource
 
     protected static ?int $navigationSort = 20;
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()->can('manage cbu');
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -62,8 +67,7 @@ class OfficersListResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-        ];
+        return [];
     }
 
     public static function getPages(): array

@@ -17,7 +17,7 @@ class CashierRevolvingFundReplenishmentChecker extends Component
             ->whereYear('transaction_date', config('app.transaction_date')?->year)
             ->selectRaw('(coalesce(sum(deposit), 0) - coalesce(sum(withdrawal), 0)) as balance')
             ->first()?->balance;
-        $this->replenished = $balance && $balance > 0;
+        $this->replenished = ($balance && $balance > 0) || !auth()->user()->can('manage payments');
     }
 
     public function render()

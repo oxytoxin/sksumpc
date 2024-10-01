@@ -26,6 +26,11 @@ class LegacyLoanPayments extends Page
 
     public $data = [];
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()->can('manage bookkeeping');
+    }
+
     public function mount()
     {
         $this->form->fill();

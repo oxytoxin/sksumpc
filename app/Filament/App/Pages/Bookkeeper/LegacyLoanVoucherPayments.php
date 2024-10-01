@@ -34,6 +34,11 @@ class LegacyLoanVoucherPayments extends Page
 
     public $data = [];
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()->can('manage bookkeeping');
+    }
+
     public function mount()
     {
         $this->form->fill();
@@ -69,7 +74,7 @@ class LegacyLoanVoucherPayments extends Page
                         $cib = Account::getCashInBankGF();
                         $net_amount = $items->firstWhere('account_id', $cib?->id);
                         if ($net_amount) {
-                            $items = $items->filter(fn ($i) => $i['account_id'] != $net_amount['account_id']);
+                            $items = $items->filter(fn($i) => $i['account_id'] != $net_amount['account_id']);
                             $net_amount['credit'] = $items->sum('debit') - $items->sum('credit');
                             $items->push($net_amount);
                         }
@@ -85,7 +90,7 @@ class LegacyLoanVoucherPayments extends Page
                                 ->preload(),
                             Select::make('account_id')
                                 ->options(
-                                    fn ($get) => Account::withCode()->whereDoesntHave('children', fn ($q) => $q->whereNull('member_id'))->where('member_id', $get('member_id') ?? null)->pluck('code', 'id')
+                                    fn($get) => Account::withCode()->whereDoesntHave('children', fn($q) => $q->whereNull('member_id'))->where('member_id', $get('member_id') ?? null)->pluck('code', 'id')
                                 )
                                 ->searchable()
                                 ->required()
@@ -95,21 +100,21 @@ class LegacyLoanVoucherPayments extends Page
                                     $set('principal', null);
                                 }),
                             TextInput::make('debit')
-                                ->disabled(fn ($get) => Account::find($get('account_id'))?->tag == 'member_loans_receivable')
+                                ->disabled(fn($get) => Account::find($get('account_id'))?->tag == 'member_loans_receivable')
                                 ->dehydrated()
                                 ->moneymask(),
                             TextInput::make('credit')
-                                ->disabled(fn ($get) => Account::find($get('account_id'))?->tag == 'member_loans_receivable')
+                                ->disabled(fn($get) => Account::find($get('account_id'))?->tag == 'member_loans_receivable')
                                 ->dehydrated()
                                 ->moneymask(),
                             TextInput::make('interest')
                                 ->moneymask()
-                                ->disabled(fn ($get) => Account::find($get('account_id'))?->tag != 'member_loans_receivable')
-                                ->afterStateUpdated(fn ($set, $get) => $set('credit', floatval($get('interest') + floatval($get('principal'))))),
+                                ->disabled(fn($get) => Account::find($get('account_id'))?->tag != 'member_loans_receivable')
+                                ->afterStateUpdated(fn($set, $get) => $set('credit', floatval($get('interest') + floatval($get('principal'))))),
                             TextInput::make('principal')
                                 ->moneymask()
-                                ->disabled(fn ($get) => Account::find($get('account_id'))?->tag != 'member_loans_receivable')
-                                ->afterStateUpdated(fn ($set, $get) => $set('credit', floatval($get('interest') + floatval($get('principal'))))),
+                                ->disabled(fn($get) => Account::find($get('account_id'))?->tag != 'member_loans_receivable')
+                                ->afterStateUpdated(fn($set, $get) => $set('credit', floatval($get('interest') + floatval($get('principal'))))),
                         ];
                     }),
                 Actions::make([

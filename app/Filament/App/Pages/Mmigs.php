@@ -29,6 +29,11 @@ class Mmigs extends Page implements HasTable
         return 'MMIGS';
     }
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()->can('manage cbu');
+    }
+
     public function table(Table $table)
     {
         return $table

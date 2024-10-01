@@ -2,15 +2,19 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Account;
-use App\Models\DisbursementVoucherItem;
-use App\Models\Division;
+use App\Models\User;
 use App\Models\Member;
+use App\Models\Account;
+use App\Models\Division;
 use App\Models\MemberType;
 use App\Models\Occupation;
 use App\Models\PaymentType;
 use App\Models\Transaction;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Hash;
+use App\Models\DisbursementVoucherItem;
 
 class UpdateDatabaseConcernsCommand extends Command
 {
@@ -40,6 +44,14 @@ class UpdateDatabaseConcernsCommand extends Command
                 'transaction_date' => $item->disbursement_voucher->transaction_date,
             ]);
         });
+
+        $role = Role::where('name', 'clerk')->first();
+        $user = User::create([
+            'name' => 'SKSU BILLING CLERK',
+            'email' => 'sksumpcclerk@gmail.com',
+            'password' => Hash::make('password'),
+        ]);
+        $user->assignRole($role);
         \DB::commit();
     }
 }

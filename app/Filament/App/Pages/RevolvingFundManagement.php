@@ -21,6 +21,11 @@ class RevolvingFundManagement extends Page implements HasTable
 
     protected static ?int $navigationSort = 4;
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()->can('manage payments');
+    }
+
     protected function getHeaderActions(): array
     {
         return [

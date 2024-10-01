@@ -29,7 +29,7 @@ class CapitalSubscriptionBillingResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return auth()->user()->can('manage cbu') || auth()->user()->can('manage payments');
+        return auth()->user()->can('manage cbu') || auth()->user()->can('manage payments') || auth()->user()->can('handle clerical tasks');
     }
 
     public static function form(Form $form): Form
