@@ -142,8 +142,8 @@ class UserRoleSeeder extends Seeder
         ]);
         $role->givePermissionTo($permission);
         $user = User::create([
-            'name' => 'DESIREE G. LEGASPI',
-            'email' => 'sksumpctreasurer@gmail.com',
+            'name' => 'SKSU BILLING CLERK',
+            'email' => 'sksumpcclerk@gmail.com',
             'password' => Hash::make('password'),
         ]);
         $user->assignRole($role);
