@@ -18,13 +18,13 @@ class PayLegacyLoan
 {
     use AsAction;
 
-    public function handle(LoanAccount $loanAccount, $principal, $interest, $payment_type_id, $reference_number, $transaction_date, $transactionType): LoanPayment
+    public function handle(LoanAccount $loanAccount, $principal, $interest, $payment_type_id, $reference_number, $transaction_date, $transactionType, $isJevOrDv = false): LoanPayment
     {
         $loan = $loanAccount->loan;
         $loan_receivables_account = $loan->loan_account;
         $loan_interests_account = Account::whereAccountableType(LoanType::class)->whereAccountableId($loan->loan_type_id)->whereTag('loan_interests')->first();
 
-        if ($transactionType->name == 'CRJ')
+        if ($transactionType->name == 'CRJ' && !$isJevOrDv)
             app(CreateTransaction::class)->handle(new TransactionData(
                 account_id: Account::getCashOnHand()->id,
                 transactionType: $transactionType,

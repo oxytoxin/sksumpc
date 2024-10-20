@@ -20,7 +20,7 @@ class WithdrawFromSavingsAccount
 {
     use AsAction;
 
-    public function handle(Member $member, SavingsData $data, TransactionType $transactionType)
+    public function handle(Member $member, SavingsData $data, TransactionType $transactionType, $isJevOrDv = false)
     {
         DB::beginTransaction();
         $savings_account = SavingsAccount::find($data->savings_account_id);
@@ -40,30 +40,33 @@ class WithdrawFromSavingsAccount
             'member_id' => $member->id,
             'transaction_date' => $data->transaction_date,
         ]);
-        if ($data->payment_type_id == 1) {
-            app(CreateTransaction::class)->handle(new TransactionData(
-                account_id: Account::getCashOnHand()->id,
-                transactionType: $transactionType,
-                payment_type_id: $data->payment_type_id,
-                reference_number: $savings->reference_number,
-                credit: $data->amount,
-                member_id: $savings->member_id,
-                remarks: 'Member Withdrawal from Savings',
-                transaction_date: $data->transaction_date,
-            ));
+        if (!$isJevOrDv) {
+            if ($data->payment_type_id == 1) {
+                app(CreateTransaction::class)->handle(new TransactionData(
+                    account_id: Account::getCashOnHand()->id,
+                    transactionType: $transactionType,
+                    payment_type_id: $data->payment_type_id,
+                    reference_number: $savings->reference_number,
+                    credit: $data->amount,
+                    member_id: $savings->member_id,
+                    remarks: 'Member Withdrawal from Savings',
+                    transaction_date: $data->transaction_date,
+                ));
+            }
+            if ($data->payment_type_id == 4) {
+                app(CreateTransaction::class)->handle(new TransactionData(
+                    account_id: Account::getCashInBankMSO()->id,
+                    transactionType: $transactionType,
+                    payment_type_id: $data->payment_type_id,
+                    reference_number: $savings->reference_number,
+                    credit: $data->amount,
+                    member_id: $savings->member_id,
+                    remarks: 'Member Withdrawal from Savings',
+                    transaction_date: $data->transaction_date,
+                ));
+            }
         }
-        if ($data->payment_type_id == 4) {
-            app(CreateTransaction::class)->handle(new TransactionData(
-                account_id: Account::getCashInBankMSO()->id,
-                transactionType: $transactionType,
-                payment_type_id: $data->payment_type_id,
-                reference_number: $savings->reference_number,
-                credit: $data->amount,
-                member_id: $savings->member_id,
-                remarks: 'Member Withdrawal from Savings',
-                transaction_date: $data->transaction_date,
-            ));
-        }
+
         app(CreateTransaction::class)->handle(new TransactionData(
             account_id: $savings_account->id,
             transactionType: $transactionType,

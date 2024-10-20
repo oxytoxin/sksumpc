@@ -17,7 +17,7 @@ class PayLoan
 {
     use AsAction;
 
-    public function handle(Loan $loan, LoanPaymentData $loanPaymentData, TransactionType $transactionType): LoanPayment
+    public function handle(Loan $loan, LoanPaymentData $loanPaymentData, TransactionType $transactionType, $isJevOrDv = false): LoanPayment
     {
         $start = $loan->last_payment?->transaction_date ?? $loan->transaction_date;
         $end = $loanPaymentData->transaction_date;
@@ -28,29 +28,31 @@ class PayLoan
         $loan_receivables_account = $loan->loan_account;
         $loan_interests_account = Account::whereAccountableType(LoanType::class)->whereAccountableId($loan->loan_type_id)->whereTag('loan_interests')->first();
 
-        if ($loanPaymentData->payment_type_id == 1) {
-            app(CreateTransaction::class)->handle(new TransactionData(
-                account_id: Account::getCashOnHand()->id,
-                transactionType: $transactionType,
-                payment_type_id: $loanPaymentData->payment_type_id,
-                reference_number: $loanPaymentData->reference_number,
-                debit: $loanPaymentData->amount,
-                member_id: $loan->member_id,
-                remarks: 'Member Loan Payment',
-                transaction_date: $loanPaymentData->transaction_date,
-            ));
-        }
-        if ($loanPaymentData->payment_type_id == 4) {
-            app(CreateTransaction::class)->handle(new TransactionData(
-                account_id: Account::getCashInBankGF()->id,
-                transactionType: $transactionType,
-                payment_type_id: $loanPaymentData->payment_type_id,
-                reference_number: $loanPaymentData->reference_number,
-                debit: $loanPaymentData->amount,
-                member_id: $loan->member_id,
-                remarks: 'Member Loan Payment',
-                transaction_date: $loanPaymentData->transaction_date,
-            ));
+        if (!$isJevOrDv) {
+            if ($loanPaymentData->payment_type_id == 1) {
+                app(CreateTransaction::class)->handle(new TransactionData(
+                    account_id: Account::getCashOnHand()->id,
+                    transactionType: $transactionType,
+                    payment_type_id: $loanPaymentData->payment_type_id,
+                    reference_number: $loanPaymentData->reference_number,
+                    debit: $loanPaymentData->amount,
+                    member_id: $loan->member_id,
+                    remarks: 'Member Loan Payment',
+                    transaction_date: $loanPaymentData->transaction_date,
+                ));
+            }
+            if ($loanPaymentData->payment_type_id == 4) {
+                app(CreateTransaction::class)->handle(new TransactionData(
+                    account_id: Account::getCashInBankGF()->id,
+                    transactionType: $transactionType,
+                    payment_type_id: $loanPaymentData->payment_type_id,
+                    reference_number: $loanPaymentData->reference_number,
+                    debit: $loanPaymentData->amount,
+                    member_id: $loan->member_id,
+                    remarks: 'Member Loan Payment',
+                    transaction_date: $loanPaymentData->transaction_date,
+                ));
+            }
         }
 
         app(CreateTransaction::class)->handle(new TransactionData(

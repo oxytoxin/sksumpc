@@ -65,7 +65,8 @@ class JournalEntryVoucherItem extends Model
                             amount: $journalEntryVoucherItem->credit,
                             transaction_date: $transaction_date
                         ),
-                        transactionType: $transactionType
+                        transactionType: $transactionType,
+                        isJevOrDv: true,
                     );
             } else if (in_array($account->tag, ['regular_savings'])) {
                 if ($journalEntryVoucherItem->credit) {
@@ -78,7 +79,8 @@ class JournalEntryVoucherItem extends Model
                             savings_account_id: $account->id,
                             transaction_date: $transaction_date
                         ),
-                        transactionType: $transactionType
+                        transactionType: $transactionType,
+                        isJevOrDv: true,
                     );
                 }
                 if ($journalEntryVoucherItem->debit) {
@@ -91,7 +93,8 @@ class JournalEntryVoucherItem extends Model
                             savings_account_id: $account->id,
                             transaction_date: $transaction_date
                         ),
-                        transactionType: $transactionType
+                        transactionType: $transactionType,
+                        isJevOrDv: true,
                     );
                 }
             } else if (in_array($account->tag, ['imprest_savings'])) {
@@ -104,7 +107,8 @@ class JournalEntryVoucherItem extends Model
                             amount: $journalEntryVoucherItem->credit,
                             transaction_date: $transaction_date
                         ),
-                        transactionType: $transactionType
+                        transactionType: $transactionType,
+                        isJevOrDv: true,
                     );
                 }
                 if ($journalEntryVoucherItem->debit) {
@@ -116,7 +120,8 @@ class JournalEntryVoucherItem extends Model
                             amount: $journalEntryVoucherItem->debit,
                             transaction_date: $transaction_date
                         ),
-                        transactionType: $transactionType
+                        transactionType: $transactionType,
+                        isJevOrDv: true,
                     );
                 }
             } else if (in_array($account->tag, ['love_gift_savings'])) {
@@ -129,7 +134,8 @@ class JournalEntryVoucherItem extends Model
                             amount: $journalEntryVoucherItem->credit,
                             transaction_date: $transaction_date
                         ),
-                        transactionType: $transactionType
+                        transactionType: $transactionType,
+                        isJevOrDv: true,
                     );
                 }
                 if ($journalEntryVoucherItem->debit) {
@@ -141,7 +147,8 @@ class JournalEntryVoucherItem extends Model
                             amount: $journalEntryVoucherItem->debit,
                             transaction_date: $transaction_date
                         ),
-                        transactionType: $transactionType
+                        transactionType: $transactionType,
+                        isJevOrDv: true,
                     );
                 }
             } else if (in_array($account->tag, ['member_loans_receivable'])) {
@@ -156,7 +163,8 @@ class JournalEntryVoucherItem extends Model
                                 payment_type_id: 2,
                                 reference_number: $journalEntryVoucherItem->journal_entry_voucher->reference_number,
                                 transaction_date: $transaction_date,
-                                transactionType: $transactionType
+                                transactionType: $transactionType,
+                                isJevOrDv: true,
                             );
                     } else {
                         app(PayLoan::class)->handle(
@@ -167,7 +175,8 @@ class JournalEntryVoucherItem extends Model
                                 amount: $journalEntryVoucherItem->credit,
                                 transaction_date: $transaction_date
                             ),
-                            transactionType: $transactionType
+                            transactionType: $transactionType,
+                            isJevOrDv: true,
                         );
                     }
                 }

@@ -19,7 +19,7 @@ class WithdrawFromLoveGiftsAccount
 {
     use AsAction;
 
-    public function handle(Member $member, LoveGiftData $data, TransactionType $transactionType)
+    public function handle(Member $member, LoveGiftData $data, TransactionType $transactionType, $isJevOrDv = false)
     {
         if ($member->love_gifts()->sum('amount') - $data->amount < 500) {
             Notification::make()->title('Invalid Amount')->body('A P500 balance should remain.')->danger()->send();
@@ -37,28 +37,29 @@ class WithdrawFromLoveGiftsAccount
             'member_id' => $member->id,
             'transaction_date' => $data->transaction_date,
         ]);
-
-        if ($data->payment_type_id == 1) {
-            app(CreateTransaction::class)->handle(new TransactionData(
-                account_id: Account::getCashOnHand()->id,
-                transactionType: $transactionType,
-                payment_type_id: $data->payment_type_id,
-                reference_number: $love_gift->reference_number,
-                credit: $data->amount,
-                member_id: $love_gift->member_id,
-                remarks: 'Member Withdrawal from Love Gift',
-            ));
-        }
-        if ($data->payment_type_id == 4) {
-            app(CreateTransaction::class)->handle(new TransactionData(
-                account_id: Account::getCashInBankMSO()->id,
-                transactionType: $transactionType,
-                payment_type_id: $data->payment_type_id,
-                reference_number: $love_gift->reference_number,
-                credit: $data->amount,
-                member_id: $love_gift->member_id,
-                remarks: 'Member Withdrawal from Love Gift',
-            ));
+        if (!$isJevOrDv) {
+            if ($data->payment_type_id == 1) {
+                app(CreateTransaction::class)->handle(new TransactionData(
+                    account_id: Account::getCashOnHand()->id,
+                    transactionType: $transactionType,
+                    payment_type_id: $data->payment_type_id,
+                    reference_number: $love_gift->reference_number,
+                    credit: $data->amount,
+                    member_id: $love_gift->member_id,
+                    remarks: 'Member Withdrawal from Love Gift',
+                ));
+            }
+            if ($data->payment_type_id == 4) {
+                app(CreateTransaction::class)->handle(new TransactionData(
+                    account_id: Account::getCashInBankMSO()->id,
+                    transactionType: $transactionType,
+                    payment_type_id: $data->payment_type_id,
+                    reference_number: $love_gift->reference_number,
+                    credit: $data->amount,
+                    member_id: $love_gift->member_id,
+                    remarks: 'Member Withdrawal from Love Gift',
+                ));
+            }
         }
 
         app(CreateTransaction::class)->handle(new TransactionData(

@@ -17,7 +17,7 @@ class DepositToLoveGiftsAccount
 {
     use AsAction;
 
-    public function handle(Member $member, LoveGiftData $data, TransactionType $transactionType)
+    public function handle(Member $member, LoveGiftData $data, TransactionType $transactionType, $isJevOrDv = false)
     {
         DB::beginTransaction();
         $love_gift_account = $member->love_gift_account;
@@ -29,28 +29,31 @@ class DepositToLoveGiftsAccount
             'member_id' => $member->id,
             'transaction_date' => $data->transaction_date,
         ]);
-        if ($data->payment_type_id == 1) {
-            app(CreateTransaction::class)->handle(new TransactionData(
-                account_id: Account::getCashOnHand()->id,
-                transactionType: $transactionType,
-                payment_type_id: $data->payment_type_id,
-                reference_number: $love_gift->reference_number,
-                debit: $love_gift->amount,
-                member_id: $love_gift->member_id,
-                remarks: 'Member Deposit to Love Gift',
-            ));
+        if (!$isJevOrDv) {
+            if ($data->payment_type_id == 1) {
+                app(CreateTransaction::class)->handle(new TransactionData(
+                    account_id: Account::getCashOnHand()->id,
+                    transactionType: $transactionType,
+                    payment_type_id: $data->payment_type_id,
+                    reference_number: $love_gift->reference_number,
+                    debit: $love_gift->amount,
+                    member_id: $love_gift->member_id,
+                    remarks: 'Member Deposit to Love Gift',
+                ));
+            }
+            if ($data->payment_type_id == 4) {
+                app(CreateTransaction::class)->handle(new TransactionData(
+                    account_id: Account::getCashInBankMSO()->id,
+                    transactionType: $transactionType,
+                    payment_type_id: $data->payment_type_id,
+                    reference_number: $love_gift->reference_number,
+                    debit: $love_gift->amount,
+                    member_id: $love_gift->member_id,
+                    remarks: 'Member Deposit to Love Gift',
+                ));
+            }
         }
-        if ($data->payment_type_id == 4) {
-            app(CreateTransaction::class)->handle(new TransactionData(
-                account_id: Account::getCashInBankMSO()->id,
-                transactionType: $transactionType,
-                payment_type_id: $data->payment_type_id,
-                reference_number: $love_gift->reference_number,
-                debit: $love_gift->amount,
-                member_id: $love_gift->member_id,
-                remarks: 'Member Deposit to Love Gift',
-            ));
-        }
+
         app(CreateTransaction::class)->handle(new TransactionData(
             account_id: $love_gift_account->id,
             transactionType: $transactionType,

@@ -66,7 +66,8 @@ class DisbursementVoucherItem extends Model
                             amount: $disbursementVoucherItem->credit,
                             transaction_date: $transaction_date
                         ),
-                        transactionType: $transactionType
+                        transactionType: $transactionType,
+                        isJevOrDv: true,
                     );
             } else if (in_array($account->tag, ['regular_savings'])) {
                 if ($disbursementVoucherItem->credit) {
@@ -79,7 +80,8 @@ class DisbursementVoucherItem extends Model
                             savings_account_id: $account->id,
                             transaction_date: $transaction_date
                         ),
-                        transactionType: $transactionType
+                        transactionType: $transactionType,
+                        isJevOrDv: true,
                     );
                 }
                 if ($disbursementVoucherItem->debit) {
@@ -92,7 +94,8 @@ class DisbursementVoucherItem extends Model
                             savings_account_id: $account->id,
                             transaction_date: $transaction_date
                         ),
-                        transactionType: $transactionType
+                        transactionType: $transactionType,
+                        isJevOrDv: true,
                     );
                 }
             } else if (in_array($account->tag, ['imprest_savings'])) {
@@ -105,7 +108,8 @@ class DisbursementVoucherItem extends Model
                             amount: $disbursementVoucherItem->credit,
                             transaction_date: $transaction_date
                         ),
-                        transactionType: $transactionType
+                        transactionType: $transactionType,
+                        isJevOrDv: true,
                     );
                 }
                 if ($disbursementVoucherItem->debit) {
@@ -117,7 +121,8 @@ class DisbursementVoucherItem extends Model
                             amount: $disbursementVoucherItem->debit,
                             transaction_date: $transaction_date
                         ),
-                        transactionType: $transactionType
+                        transactionType: $transactionType,
+                        isJevOrDv: true,
                     );
                 }
             } else if (in_array($account->tag, ['love_gift_savings'])) {
@@ -130,7 +135,8 @@ class DisbursementVoucherItem extends Model
                             amount: $disbursementVoucherItem->credit,
                             transaction_date: $transaction_date
                         ),
-                        transactionType: $transactionType
+                        transactionType: $transactionType,
+                        isJevOrDv: true,
                     );
                 }
                 if ($disbursementVoucherItem->debit) {
@@ -142,7 +148,8 @@ class DisbursementVoucherItem extends Model
                             amount: $disbursementVoucherItem->debit,
                             transaction_date: $transaction_date
                         ),
-                        transactionType: $transactionType
+                        transactionType: $transactionType,
+                        isJevOrDv: true,
                     );
                 }
             } else if (in_array($account->tag, ['member_loans_receivable'])) {
@@ -157,7 +164,8 @@ class DisbursementVoucherItem extends Model
                                 payment_type_id: 4,
                                 reference_number: $disbursementVoucherItem->disbursement_voucher->reference_number,
                                 transaction_date: $transaction_date,
-                                transactionType: $transactionType
+                                transactionType: $transactionType,
+                                isJevOrDv: true,
                             );
                     } else {
                         app(PayLoan::class)->handle(
@@ -168,7 +176,8 @@ class DisbursementVoucherItem extends Model
                                 amount: $disbursementVoucherItem->credit,
                                 transaction_date: $transaction_date
                             ),
-                            transactionType: $transactionType
+                            transactionType: $transactionType,
+                            isJevOrDv: true,
                         );
                     }
                 }
