@@ -75,6 +75,17 @@ function filterRecursive($collection, $callback)
     });
 }
 
+function flattenRecursively(Collection $collection): Collection
+{
+    return $collection->flatMap(function ($item) {
+        info($item->children->count());
+        if ($item->children) {
+            return flattenRecursively(collect($item->children));
+        }
+        return [$item];
+    });
+}
+
 function findRecursive($collection, $callback)
 {
     return $collection->flatMap(function ($item) use ($callback) {

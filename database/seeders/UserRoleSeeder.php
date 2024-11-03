@@ -147,5 +147,13 @@ class UserRoleSeeder extends Seeder
             'password' => Hash::make('password'),
         ]);
         $user->assignRole($role);
+
+        $role = Role::where('name', 'clerk')->first();
+        $user = User::create([
+            'name' => 'SKSU BILLING CLERK',
+            'email' => 'sksumpcclerk@gmail.com',
+            'password' => Hash::make('password'),
+        ]);
+        $user->assignRole($role);
     }
 }

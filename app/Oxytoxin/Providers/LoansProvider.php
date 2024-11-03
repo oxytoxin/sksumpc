@@ -121,6 +121,7 @@ class LoansProvider
             'readonly' => true,
             'code' => 'service_fee',
         ];
+
         if ($loanType->id != 2) {
             $items[] = [
                 'member_id' => $member->id,

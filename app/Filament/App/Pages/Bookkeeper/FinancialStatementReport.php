@@ -6,6 +6,7 @@ use App\Models\AccountType;
 use App\Models\LoanType;
 use App\Models\TransactionType;
 use App\Oxytoxin\Providers\FinancialStatementProvider;
+use App\Oxytoxin\Providers\TrialBalanceProvider;
 use Carbon\CarbonImmutable;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
@@ -39,16 +40,9 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
     public function form(Form $form): Form
     {
         return $form->schema([
-            DatePicker::make('transaction_date')
-                ->default(config('app.transaction_date') ?? today())
-                ->native(false)
-                ->reactive(),
-            Select::make('mode')
-                ->options([
-                    'daily' => 'Daily',
-                    'monthly' => 'Monthly'
-                ])
-                ->default('monthly')
+            Select::make('year')
+                ->options(oxy_get_year_range())
+                ->default(config('app.transaction_date', today())->year)
                 ->selectablePlaceholder(false)
                 ->reactive(),
         ])
@@ -66,10 +60,10 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
     public function Accounts()
     {
         if ($this->data['mode'] == 'daily') {
-            $date = date_create($this->data['transaction_date'] ?? today());
+            $date = date_create($this->data['transaction_date'] ?? config('app.transaction_date', today()));
             return FinancialStatementProvider::getDailyAccountsSummary($date);
         }
-        $transaction_date = CarbonImmutable::create($this->data['transaction_date'] ?? today());
+        $transaction_date = CarbonImmutable::create($this->data['transaction_date'] ?? config('app.transaction_date', today()));
         return FinancialStatementProvider::getAccountsSummary(month: $transaction_date->month, year: $transaction_date->year);
     }
 
@@ -95,6 +89,19 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
     public function AccountTypes()
     {
         return AccountType::get();
+    }
+
+
+    #[Computed]
+    public function FormattedBalanceForwardedDate()
+    {
+        return CarbonImmutable::create(year: $this->data['year'])->subYearNoOverflow()->endOfYear()->format('F Y');
+    }
+
+    #[Computed]
+    public function TrialBalance()
+    {
+        return TrialBalanceProvider::getTrialBalance($this->data['year']);
     }
 
     public function downloadTrialBalance()

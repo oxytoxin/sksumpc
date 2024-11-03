@@ -52,6 +52,7 @@ use Filament\Resources\Resource;
 use Filament\Support\Colors\Color;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -384,7 +385,7 @@ class MemberResource extends Resource
                 TextColumn::make('member_type.name')
                     ->sortable(),
                 TextColumn::make('member_subtype.name')
-                    ->visible(fn($livewire) => $livewire->tableFilters['member_type']['member_type'] == 1)
+                    ->visible(fn(HasTable $livewire) => $livewire->getTableFilterState('member_type') == 1)
                     ->sortable(),
                 TextColumn::make('terminated_at')
                     ->date('m/d/Y')

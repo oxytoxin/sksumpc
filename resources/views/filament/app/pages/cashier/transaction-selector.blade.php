@@ -1,4 +1,4 @@
-<div class="flex justify-center">
+<div class="flex select-none justify-center">
     <details class="mx-auto mb-2">
         <summary class="mb-2 cursor-pointer rounded-lg bg-gray-200 px-4 py-2 shadow-md">
             <span class="font-semibold">Select Transaction</span>

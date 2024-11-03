@@ -19,7 +19,8 @@ class CashierTransactionsPage extends Page implements HasForms
     protected static string $view = 'filament.app.pages.cashier.cashier-transactions-page';
 
     protected static ?string $navigationGroup = 'Cashier';
-
+    protected ?string $heading = 'Transactions';
+    protected static ?string $navigationLabel = 'Transactions';
     protected static ?int $navigationSort = 2;
 
     public static function shouldRegisterNavigation(): bool

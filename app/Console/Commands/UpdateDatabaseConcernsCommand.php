@@ -45,13 +45,6 @@ class UpdateDatabaseConcernsCommand extends Command
             ]);
         });
 
-        $role = Role::where('name', 'clerk')->first();
-        $user = User::create([
-            'name' => 'SKSU BILLING CLERK',
-            'email' => 'sksumpcclerk@gmail.com',
-            'password' => Hash::make('password'),
-        ]);
-        $user->assignRole($role);
         \DB::commit();
     }
 }

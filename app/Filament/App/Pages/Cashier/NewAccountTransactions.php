@@ -39,14 +39,16 @@ class NewAccountTransactions extends Page
                 TextInput::make('name')
                     ->required(),
                 TextInput::make('number')
+                    ->unique('accounts', 'number')
                     ->required(),
                 Actions::make([
                     Action::make('create')
                         ->action(function () {
+                            $data = $this->form->getState();
                             app(CreateNewSavingsAccount::class)->handle(new SavingsAccountData(
-                                member_id: $this->data['member_id'],
-                                name: $this->data['name'],
-                                number: $this->data['number']
+                                member_id: $data['member_id'],
+                                name: $data['name'],
+                                number: $data['number']
                             ));
                             Notification::make()->title('Savings account created!')->success()->send();
                             $this->reset('data');
