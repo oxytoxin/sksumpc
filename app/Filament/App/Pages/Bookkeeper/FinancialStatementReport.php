@@ -30,11 +30,13 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
 
     protected static ?string $navigationGroup = 'Bookkeeping';
 
+
     public static function shouldRegisterNavigation(): bool
     {
         return auth()->user()->can('manage bookkeeping');
     }
 
+    public $data_loaded = false;
     public $data = [];
 
     public function form(Form $form): Form
@@ -101,7 +103,13 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
     #[Computed]
     public function TrialBalance()
     {
-        return TrialBalanceProvider::getTrialBalance($this->data['year']);
+        $data = TrialBalanceProvider::getTrialBalance($this->data['year']);
+        return $data;
+    }
+
+    public function loadData()
+    {
+        $this->data_loaded = true;
     }
 
     public function downloadTrialBalance()
