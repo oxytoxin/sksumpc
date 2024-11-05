@@ -55,36 +55,33 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
     public function mount()
     {
         $this->form->fill();
-        // $this->data['transaction_date'] = '01/01/2024';
-    }
-
-    #[Computed]
-    public function Accounts()
-    {
-        if ($this->data['mode'] == 'daily') {
-            $date = date_create($this->data['transaction_date'] ?? config('app.transaction_date', today()));
-            return FinancialStatementProvider::getDailyAccountsSummary($date);
-        }
-        $transaction_date = CarbonImmutable::create($this->data['transaction_date'] ?? config('app.transaction_date', today()));
-        return FinancialStatementProvider::getAccountsSummary(month: $transaction_date->month, year: $transaction_date->year);
-    }
-
-    #[Computed]
-    public function BalanceForwardedDate()
-    {
-        return CarbonImmutable::create($this->data['transaction_date'])->subMonthNoOverflow();
-    }
-
-    #[Computed]
-    public function TransactionDate()
-    {
-        return CarbonImmutable::create($this->data['transaction_date']);
+        // $this->data['year'] = 2024;
     }
 
     #[Computed]
     public function TransactionTypes()
     {
         return TransactionType::get();
+    }
+
+    #[Computed]
+    public function MonthPairs()
+    {
+        $pairs = [];
+        $selected_year = CarbonImmutable::create(year: $this->data['year']);
+        $current = $selected_year->subYearNoOverflow()->endOfYear();
+        $end = $selected_year->endOfYear();
+        $index = 0;
+        while ($current->format('F Y') != $end->format('F Y')) {
+            $next = $current->addMonthNoOverflow();
+            $pairs[] = [
+                'current' => ['index' => $index++, 'date' => $current],
+                'next' => ['index' => $index++, 'date' => $next],
+            ];
+            $current = $next;
+        }
+
+        return $pairs;
     }
 
     #[Computed]

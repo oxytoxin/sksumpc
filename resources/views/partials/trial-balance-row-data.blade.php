@@ -25,12 +25,12 @@
                 </td>
             @endif
             <td class="whitespace-nowrap border border-black px-2 text-right text-xs uppercase hover:bg-green-300">
-                <a href="{{ route('filament.app.pages.transactions-list', ['transaction_type' => 1, 'month' => $key, 'year' => 2024, 'account_id' => $account->id, 'payment_mode' => 1]) }}" target="blank" class="inline-block w-full">
+                <a href="{{ route('filament.app.pages.transactions-list', ['transaction_type' => 1, 'month' => $key, 'year' => $data['year'], 'account_id' => $account->id, 'payment_mode' => 1]) }}" target="blank" class="inline-block w-full">
                     {{ renumber_format($account["{$key}_month_crj_debit"]) }}
                 </a>
             </td>
             <td class="whitespace-nowrap border border-black px-2 text-right text-xs uppercase hover:bg-green-300">
-                <a href="{{ route('filament.app.pages.transactions-list', ['transaction_type' => 1, 'month' => $key, 'year' => 2024, 'account_id' => $account->id, 'payment_mode' => -1]) }}" target="blank" class="inline-block w-full">
+                <a href="{{ route('filament.app.pages.transactions-list', ['transaction_type' => 1, 'month' => $key, 'year' => $data['year'], 'account_id' => $account->id, 'payment_mode' => -1]) }}" target="blank" class="inline-block w-full">
                     {{ renumber_format($account["{$key}_month_crj_credit"]) }}
                 </a>
             </td>
@@ -47,12 +47,12 @@
                 </td>
             @endif
             <td class="whitespace-nowrap border border-black px-2 text-right text-xs uppercase hover:bg-green-300">
-                <a href="{{ route('filament.app.pages.transactions-list', ['transaction_type' => 2, 'month' => $key, 'year' => 2024, 'account_id' => $account->id, 'payment_mode' => 1]) }}" target="blank" class="inline-block w-full">
+                <a href="{{ route('filament.app.pages.transactions-list', ['transaction_type' => 2, 'month' => $key, 'year' => $data['year'], 'account_id' => $account->id, 'payment_mode' => 1]) }}" target="blank" class="inline-block w-full">
                     {{ renumber_format($account["{$key}_month_cdj_debit"]) }}
                 </a>
             </td>
             <td class="whitespace-nowrap border border-black px-2 text-right text-xs uppercase hover:bg-green-300">
-                <a href="{{ route('filament.app.pages.transactions-list', ['transaction_type' => 2, 'month' => $key, 'year' => 2024, 'account_id' => $account->id, 'payment_mode' => -1]) }}" target="blank" class="inline-block w-full">
+                <a href="{{ route('filament.app.pages.transactions-list', ['transaction_type' => 2, 'month' => $key, 'year' => $data['year'], 'account_id' => $account->id, 'payment_mode' => -1]) }}" target="blank" class="inline-block w-full">
                     {{ renumber_format($account["{$key}_month_cdj_credit"]) }}
                 </a>
             </td>
@@ -69,12 +69,12 @@
                 </td>
             @endif
             <td class="whitespace-nowrap border border-black px-2 text-right text-xs uppercase hover:bg-green-300">
-                <a href="{{ route('filament.app.pages.transactions-list', ['transaction_type' => 3, 'month' => $key, 'year' => 2024, 'account_id' => $account->id, 'payment_mode' => 1]) }}" target="blank" class="inline-block w-full">
+                <a href="{{ route('filament.app.pages.transactions-list', ['transaction_type' => 3, 'month' => $key, 'year' => $data['year'], 'account_id' => $account->id, 'payment_mode' => 1]) }}" target="blank" class="inline-block w-full">
                     {{ renumber_format($account["{$key}_month_jev_debit"]) }}
                 </a>
             </td>
             <td class="whitespace-nowrap border border-black px-2 text-right text-xs uppercase hover:bg-green-300">
-                <a href="{{ route('filament.app.pages.transactions-list', ['transaction_type' => 3, 'month' => $key, 'year' => 2024, 'account_id' => $account->id, 'payment_mode' => -1]) }}" target="blank" class="inline-block w-full">
+                <a href="{{ route('filament.app.pages.transactions-list', ['transaction_type' => 3, 'month' => $key, 'year' => $data['year'], 'account_id' => $account->id, 'payment_mode' => -1]) }}" target="blank" class="inline-block w-full">
                     {{ renumber_format($account["{$key}_month_jev_credit"]) }}
                 </a>
             </td>
@@ -85,12 +85,12 @@
                 </td>
             @endif
             <td class="whitespace-nowrap border border-black px-2 text-right text-xs uppercase hover:bg-green-300">
-                <a href="{{ route('filament.app.pages.transactions-list', ['month' => $key, 'year' => 2024, 'account_id' => $account->id, 'payment_mode' => 1]) }}" target="blank" class="inline-block w-full">
+                <a href="{{ route('filament.app.pages.transactions-list', ['month' => $key, 'year' => $data['year'], 'account_id' => $account->id, 'payment_mode' => 1]) }}" target="blank" class="inline-block w-full">
                     {{ renumber_format($account["{$key}_total_debit"]) }}
                 </a>
             </td>
             <td class="whitespace-nowrap border border-black px-2 text-right text-xs uppercase hover:bg-green-300">
-                <a href="{{ route('filament.app.pages.transactions-list', ['month' => $key, 'year' => 2024, 'account_id' => $account->id, 'payment_mode' => -1]) }}" target="blank" class="inline-block w-full">
+                <a href="{{ route('filament.app.pages.transactions-list', ['month' => $key, 'year' => $data['year'], 'account_id' => $account->id, 'payment_mode' => -1]) }}" target="blank" class="inline-block w-full">
                     {{ renumber_format($account["{$key}_total_credit"]) }}
                 </a>
             </td>

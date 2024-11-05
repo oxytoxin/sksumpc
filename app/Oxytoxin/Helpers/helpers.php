@@ -8,10 +8,10 @@ function format_percentage($new, $old): string
 {
     if ($old != 0) {
         $percentage = ($new - $old) / $old * 100;
-
+        if (round($percentage, 2) == 0) return '-';
         return str(round($percentage, 2))->append('%');
     } else {
-        return '';
+        return '-';
     }
 }
 
