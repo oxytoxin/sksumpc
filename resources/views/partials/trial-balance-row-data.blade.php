@@ -12,10 +12,14 @@
         @endfor
     @else
         <td class="whitespace-nowrap border border-black px-2 text-right text-xs uppercase hover:bg-green-300">
-            {{ renumber_format($account['0_ending_balance_debit']) }}
+            <a href="{{ route('filament.app.pages.transactions-list', ['transaction_type' => 1, 'month' => 12, 'year' => $data['year'] - 1, 'account_id' => $account->id, 'payment_mode' => 1]) }}" target="blank" class="inline-block w-full">
+                {{ renumber_format($account['0_ending_balance_debit']) }}
+            </a>
         </td>
         <td class="whitespace-nowrap border border-black px-2 text-right text-xs uppercase hover:bg-green-300">
-            {{ renumber_format($account['0_ending_balance_credit']) }}
+            <a href="{{ route('filament.app.pages.transactions-list', ['transaction_type' => 1, 'month' => 12, 'year' => $data['year'] - 1, 'account_id' => $account->id, 'payment_mode' => -1]) }}" target="blank" class="inline-block w-full">
+                {{ renumber_format($account['0_ending_balance_credit']) }}
+            </a>
         </td>
         @foreach (oxy_get_month_range() as $key => $monthly_balance)
             @if ($account->id === 55)
