@@ -14,8 +14,8 @@
             <tr class="border-2 border-black">
                 <td class="border-2 border-black">{{ $payment->transaction_date->format('m/d/Y') }}</td>
                 <td class="border-2 border-black">{{ $payment->reference_number }}</td>
-                <td class="border-2 border-black"></td>
-                <td class="border-2 border-black">{{ Filament\Support\format_money($payment->amount, 'PHP') }}</td>
+                <td class="border-2 border-black">{{ $payment->amount < 0 ? Filament\Support\format_money($payment->withdrawal ?? 0, 'PHP') : '' }}</td>
+                <td class="border-2 border-black">{{ $payment->amount > 0 ? Filament\Support\format_money($payment->deposit ?? 0, 'PHP') : '' }}</td>
                 <td class="border-2 border-black">{{ Filament\Support\format_money($payment->running_balance, 'PHP') }}
                 </td>
                 <td class="border-2 border-black">{{ $payment->remarks }}</td>

@@ -56,6 +56,15 @@ class JournalEntryVoucherItem extends Model
             $transaction_date = SystemConfiguration::transaction_date() ?? today();
             $transactionType = TransactionType::firstWhere('name', 'JEV');
             if (in_array($account->tag, ['member_common_cbu_paid', 'member_preferred_cbu_paid', 'member_laboratory_cbu_paid'])) {
+                if ($journalEntryVoucherItem->credit > 0) {
+                    $amount = $journalEntryVoucherItem->credit;
+                } else {
+                    $amount = $journalEntryVoucherItem->debit * -1;
+                    $account->member->capital_subscriptions_common->update([
+                        'is_common' => false
+                    ]);
+                }
+
                 app(PayCapitalSubscription::class)
                     ->handle(
                         cbu: $account->member->capital_subscriptions_common,

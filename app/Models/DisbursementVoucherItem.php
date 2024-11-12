@@ -57,13 +57,21 @@ class DisbursementVoucherItem extends Model
             $disbursementVoucherItem->transaction_date = $transaction_date;
             $transactionType = TransactionType::firstWhere('name', 'CDJ');
             if (in_array($account->tag, ['member_common_cbu_paid', 'member_preferred_cbu_paid', 'member_laboratory_cbu_paid'])) {
+                if ($disbursementVoucherItem->credit > 0) {
+                    $amount = $disbursementVoucherItem->credit;
+                } else {
+                    $amount = $disbursementVoucherItem->debit * -1;
+                    $account->member->capital_subscriptions_common->update([
+                        'is_common' => false
+                    ]);
+                }
                 app(PayCapitalSubscription::class)
                     ->handle(
                         cbu: $account->member->capital_subscriptions_common,
                         data: new CapitalSubscriptionPaymentData(
                             payment_type_id: 4,
                             reference_number: $disbursementVoucherItem->disbursement_voucher->reference_number,
-                            amount: $disbursementVoucherItem->credit,
+                            amount: $amount,
                             transaction_date: $transaction_date
                         ),
                         transactionType: $transactionType,
