@@ -28,6 +28,10 @@ class MsoBillingResource extends Resource
     protected static ?string $model = MsoBilling::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
 
     public static function form(Form $form): Form
     {
