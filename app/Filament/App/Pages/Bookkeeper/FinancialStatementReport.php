@@ -7,6 +7,7 @@ use App\Models\LoanType;
 use App\Models\TransactionType;
 use App\Oxytoxin\Providers\FinancialStatementProvider;
 use App\Oxytoxin\Providers\TrialBalanceProvider;
+use Auth;
 use Carbon\CarbonImmutable;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
@@ -31,22 +32,39 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
     protected static ?string $navigationGroup = 'Bookkeeping';
 
 
+
     public static function shouldRegisterNavigation(): bool
     {
-        return auth()->user()->can('manage bookkeeping');
+        return Auth::user()->can('manage bookkeeping');
     }
 
     public $data_loaded = false;
     public $data = [];
+    public $load_data = true;
 
     public function form(Form $form): Form
     {
         return $form->schema([
+            Select::make('mode')
+                ->options([
+                    'single' => 'Single Month',
+                    // 'comparative' => 'Comparative',
+                    // 'period' => 'Period Covered',
+                    'yearly' => 'Yearly'
+                ])
+                ->default('single')
+                ->live(),
+            Select::make('month')
+                ->options(oxy_get_month_range())
+                ->default(config('app.transaction_date', today())->month)
+                ->selectablePlaceholder(false)
+                ->visible(fn($get) => $get('mode') == 'single')
+                ->live(),
             Select::make('year')
                 ->options(oxy_get_year_range())
                 ->default(config('app.transaction_date', today())->year)
                 ->selectablePlaceholder(false)
-                ->reactive(),
+                ->live(),
         ])
             ->columns(4)
             ->statePath('data');
@@ -55,7 +73,13 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
     public function mount()
     {
         $this->form->fill();
-        // $this->data['year'] = 2024;
+    }
+
+
+    #[Computed]
+    public function SelectedMonth()
+    {
+        return CarbonImmutable::create($this->data['year'], $this->data['month']);
     }
 
     #[Computed]
@@ -73,14 +97,13 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
         $end = $selected_year->endOfYear();
         $index = 0;
         while ($current->format('F Y') != $end->format('F Y')) {
-            $next = $current->addMonthNoOverflow();
+            $next = $current->addMonthNoOverflow()->endOfMonth();
             $pairs[] = [
-                'current' => ['index' => $index++, 'date' => $current],
-                'next' => ['index' => $index++, 'date' => $next],
+                'current' => ['index' => $index, 'date' => $current],
+                'next' => ['index' => ++$index, 'date' => $next],
             ];
             $current = $next;
         }
-
         return $pairs;
     }
 
@@ -89,7 +112,6 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
     {
         return AccountType::get();
     }
-
 
     #[Computed]
     public function FormattedBalanceForwardedDate()
@@ -100,7 +122,10 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
     #[Computed]
     public function TrialBalance()
     {
-        $data = TrialBalanceProvider::getTrialBalance($this->data['year']);
+        $data = match ($this->data['mode']) {
+            'yearly' => TrialBalanceProvider::getYearlyTrialBalance($this->data['year']),
+            'single' => TrialBalanceProvider::getMonthlyTrialBalance($this->selected_month),
+        };
         return $data;
     }
 

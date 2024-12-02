@@ -5,18 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class CashCollectibleBillingPayment extends Model
+class CashCollectibleSubscription extends Model
 {
     use HasFactory;
+
+    protected $casts = [
+        'amount' => 'decimal:4',
+        'billable_amount' => 'decimal:4',
+    ];
 
     public function cash_collectible_account()
     {
         return $this->belongsTo(CashCollectibleAccount::class, 'account_id');
-    }
-
-    public function cash_collectible_billing()
-    {
-        return $this->belongsTo(CashCollectibleBilling::class);
     }
 
     public function member()

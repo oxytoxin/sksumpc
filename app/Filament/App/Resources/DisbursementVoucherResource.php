@@ -8,6 +8,7 @@ use App\Models\DisbursementVoucher;
 use App\Models\Member;
 use App\Models\VoucherType;
 use App\Rules\BalancedBookkeepingEntries;
+use Auth;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -31,7 +32,7 @@ class DisbursementVoucherResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return auth()->user()->can('manage bookkeeping');
+        return Auth::user()->can('manage bookkeeping');
     }
 
     public static function form(Form $form): Form

@@ -5,8 +5,14 @@ namespace App\Filament\App\Resources\CashCollectibleBillingResource\Pages;
 use App\Actions\CashCollectionBilling\CreateIndividualBilling;
 use App\Filament\App\Resources\CashCollectibleBillingResource;
 use App\Models\CashCollectible;
+use App\Models\CashCollectibleAccount;
+use App\Models\CashCollectibleBilling;
+use App\Models\CashCollectibleBillingPayment;
+use App\Models\CashCollectibleSubscription;
 use App\Models\Member;
 use App\Models\PaymentType;
+use Auth;
+use DB;
 use Filament\Actions;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
@@ -24,27 +30,46 @@ class ManageCashCollectibleBillings extends ManageRecords
     #[Computed]
     public function UserIsCashier()
     {
-        return auth()->user()->can('manage payments');
+        return Auth::user()->can('manage payments');
     }
 
     #[Computed]
     public function UserIsCbuOfficer()
     {
-        return auth()->user()->can('manage cbu');
+        return Auth::user()->can('manage cbu');
     }
 
     protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('subscriptions')
+                ->label('Manage Subscriptions')
+                ->url(route('filament.app.resources.cash-collectible-subscriptions.index')),
             Actions\CreateAction::make('group')
                 ->label('New Group Billing')
+                ->action(function ($data) {
+                    DB::beginTransaction();
+                    $cash_collectible_billing = CashCollectibleBilling::create($data);
+                    CashCollectibleSubscription::where('account_id', $data['account_id'])->each(function ($subscription) use ($cash_collectible_billing) {
+                        CashCollectibleBillingPayment::create([
+                            'cash_collectible_billing_id' => $cash_collectible_billing->id,
+                            'account_id' => $subscription->account_id,
+                            'member_id' => $subscription->member_id,
+                            'payee' => $subscription->payee,
+                            'amount_due' => $subscription->billable_amount,
+                            'amount_paid' => $subscription->billable_amount,
+                        ]);
+                    });
+                    DB::commit();
+                    Notification::make()->title('New group billing created.')->success()->send();
+                })
                 ->createAnother(false),
             Actions\CreateAction::make('individual')
                 ->label('New Individual Billing')
                 ->form([
-                    Select::make('cash_collectible_id')
-                        ->options(CashCollectible::pluck('name', 'id'))
-                        ->label('Cash Collectible')
+                    Select::make('account_id')
+                        ->options(CashCollectibleAccount::pluck('name', 'id'))
+                        ->label('Cash Collectible Account')
                         ->required(),
                     Select::make('payment_type_id')
                         ->paymenttype()
@@ -61,7 +86,7 @@ class ManageCashCollectibleBillings extends ManageRecords
                         ->options(Member::pluck('full_name', 'id'))
                         ->searchable()
                         ->reactive()
-                        ->afterStateUpdated(fn ($set, $state) => $set('payee', Member::find($state)?->full_name))
+                        ->afterStateUpdated(fn($set, $state) => $set('payee', Member::find($state)?->full_name))
                         ->preload(),
                     TextInput::make('payee')
                         ->required(),
@@ -71,7 +96,7 @@ class ManageCashCollectibleBillings extends ManageRecords
                 ->action(function ($data) {
                     app(CreateIndividualBilling::class)->handle(
                         payment_type_id: $data['payment_type_id'],
-                        cash_collectible_id: $data['cash_collectible_id'],
+                        account_id: $data['account_id'],
                         date: $data['date'],
                         member_id: $data['member_id'],
                         payee: $data['payee'],

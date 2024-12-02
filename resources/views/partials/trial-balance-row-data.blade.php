@@ -21,7 +21,7 @@
                 {{ renumber_format($account['0_ending_balance_credit']) }}
             </a>
         </td>
-        @foreach (oxy_get_month_range() as $key => $monthly_balance)
+        @foreach (oxy_get_month_range() as $key => $month)
             @if ($account->id === 55)
                 <td class="whitespace-nowrap border border-black px-2 text-right text-xs uppercase hover:bg-green-300">
                 </td>

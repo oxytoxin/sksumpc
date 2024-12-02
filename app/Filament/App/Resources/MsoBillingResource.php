@@ -2,44 +2,54 @@
 
 namespace App\Filament\App\Resources;
 
-use App\Actions\CashCollectionBilling\PostCashCollectibleBillingPayments;
+use App\Actions\MsoBilling\PostMsoBillingPayments;
+use App\Filament\App\Resources\MsoBillingResource\Pages;
+use App\Filament\App\Resources\MsoBillingResource\RelationManagers;
+use App\Models\MemberSubtype;
+use App\Models\MemberType;
+use App\Models\MsoBilling;
 use Filament\Forms;
-use Filament\Tables;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Filament\Resources\Resource;
-use Filament\Forms\Components\Select;
-use App\Models\CashCollectibleBilling;
 use Filament\Forms\Components\DatePicker;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\App\Resources\CashCollectibleBillingResource\Pages;
-use App\Filament\App\Resources\CashCollectibleBillingResource\RelationManagers;
-use App\Models\CashCollectible;
-use App\Models\CashCollectibleAccount;
-use App\Models\PaymentType;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
 use Filament\Notifications\Notification;
+use Filament\Resources\Resource;
+use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class CashCollectibleBillingResource extends Resource
+class MsoBillingResource extends Resource
 {
-    protected static ?string $model = CashCollectibleBilling::class;
+    protected static ?string $model = MsoBilling::class;
 
-    protected static ?string $navigationGroup = 'Share Capital';
-    protected static ?string $navigationLabel = 'Stakeholders';
-    protected static ?int $navigationSort = 6;
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Select::make('account_id')
-                    ->options(CashCollectibleAccount::pluck('name', 'id'))
-                    ->label('Cash Collectible Account')
-                    ->required(),
+                Select::make('member_type_id')
+                    ->label('Member Type')
+                    ->reactive()
+                    ->options(MemberType::pluck('name', 'id')),
+                Select::make('member_subtype_id')
+                    ->label('Member Subtype')
+                    ->visible(fn($get) => MemberSubtype::whereMemberTypeId($get('member_type_id'))->count())
+                    ->options(fn($get) => MemberSubtype::whereMemberTypeId($get('member_type_id'))->pluck('name', 'id')),
+                Select::make('type')
+                    ->label('MSO Type')
+                    ->reactive()
+                    ->required()
+                    ->options([
+                        1 => 'Savings',
+                        2 => 'Imprest',
+                        3 => 'Love Gift',
+                    ]),
                 Select::make('payment_type_id')
                     ->paymenttype()
                     ->required()
@@ -51,6 +61,7 @@ class CashCollectibleBillingResource extends Resource
                     ->default(config('app.transaction_date'))
                     ->required()
                     ->native(false),
+                TextInput::make('amount')->numeric()->gte(0)
             ]);
     }
 
@@ -81,8 +92,8 @@ class CashCollectibleBillingResource extends Resource
                     ]),
                 Tables\Actions\DeleteAction::make()
                     ->visible(fn($record) => !$record->posted)
-                    ->action(function (CashCollectibleBilling $record) {
-                        $record->cash_collectible_billing_payments()->delete();
+                    ->action(function (MsoBilling $record) {
+                        $record->payments()->delete();
                         $record->delete();
                     }),
                 Action::make('for_or')
@@ -91,27 +102,27 @@ class CashCollectibleBillingResource extends Resource
                     ->visible(fn($record, $livewire) => !$record->posted && !$record->for_or && !$record->or_number && $livewire->user_is_cashier)
                     ->label('For OR')
                     ->requiresConfirmation()
-                    ->action(function (CashCollectibleBilling $record) {
-                        if ($record->cash_collectible_billing_payments()->doesntExist()) {
+                    ->action(function (MsoBilling $record) {
+                        if ($record->payments()->doesntExist()) {
                             Notification::make()->title('No content, Subject for Review')->danger()->send();
                             return;
                         }
                         $record->update([
                             'for_or' => true,
                         ]);
-                        Notification::make()->title('Cash collectible billing for OR by Cashier!')->success()->send();
+                        Notification::make()->title('MSO billing for OR by Cashier!')->success()->send();
                     }),
                 Action::make('post_payments')
                     ->button()
                     ->color('success')
                     ->visible(fn($record, $livewire) => !$record->posted && !$record->for_or && $record->or_number && $livewire->user_is_cbu_officer)
                     ->requiresConfirmation()
-                    ->action(function (CashCollectibleBilling $record) {
-                        app(PostCashCollectibleBillingPayments::class)->handle(cashCollectibleBilling: $record);
+                    ->action(function (MsoBilling $record) {
+                        app(PostMsoBillingPayments::class)->handle($record);
                         Notification::make()->title('Payments posted!')->success()->send();
                     }),
                 Action::make('billing_receivables')
-                    ->url(fn($record) => route('filament.app.resources.cash-collectible-billings.billing-payments', ['cash_collectible_billing' => $record]))
+                    ->url(fn($record) => route('filament.app.resources.mso-billings.billing-payments', ['mso_billing' => $record]))
                     ->button()
                     ->outlined(),
             ])
@@ -122,18 +133,11 @@ class CashCollectibleBillingResource extends Resource
             ]);
     }
 
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
-
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageCashCollectibleBillings::route('/'),
-            'billing-payments' => Pages\CashCollectibleBillingPayments::route('/{cash_collectible_billing}/receivables'),
+            'index' => Pages\ManageMsoBillings::route('/'),
+            'billing-payments' => Pages\MsoBillingPayments::route('/{mso_billing}/receivables'),
         ];
     }
 }

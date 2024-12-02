@@ -60,9 +60,6 @@ class JournalEntryVoucherItem extends Model
                     $amount = $journalEntryVoucherItem->credit;
                 } else {
                     $amount = $journalEntryVoucherItem->debit * -1;
-                    $account->member->capital_subscriptions_common->update([
-                        'is_common' => false
-                    ]);
                 }
 
                 app(PayCapitalSubscription::class)
@@ -71,12 +68,17 @@ class JournalEntryVoucherItem extends Model
                         data: new CapitalSubscriptionPaymentData(
                             payment_type_id: 2,
                             reference_number: $journalEntryVoucherItem->journal_entry_voucher->reference_number,
-                            amount: $journalEntryVoucherItem->credit,
+                            amount: $amount,
                             transaction_date: $transaction_date
                         ),
                         transactionType: $transactionType,
                         isJevOrDv: true,
                     );
+                if ($amount < 0) {
+                    $account->member->capital_subscriptions_common->update([
+                        'is_common' => false
+                    ]);
+                }
             } else if (in_array($account->tag, ['regular_savings'])) {
                 if ($journalEntryVoucherItem->credit) {
                     app(DepositToSavingsAccount::class)->handle(

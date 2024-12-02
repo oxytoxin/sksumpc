@@ -1,11 +1,15 @@
 <?php
 
-namespace App\Filament\App\Resources\CashCollectibleBillingResource\Pages;
+namespace App\Filament\App\Resources\MsoBillingResource\Pages;
 
 use Filament\Actions;
+use App\Models\Member;
+use App\Models\MsoBilling;
 use Filament\Tables\Table;
+use Filament\Actions\Action;
 use Illuminate\Support\Facades\DB;
-use App\Models\CashCollectibleBilling;
+use Illuminate\Support\Facades\Auth;
+use Filament\Forms\Components\Select;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -17,34 +21,30 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Filters\SelectFilter;
 use Spatie\SimpleExcel\SimpleExcelReader;
-use Illuminate\Contracts\Support\Htmlable;
-use Filament\Tables\Columns\Summarizers\Sum;
 use App\Models\CashCollectibleBillingPayment;
-use App\Models\CapitalSubscriptionBillingPayment;
-use App\Filament\App\Resources\CashCollectibleBillingResource;
-use App\Models\Member;
-use Auth;
-use Filament\Actions\Action;
+use App\Filament\App\Resources\MsoBillingResource;
+use App\Models\Account;
+use App\Models\MsoBillingPayment;
 use Filament\Actions\CreateAction;
-use Filament\Forms\Components\Select;
+use Illuminate\Contracts\Support\Htmlable;
 
-class CashCollectibleBillingPayments extends ListRecords
+class MsoBillingPayments extends ListRecords
 {
-    protected static string $resource = CashCollectibleBillingResource::class;
+    protected static string $resource = MsoBillingResource::class;
 
-    public CashCollectibleBilling $cash_collectible_billing;
+    public MsoBilling $mso_billing;
 
     public function getHeading(): string|Htmlable
     {
-        return 'Cash Collectible Receivables';
+        return 'MSO Receivables';
     }
 
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make()->label('New Cash Collectible Receivable')
+            CreateAction::make()->label('New MSO Receivable')
                 ->createAnother(false)
-                ->disabled(fn() => $this->cash_collectible_billing->posted)
+                ->disabled(fn() => $this->mso_billing->posted)
                 ->form([
                     Select::make('member_id')
                         ->label('Member')
@@ -53,21 +53,30 @@ class CashCollectibleBillingPayments extends ListRecords
                         ->reactive()
                         ->afterStateUpdated(fn($set, $state) => $set('payee', Member::find($state)?->full_name))
                         ->preload(),
+                    Select::make('account_id')
+                        ->label('Account')
+                        ->options(fn($get) => match ($this->mso_billing->type) {
+                            1 => Account::withCode()->whereMemberId($get('member_id'))->whereTag('regular_savings')->pluck('code', 'id'),
+                            2 => Account::withCode()->whereMemberId($get('member_id'))->whereTag('imprest_savings')->pluck('code', 'id'),
+                            3 => Account::withCode()->whereMemberId($get('member_id'))->whereTag('love_gift_savings')->pluck('code', 'id'),
+                        })
+                        ->searchable()
+                        ->preload(),
                     TextInput::make('payee')
                         ->required(),
                     TextInput::make('amount')
                         ->moneymask(),
                 ])
                 ->action(function ($data) {
-                    CashCollectibleBillingPayment::create([
-                        'cash_collectible_billing_id' => $this->cash_collectible_billing->id,
-                        'account_id' => $this->cash_collectible_billing->account_id,
+                    MsoBillingPayment::create([
+                        'mso_billing_id' => $this->mso_billing->id,
+                        'account_id' => $data['account_id'],
                         'member_id' => $data['member_id'],
                         'payee' => $data['payee'],
                         'amount_due' => $data['amount'],
                         'amount_paid' => $data['amount'],
                     ]);
-                    Notification::make()->title('New receivable created!')->success()->send();
+                    Notification::make()->title('New MSO receivable created!')->success()->send();
                 }),
             Action::make('Import')
                 ->visible(Auth::user()->can('manage cbu'))
@@ -76,10 +85,10 @@ class CashCollectibleBillingPayments extends ListRecords
                         ->storeFiles(false)
                         ->acceptedFileTypes(['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/octet-stream']),
                 ])
-                ->disabled(fn() => $this->cash_collectible_billing->posted)
+                ->disabled(fn() => $this->mso_billing->posted)
                 ->action(function ($data) {
-                    $payments = $this->cash_collectible_billing->cash_collectible_billing_payments()->join('members', 'cash_collectible_billing_payments.member_id', 'members.id')
-                        ->selectRaw('cash_collectible_billing_payments.*, members.mpc_code as member_code')
+                    $payments = $this->mso_billing->payments()->join('members', 'mso_billing_payments.member_id', 'members.id')
+                        ->selectRaw('mso_billing_payments.*, members.mpc_code as member_code')
                         ->get();
                     $rows = SimpleExcelReader::create($data['billing']->getRealPath(), type: 'xlsx')
                         ->headerOnRow(1)
@@ -101,18 +110,18 @@ class CashCollectibleBillingPayments extends ListRecords
             Action::make('Export')
                 ->visible(Auth::user()->can('manage cbu'))
                 ->action(function () {
-                    $title = str('SKSU MPC CASH COLLECTIBLE BILLING')->append(' - as of ')->append($this->cash_collectible_billing->date->format('F Y'))->upper();
+                    $title = str('SKSU MPC MSO BILLING')->append(' - as of ')->append($this->mso_billing->date->format('F Y'))->upper();
                     $filename = $title->append('.xlsx');
-                    $cash_collectible_billing_payments = CashCollectibleBillingPayment::whereBelongsTo($this->cash_collectible_billing, 'cash_collectible_billing')
-                        ->join('members', 'cash_collectible_billing_payments.member_id', 'members.id')
-                        ->selectRaw('cash_collectible_billing_payments.*, members.alt_full_name as member_name, members.mpc_code as member_code')
+                    $mso_billing_payments = MsoBillingPayment::whereBelongsTo($this->mso_billing, 'mso_billing')
+                        ->join('members', 'mso_billing_payments.member_id', 'members.id')
+                        ->selectRaw('mso_billing_payments.*, members.alt_full_name as member_name, members.mpc_code as member_code')
                         ->orderBy('member_name')
                         ->get();
                     $spreadsheet = IOFactory::load(storage_path('templates/billing_template.xlsx'));
                     $worksheet = $spreadsheet->getActiveSheet();
                     $worksheet->setCellValue('A1', $title);
-                    $worksheet->insertNewRowBefore(3, $cash_collectible_billing_payments->count());
-                    foreach ($cash_collectible_billing_payments as $key => $payment) {
+                    $worksheet->insertNewRowBefore(3, $mso_billing_payments->count());
+                    foreach ($mso_billing_payments as $key => $payment) {
                         $worksheet->setCellValue('A' . $key + 3, $key + 1);
                         $worksheet->setCellValue('B' . $key + 3, $payment->member_code);
                         $worksheet->setCellValue('C' . $key + 3, $payment->member_name);
@@ -123,7 +132,7 @@ class CashCollectibleBillingPayments extends ListRecords
                     $worksheet->setCellValue('D' . $key + 4, "=SUM(D3:D" . $key + 3 . ")");
                     $worksheet->setCellValue('E' . $key + 4, "=SUM(E3:E" . $key + 3 . ")");
                     $worksheet->getProtection()->setSheet(true)->setInsertRows(true)->setInsertColumns(true);
-                    $worksheet->protectCells('E3:E' . ($cash_collectible_billing_payments->count() + 2), auth()->user()->getAuthPassword(), true);
+                    $worksheet->protectCells('E3:E' . ($mso_billing_payments->count() + 2), auth()->user()->getAuthPassword(), true);
                     $path = storage_path('app/livewire-tmp/' . $filename);
                     $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
                     $writer->save($path);
@@ -141,16 +150,16 @@ class CashCollectibleBillingPayments extends ListRecords
     {
         return $table
             ->query(
-                CashCollectibleBillingPayment::query()
-                    ->where('cash_collectible_billing_id', $this->cash_collectible_billing->id)
-                    ->join('members', 'cash_collectible_billing_payments.member_id', 'members.id')
-                    ->selectRaw('cash_collectible_billing_payments.*, members.alt_full_name as member_name')
+                MsoBillingPayment::query()
+                    ->where('mso_billing_id', $this->mso_billing->id)
+                    ->join('members', 'mso_billing_payments.member_id', 'members.id')
+                    ->selectRaw('mso_billing_payments.*, members.alt_full_name as member_name')
                     ->orderBy('member_name')
             )
-            ->emptyStateHeading('No cash collectible receivables')
+            ->emptyStateHeading('No MSO receivables')
             ->columns([
                 TextColumn::make('member.alt_full_name')->label('Member')->searchable(),
-                TextColumn::make('cash_collectible_account.name'),
+                TextColumn::make('account.number'),
                 TextColumn::make('amount_due')->money('PHP'),
                 TextColumn::make('amount_paid')->money('PHP'),
             ])

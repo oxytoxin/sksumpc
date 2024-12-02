@@ -20,9 +20,9 @@ class CashCollectibleBilling extends Model
         return 'STAKEHOLDERSBILLING' . '-' . today()->format('Y-m-') . str_pad($cashCollectionBilling->id, 6, '0', STR_PAD_LEFT);
     }
 
-    public function cash_collectible()
+    public function cash_collectible_account()
     {
-        return $this->belongsTo(CashCollectible::class);
+        return $this->belongsTo(CashCollectibleAccount::class, 'account_id');
     }
 
     public function cash_collectible_billing_payments()

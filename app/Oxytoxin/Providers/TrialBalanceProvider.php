@@ -11,12 +11,87 @@ use Carbon\CarbonImmutable;
 
 class TrialBalanceProvider
 {
-    public static function getTrialBalance($year)
+    public static function getYearlyTrialBalance(int $year)
     {
-        Cache::forget('trial_balance');
-        return Cache::remember('trial_balance', 3600, function () use ($year) {
+        if (env('production')) {
+            Cache::forget('trial_balance_' . $year);
+        }
+        return Cache::remember('trial_balance_' . $year, 3600, function () use ($year) {
             return self::getYearlyAccountSummary($year);
         });
+    }
+
+    public static function getMonthlyTrialBalance(CarbonImmutable $date)
+    {
+        return Account::withQueryConstraint(function ($query) use ($date) {
+            $ending_date = $date->endOfMonth();
+            $query
+                ->withCount(['children' => fn($q) => $q->whereNull('member_id')])
+                ->withSum(["recursiveCrjTransactions as month_crj_debit" => fn($query) => $query->whereMonth('transaction_date', $date->month)->whereYear('transaction_date', $date->year)], 'debit')
+                ->withSum(["recursiveCrjTransactions as month_crj_credit" => fn($query) => $query->whereMonth('transaction_date', $date->month)->whereYear('transaction_date', $date->year)], 'credit')
+                ->withSum(["recursiveCdjTransactions as month_cdj_debit" => fn($query) => $query->whereMonth('transaction_date', $date->month)->whereYear('transaction_date', $date->year)], 'debit')
+                ->withSum(["recursiveCdjTransactions as month_cdj_credit" => fn($query) => $query->whereMonth('transaction_date', $date->month)->whereYear('transaction_date', $date->year)], 'credit')
+                ->withSum(["recursiveJevTransactions as month_jev_debit" => fn($query) => $query->whereMonth('transaction_date', $date->month)->whereYear('transaction_date', $date->year)], 'debit')
+                ->withSum(["recursiveJevTransactions as month_jev_credit" => fn($query) => $query->whereMonth('transaction_date', $date->month)->whereYear('transaction_date', $date->year)], 'credit')
+                ->withSum(["recursiveCrjTransactions as ending_crj_debit" => fn($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'debit')
+                ->withSum(["recursiveCrjTransactions as ending_crj_credit" => fn($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'credit')
+                ->withSum(["recursiveCdjTransactions as ending_cdj_debit" => fn($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'debit')
+                ->withSum(["recursiveCdjTransactions as ending_cdj_credit" => fn($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'credit')
+                ->withSum(["recursiveJevTransactions as ending_jev_debit" => fn($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'debit')
+                ->withSum(["recursiveJevTransactions as ending_jev_credit" => fn($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'credit')
+                ->whereNull('accounts.member_id');
+        }, function () use ($date) {
+            $addSelectStatement = "laravel_cte.*,";
+            $addSelectStatement .= "
+                    (
+                        coalesce(month_crj_debit, 0) + 
+                        coalesce(month_cdj_debit, 0) + 
+                        coalesce(month_jev_debit, 0)
+                    ) as total_debit, 
+                    (
+                        coalesce(month_crj_credit, 0) +
+                        coalesce(month_cdj_credit, 0) + 
+                        coalesce(month_jev_credit, 0)
+                    ) as total_credit, 
+                        case when debit_operator > 0 then (
+                            (
+                                coalesce(ending_crj_debit, 0) + 
+                                coalesce(ending_cdj_debit, 0) + 
+                                coalesce(ending_jev_debit, 0)
+                            ) * debit_operator +
+                            (
+                                coalesce(ending_crj_credit, 0) +
+                                coalesce(ending_cdj_credit, 0) + 
+                                coalesce(ending_jev_credit, 0)
+                            ) * credit_operator
+                        )
+                        else 0
+                        end    
+                        as ending_balance_debit,
+                        case when credit_operator > 0 then (
+                            (
+                                coalesce(ending_crj_debit, 0) + 
+                                coalesce(ending_cdj_debit, 0) + 
+                                coalesce(ending_jev_debit, 0)
+                            ) * debit_operator +
+                            (
+                                coalesce(ending_crj_credit, 0) +
+                                coalesce(ending_cdj_credit, 0) + 
+                                coalesce(ending_jev_credit, 0)
+                            ) * credit_operator
+                        ) 
+                        else 0
+                        end    
+                        as ending_balance_credit,
+                ";
+            $addSelectStatement .= "account_types.debit_operator, account_types.credit_operator";
+
+            return Account::tree()
+                ->orderBy('sort')
+                ->join('account_types', 'account_type_id', 'account_types.id')
+                ->addSelect(DB::raw($addSelectStatement))
+                ->get();
+        })->toTree();
     }
 
     public static function getYearlyAccountSummary($year)

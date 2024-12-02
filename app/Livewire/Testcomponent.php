@@ -7,6 +7,7 @@ use Livewire\Component;
 use App\Models\TransactionType;
 use App\Oxytoxin\Providers\FinancialStatementProvider;
 use App\Oxytoxin\Providers\TrialBalanceProvider;
+use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Livewire\Attributes\Computed;
 
@@ -40,7 +41,13 @@ class Testcomponent extends Component
     #[Computed]
     public function TrialBalance()
     {
-        return TrialBalanceProvider::getTrialBalance(2024);
+        return TrialBalanceProvider::getMonthlyTrialBalance($this->selected_month);
+    }
+
+    #[Computed]
+    public function SelectedMonth()
+    {
+        return CarbonImmutable::create(2023, 12, 31);
     }
 
     public function render()

@@ -16,4 +16,5 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('login', Login::class)->name('login');
+
 Route::get('testcomponent', Testcomponent::class)->name('testcomponent');

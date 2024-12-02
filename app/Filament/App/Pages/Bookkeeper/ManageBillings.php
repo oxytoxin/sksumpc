@@ -8,6 +8,8 @@ use App\Filament\App\Pages\Cashier\PaymentTransactions;
 use App\Filament\App\Resources\CapitalSubscriptionBillingResource\Pages\ManageCapitalSubscriptionBillings;
 use App\Filament\App\Resources\CashCollectibleBillingResource\Pages\ManageCashCollectibleBillings;
 use App\Filament\App\Resources\LoanBillingResource\Pages\ManageLoanBillings;
+use App\Filament\App\Resources\MsoBillingResource\Pages\ManageMsoBillings;
+use Auth;
 use Filament\Forms\Components\Livewire;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
@@ -26,7 +28,7 @@ class ManageBillings extends Page
 
     public static function shouldRegisterNavigation(): bool
     {
-        return auth()->user()->can('manage bookkeeping');
+        return Auth::user()->can('manage bookkeeping');
     }
 
     public function mount(): void
@@ -49,6 +51,10 @@ class ManageBillings extends Page
                         Tab::make('Capital Subscription Billings')
                             ->schema([
                                 Livewire::make(ManageCapitalSubscriptionBillings::class),
+                            ]),
+                        Tab::make('MSO Billings')
+                            ->schema([
+                                Livewire::make(ManageMsoBillings::class),
                             ]),
                         Tab::make('Other Billings')
                             ->schema([

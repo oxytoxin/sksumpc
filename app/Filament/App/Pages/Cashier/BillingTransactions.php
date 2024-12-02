@@ -5,6 +5,7 @@ namespace App\Filament\App\Pages\Cashier;
 use App\Models\CapitalSubscriptionBilling;
 use App\Models\CashCollectibleBilling;
 use App\Models\LoanBilling;
+use App\Models\MsoBilling;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Placeholder;
@@ -32,6 +33,7 @@ class BillingTransactions extends Component implements HasForms
                         1 => 'Capital Subscription',
                         2 => 'Loan',
                         3 => 'Stakeholders',
+                        4 => 'MSO',
                     ])
                     ->reactive(),
                 Select::make('billing_id')
@@ -48,14 +50,17 @@ class BillingTransactions extends Component implements HasForms
                             case 3:
                                 return CashCollectibleBilling::where('for_or', true)->pluck('reference_number', 'id');
                                 break;
+                            case 4:
+                                return MsoBilling::where('for_or', true)->pluck('reference_number', 'id');
+                                break;
                             default:
                                 return [];
                                 break;
                         }
                     }),
                 Placeholder::make('loan_type')
-                    ->visible(fn ($get) => $get('type') == 2 && $get('billing_id'))
-                    ->content(fn ($get) => LoanBilling::find($get('billing_id'))?->loan_type->name),
+                    ->visible(fn($get) => $get('type') == 2 && $get('billing_id'))
+                    ->content(fn($get) => LoanBilling::find($get('billing_id'))?->loan_type->name),
                 TextInput::make('name')->required(),
                 TextInput::make('or_number')->required()->label('OR #'),
                 Actions::make([
@@ -66,6 +71,7 @@ class BillingTransactions extends Component implements HasForms
                                 1 => CapitalSubscriptionBilling::find($data['billing_id']),
                                 2 => LoanBilling::find($data['billing_id']),
                                 3 => CashCollectibleBilling::find($data['billing_id']),
+                                4 => MsoBilling::find($data['billing_id']),
                                 default => null
                             };
 
@@ -84,18 +90,20 @@ class BillingTransactions extends Component implements HasForms
                                     return match ((int)$get('type')) {
                                         1 => route('filament.app.resources.capital-subscription-billings.billing-payments', ['capital_subscription_billing' => $get('billing_id')]),
                                         2 => route('filament.app.resources.loan-billings.billing-payments', ['loan_billing' => $get('billing_id')]),
+                                        3 => route('filament.app.resources.cash-collectible-billings.billing-payments', ['cash_collectible_billing' => $get('billing_id')]),
+                                        4 => route('filament.app.resources.mso-billings.billing-payments', ['mso_billing' => $get('billing_id')]),
                                         default => '#'
                                     };
                                 }
                             }
                         )
-                        ->visible(fn ($get) => $get('billing_id'))
+                        ->visible(fn($get) => $get('billing_id'))
                         ->openUrlInNewTab()
                         ->button()
                         ->outlined(),
                     Action::make('print')
-                        ->url(fn ($get) => route('filament.app.resources.loan-billings.statement-of-remittance', ['loan_billing' => $get('billing_id')]))
-                        ->visible(fn ($get) => $get('type') == 2 && $get('billing_id'))
+                        ->url(fn($get) => route('filament.app.resources.loan-billings.statement-of-remittance', ['loan_billing' => $get('billing_id')]))
+                        ->visible(fn($get) => $get('type') == 2 && $get('billing_id'))
                         ->icon('heroicon-o-printer')
                         ->button()
                         ->openUrlInNewTab()

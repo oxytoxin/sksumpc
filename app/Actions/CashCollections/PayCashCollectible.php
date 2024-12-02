@@ -5,6 +5,7 @@ namespace App\Actions\CashCollections;
 use App\Actions\Transactions\CreateTransaction;
 use App\Models\Account;
 use App\Models\CashCollectible;
+use App\Models\CashCollectibleAccount;
 use App\Models\TransactionType;
 use App\Oxytoxin\DTO\CashCollectibles\CashCollectiblePaymentData;
 use App\Oxytoxin\DTO\Transactions\TransactionData;
@@ -15,28 +16,18 @@ class PayCashCollectible
 {
     use AsAction;
 
-    public function handle(CashCollectible $cashCollectible, CashCollectiblePaymentData $cashCollectiblePaymentData, TransactionType $transactionType)
+    public function handle(CashCollectibleAccount $cashCollectibleAccount, CashCollectiblePaymentData $cashCollectiblePaymentData, TransactionType $transactionType)
     {
         DB::beginTransaction();
-        $payment = $cashCollectible->payments()->create([
-            'payee' => $cashCollectiblePaymentData->payee,
-            'payment_type_id' => $cashCollectiblePaymentData->payment_type_id,
-            'reference_number' => $cashCollectiblePaymentData->reference_number,
-            'amount' => $cashCollectiblePaymentData->amount,
-            'member_id' => $cashCollectiblePaymentData->member_id,
-            'transaction_date' => $cashCollectiblePaymentData->transaction_date
-        ]);
-        $accounts_receivables_account = Account::whereTag('account_receivables')->whereAccountableType(CashCollectible::class)->whereAccountableId($cashCollectible->id)->first();
-
         if ($cashCollectiblePaymentData->payment_type_id == 1) {
             app(CreateTransaction::class)->handle(new TransactionData(
                 account_id: Account::getCashOnHand()->id,
                 transactionType: $transactionType,
                 payment_type_id: $cashCollectiblePaymentData->payment_type_id,
-                reference_number: $payment->reference_number,
-                debit: $payment->amount,
-                member_id: $payment->member_id,
-                remarks: 'Member Payment for ' . strtoupper($cashCollectible->name),
+                reference_number: $cashCollectiblePaymentData->reference_number,
+                debit: $cashCollectiblePaymentData->amount,
+                member_id: $cashCollectiblePaymentData->member_id,
+                remarks: 'Member Payment for ' . strtoupper($cashCollectibleAccount->name),
                 transaction_date: $cashCollectiblePaymentData->transaction_date
             ));
         }
@@ -45,26 +36,23 @@ class PayCashCollectible
                 account_id: Account::getCashInBankGF()->id,
                 transactionType: $transactionType,
                 payment_type_id: $cashCollectiblePaymentData->payment_type_id,
-                reference_number: $payment->reference_number,
-                debit: $payment->amount,
-                member_id: $payment->member_id,
-                remarks: 'Member Payment for ' . strtoupper($cashCollectible->name),
+                reference_number: $cashCollectiblePaymentData->reference_number,
+                debit: $cashCollectiblePaymentData->amount,
+                member_id: $cashCollectiblePaymentData->member_id,
+                remarks: 'Member Payment for ' . strtoupper($cashCollectibleAccount->name),
                 transaction_date: $cashCollectiblePaymentData->transaction_date
             ));
         }
-
         app(CreateTransaction::class)->handle(new TransactionData(
-            account_id: $accounts_receivables_account->id,
+            account_id: $cashCollectibleAccount->id,
             transactionType: $transactionType,
             payment_type_id: $cashCollectiblePaymentData->payment_type_id,
-            reference_number: $payment->reference_number,
-            credit: $payment->amount,
-            member_id: $payment->member_id,
-            remarks: 'Member Payment for ' . strtoupper($cashCollectible->name),
+            reference_number: $cashCollectiblePaymentData->reference_number,
+            credit: $cashCollectiblePaymentData->amount,
+            member_id: $cashCollectiblePaymentData->member_id,
+            remarks: 'Member Payment for ' . strtoupper($cashCollectibleAccount->name),
             transaction_date: $cashCollectiblePaymentData->transaction_date
         ));
         DB::commit();
-
-        return $payment;
     }
 }

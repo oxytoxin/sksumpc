@@ -8,38 +8,30 @@
             <thead class="sticky top-0 bg-white">
                 <tr>
                     <th rowspan="2" class="border border-black px-2"></th>
-                    @foreach ($this->month_pairs as $month_pair)
-                        <th colspan="2" class="whitespace-nowrap border border-black px-2">{{ $month_pair['next']['date']->format('F Y') }}</th>
-                        <th colspan="2" class="whitespace-nowrap border border-black px-2">{{ $month_pair['current']['date']->format('F Y') }}</th>
-                        <th rowspan="2" class="border border-black px-2">INCREASE/DECREASE</th>
-                        <th rowspan="2" class="border border-black px-2">REMARKS</th>
-                    @endforeach
+                    <th colspan="2" class="whitespace-nowrap border border-black px-2">{{ $this->selected_month->format('F Y') }}</th>
+                    <th rowspan="2" class="border border-black px-2">REMARKS</th>
                 </tr>
                 <tr>
-                    @foreach ($this->month_pairs as $month_pair)
-                        <th class="border border-black px-2">DEBIT</th>
-                        <th class="border border-black px-2">CREDIT</th>
-                        <th class="border border-black px-2">DEBIT</th>
-                        <th class="border border-black px-2">CREDIT</th>
-                    @endforeach
+                    <th class="border border-black px-2">DEBIT</th>
+                    <th class="border border-black px-2">CREDIT</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($this->account_types->whereIn('id', [1, 2, 4]) as $account_type)
                     <tr>
-                        <th colspan="{{ 3 + count($this->month_pairs) * 6 }}" class="whitespace-nowrap border border-black bg-green-300 px-4 text-left">
+                        <th colspan="4" class="whitespace-nowrap border border-black bg-green-300 px-4 text-left">
                             {{ $account_type->name }}</th>
                     </tr>
                     @if ($account_type->id == 4)
-                        @include('partials.financial-condition-equity-extras')
+                        @include('partials.single-month-financial-condition-equity-extras')
                     @endif
                     @foreach ($this->trial_balance->where('account_type_id', $account_type->id) as $account)
-                        @include('partials.financial-condition-operation-row-data', [
+                        @include('partials.single-month-financial-condition-operation-row-data', [
                             'account' => $account,
                             'account_type' => $account_type,
                         ])
                     @endforeach
-                    @include('partials.financial-condition-operation-row-footer', [
+                    @include('partials.single-month-financial-condition-operation-row-footer', [
                         'accounts' => $this->trial_balance->where('account_type_id', $account_type->id),
                         'account_type' => $account_type,
                     ])

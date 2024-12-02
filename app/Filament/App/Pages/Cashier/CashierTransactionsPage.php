@@ -3,6 +3,7 @@
 namespace App\Filament\App\Pages\Cashier;
 
 use App\Models\SystemConfiguration;
+use Auth;
 use Filament\Forms\Components\Livewire;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
@@ -25,7 +26,7 @@ class CashierTransactionsPage extends Page implements HasForms
 
     public static function shouldRegisterNavigation(): bool
     {
-        return auth()->user()->can('manage payments');
+        return Auth::user()->can('manage payments');
     }
 
     public $data = [];

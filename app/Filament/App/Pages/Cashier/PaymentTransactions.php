@@ -23,6 +23,7 @@ use App\Filament\App\Pages\Cashier\Actions\CashierTransactionsPageSavings;
 use App\Filament\App\Pages\Cashier\Traits\HasReceipt;
 use App\Models\Account;
 use App\Models\CashCollectible;
+use App\Models\CashCollectibleAccount;
 use App\Models\LoanAccount;
 use App\Models\Member;
 use App\Models\PaymentType;
@@ -271,8 +272,8 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                 Section::make('')
                                     ->extraAttributes(['data-transaction' => 'cash-collection'])
                                     ->schema([
-                                        Select::make('cash_collectible_id')
-                                            ->options(CashCollectible::pluck('name', 'id'))
+                                        Select::make('cash_collectible_account_id')
+                                            ->options(CashCollectibleAccount::pluck('name', 'id'))
                                             ->label('Cash Collectible')
                                             ->required(),
                                         TextInput::make('payee')
@@ -429,7 +430,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                     ];
                                 }
                                 if ($transaction['type'] == 'cash_collection') {
-                                    $cashCollectible = CashCollectible::find($transaction['data']['cash_collectible_id']);
+                                    $cashCollectible = CashCollectibleAccount::find($transaction['data']['cash_collectible_account_id']);
                                     app(PayCashCollectible::class)->handle($cashCollectible, new CashCollectiblePaymentData(
                                         member_id: $member?->id,
                                         payee: $transaction['data']['payee'],

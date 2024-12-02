@@ -11,6 +11,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Resources\Pages\ManageRecords;
 use App\Filament\App\Resources\CapitalSubscriptionBillingResource;
 use App\Models\Member;
+use Auth;
 use Filament\Notifications\Notification;
 
 class ManageCapitalSubscriptionBillings extends ManageRecords
@@ -21,13 +22,13 @@ class ManageCapitalSubscriptionBillings extends ManageRecords
     #[Computed]
     public function UserIsCashier()
     {
-        return auth()->user()->can('manage payments');
+        return Auth::user()->can('manage payments');
     }
 
     #[Computed]
     public function UserIsCbuOfficer()
     {
-        return auth()->user()->can('manage cbu');
+        return Auth::user()->can('manage cbu');
     }
 
     protected function getHeaderActions(): array

@@ -12,14 +12,35 @@
                 Financial Operation
             </x-filament::tabs.item>
         </x-filament::tabs>
-        <div x-show="activeTab === 'trial_balance'" class="mt-4">
-            @include('livewire.app.bookkeeper.reports.trial-balance-report')
-        </div>
-        <div x-show="activeTab === 'financial_condition'" class="mt-4">
-            @include('livewire.app.bookkeeper.reports.financial-condition-report')
-        </div>
-        <div x-show="activeTab === 'financial_operation'" class="mt-4">
-            @include('livewire.app.bookkeeper.reports.financial-operation-report')
-        </div>
+
+        @if ($load_data)
+            @switch($data['mode'])
+                @case('yearly')
+                    <div x-show="activeTab === 'trial_balance'" class="mt-4">
+                        @include('livewire.app.bookkeeper.reports.trial-balance-report')
+                    </div>
+                    <div x-show="activeTab === 'financial_condition'" class="mt-4">
+                        @include('livewire.app.bookkeeper.reports.financial-condition-report')
+                    </div>
+                    <div x-show="activeTab === 'financial_operation'" class="mt-4">
+                        @include('livewire.app.bookkeeper.reports.financial-operation-report')
+                    </div>
+                @break
+
+                @case('single')
+                    <div x-show="activeTab === 'trial_balance'" class="mt-4">
+                        @include('livewire.app.bookkeeper.reports.single-month-trial-balance-report')
+                    </div>
+                    <div x-show="activeTab === 'financial_condition'" class="mt-4">
+                        @include('livewire.app.bookkeeper.reports.single-month-financial-condition-report')
+                    </div>
+                    <div x-show="activeTab === 'financial_operation'" class="mt-4">
+                        @include('livewire.app.bookkeeper.reports.single-month-financial-operation-report')
+                    </div>
+                @break
+
+                @default
+            @endswitch
+        @endif
     </div>
 </x-filament-panels::page>

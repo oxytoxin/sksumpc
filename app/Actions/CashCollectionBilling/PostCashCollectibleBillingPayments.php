@@ -24,7 +24,7 @@ class PostCashCollectibleBillingPayments
         $transaction_type = TransactionType::firstWhere('name', 'CRJ');
         $cashCollectibleBilling->cash_collectible_billing_payments()->each(function (CashCollectibleBillingPayment $payment) use ($cashCollectibleBilling, $transaction_type) {
             app(PayCashCollectible::class)->handle(
-                cashCollectible: $cashCollectibleBilling->cash_collectible,
+                cashCollectibleAccount: $cashCollectibleBilling->cash_collectible_account,
                 cashCollectiblePaymentData: new CashCollectiblePaymentData(
                     member_id: $payment->member_id,
                     payment_type_id: $cashCollectibleBilling->payment_type_id,
