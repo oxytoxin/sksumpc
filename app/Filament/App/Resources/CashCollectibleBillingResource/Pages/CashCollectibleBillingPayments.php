@@ -143,13 +143,11 @@ class CashCollectibleBillingPayments extends ListRecords
             ->query(
                 CashCollectibleBillingPayment::query()
                     ->where('cash_collectible_billing_id', $this->cash_collectible_billing->id)
-                    ->join('members', 'cash_collectible_billing_payments.member_id', 'members.id')
-                    ->selectRaw('cash_collectible_billing_payments.*, members.alt_full_name as member_name')
-                    ->orderBy('member_name')
+                    ->orderBy('payee')
             )
             ->emptyStateHeading('No cash collectible receivables')
             ->columns([
-                TextColumn::make('member.alt_full_name')->label('Member')->searchable(),
+                TextColumn::make('payee')->searchable(),
                 TextColumn::make('cash_collectible_account.name'),
                 TextColumn::make('amount_due')->money('PHP'),
                 TextColumn::make('amount_paid')->money('PHP'),

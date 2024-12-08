@@ -27,7 +27,8 @@ class PayCashCollectible
                 reference_number: $cashCollectiblePaymentData->reference_number,
                 debit: $cashCollectiblePaymentData->amount,
                 member_id: $cashCollectiblePaymentData->member_id,
-                remarks: 'Member Payment for ' . strtoupper($cashCollectibleAccount->name),
+                payee: $cashCollectiblePaymentData->payee,
+                remarks: 'Payment for ' . strtoupper($cashCollectibleAccount->name),
                 transaction_date: $cashCollectiblePaymentData->transaction_date
             ));
         }
@@ -39,7 +40,8 @@ class PayCashCollectible
                 reference_number: $cashCollectiblePaymentData->reference_number,
                 debit: $cashCollectiblePaymentData->amount,
                 member_id: $cashCollectiblePaymentData->member_id,
-                remarks: 'Member Payment for ' . strtoupper($cashCollectibleAccount->name),
+                payee: $cashCollectiblePaymentData->payee,
+                remarks: 'Payment for ' . strtoupper($cashCollectibleAccount->name),
                 transaction_date: $cashCollectiblePaymentData->transaction_date
             ));
         }
@@ -50,7 +52,8 @@ class PayCashCollectible
             reference_number: $cashCollectiblePaymentData->reference_number,
             credit: $cashCollectiblePaymentData->amount,
             member_id: $cashCollectiblePaymentData->member_id,
-            remarks: 'Member Payment for ' . strtoupper($cashCollectibleAccount->name),
+            payee: $cashCollectiblePaymentData->payee,
+            remarks: 'Payment for ' . strtoupper($cashCollectibleAccount->name),
             transaction_date: $cashCollectiblePaymentData->transaction_date
         ));
         DB::commit();
