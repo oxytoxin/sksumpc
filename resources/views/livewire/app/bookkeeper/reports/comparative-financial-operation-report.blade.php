@@ -43,7 +43,6 @@
         </div>
     </div>
     <div class="p-4 flex justify-end">
-        <x-filament::button icon="heroicon-o-printer"
-            @click="printOut($refs.print.outerHTML, 'Imprests Subsidiary Ledger')">Print</x-filament::button>
+        <x-filament::button icon="heroicon-o-printer" @click="printOut($refs.print.outerHTML, 'Statement of Financial Operation')">Print</x-filament::button>
     </div>
 </div>
