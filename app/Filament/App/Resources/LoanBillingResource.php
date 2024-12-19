@@ -29,7 +29,7 @@ class LoanBillingResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return auth()->user()->can('manage loans') || auth()->user()->can('manage payments') || auth()->user()->can('handle clerical tasks');
+        return false;
     }
 
     public static function form(Form $form): Form

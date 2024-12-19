@@ -70,7 +70,7 @@
                 <td colspan="4" class="px-2">DESCRIPTION OF ENTRY</td>
             </tr>
             <tr>
-                <td class="border-black border-r px-2 w-1/6">Perepared and Certified Correct:</td>
+                <td class="border-black border-r px-2 w-1/6">Prepared and Certified Correct:</td>
                 <td class="px-2 w-1/6">Funds Available:</td>
                 <td colspan="4" class="border-black border-l px-2 border-b">{{ $disbursement_voucher->description }}</td>
             </tr>

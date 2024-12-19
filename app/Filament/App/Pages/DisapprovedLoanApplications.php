@@ -19,7 +19,7 @@ class DisapprovedLoanApplications extends Page implements HasTable
 
     protected static ?string $navigationGroup = 'Loan';
 
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 4;
 
     public function mount(): void
     {
@@ -43,7 +43,7 @@ class DisapprovedLoanApplications extends Page implements HasTable
                 TextColumn::make('desired_amount')->money('PHP'),
                 TextColumn::make('disapproval_date')->date('m/d/Y')->label('Date Disapproved'),
                 TextColumn::make('status')
-                    ->formatStateUsing(fn ($state) => match ($state) {
+                    ->formatStateUsing(fn($state) => match ($state) {
                         LoanApplication::STATUS_DISAPPROVED => 'Disapproved',
                     })
                     ->colors([

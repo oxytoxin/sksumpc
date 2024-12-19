@@ -18,6 +18,7 @@ use Livewire\Attributes\Computed;
 class DailyCollectionsReport extends Page
 {
     protected static bool $shouldRegisterNavigation = false;
+
     protected static string $view = 'filament.app.pages.cashier.reports.daily-collections-report';
 
     #[Computed]

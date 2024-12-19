@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\Account;
 use Livewire\Component;
 use App\Models\TransactionType;
+use App\Models\User;
 use App\Oxytoxin\Providers\FinancialStatementProvider;
 use App\Oxytoxin\Providers\TrialBalanceProvider;
 use Carbon\Carbon;
@@ -35,8 +36,6 @@ class Testcomponent extends Component
     {
         return CarbonImmutable::create(year: 2024)->subYearNoOverflow()->endOfYear()->format('F Y');
     }
-
-
 
     #[Computed]
     public function TrialBalance()

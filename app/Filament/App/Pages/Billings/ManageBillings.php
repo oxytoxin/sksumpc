@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\App\Pages\Bookkeeper;
+namespace App\Filament\App\Pages\Billings;
 
 use App\Filament\App\Pages\Cashier\BillingTransactions;
 use App\Filament\App\Pages\Cashier\NewAccountTransactions;
@@ -20,15 +20,15 @@ class ManageBillings extends Page
 {
     protected static ?int $navigationSort = 1;
 
-    protected static ?string $navigationGroup = 'Bookkeeping';
+    protected static string $view = 'filament.app.pages.billings.manage-billings';
 
-    protected static string $view = 'filament.app.pages.bookkeeper.manage-billings';
+    protected static ?string $title = 'Manage Billings';
 
     public $data = [];
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()->can('manage bookkeeping');
+        return false;
     }
 
     public function mount(): void
