@@ -1,5 +1,5 @@
-@import '../../../../vendor/filament/filament/resources/css/theme.css';
-@import '../../../../vendor/awcodes/filament-table-repeater/resources/css/plugin.css';
+@import "../../../../vendor/filament/filament/resources/css/theme.css";
+@import "../../../../vendor/awcodes/filament-table-repeater/resources/css/plugin.css";
 
 @config './tailwind.config.js';
 
@@ -84,15 +84,15 @@ button[wire\:click="resetTableFiltersForm"] {
 }
 
 .fs-row-data {
-    @apply whitespace-nowrap border border-black px-2 text-right text-xs uppercase hover:bg-green-300;
+    @apply whitespace-nowrap print:whitespace-normal border border-black px-2 text-right text-xs print:text-[8pt] uppercase hover:bg-green-300;
 }
 
 .fs-row-header {
-    @apply whitespace-nowrap border border-black px-2 text-base font-bold uppercase hover:bg-green-300;
+    @apply whitespace-nowrap print:whitespace-normal border border-black px-2 text-base print:text-[8pt] font-bold uppercase hover:bg-green-300;
 }
 
 .fi-ta-summary-row {
-    @apply bg-green-200 font-semibold;
+    @apply bg-green-200 print:text-[8pt] font-semibold;
 }
 
 .fi-ta-text-summary > span {

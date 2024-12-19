@@ -6,11 +6,11 @@ use App\Models\CapitalSubscription;
 use App\Models\Member;
 use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionData;
 use Illuminate\Support\Facades\DB;
-use Lorisleiva\Actions\Concerns\AsAction;
+
 
 class CreateNewCapitalSubscription
 {
-    use AsAction;
+
 
     public function handle(Member $member, CapitalSubscriptionData $data): CapitalSubscription
     {

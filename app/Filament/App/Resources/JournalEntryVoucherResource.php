@@ -2,23 +2,27 @@
 
 namespace App\Filament\App\Resources;
 
-use App\Filament\App\Resources\JournalEntryVoucherResource\Pages;
-use App\Models\Account;
-use App\Models\JournalEntryVoucher;
+use Filament\Tables;
 use App\Models\Member;
+use App\Models\Account;
+use Filament\Forms\Form;
+use Filament\Tables\Table;
 use App\Models\VoucherType;
-use App\Rules\BalancedBookkeepingEntries;
-use Awcodes\FilamentTableRepeater\Components\TableRepeater;
+use Filament\Resources\Resource;
+use App\Models\JournalEntryVoucher;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\Filter;
-use Filament\Tables\Table;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Enums\FiltersLayout;
+use App\Rules\BalancedBookkeepingEntries;
+use Awcodes\FilamentTableRepeater\Components\TableRepeater;
+use App\Filament\App\Resources\JournalEntryVoucherResource\Pages;
+use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
+use App\Filament\App\Resources\JournalEntryVoucherResource\Pages\ManageJournalEntryVouchers;
+use Auth;
 
 class JournalEntryVoucherResource extends Resource
 {
@@ -30,7 +34,7 @@ class JournalEntryVoucherResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return auth()->user()->can('manage bookkeeping');
+        return Auth::user()->can('manage bookkeeping');
     }
 
     public static function form(Form $form): Form
@@ -95,9 +99,11 @@ class JournalEntryVoucherResource extends Resource
                 TextColumn::make('description'),
             ])
             ->filters([
-                Filter::make('transaction_date')
-                    ->dateRange('transaction_date'),
+                DateRangeFilter::make('transaction_date')
+                    ->format('m/d/Y')
+                    ->displayFormat('MM/DD/YYYY'),
             ])
+            ->filtersLayout(FiltersLayout::AboveContent)
             ->actions([
                 Action::make('view')
                     ->button()

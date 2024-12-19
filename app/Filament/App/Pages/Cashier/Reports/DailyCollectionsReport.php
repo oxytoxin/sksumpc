@@ -33,7 +33,7 @@ class DailyCollectionsReport extends Page
         return Account::getCashInBankGF()
             ->recursiveTransactions()
             ->whereDate('transaction_date', config('app.transaction_date'))
-            ->sum('debit');
+            ->sum('credit');
     }
 
     #[Computed]
@@ -42,7 +42,7 @@ class DailyCollectionsReport extends Page
         return Account::getCashInBankMSO()
             ->recursiveTransactions()
             ->whereDate('transaction_date', config('app.transaction_date'))
-            ->sum('debit');
+            ->sum('credit');
     }
 
     #[Computed]

@@ -27,7 +27,6 @@ class ManageDisbursementVouchers extends ManageRecords
             Actions\CreateAction::make()
                 ->action(function ($data) {
                     DB::beginTransaction();
-                    $transactionType = TransactionType::firstWhere('name', 'CDJ');
                     $data['voucher_type_id'] = 6;
                     $items = $data['disbursement_voucher_items'];
                     unset($data['disbursement_voucher_items']);

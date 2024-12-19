@@ -11,11 +11,11 @@ use App\Oxytoxin\DTO\MSO\ImprestData;
 use App\Oxytoxin\DTO\Transactions\TransactionData;
 use App\Oxytoxin\Providers\ImprestsProvider;
 use DB;
-use Lorisleiva\Actions\Concerns\AsAction;
+
 
 class DepositToImprestAccount
 {
-    use AsAction;
+
 
     public function handle(Member $member, ImprestData $data, TransactionType $transactionType, $transact = true, $isJevOrDv = false)
     {

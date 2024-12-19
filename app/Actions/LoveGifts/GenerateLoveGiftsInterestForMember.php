@@ -8,11 +8,11 @@ use App\Oxytoxin\DTO\MSO\LoveGiftData;
 use App\Oxytoxin\Providers\LoveGiftProvider;
 use App\Oxytoxin\Services\InterestCalculator;
 use DB;
-use Lorisleiva\Actions\Concerns\AsAction;
+
 
 class GenerateLoveGiftsInterestForMember
 {
-    use AsAction;
+
 
     public function handle(Member $member)
     {

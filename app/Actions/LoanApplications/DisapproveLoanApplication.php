@@ -3,11 +3,11 @@
 namespace App\Actions\LoanApplications;
 
 use App\Models\LoanApplication;
-use Lorisleiva\Actions\Concerns\AsAction;
+
 
 class DisapproveLoanApplication
 {
-    use AsAction;
+
 
     public function handle(LoanApplication $loan_application, ?string $priority_number, int $disapproval_reason_id, ?string $remarks = null, $disapproval_date = null)
     {

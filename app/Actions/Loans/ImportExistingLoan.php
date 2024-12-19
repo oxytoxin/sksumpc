@@ -14,11 +14,11 @@ use App\Oxytoxin\DTO\Loan\LoanData;
 use App\Oxytoxin\DTO\Transactions\TransactionData;
 use App\Oxytoxin\Providers\LoansProvider;
 use Illuminate\Support\Facades\DB;
-use Lorisleiva\Actions\Concerns\AsAction;
+
 
 class ImportExistingLoan
 {
-    use AsAction;
+
 
     public function handle(Member $member, LoanType $loanType, $reference_number, $amount, $balance_forwarded, $number_of_terms, $application_date)
     {

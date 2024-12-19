@@ -12,11 +12,11 @@ use App\Oxytoxin\DTO\MSO\SavingsData;
 use App\Oxytoxin\DTO\Transactions\TransactionData;
 use App\Oxytoxin\Providers\SavingsProvider;
 use DB;
-use Lorisleiva\Actions\Concerns\AsAction;
+
 
 class DepositToSavingsAccount
 {
-    use AsAction;
+
 
     public function handle(Member $member, SavingsData $data, TransactionType $transactionType, $isJevOrDv = false)
     {

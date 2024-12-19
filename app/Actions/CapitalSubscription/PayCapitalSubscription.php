@@ -10,13 +10,11 @@ use App\Models\TransactionType;
 use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionPaymentData;
 use App\Oxytoxin\DTO\Transactions\TransactionData;
 use DB;
-use Lorisleiva\Actions\Concerns\AsAction;
+
 
 class PayCapitalSubscription
 {
-    use AsAction;
-
-    public function handle(CapitalSubscription $cbu, CapitalSubscriptionPaymentData $data, TransactionType $transactionType, $transact = true, $isJevOrDv = false)
+    public function handle(CapitalSubscription $cbu, CapitalSubscriptionPaymentData $data, TransactionType $transactionType, $isJevOrDv = false, $transact = true)
     {
         DB::beginTransaction();
         $payment = CapitalSubscriptionPayment::create([
@@ -27,6 +25,13 @@ class PayCapitalSubscription
             'amount' => $data->amount,
             'transaction_date' => $data->transaction_date
         ]);
+        if ($data->amount > 0) {
+            $debit = 0;
+            $credit = $data->amount;
+        } else {
+            $debit = $data->amount * -1;
+            $credit = 0;
+        }
         if ($transact) {
             if (!$isJevOrDv) {
                 if ($data->payment_type_id == 1) {
@@ -35,7 +40,8 @@ class PayCapitalSubscription
                         transactionType: $transactionType,
                         payment_type_id: $data->payment_type_id,
                         reference_number: $payment->reference_number,
-                        debit: $payment->amount,
+                        debit: $debit,
+                        credit: $credit,
                         member_id: $cbu->member->id,
                         remarks: 'Member CBU Payment',
                         transaction_date: $data->transaction_date,
@@ -47,7 +53,8 @@ class PayCapitalSubscription
                         transactionType: $transactionType,
                         payment_type_id: $data->payment_type_id,
                         reference_number: $payment->reference_number,
-                        debit: $payment->amount,
+                        debit: $debit,
+                        credit: $credit,
                         member_id: $cbu->member->id,
                         remarks: 'Member CBU Payment',
                         transaction_date: $data->transaction_date,
@@ -59,7 +66,8 @@ class PayCapitalSubscription
                 transactionType: $transactionType,
                 payment_type_id: $data->payment_type_id,
                 reference_number: $payment->reference_number,
-                credit: $payment->amount,
+                debit: $debit,
+                credit: $credit,
                 member_id: $cbu->member->id,
                 remarks: 'Member CBU Payment',
                 transaction_date: $data->transaction_date,

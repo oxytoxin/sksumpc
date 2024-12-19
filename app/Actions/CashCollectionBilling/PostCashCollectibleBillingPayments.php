@@ -9,11 +9,11 @@ use App\Actions\CashCollections\PayCashCollectible;
 use App\Models\CashCollectibleBilling;
 use App\Models\CashCollectibleBillingPayment;
 use App\Oxytoxin\DTO\CashCollectibles\CashCollectiblePaymentData;
-use Lorisleiva\Actions\Concerns\AsAction;
+
 
 class PostCashCollectibleBillingPayments
 {
-    use AsAction;
+
 
     public function handle(CashCollectibleBilling $cashCollectibleBilling)
     {

@@ -5,11 +5,11 @@ namespace App\Actions\LoanApplications;
 use App\Models\LoanApplication;
 use App\Oxytoxin\DTO\Loan\LoanApplicationData;
 use DB;
-use Lorisleiva\Actions\Concerns\AsAction;
+
 
 class CreateNewLoanApplication
 {
-    use AsAction;
+
 
     public function handle(LoanApplicationData $loanApplicationData)
     {

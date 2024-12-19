@@ -13,11 +13,11 @@ use App\Oxytoxin\Providers\LoveGiftProvider;
 use DB;
 use Filament\Notifications\Notification;
 use Illuminate\Validation\ValidationException;
-use Lorisleiva\Actions\Concerns\AsAction;
+
 
 class WithdrawFromLoveGiftsAccount
 {
-    use AsAction;
+
 
     public function handle(Member $member, LoveGiftData $data, TransactionType $transactionType, $isJevOrDv = false)
     {

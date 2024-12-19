@@ -10,11 +10,11 @@ use App\Models\TransactionType;
 use App\Oxytoxin\DTO\CashCollectibles\CashCollectiblePaymentData;
 use App\Oxytoxin\DTO\Transactions\TransactionData;
 use DB;
-use Lorisleiva\Actions\Concerns\AsAction;
+
 
 class PayCashCollectible
 {
-    use AsAction;
+
 
     public function handle(CashCollectibleAccount $cashCollectibleAccount, CashCollectiblePaymentData $cashCollectiblePaymentData, TransactionType $transactionType)
     {

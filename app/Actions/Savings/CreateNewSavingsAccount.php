@@ -4,12 +4,12 @@ namespace App\Actions\Savings;
 
 use App\Models\Account;
 use App\Models\SavingsAccount;
-use Lorisleiva\Actions\Concerns\AsAction;
+
 use App\Oxytoxin\DTO\MSO\Accounts\SavingsAccountData;
 
 class CreateNewSavingsAccount
 {
-    use AsAction;
+
 
     public function handle(SavingsAccountData $savingsAccountData): SavingsAccount
     {

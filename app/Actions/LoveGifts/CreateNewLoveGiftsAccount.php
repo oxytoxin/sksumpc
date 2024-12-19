@@ -4,11 +4,11 @@ namespace App\Actions\LoveGifts;
 
 use App\Models\Account;
 use App\Oxytoxin\DTO\MSO\Accounts\LoveGiftAccountData;
-use Lorisleiva\Actions\Concerns\AsAction;
+
 
 class CreateNewLoveGiftsAccount
 {
-    use AsAction;
+
 
     public function handle(LoveGiftAccountData $loveGiftAccountData)
     {

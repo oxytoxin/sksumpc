@@ -9,11 +9,11 @@ use App\Models\TransactionType;
 use App\Oxytoxin\DTO\Loan\LoanPaymentData;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\DB;
-use Lorisleiva\Actions\Concerns\AsAction;
+
 
 class PostLoanBillingPayments
 {
-    use AsAction;
+
 
     public function handle(LoanBilling $loanBilling)
     {

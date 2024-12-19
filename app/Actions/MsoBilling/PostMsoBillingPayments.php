@@ -18,11 +18,11 @@ use App\Oxytoxin\DTO\CashCollectibles\CashCollectiblePaymentData;
 use App\Oxytoxin\DTO\MSO\ImprestData;
 use App\Oxytoxin\DTO\MSO\LoveGiftData;
 use App\Oxytoxin\DTO\MSO\SavingsData;
-use Lorisleiva\Actions\Concerns\AsAction;
+
 
 class PostMsoBillingPayments
 {
-    use AsAction;
+
 
     public function handle(MsoBilling $msoBilling)
     {

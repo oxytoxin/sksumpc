@@ -14,11 +14,11 @@ use App\Oxytoxin\Providers\SavingsProvider;
 use DB;
 use Filament\Notifications\Notification;
 use Illuminate\Validation\ValidationException;
-use Lorisleiva\Actions\Concerns\AsAction;
+
 
 class WithdrawFromSavingsAccount
 {
-    use AsAction;
+
 
     public function handle(Member $member, SavingsData $data, TransactionType $transactionType, $isJevOrDv = false)
     {

@@ -11,11 +11,11 @@ use App\Models\TransactionType;
 use App\Oxytoxin\DTO\Loan\LoanPaymentData;
 use App\Oxytoxin\DTO\Transactions\TransactionData;
 use App\Oxytoxin\Providers\LoansProvider;
-use Lorisleiva\Actions\Concerns\AsAction;
+
 
 class PayLoan
 {
-    use AsAction;
+
 
     public function handle(Loan $loan, LoanPaymentData $loanPaymentData, TransactionType $transactionType, $isJevOrDv = false): LoanPayment
     {

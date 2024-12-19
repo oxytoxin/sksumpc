@@ -5,11 +5,11 @@ namespace App\Actions\CapitalSubscriptionBilling;
 use App\Models\CapitalSubscriptionBilling;
 use App\Models\Member;
 use DB;
-use Lorisleiva\Actions\Concerns\AsAction;
+
 
 class CreateIndividualBilling
 {
-    use AsAction;
+
 
     public function handle($payment_type_id, $date, $member_id)
     {

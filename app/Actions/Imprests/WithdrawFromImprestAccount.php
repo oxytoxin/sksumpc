@@ -13,11 +13,11 @@ use App\Oxytoxin\Providers\ImprestsProvider;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
-use Lorisleiva\Actions\Concerns\AsAction;
+
 
 class WithdrawFromImprestAccount
 {
-    use AsAction;
+
 
     public function handle(Member $member, ImprestData $data, TransactionType $transactionType, $isJevOrDv = false)
     {

@@ -26,7 +26,7 @@ class LoansProvider
 
     const DAYS_IN_MONTH = 30;
 
-    public static function getAccruableDays(Carbon|CarbonImmutable $start, Carbon|CarbonImmutable $end)
+    public static function getAccruableDays($start, $end)
     {
         if ($start->month == $end->month && $start->year == $end->year) {
             $days_of_start_month = max($end->day - $start->day, 0);

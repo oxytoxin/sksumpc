@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -27,6 +28,6 @@ class SystemConfiguration extends Model
         $transaction_date = self::firstWhere('name', 'Transaction Date');
         if (!$transaction_date)
             return null;
-        return Carbon::create($transaction_date->content['transaction_date']);
+        return CarbonImmutable::create($transaction_date->content['transaction_date']);
     }
 }

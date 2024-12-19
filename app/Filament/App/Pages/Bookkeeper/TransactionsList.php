@@ -4,6 +4,7 @@ namespace App\Filament\App\Pages\Bookkeeper;
 
 use App\Models\Account;
 use App\Models\Transaction;
+use Auth;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Filament\Actions\Action;
@@ -30,7 +31,7 @@ class TransactionsList extends Page implements HasForms, HasTable
 
     public static function shouldRegisterNavigation(): bool
     {
-        return auth()->user()->can('manage bookkeeping');
+        return Auth::user()->can('manage bookkeeping');
     }
 
     protected static string $view = 'filament.app.pages.bookkeeper.transactions-list';
@@ -82,6 +83,8 @@ class TransactionsList extends Page implements HasForms, HasTable
                     ->when($this->transaction_type, fn($q) => $q->where('transaction_type_id', $this->transaction_type))
                     ->when($this->payment_mode == 1, fn($q) => $q->whereNotNull('debit'))
                     ->when($this->payment_mode == -1, fn($q) => $q->whereNotNull('credit'))
+                    ->orderByDesc('transaction_date')
+                    ->orderByDesc('id')
             )
             ->filters([
                 DateRangeFilter::make('transaction_date')
@@ -98,8 +101,8 @@ class TransactionsList extends Page implements HasForms, HasTable
                         return (string)(
                             $rowLoop->iteration +
                             ($livewire->getTableRecordsPerPage() * (
-                                    $livewire->getTablePage() - 1
-                                ))
+                                $livewire->getTablePage() - 1
+                            ))
                         );
                     }
                 ),

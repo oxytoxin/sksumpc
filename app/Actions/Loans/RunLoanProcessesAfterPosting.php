@@ -13,11 +13,11 @@ use App\Oxytoxin\DTO\MSO\ImprestData;
 use App\Oxytoxin\Providers\LoansProvider;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Lorisleiva\Actions\Concerns\AsAction;
+
 
 class RunLoanProcessesAfterPosting
 {
-    use AsAction;
+
 
     public function handle(Loan $loan)
     {

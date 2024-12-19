@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @mixin IdeHelperLoanAccount
+ * @mixin IdeHelperTimeDepositAccount
  */
 class TimeDepositAccount extends Account
 {

@@ -40,7 +40,7 @@ class Testcomponent extends Component
     #[Computed]
     public function TrialBalance()
     {
-        return TrialBalanceProvider::getMonthlyTrialBalance($this->selected_month);
+        return TrialBalanceProvider::getSingleTrialBalance($this->selected_month);
     }
 
     #[Computed]

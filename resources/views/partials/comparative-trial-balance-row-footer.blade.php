@@ -3,7 +3,7 @@
     $totals = [];
     $balance_forwarded_debit = sum_no_children_recursive($this->trial_balance, '0_ending_balance_debit');
     $balance_forwarded_credit = sum_no_children_recursive($this->trial_balance, '0_ending_balance_credit');
-    for ($m = 1; $m <= 12; $m++) {
+    for ($m = 1; $m <= 2; $m++) {
         $totals[] = [
             'total_crj_debit' => sum_no_children_recursive($this->trial_balance->where('id', '!=', 55), "{$m}_month_crj_debit") - $mso_account["{$m}_month_crj_debit"],
             'total_crj_credit' => sum_no_children_recursive($this->trial_balance->where('id', '!=', 55), "{$m}_month_crj_credit") - $mso_account["{$m}_month_crj_credit"],
@@ -87,7 +87,7 @@
         @endforeach
     </tr>
     <tr>
-        <td class="whitespace-nowrap sticky left-0 bg-white border border-black px-2 text-lg font-bold uppercase hover:bg-green-300">
+        <td class="whitespace-nowrap border sticky left-0 bg-white border-black px-2 text-lg font-bold uppercase hover:bg-green-300">
             VARIANCE
         </td>
         <td colspan="2" class="whitespace-nowrap border border-black px-2 text-right text-xs uppercase hover:bg-green-300">

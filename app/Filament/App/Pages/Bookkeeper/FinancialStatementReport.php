@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Pages\Bookkeeper;
 
+use App\Filament\App\Pages\Cashier\RequiresBookkeeperTransactionDate;
 use App\Models\AccountType;
 use App\Models\LoanType;
 use App\Models\TransactionType;
@@ -23,7 +24,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class FinancialStatementReport extends Page implements HasActions, HasForms
 {
-    use InteractsWithActions, InteractsWithForms;
+    use InteractsWithActions, InteractsWithForms, RequiresBookkeeperTransactionDate;
 
     protected static string $view = 'filament.app.pages.bookkeeper.financial-statement-report';
 
@@ -48,7 +49,7 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
             Select::make('mode')
                 ->options([
                     'single' => 'Single Month',
-                    // 'comparative' => 'Comparative',
+                    'comparative' => 'Comparative',
                     // 'period' => 'Period Covered',
                     'yearly' => 'Yearly'
                 ])
@@ -56,15 +57,28 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
                 ->live(),
             Select::make('month')
                 ->options(oxy_get_month_range())
-                ->default(config('app.transaction_date', today())->month)
+                ->default(config('app.transaction_date')?->month)
                 ->selectablePlaceholder(false)
-                ->visible(fn($get) => $get('mode') == 'single')
+                ->visible(fn($get) => in_array($get('mode'), ['single']))
                 ->live(),
             Select::make('year')
                 ->options(oxy_get_year_range())
-                ->default(config('app.transaction_date', today())->year)
+                ->default(config('app.transaction_date')?->year)
                 ->selectablePlaceholder(false)
+                ->visible(fn($get) => in_array($get('mode'), ['single', 'yearly']))
                 ->live(),
+            DatePicker::make('from')
+                ->live()
+                ->default(config('app.transaction_date')?->subMonthNoOverflow())
+                ->native(false)
+                ->displayFormat('m/d/Y')
+                ->visible(fn($get) => in_array($get('mode'), ['comparative'])),
+            DatePicker::make('to')
+                ->live()
+                ->default(config('app.transaction_date'))
+                ->native(false)
+                ->displayFormat('m/d/Y')
+                ->visible(fn($get) => in_array($get('mode'), ['comparative']))
         ])
             ->columns(4)
             ->statePath('data');
@@ -83,6 +97,18 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
     }
 
     #[Computed]
+    public function FromDate()
+    {
+        return CarbonImmutable::create($this->data['from']);
+    }
+
+    #[Computed]
+    public function ToDate()
+    {
+        return CarbonImmutable::create($this->data['to']);
+    }
+
+    #[Computed]
     public function TransactionTypes()
     {
         return TransactionType::get();
@@ -90,6 +116,26 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
 
     #[Computed]
     public function MonthPairs()
+    {
+        return match ($this->data['mode']) {
+            'comparative' => $this->getComparativeMonthPairs(),
+            'yearly' => $this->getYearlyMonthPairs(),
+        };
+    }
+
+    private function getComparativeMonthPairs()
+    {
+        $pairs = [];
+        $current = $this->from_date;
+        $end = $this->to_date;
+        $pairs[] = [
+            'current' => ['index' => 1, 'date' => $current],
+            'next' => ['index' => 2, 'date' => $end],
+        ];
+        return $pairs;
+    }
+
+    private function getYearlyMonthPairs()
     {
         $pairs = [];
         $selected_year = CarbonImmutable::create(year: $this->data['year']);
@@ -116,15 +162,25 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
     #[Computed]
     public function FormattedBalanceForwardedDate()
     {
-        return CarbonImmutable::create(year: $this->data['year'])->subYearNoOverflow()->endOfYear()->format('F Y');
+        return match ($this->data['mode']) {
+            'yearly' => CarbonImmutable::create(year: $this->data['year'])->subYearNoOverflow()->endOfYear()->format('F Y'),
+            'comparative' => $this->to_date->subMonthNoOverflow()->endOfMonth()->format('F d, Y'),
+        };
+    }
+
+    #[Computed]
+    public function ComparativeDates()
+    {
+        return [$this->from_date, $this->to_date];
     }
 
     #[Computed]
     public function TrialBalance()
     {
         $data = match ($this->data['mode']) {
+            'single' => TrialBalanceProvider::getSingleTrialBalance($this->selected_month),
+            'comparative' => TrialBalanceProvider::getComparativeTrialBalance($this->from_date, $this->to_date),
             'yearly' => TrialBalanceProvider::getYearlyTrialBalance($this->data['year']),
-            'single' => TrialBalanceProvider::getMonthlyTrialBalance($this->selected_month),
         };
         return $data;
     }

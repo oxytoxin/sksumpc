@@ -15,6 +15,11 @@ class ManageJournalEntryVouchers extends ManageRecords
 {
     protected static string $resource = JournalEntryVoucherResource::class;
 
+    public function mount(): void
+    {
+        parent::mount();
+        data_set($this, 'tableFilters.transaction_date.transaction_date', (config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')) . ' - ' . (config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')));
+    }
     protected function getHeaderActions(): array
     {
         return [

@@ -8,11 +8,11 @@ use App\Models\LoanApplication;
 use App\Models\LoanType;
 use App\Oxytoxin\DTO\Loan\LoanData;
 use Illuminate\Support\Facades\DB;
-use Lorisleiva\Actions\Concerns\AsAction;
+
 
 class CreateNewLoan
 {
-    use AsAction;
+
 
     public function handle(LoanApplication $loanApplication, LoanData $loanData)
     {

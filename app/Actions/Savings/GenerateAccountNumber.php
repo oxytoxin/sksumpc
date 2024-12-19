@@ -3,11 +3,11 @@
 namespace App\Actions\Savings;
 
 use App\Models\Account;
-use Lorisleiva\Actions\Concerns\AsAction;
+
 
 class GenerateAccountNumber
 {
-    use AsAction;
+
 
     public function handle($member_type_id)
     {

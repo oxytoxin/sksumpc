@@ -8,11 +8,11 @@ use App\Oxytoxin\DTO\MSO\ImprestData;
 use App\Oxytoxin\Providers\ImprestsProvider;
 use App\Oxytoxin\Services\InterestCalculator;
 use DB;
-use Lorisleiva\Actions\Concerns\AsAction;
+
 
 class GenerateImprestsInterestForMember
 {
-    use AsAction;
+
 
     public function handle(Member $member)
     {

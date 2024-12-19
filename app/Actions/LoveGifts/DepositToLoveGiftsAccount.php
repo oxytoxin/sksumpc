@@ -11,11 +11,11 @@ use App\Oxytoxin\DTO\MSO\LoveGiftData;
 use App\Oxytoxin\DTO\Transactions\TransactionData;
 use App\Oxytoxin\Providers\LoveGiftProvider;
 use DB;
-use Lorisleiva\Actions\Concerns\AsAction;
+
 
 class DepositToLoveGiftsAccount
 {
-    use AsAction;
+
 
     public function handle(Member $member, LoveGiftData $data, TransactionType $transactionType, $isJevOrDv = false)
     {

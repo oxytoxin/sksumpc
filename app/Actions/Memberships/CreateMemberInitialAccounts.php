@@ -13,12 +13,12 @@ use App\Oxytoxin\DTO\MSO\Accounts\ImprestAccountData;
 use App\Oxytoxin\DTO\MSO\Accounts\LoveGiftAccountData;
 use App\Oxytoxin\DTO\MSO\Accounts\SavingsAccountData;
 use DB;
-use Lorisleiva\Actions\Concerns\AsAction;
+
 use Spatie\Permission\Models\Role;
 
 class CreateMemberInitialAccounts
 {
-    use AsAction;
+
 
     public function handle(Member $member)
     {

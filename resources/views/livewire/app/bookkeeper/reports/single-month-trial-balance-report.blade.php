@@ -5,7 +5,7 @@
     </div>
     <div class="flex-1 overflow-auto">
         <table class="w-full border-separate border-spacing-0 border border-black">
-            <thead class="sticky top-0 z-20 bg-white">
+            <thead class="sticky top-0 z-[5] bg-white">
                 <tr>
                     <th class="sticky left-0 whitespace-nowrap border border-black bg-white px-2" rowspan="3">TRIAL BALANCE
                     </th>

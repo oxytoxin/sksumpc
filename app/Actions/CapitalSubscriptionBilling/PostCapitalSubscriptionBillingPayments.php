@@ -9,11 +9,11 @@ use App\Models\TransactionType;
 use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionPaymentData;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\DB;
-use Lorisleiva\Actions\Concerns\AsAction;
+
 
 class PostCapitalSubscriptionBillingPayments
 {
-    use AsAction;
+
 
     public function handle(CapitalSubscriptionBilling $cbuBilling)
     {

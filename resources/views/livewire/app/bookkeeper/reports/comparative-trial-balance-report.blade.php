@@ -7,11 +7,10 @@
         <table class="w-full border-separate border-spacing-0 border border-black">
             <thead class="sticky top-0 z-[5] bg-white">
                 <tr>
-                    <th class="sticky left-0 whitespace-nowrap border border-black bg-white px-2" rowspan="3">TRIAL BALANCE
-                    </th>
+                    <th class="sticky left-0 whitespace-nowrap border border-black bg-white px-2" rowspan="3">TRIAL BALANCE</th>
                     <th class="whitespace-nowrap border border-black px-2 uppercase" colspan="2">{{ $this->formatted_balance_forwarded_date }}</th>
-                    @foreach (oxy_get_month_range() as $month)
-                        <th class="whitespace-nowrap border border-black px-2 uppercase" colspan="16">{{ $month }}</th>
+                    @foreach ($this->comparative_dates as $date)
+                        <th class="whitespace-nowrap border border-black px-2 uppercase" colspan="16">{{ $date->format('F d, Y') }}</th>
                     @endforeach
                 </tr>
                 <tr>
@@ -19,7 +18,7 @@
                         BALANCE FORWARDED
                     </th>
 
-                    @foreach (oxy_get_month_range() as $month)
+                    @foreach ($this->comparative_dates as $date)
                         @foreach ($this->transaction_types as $transaction_type)
                             <th class="whitespace-nowrap border border-black px-2 uppercase" colspan="2">
                                 {{ $transaction_type->name }}
@@ -40,7 +39,7 @@
                 <tr>
                     <th class="border border-black px-2">DEBIT</th>
                     <th class="border border-black px-2">CREDIT</th>
-                    @foreach (oxy_get_month_range() as $monthly_balance)
+                    @foreach ($this->comparative_dates as $monthly_balance)
                         @foreach ($this->transaction_types as $transaction_type)
                             <th class="border border-black px-2">DEBIT</th>
                             <th class="border border-black px-2">CREDIT</th>
@@ -56,10 +55,10 @@
             </thead>
             <tbody>
                 @foreach ($this->trial_balance as $key => $account)
-                    @include('partials.trial-balance-row-data', ['account' => $account])
+                    @include('partials.comparative-trial-balance-row-data', ['account' => $account])
                 @endforeach
             </tbody>
-            @include('partials.trial-balance-row-footer')
+            @include('partials.comparative-trial-balance-row-footer')
         </table>
     </div>
 </div>

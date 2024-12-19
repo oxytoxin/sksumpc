@@ -5,11 +5,11 @@ namespace App\Actions\CashCollectionBilling;
 use App\Models\CashCollectibleBilling;
 use App\Models\Member;
 use DB;
-use Lorisleiva\Actions\Concerns\AsAction;
+
 
 class CreateIndividualBilling
 {
-    use AsAction;
+
 
     public function handle($payment_type_id, $account_id, $date, $member_id, $payee, $amount)
     {

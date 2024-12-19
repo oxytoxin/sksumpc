@@ -77,6 +77,12 @@ class DisbursementVoucherItem extends Model
                         transactionType: $transactionType,
                         isJevOrDv: true,
                     );
+
+                if ($amount < 0) {
+                    $account->member->capital_subscriptions_common->update([
+                        'is_common' => false
+                    ]);
+                }
             } else if (in_array($account->tag, ['regular_savings'])) {
                 if ($disbursementVoucherItem->credit) {
                     app(DepositToSavingsAccount::class)->handle(

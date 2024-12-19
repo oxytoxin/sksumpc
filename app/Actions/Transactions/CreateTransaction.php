@@ -4,11 +4,11 @@ namespace App\Actions\Transactions;
 
 use App\Models\Transaction;
 use App\Oxytoxin\DTO\Transactions\TransactionData;
-use Lorisleiva\Actions\Concerns\AsAction;
+
 
 class CreateTransaction
 {
-    use AsAction;
+
 
     public function handle(TransactionData $transactionData)
     {
