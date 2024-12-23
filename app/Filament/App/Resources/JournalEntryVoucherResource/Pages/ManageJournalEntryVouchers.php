@@ -26,7 +26,7 @@ class ManageJournalEntryVouchers extends ManageRecords
             CreateAction::make()
                 ->action(function ($data) {
                     DB::beginTransaction();
-                    $transactionType = TransactionType::firstWhere('name', 'CDJ');
+                    $transactionType = TransactionType::CDJ();
                     $data['voucher_type_id'] = 6;
                     $items = $data['journal_entry_voucher_items'];
                     unset($data['journal_entry_voucher_items'], $data['member_id']);

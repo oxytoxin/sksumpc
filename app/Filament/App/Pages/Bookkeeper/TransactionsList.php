@@ -114,7 +114,6 @@ class TransactionsList extends Page implements HasForms, HasTable
                 TextColumn::make('account.number')->label('Account Number'),
                 TextColumn::make('debit')->formatStateUsing(fn($state) => renumber_format($state, 4)),
                 TextColumn::make('credit')->formatStateUsing(fn($state) => renumber_format($state, 4)),
-                TextColumn::make('running_balance')->formatStateUsing(fn($record) => 2),
                 TextColumn::make('transaction_type.name'),
             ]);
     }

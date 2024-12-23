@@ -37,7 +37,7 @@ class GenerateSavingsInterestForMember
                 reference_number: '#INTEREST',
                 amount: $total_interest,
                 savings_account_id: $account->id,
-            ), TransactionType::firstWhere('name', 'CDJ'));
+            ), TransactionType::CDJ());
             $account->savings_unaccrued()->update([
                 'accrued' => true,
             ]);

@@ -74,7 +74,7 @@ class LegacyLoanPayments extends Page
                         ->requiresConfirmation()
                         ->action(function () {
                             $data = $this->form->getState();
-                            $transactionType = TransactionType::firstWhere('name', 'CRJ');
+                            $transactionType = TransactionType::CRJ();
                             app(PayLegacyLoan::class)
                                 ->handle(
                                     loanAccount: LoanAccount::find($data['loan_account_id']),

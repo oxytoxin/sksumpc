@@ -55,7 +55,7 @@ class DisbursementVoucherItem extends Model
             $account = Account::find($disbursementVoucherItem->account_id);
             $transaction_date = SystemConfiguration::transaction_date() ?? today();
             $disbursementVoucherItem->transaction_date = $transaction_date;
-            $transactionType = TransactionType::firstWhere('name', 'CDJ');
+            $transactionType = TransactionType::CDJ();
             if (in_array($account->tag, ['member_common_cbu_paid', 'member_preferred_cbu_paid', 'member_laboratory_cbu_paid'])) {
                 if ($disbursementVoucherItem->credit > 0) {
                     $amount = $disbursementVoucherItem->credit;

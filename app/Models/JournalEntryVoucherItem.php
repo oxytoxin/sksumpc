@@ -54,7 +54,7 @@ class JournalEntryVoucherItem extends Model
         static::creating(function (JournalEntryVoucherItem $journalEntryVoucherItem) {
             $account = Account::find($journalEntryVoucherItem->account_id);
             $transaction_date = SystemConfiguration::transaction_date() ?? today();
-            $transactionType = TransactionType::firstWhere('name', 'JEV');
+            $transactionType = TransactionType::JEV();
             if (in_array($account->tag, ['member_common_cbu_paid', 'member_preferred_cbu_paid', 'member_laboratory_cbu_paid'])) {
                 if ($journalEntryVoucherItem->credit > 0) {
                     $amount = $journalEntryVoucherItem->credit;

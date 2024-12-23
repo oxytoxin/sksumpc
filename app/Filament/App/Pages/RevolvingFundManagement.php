@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Pages;
 
+use App\Actions\RevolvingFund\ReplenishRevolvingFund;
 use App\Models\RevolvingFund;
 use Filament\Pages\Page;
 use Filament\Tables\Table;
@@ -35,12 +36,8 @@ class RevolvingFundManagement extends Page implements HasTable
                     TextInput::make('amount')
                         ->moneymask()
                 ])
-                ->action(function ($data) {
-                    RevolvingFund::create([
-                        'reference_number' => $data['reference_number'],
-                        'deposit' => $data['amount'],
-                        'transaction_date' => config('app.transaction_date')
-                    ]);
+                ->action(function ($data, ReplenishRevolvingFund $replenishRevolvingFund) {
+                    $replenishRevolvingFund->handle($data['reference_number'], $data['amount']);
                     Notification::make()->title('Revolving fund replenished!')->success()->send();
                 })
         ];

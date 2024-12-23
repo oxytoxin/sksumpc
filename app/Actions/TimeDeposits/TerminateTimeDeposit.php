@@ -23,7 +23,7 @@ class TerminateTimeDeposit
 
         app(CreateTransaction::class)->handle(new TransactionData(
             account_id: Account::getCashInBankMSO()->id,
-            transactionType: TransactionType::firstWhere('name', 'CRJ'),
+            transactionType: TransactionType::CRJ(),
             payment_type_id: 1,
             reference_number: $timeDeposit->reference_number,
             credit: $timeDeposit->maturity_amount,
@@ -33,7 +33,7 @@ class TerminateTimeDeposit
 
         app(CreateTransaction::class)->handle(new TransactionData(
             account_id: $timeDeposit->time_deposit_account_id,
-            transactionType: TransactionType::firstWhere('name', 'CRJ'),
+            transactionType: TransactionType::CRJ(),
             payment_type_id: 1,
             reference_number: $timeDeposit->reference_number,
             debit: $timeDeposit->maturity_amount,

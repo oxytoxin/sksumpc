@@ -21,7 +21,7 @@ class PostCapitalSubscriptionBillingPayments
             return Notification::make()->title('Billing reference number and payment type is missing!')->danger()->send();
         }
         DB::beginTransaction();
-        $transaction_type = TransactionType::firstWhere('name', 'CRJ');
+        $transaction_type = TransactionType::CRJ();
         $cbuBilling->capital_subscription_billing_payments()->with('capital_subscription')->each(function (CapitalSubscriptionBillingPayment $cbup) use ($cbuBilling, $transaction_type) {
             app(PayCapitalSubscription::class)->handle($cbup->capital_subscription, new CapitalSubscriptionPaymentData(
                 payment_type_id: $cbuBilling->payment_type_id,

@@ -21,7 +21,7 @@ class PostCashCollectibleBillingPayments
             return Notification::make()->title('Billing reference number and payment type is missing!')->danger()->send();
         }
         DB::beginTransaction();
-        $transaction_type = TransactionType::firstWhere('name', 'CRJ');
+        $transaction_type = TransactionType::CRJ();
         $cashCollectibleBilling->cash_collectible_billing_payments()->each(function (CashCollectibleBillingPayment $payment) use ($cashCollectibleBilling, $transaction_type) {
             app(PayCashCollectible::class)->handle(
                 cashCollectibleAccount: $cashCollectibleBilling->cash_collectible_account,

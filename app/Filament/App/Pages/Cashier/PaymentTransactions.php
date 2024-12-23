@@ -324,7 +324,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                             $member = Member::find($formData['member_id']);
                             $transactions = [];
                             $payment_types = PaymentType::get();
-                            $transaction_type = TransactionType::firstWhere('name', 'CRJ');
+                            $transaction_type = TransactionType::CRJ();
                             foreach ($formData['transactions'] as $key => $transaction) {
                                 if ($transaction['type'] == 'cbu') {
                                     $transaction_data = CashierTransactionsPageCbuPayment::handle(
@@ -417,7 +417,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                         amount: $transaction['data']['amount'],
                                         maturity_amount: TimeDepositsProvider::getMaturityAmount(floatval($transaction['data']['amount'])),
                                         transaction_date: $this->transaction_date,
-                                    ), transactionType: TransactionType::firstWhere('name', 'CRJ'));
+                                    ), transactionType: TransactionType::CRJ());
                                     $time_deposit_account = $td->time_deposit_account;
                                     $transactions[] = [
                                         'payee' => $member->full_name,
@@ -438,7 +438,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                         reference_number: $transaction['data']['reference_number'],
                                         amount: $transaction['data']['amount'],
                                         transaction_date: $this->transaction_date,
-                                    ), TransactionType::firstWhere('name', 'CRJ'));
+                                    ), TransactionType::CRJ());
                                     $transactions[] = [
                                         'payee' => $transaction['data']['payee'],
                                         'account_number' => '',
@@ -458,7 +458,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                         amount: $transaction['data']['amount'],
                                         remarks: $transaction['data']['remarks'],
                                         transaction_date: $this->transaction_date,
-                                    ), TransactionType::firstWhere('name', 'CRJ'));
+                                    ), TransactionType::CRJ());
                                     $transactions[] = [
                                         'payee' => $member->full_name,
                                         'account_number' => $loan_account->number,

@@ -30,7 +30,7 @@ class PostMsoBillingPayments
             return Notification::make()->title('Billing reference number and payment type is missing!')->danger()->send();
         }
         DB::beginTransaction();
-        $transaction_type = TransactionType::firstWhere('name', 'CRJ');
+        $transaction_type = TransactionType::CRJ();
         $msoBilling->payments()->with('member')->each(function (MsoBillingPayment $payment) use ($msoBilling, $transaction_type) {
             $member = $payment->member;
             if ($msoBilling->type == 1) {

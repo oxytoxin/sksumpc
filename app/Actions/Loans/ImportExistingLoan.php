@@ -94,7 +94,7 @@ class ImportExistingLoan
         $loan->save();
 
         $principal_payment = $loan->gross_amount - $balance_forwarded;
-        $transactionType = TransactionType::firstWhere('name', 'CRJ');
+        $transactionType = TransactionType::CRJ();
         app(CreateTransaction::class)->handle(new TransactionData(
             account_id: Account::getCashOnHand()->id,
             transactionType: $transactionType,

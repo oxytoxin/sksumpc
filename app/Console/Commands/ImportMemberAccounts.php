@@ -47,8 +47,8 @@ class ImportMemberAccounts extends Command
     public function handle()
     {
         $members = Member::get(['id', 'mpc_code']);
-        $members = $members->mapWithKeys(fn ($m) => [$m->mpc_code => $m]);
-        $transaction_type = TransactionType::firstWhere('name', 'CRJ');
+        $members = $members->mapWithKeys(fn($m) => [$m->mpc_code => $m]);
+        $transaction_type = TransactionType::CRJ();
         $rows = SimpleExcelReader::create(storage_path('csv/accounts/regular_savings_accounts.xlsx'))->getRows();
         $this->importSavings(rows: $rows, members: $members, transaction_type: $transaction_type);
         $rows = SimpleExcelReader::create(storage_path('csv/accounts/associate_savings_accounts.xlsx'))->getRows();

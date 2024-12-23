@@ -11,4 +11,19 @@ use Illuminate\Database\Eloquent\Model;
 class TransactionType extends Model
 {
     use HasFactory;
+
+    public static function CRJ()
+    {
+        return self::firstWhere('name', 'CRJ');
+    }
+
+    public static function CDJ()
+    {
+        return self::firstWhere('name', 'CDJ');
+    }
+
+    public static function JEV()
+    {
+        return self::firstWhere('name', 'JEV');
+    }
 }

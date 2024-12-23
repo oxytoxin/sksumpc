@@ -35,7 +35,7 @@ class GenerateLoveGiftsInterestForMember
             payment_type_id: 1,
             reference_number: '#INTEREST',
             amount: $total_interest
-        ), TransactionType::firstWhere('name', 'CDJ'));
+        ), TransactionType::CDJ());
         $member->imprests_unaccrued()->update([
             'accrued' => true,
         ]);

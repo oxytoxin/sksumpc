@@ -51,7 +51,7 @@ class ImportMembers extends Command
             $religions = Religion::get();
             $genders = Gender::get();
             $civil_statuses = CivilStatus::get();
-            $transaction_type = TransactionType::firstWhere('name', 'CRJ');
+            $transaction_type = TransactionType::CRJ();
             $rows->each(function (array $memberData) use ($divisions, $religions, $genders, $civil_statuses, $transaction_type) {
                 try {
                     if ($memberData['mpc_code']) {
