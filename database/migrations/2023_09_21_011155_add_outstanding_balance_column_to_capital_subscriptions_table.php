@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('capital_subscriptions', function (Blueprint $table) {
             $table->decimal('outstanding_balance', 18, 4)->after('par_value');
-            $table->decimal('total_amount_paid', 18, 4)->virtualAs(DB::raw("IF(outstanding_balance > 0, amount_subscribed - outstanding_balance, amount_subscribed)"))->after('par_value');
+            $table->decimal('total_amount_paid', 18, 4)->virtualAs(DB::raw('IF(outstanding_balance > 0, amount_subscribed - outstanding_balance, amount_subscribed)'))->after('par_value');
             $table->decimal('actual_amount_paid', 18, 4)->default(0)->after('par_value');
         });
         DB::unprepared('

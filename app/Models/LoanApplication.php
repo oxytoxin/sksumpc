@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use NumberFormatter;
-use Spatie\LaravelData\DataCollection;
 use App\Oxytoxin\DTO\Loan\LoanApproval;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use NumberFormatter;
+use Spatie\LaravelData\DataCollection;
 
 /**
  * @mixin IdeHelperLoanApplication
@@ -35,7 +35,7 @@ class LoanApplication extends Model
         'payment_start_date' => 'immutable_date',
         'surcharge_start_date' => 'immutable_date',
         'status' => 'integer',
-        'approvals' => DataCollection::class . ':' . LoanApproval::class,
+        'approvals' => DataCollection::class.':'.LoanApproval::class,
     ];
 
     public function getStatusNameAttribute()
@@ -113,9 +113,8 @@ class LoanApplication extends Model
             $loanApplication->cbu_amount = CapitalSubscription::whereMemberId($loanApplication->member_id)->sum('actual_amount_paid');
         });
 
-
         static::created(function (LoanApplication $loanApplication) {
-            $loanApplication->reference_number = $loanApplication->loan_type->code . '-' . today()->format('Y-') . str_pad($loanApplication->id, 6, '0', STR_PAD_LEFT);
+            $loanApplication->reference_number = $loanApplication->loan_type->code.'-'.today()->format('Y-').str_pad($loanApplication->id, 6, '0', STR_PAD_LEFT);
             $loanApplication->save();
         });
     }

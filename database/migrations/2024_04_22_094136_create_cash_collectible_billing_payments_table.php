@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\CashCollectible;
 use App\Models\CashCollectibleBilling;
 use App\Models\Member;
 use Illuminate\Database\Migrations\Migration;

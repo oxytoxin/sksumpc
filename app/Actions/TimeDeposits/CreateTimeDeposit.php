@@ -12,11 +12,8 @@ use App\Oxytoxin\DTO\MSO\TimeDepositData;
 use App\Oxytoxin\DTO\Transactions\TransactionData;
 use DB;
 
-
 class CreateTimeDeposit
 {
-
-
     public function handle(TimeDepositData $timeDepositData, TransactionType $transactionType, $account_number = null)
     {
         DB::beginTransaction();
@@ -41,30 +38,7 @@ class CreateTimeDeposit
             'transaction_date' => $timeDepositData->transaction_date,
             'time_deposit_account_id' => $tda->id,
         ]);
-        if ($timeDepositData->payment_type_id == 1) {
-            app(CreateTransaction::class)->handle(new TransactionData(
-                account_id: Account::getCashOnHand()->id,
-                transactionType: $transactionType,
-                payment_type_id: $timeDepositData->payment_type_id,
-                reference_number: $td->reference_number,
-                debit: $td->amount,
-                member_id: $td->member_id,
-                remarks: 'Member Time Deposit',
-                transaction_date: $timeDepositData->transaction_date,
-            ));
-        }
-        if ($timeDepositData->payment_type_id == 4) {
-            app(CreateTransaction::class)->handle(new TransactionData(
-                account_id: Account::getCashInBankMSO()->id,
-                transactionType: $transactionType,
-                payment_type_id: $timeDepositData->payment_type_id,
-                reference_number: $td->reference_number,
-                debit: $td->amount,
-                member_id: $td->member_id,
-                remarks: 'Member Time Deposit',
-                transaction_date: $timeDepositData->transaction_date,
-            ));
-        }
+
         app(CreateTransaction::class)->handle(new TransactionData(
             account_id: $tda->id,
             transactionType: $transactionType,

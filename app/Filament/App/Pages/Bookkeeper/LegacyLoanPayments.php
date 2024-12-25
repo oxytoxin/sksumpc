@@ -48,13 +48,13 @@ class LegacyLoanPayments extends Page
                     ->options(Member::pluck('full_name', 'id'))
                     ->reactive(),
                 Select::make('loan_account_id')
-                    ->options(fn($get) => LoanAccount::when($get('member_id'), fn($q, $v) => $q->where('member_id', $v))->pluck('number', 'id'))
+                    ->options(fn ($get) => LoanAccount::when($get('member_id'), fn ($q, $v) => $q->where('member_id', $v))->pluck('number', 'id'))
                     ->searchable()
                     ->reactive()
                     ->label('Loan Account')
                     ->preload(),
                 Placeholder::make('loan_type')
-                    ->content(fn($get) => LoanAccount::find($get('loan_account_id'))?->loan?->loan_type?->name),
+                    ->content(fn ($get) => LoanAccount::find($get('loan_account_id'))?->loan?->loan_type?->name),
                 Select::make('payment_type_id')
                     ->paymenttype()
                     ->required(),
@@ -64,7 +64,7 @@ class LegacyLoanPayments extends Page
                     ->moneymask(),
                 TextInput::make('interest')
                     ->moneymask(),
-                Placeholder::make('total')->content(fn($get) => floatval($get('principal')) + floatval($get('interest'))),
+                Placeholder::make('total')->content(fn ($get) => floatval($get('principal')) + floatval($get('interest'))),
                 DatePicker::make('transaction_date')
                     ->default(config('app.transaction_date') ?? today())
                     ->native(false)
@@ -87,8 +87,8 @@ class LegacyLoanPayments extends Page
                                 );
                             Notification::make()->title('Legacy loan payment posted!')->success()->send();
                             $this->reset();
-                        })
-                ])
+                        }),
+                ]),
             ])
             ->statePath('data');
     }

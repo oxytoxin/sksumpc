@@ -7,6 +7,4 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @mixin IdeHelperPosition
  */
-class Position extends Model
-{
-}
+class Position extends Model {}

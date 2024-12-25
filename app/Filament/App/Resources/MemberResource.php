@@ -32,7 +32,6 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -70,7 +69,7 @@ class MemberResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return auth()->user()->roles()->count() > 1 || !auth()->user()->hasRole('member');
+        return auth()->user()->roles()->count() > 1 || ! auth()->user()->hasRole('member');
     }
 
     public static function infolist(Infolist $infolist): Infolist
@@ -94,7 +93,7 @@ class MemberResource extends Resource
                         SpatieMediaLibraryImageEntry::make('profile_photo')
                             ->label('')
                             ->collection('profile_photo')->circular()
-                            ->visible(fn($record) => $record->getFirstMedia('profile_photo')),
+                            ->visible(fn ($record) => $record->getFirstMedia('profile_photo')),
                         TextEntry::make('full_name')->extraAttributes(['class' => 'font-semibold'])->inlineLabel()->alignStart(),
                         TextEntry::make('contact')->extraAttributes(['class' => 'font-semibold'])->inlineLabel()->alignStart(),
                         TextEntry::make('age')->extraAttributes(['class' => 'font-semibold'])->inlineLabel()->alignStart(),
@@ -129,26 +128,26 @@ class MemberResource extends Resource
                             TextEntry::make('membership_acceptance.effectivity_date')->label('Membership Date')->date('F d, Y')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                             TextEntry::make('membership_acceptance.bod_resolution')->label('BOD Resolution')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                             TextEntry::make('member_type.name')->label('Type of Member')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
-                            TextEntry::make('initial_capital_subscription.number_of_shares')->formatStateUsing(fn($state) => round($state, 0))->label('# of Shares Subscribed')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
+                            TextEntry::make('initial_capital_subscription.number_of_shares')->formatStateUsing(fn ($state) => round($state, 0))->label('# of Shares Subscribed')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                             TextEntry::make('initial_capital_subscription.amount_subscribed')->label('Amount Subscribed')->money('PHP')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                         ]),
                     Actions::make([
                         Action::make('print')
-                            ->url(fn($livewire) => route('filament.app.resources.members.print', ['member' => $livewire->record])),
+                            ->url(fn ($livewire) => route('filament.app.resources.members.print', ['member' => $livewire->record])),
                     ])->alignEnd(),
                 ]),
         ];
 
         $tabs[] = Tab::make('CBU')
-            ->schema(fn($record) => [
+            ->schema(fn ($record) => [
                 Livewire::make(CbuTable::class, ['member' => $record]),
             ]);
         $tabs[] = Tab::make('MSO')
-            ->schema(fn($record) => [
+            ->schema(fn ($record) => [
                 Livewire::make(MsoTable::class, ['member' => $record]),
             ]);
         $tabs[] = Tab::make('Loan')
-            ->schema(fn($record) => [
+            ->schema(fn ($record) => [
                 Livewire::make(LoansTable::class, ['member' => $record]),
             ]);
 
@@ -189,6 +188,7 @@ class MemberResource extends Resource
                                         $set('amount_subscribed', round($member_type->default_amount_subscribed, 0));
                                         if ($member_type?->id == 1) {
                                             $set('present_employer', 'SKSU-Sultan Kudarat State University');
+
                                             return;
                                         }
                                         if ($member_type?->id == 4) {
@@ -207,17 +207,17 @@ class MemberResource extends Resource
                                     ->required(),
                                 Select::make('member_subtype_id')
                                     ->relationship('member_subtype', 'name')
-                                    ->options(fn($get) => MemberSubtype::whereMemberTypeId($get('member_type_id'))->pluck('name', 'id'))
-                                    ->required(fn($get) => $get('member_type_id') == 1)
-                                    ->visible(fn($get) => $get('member_type_id') == 1)
+                                    ->options(fn ($get) => MemberSubtype::whereMemberTypeId($get('member_type_id'))->pluck('name', 'id'))
+                                    ->required(fn ($get) => $get('member_type_id') == 1)
+                                    ->visible(fn ($get) => $get('member_type_id') == 1)
                                     ->live(),
                                 Select::make('division_id')
-                                    ->visible(fn($get) => $get('member_type_id') != 4)
+                                    ->visible(fn ($get) => $get('member_type_id') != 4)
                                     ->relationship('division', 'name'),
                                 TextInput::make('grade')
-                                    ->visible(fn($get) => $get('member_type_id') == 4),
+                                    ->visible(fn ($get) => $get('member_type_id') == 4),
                                 TextInput::make('section')
-                                    ->visible(fn($get) => $get('member_type_id') == 4),
+                                    ->visible(fn ($get) => $get('member_type_id') == 4),
                                 Select::make('patronage_status_id')
                                     ->label('Patronage Status')
                                     ->default(1)
@@ -232,26 +232,26 @@ class MemberResource extends Resource
                     ->schema([
                         TextInput::make('first_name')
                             ->label('First Name')
-                            ->dehydrateStateUsing(fn($state) => strtoupper($state))
+                            ->dehydrateStateUsing(fn ($state) => strtoupper($state))
                             ->required()
                             ->maxLength(125),
                         TextInput::make('last_name')
                             ->label('Last Name')
-                            ->dehydrateStateUsing(fn($state) => strtoupper($state))
+                            ->dehydrateStateUsing(fn ($state) => strtoupper($state))
                             ->required()
                             ->maxLength(125),
                         TextInput::make('middle_initial')
                             ->label('MI')
-                            ->dehydrateStateUsing(fn($state) => $state ? strtoupper($state) : null)
+                            ->dehydrateStateUsing(fn ($state) => $state ? strtoupper($state) : null)
                             ->maxLength(1),
                         TextInput::make('contact'),
                         DatePicker::make('dob')
                             ->before(today()->subYearsNoOverflow(10))
                             ->validationAttribute('Date of Birth')
                             ->live(onBlur: true)
-                            ->afterStateUpdated(fn($set, $state) => $set('age', Carbon::make($state)?->diffInYears(today())))
+                            ->afterStateUpdated(fn ($set, $state) => $set('age', Carbon::make($state)?->diffInYears(today())))
                             ->label('Date of Birth'),
-                        TextInput::make('age')->readOnly()->dehydrated(false)->formatStateUsing(fn($record) => $record?->age),
+                        TextInput::make('age')->readOnly()->dehydrated(false)->formatStateUsing(fn ($record) => $record?->age),
                         TextInput::make('place_of_birth')
                             ->label('Place of Birth'),
                         Section::make('Address')
@@ -262,15 +262,15 @@ class MemberResource extends Resource
                                     ->relationship('region', 'description'),
                                 Select::make('province_id')
                                     ->live()
-                                    ->disabled(fn($get) => !$get('region_id'))
-                                    ->relationship('province', 'name', fn($query, $get) => $query->whereRegionId($get('region_id'))),
+                                    ->disabled(fn ($get) => ! $get('region_id'))
+                                    ->relationship('province', 'name', fn ($query, $get) => $query->whereRegionId($get('region_id'))),
                                 Select::make('municipality_id')
                                     ->live()
-                                    ->disabled(fn($get) => !$get('province_id'))
-                                    ->relationship('municipality', 'name', fn($query, $get) => $query->whereProvinceId($get('province_id'))),
+                                    ->disabled(fn ($get) => ! $get('province_id'))
+                                    ->relationship('municipality', 'name', fn ($query, $get) => $query->whereProvinceId($get('province_id'))),
                                 Select::make('barangay_id')
-                                    ->disabled(fn($get) => !$get('municipality_id'))
-                                    ->relationship('barangay', 'name', fn($query, $get) => $query->whereMunicipalityId($get('municipality_id'))),
+                                    ->disabled(fn ($get) => ! $get('municipality_id'))
+                                    ->relationship('barangay', 'name', fn ($query, $get) => $query->whereMunicipalityId($get('municipality_id'))),
                             ])->columns(2),
                     ]),
                 Grid::make(3)
@@ -286,7 +286,7 @@ class MemberResource extends Resource
                     ]),
                 TableRepeater::make('dependents')
                     ->default([])
-                    ->label(fn($get) => $get('member_type_id') == 4 ? 'Parents' : 'Dependents')
+                    ->label(fn ($get) => $get('member_type_id') == 4 ? 'Parents' : 'Dependents')
                     ->schema([
                         TextInput::make('name')->required(),
                         DatePicker::make('dob')->label('Date of Birth')->format('Y-m-d')->native(false),
@@ -320,12 +320,12 @@ class MemberResource extends Resource
                 Section::make('Membership Acceptance')
                     ->schema([
                         TextInput::make('bod_resolution')->label('BOD Resolution'),
-                        DatePicker::make('effectivity_date')->native(false)->label('Membership Date')->required()->default(fn($livewire) => $livewire->transaction_date),
+                        DatePicker::make('effectivity_date')->native(false)->label('Membership Date')->required()->default(fn ($livewire) => $livewire->transaction_date),
                         Hidden::make('type')->default(MembershipStatus::ACCEPTANCE),
                     ])->relationship('membership_acceptance'),
                 Section::make('Initial Capital Subscription')
                     ->hiddenOn('edit')
-                    ->visible(fn($get) => $get('member_type_id'))
+                    ->visible(fn ($get) => $get('member_type_id'))
                     ->schema([
                         TextInput::make('number_of_terms')->readOnly()->minValue(0)->default(12),
                         TextInput::make('number_of_shares')->minValue(0)->default(0)
@@ -385,7 +385,7 @@ class MemberResource extends Resource
                 TextColumn::make('member_type.name')
                     ->sortable(),
                 TextColumn::make('member_subtype.name')
-                    ->visible(fn(HasTable $livewire) => $livewire->getTableFilterState('member_type') == 1)
+                    ->visible(fn (HasTable $livewire) => $livewire->getTableFilterState('member_type') == 1)
                     ->sortable(),
                 TextColumn::make('terminated_at')
                     ->date('m/d/Y')
@@ -401,16 +401,16 @@ class MemberResource extends Resource
                         Select::make('member_type')
                             ->relationship('member_type', 'name')
                             ->placeholder('All')
-                            ->afterStateUpdated(fn($set) => $set('member_subtype', null)),
+                            ->afterStateUpdated(fn ($set) => $set('member_subtype', null)),
                         Select::make('member_subtype')
-                            ->visible(fn($get) => $get('member_type') == 1)
+                            ->visible(fn ($get) => $get('member_type') == 1)
                             ->placeholder('All')
                             ->relationship('member_subtype', 'name'),
                     ])
                     ->query(
-                        fn($state, $query) => $query
-                            ->when($state['member_type'], fn($q, $v) => $q->whereMemberTypeId($v))
-                            ->when($state['member_subtype'], fn($q, $v) => $q->whereMemberSubtypeId($v))
+                        fn ($state, $query) => $query
+                            ->when($state['member_type'], fn ($q, $v) => $q->whereMemberTypeId($v))
+                            ->when($state['member_subtype'], fn ($q, $v) => $q->whereMemberSubtypeId($v))
                     ),
                 SelectFilter::make('gender')
                     ->relationship('gender', 'name'),
@@ -425,9 +425,9 @@ class MemberResource extends Resource
                     ])
                     ->default(1)
                     ->query(
-                        fn($query, $state) => $query
-                            ->when($state['value'] == 1, fn($q) => $q->whereNull('terminated_at'))
-                            ->when($state['value'] == 2, fn($q) => $q->whereNotNull('terminated_at'))
+                        fn ($query, $state) => $query
+                            ->when($state['value'] == 1, fn ($q) => $q->whereNull('terminated_at'))
+                            ->when($state['value'] == 2, fn ($q) => $q->whereNotNull('terminated_at'))
                     ),
                 DateRangeFilter::make('membership_date')
                     ->displayFormat('MM/DD/YYYY')
@@ -441,7 +441,7 @@ class MemberResource extends Resource
                     ->button()
                     ->color(Color::Amber)
                     ->visible(auth()->user()->can('manage members'))
-                    ->hidden(fn($record) => $record->terminated_at)
+                    ->hidden(fn ($record) => $record->terminated_at)
                     ->form([
                         TextInput::make('bod_resolution')->label('BOD Resolution')->required(),
                         DatePicker::make('termination_date')->default(config('app.transaction_date') ?? today())->native(false)->required(),
@@ -459,10 +459,10 @@ class MemberResource extends Resource
                         Notification::make()->title('Member terminated.')->success()->send();
                     }),
                 Tables\Actions\EditAction::make()
-                    ->hidden(fn($record) => $record->terminated_at)
+                    ->hidden(fn ($record) => $record->terminated_at)
                     ->visible(auth()->user()->can('manage members')),
                 Tables\Actions\DeleteAction::make()
-                    ->hidden(fn($record) => $record->terminated_at)
+                    ->hidden(fn ($record) => $record->terminated_at)
                     ->form([
                         TextInput::make('passkey')
                             ->hint("Manager's Password")
@@ -470,7 +470,7 @@ class MemberResource extends Resource
                             ->password(),
                     ])
                     ->action(function (Member $record, $data) {
-                        if (!OverrideProvider::promptManagerPasskey($data['passkey'])) {
+                        if (! OverrideProvider::promptManagerPasskey($data['passkey'])) {
                             return;
                         }
                         DB::beginTransaction();
@@ -492,7 +492,7 @@ class MemberResource extends Resource
             ])
             ->bulkActions([])
             ->emptyStateActions([])
-            ->recordUrl(fn(Member $record) => MemberResource::getUrl('view', ['record' => $record]))
+            ->recordUrl(fn (Member $record) => MemberResource::getUrl('view', ['record' => $record]))
             ->paginated([10, 25, 50]);
     }
 

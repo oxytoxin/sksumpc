@@ -5,23 +5,22 @@ namespace App\Console\Commands;
 use App\Actions\CapitalSubscription\CreateNewCapitalSubscription;
 use App\Actions\CapitalSubscription\CreateNewCapitalSubscriptionAccount;
 use App\Actions\CapitalSubscription\PayCapitalSubscription;
-use DB;
-use App\Models\User;
+use App\Models\CivilStatus;
+use App\Models\Division;
 use App\Models\Gender;
 use App\Models\Member;
-use DateTimeImmutable;
-use App\Models\Division;
 use App\Models\Religion;
+use App\Models\TransactionType;
+use App\Models\User;
+use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionData;
+use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionPaymentData;
+use App\Oxytoxin\DTO\MSO\Accounts\CapitalSubscriptionAccountData;
+use DateTimeImmutable;
+use DB;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Schema;
 use Spatie\Permission\Models\Role;
 use Spatie\SimpleExcel\SimpleExcelReader;
-use App\Actions\Memberships\CreateMemberInitialAccounts;
-use App\Models\CivilStatus;
-use App\Models\TransactionType;
-use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionData;
-use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionPaymentData;
-use App\Oxytoxin\DTO\MSO\Accounts\CapitalSubscriptionAccountData;
 
 class ImportMembers extends Command
 {
@@ -44,7 +43,7 @@ class ImportMembers extends Command
      */
     public function handle()
     {
-        if (!Member::count()) {
+        if (! Member::count()) {
             $rows = SimpleExcelReader::create(storage_path('csv/PROFILING.xlsx'))
                 ->getRows();
             $divisions = Division::get();
@@ -68,7 +67,7 @@ class ImportMembers extends Command
                             }
                         }
                         $member_address = implode(', ', $address);
-                        $memberData = collect($memberData)->map(fn($d) => filled($d) ? trim($d instanceof DateTimeImmutable ? strtoupper($d->format('m/d/Y')) : strtoupper($d)) : null)->toArray();
+                        $memberData = collect($memberData)->map(fn ($d) => filled($d) ? trim($d instanceof DateTimeImmutable ? strtoupper($d->format('m/d/Y')) : strtoupper($d)) : null)->toArray();
                         $member = Member::create([
                             'mpc_code' => $memberData['mpc_code'],
                             'first_name' => $memberData['firstname'],
@@ -135,7 +134,7 @@ class ImportMembers extends Command
         }
         Schema::disableForeignKeyConstraints();
         DB::table('members')->truncate();
-        DB::statement("ALTER TABLE members AUTO_INCREMENT =  1");
+        DB::statement('ALTER TABLE members AUTO_INCREMENT =  1');
         DB::unprepared(file_get_contents(database_path('migrations/members.sql')));
         Schema::enableForeignKeyConstraints();
     }

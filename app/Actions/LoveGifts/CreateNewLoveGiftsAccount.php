@@ -5,11 +5,8 @@ namespace App\Actions\LoveGifts;
 use App\Models\Account;
 use App\Oxytoxin\DTO\MSO\Accounts\LoveGiftAccountData;
 
-
 class CreateNewLoveGiftsAccount
 {
-
-
     public function handle(LoveGiftAccountData $loveGiftAccountData)
     {
         $member_savings = Account::firstWhere('tag', 'member_savings');

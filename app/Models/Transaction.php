@@ -38,7 +38,7 @@ class Transaction extends Model
     public function scopeWithoutMso(Builder $query)
     {
         $query->where(function ($query) {
-            $query->whereNotIn("tag", MsoTransactionTag::get())
+            $query->whereNotIn('tag', MsoTransactionTag::get())
                 ->orWhereNull('tag');
         });
     }

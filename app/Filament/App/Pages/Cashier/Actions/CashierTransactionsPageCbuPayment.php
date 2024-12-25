@@ -10,7 +10,6 @@ use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionPaymentData;
 
 class CashierTransactionsPageCbuPayment
 {
-
     public static function handle(Member $member, TransactionType $transaction_type, $reference_number, PaymentType $payment_type, $amount, $transaction_date): array
     {
         app(PayCapitalSubscription::class)->handle($member->capital_subscriptions_common, new CapitalSubscriptionPaymentData(
@@ -19,13 +18,14 @@ class CashierTransactionsPageCbuPayment
             amount: $amount,
             transaction_date: $transaction_date,
         ), $transaction_type);
+
         return [
             'account_number' => $member->capital_subscription_account->number,
             'account_name' => $member->capital_subscription_account->name,
             'reference_number' => $reference_number,
             'amount' => $amount,
             'payment_type' => $payment_type->name ?? 'CASH',
-            'remarks' => 'CBU PAYMENT'
+            'remarks' => 'CBU PAYMENT',
         ];
     }
 }

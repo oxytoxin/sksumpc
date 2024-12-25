@@ -8,7 +8,10 @@ function format_percentage($new, $old): string
 {
     if ($old != 0) {
         $percentage = ($new - $old) / $old * 100;
-        if (round($percentage, 4) == 0) return '-';
+        if (round($percentage, 4) == 0) {
+            return '-';
+        }
+
         return str(round($percentage, 4))->append('%');
     } else {
         return '-';
@@ -50,7 +53,6 @@ function sum_no_children_recursive(Collection|Model $items, string $key): float
         }
     }
 
-
     return $sum;
 }
 
@@ -82,6 +84,7 @@ function flattenRecursively(Collection $collection): Collection
         if ($item->children) {
             return flattenRecursively(collect($item->children));
         }
+
         return [$item];
     });
 }
@@ -109,17 +112,17 @@ function findRecursive($collection, $callback)
 
 function oxy_get_month_range(): array
 {
-    return collect(range(1, 12))->mapWithKeys(fn($m) => [$m => Carbon::create(null, $m)->format('F')])->toArray();
+    return collect(range(1, 12))->mapWithKeys(fn ($m) => [$m => Carbon::create(null, $m)->format('F')])->toArray();
 }
 
 function oxy_get_year_range(): array
 {
-    return collect(range(today()->addYears(10)->year, 2000))->mapWithKeys(fn($y) => [$y => $y])->toArray();
+    return collect(range(today()->addYears(10)->year, 2000))->mapWithKeys(fn ($y) => [$y => $y])->toArray();
 }
 
 function renumber_format($number, $decimals = 2)
 {
-    if (!$number || !floatval($number)) {
+    if (! $number || ! floatval($number)) {
         return '';
     }
     if ($number < 0) {

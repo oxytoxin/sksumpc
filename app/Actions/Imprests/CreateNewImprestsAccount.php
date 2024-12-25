@@ -6,14 +6,12 @@ use App\Models\Account;
 use App\Models\ImprestAccount;
 use App\Oxytoxin\DTO\MSO\Accounts\ImprestAccountData;
 
-
 class CreateNewImprestsAccount
 {
-
-
     public function handle(ImprestAccountData $imprestAccountData)
     {
         $member_savings = Account::firstWhere('tag', 'member_savings');
+
         return ImprestAccount::create([
             'name' => $imprestAccountData->name,
             'number' => $imprestAccountData->number,

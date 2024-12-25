@@ -21,9 +21,7 @@ class LoveGiftsTable extends Component implements HasForms, HasTable
     public $member_id;
 
     #[On('refresh')]
-    public function loanCreated()
-    {
-    }
+    public function loanCreated() {}
 
     public function table(Table $table): Table
     {

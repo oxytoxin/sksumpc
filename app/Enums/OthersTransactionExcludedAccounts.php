@@ -13,13 +13,13 @@ enum OthersTransactionExcludedAccounts: int
     case RESERVATION = 157;
     case OTHER_INCOME_ELECTRICITY = 162;
     case OTHER_INCOME_RENTALS = 160;
-    
+
     case MEMBERSHIP_FEES = 81;
     case LABORATORY_CBU_PAID = 101;
     case LABORATORY_CBU_DEPOSIT = 105;
 
     public static function get()
     {
-        return collect(self::cases())->map(fn($c) => $c->value)->toArray();
+        return collect(self::cases())->map(fn ($c) => $c->value)->toArray();
     }
 }

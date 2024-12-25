@@ -9,11 +9,8 @@ use App\Oxytoxin\Providers\SavingsProvider;
 use App\Oxytoxin\Services\InterestCalculator;
 use DB;
 
-
 class GenerateSavingsInterestForMember
 {
-
-
     public function handle(Member $member)
     {
         $interestCalculator = app(InterestCalculator::class);

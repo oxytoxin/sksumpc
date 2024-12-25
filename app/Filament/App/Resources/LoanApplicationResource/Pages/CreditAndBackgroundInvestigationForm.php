@@ -26,6 +26,7 @@ class CreditAndBackgroundInvestigationForm extends Page
     public $data = [];
 
     public LoanApplication $loan_application;
+
     public CreditAndBackgroundInvestigation $cibi;
 
     public function form(Form $form): Form
@@ -33,6 +34,7 @@ class CreditAndBackgroundInvestigationForm extends Page
         if ($this->loan_application->loan_type_id == 5) {
             return $this->kabuhayanForm($form);
         }
+
         return $this->genericForm($form);
     }
 
@@ -49,7 +51,7 @@ class CreditAndBackgroundInvestigationForm extends Page
                                 TextInput::make('elementary')->numeric(),
                                 TextInput::make('high_school')->numeric(),
                                 TextInput::make('college')->numeric(),
-                            ])
+                            ]),
                     ]),
                 Fieldset::make('financial_capability')
                     ->schema([
@@ -113,7 +115,7 @@ class CreditAndBackgroundInvestigationForm extends Page
                             TextInput::make('spouse.address'),
                             TextInput::make('spouse.highest_educational_attainment'),
                             TextInput::make('spouse.school'),
-                        ])->columnSpan(1)
+                        ])->columnSpan(1),
                 ]),
             TableRepeater::make('children')
                 ->schema([
@@ -170,13 +172,14 @@ class CreditAndBackgroundInvestigationForm extends Page
     public function save()
     {
         $this->cibi->update([
-            'details' => $this->form->getState()
+            'details' => $this->form->getState(),
         ]);
         Notification::make()->title('Saved!')->success()->send();
     }
+
     private function keyvaluefield($name, $key)
     {
-        return KeyValue::make($key . '.' . $name)
+        return KeyValue::make($key.'.'.$name)
             ->deletable(false)
             ->addable(false)
             ->editableKeys(false)
@@ -190,7 +193,7 @@ class CreditAndBackgroundInvestigationForm extends Page
     public function mount()
     {
         $this->cibi = CreditAndBackgroundInvestigation::query()->firstOrCreate([
-            'loan_application_id' => $this->loan_application->id
+            'loan_application_id' => $this->loan_application->id,
         ]);
         $this->form->fill();
         if ($this->cibi->details) {

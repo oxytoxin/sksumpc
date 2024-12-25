@@ -75,6 +75,11 @@ return new class extends Migration
                     'created_at' => $now,
                     'updated_at' => $now,
                 ],
+                [
+                    'name' => 'OTHERS',
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ],
             ]
         );
     }

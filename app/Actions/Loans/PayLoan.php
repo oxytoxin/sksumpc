@@ -12,12 +12,9 @@ use App\Oxytoxin\DTO\Loan\LoanPaymentData;
 use App\Oxytoxin\DTO\Transactions\TransactionData;
 use App\Oxytoxin\Providers\LoansProvider;
 
-
 class PayLoan
 {
-
-
-    public function handle(Loan $loan, LoanPaymentData $loanPaymentData, TransactionType $transactionType, $isJevOrDv = false): LoanPayment
+    public function handle(Loan $loan, LoanPaymentData $loanPaymentData, TransactionType $transactionType): LoanPayment
     {
         $start = $loan->last_payment?->transaction_date ?? $loan->transaction_date;
         $end = $loanPaymentData->transaction_date;
@@ -27,33 +24,6 @@ class PayLoan
         $principal_payment = $loanPaymentData->amount - $interest_payment;
         $loan_receivables_account = $loan->loan_account;
         $loan_interests_account = Account::whereAccountableType(LoanType::class)->whereAccountableId($loan->loan_type_id)->whereTag('loan_interests')->first();
-
-        if (!$isJevOrDv) {
-            if ($loanPaymentData->payment_type_id == 1) {
-                app(CreateTransaction::class)->handle(new TransactionData(
-                    account_id: Account::getCashOnHand()->id,
-                    transactionType: $transactionType,
-                    payment_type_id: $loanPaymentData->payment_type_id,
-                    reference_number: $loanPaymentData->reference_number,
-                    debit: $loanPaymentData->amount,
-                    member_id: $loan->member_id,
-                    remarks: 'Member Loan Payment',
-                    transaction_date: $loanPaymentData->transaction_date,
-                ));
-            }
-            if ($loanPaymentData->payment_type_id == 4) {
-                app(CreateTransaction::class)->handle(new TransactionData(
-                    account_id: Account::getCashInBankGF()->id,
-                    transactionType: $transactionType,
-                    payment_type_id: $loanPaymentData->payment_type_id,
-                    reference_number: $loanPaymentData->reference_number,
-                    debit: $loanPaymentData->amount,
-                    member_id: $loan->member_id,
-                    remarks: 'Member Loan Payment',
-                    transaction_date: $loanPaymentData->transaction_date,
-                ));
-            }
-        }
 
         app(CreateTransaction::class)->handle(new TransactionData(
             account_id: $loan_receivables_account->id,

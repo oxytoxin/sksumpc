@@ -13,19 +13,19 @@ class FinancialStatementProvider
     {
         return Account::withQueryConstraint(function ($query) use ($date) {
             $query
-                ->withCount(['children' => fn($q) => $q->whereNull('member_id')])
-                ->withSum(['recursiveCrjTransactions as total_crj_debit' => fn($query) => $query->whereDate('transaction_date', $date)], 'debit')
-                ->withSum(['recursiveCrjTransactions as total_crj_credit' => fn($query) => $query->whereDate('transaction_date', $date)], 'credit')
-                ->withSum(['recursiveCdjTransactions as total_cdj_debit' => fn($query) => $query->whereDate('transaction_date', $date)], 'debit')
-                ->withSum(['recursiveCdjTransactions as total_cdj_credit' => fn($query) => $query->whereDate('transaction_date', $date)], 'credit')
-                ->withSum(['recursiveJevTransactions as total_jev_debit' => fn($query) => $query->whereDate('transaction_date', $date)], 'debit')
-                ->withSum(['recursiveJevTransactions as total_jev_credit' => fn($query) => $query->whereDate('transaction_date', $date)], 'credit')
+                ->withCount(['children' => fn ($q) => $q->whereNull('member_id')])
+                ->withSum(['recursiveCrjTransactions as total_crj_debit' => fn ($query) => $query->whereDate('transaction_date', $date)], 'debit')
+                ->withSum(['recursiveCrjTransactions as total_crj_credit' => fn ($query) => $query->whereDate('transaction_date', $date)], 'credit')
+                ->withSum(['recursiveCdjTransactions as total_cdj_debit' => fn ($query) => $query->whereDate('transaction_date', $date)], 'debit')
+                ->withSum(['recursiveCdjTransactions as total_cdj_credit' => fn ($query) => $query->whereDate('transaction_date', $date)], 'credit')
+                ->withSum(['recursiveJevTransactions as total_jev_debit' => fn ($query) => $query->whereDate('transaction_date', $date)], 'debit')
+                ->withSum(['recursiveJevTransactions as total_jev_credit' => fn ($query) => $query->whereDate('transaction_date', $date)], 'credit')
                 ->whereNull('accounts.member_id');
         }, function () use ($date) {
             $balance_forwarded_date = Carbon::create($date)->subMonthNoOverflow();
             $joinSub = BalanceForwardedEntry::whereHas(
                 'balance_forwarded_summary',
-                fn($q) => $q
+                fn ($q) => $q
                     ->whereMonth('generated_date', $balance_forwarded_date->month)
                     ->whereYear('generated_date', $balance_forwarded_date->year)
             )->groupByRaw('account_id, balance_forwarded_summary_id')->selectRaw('balance_forwarded_entries.balance_forwarded_summary_id, balance_forwarded_entries.account_id, sum(debit) as debit, sum(credit) as credit');
@@ -71,25 +71,23 @@ class FinancialStatementProvider
         })->toTree();
     }
 
-
-
     public static function getAccountsSummary($month, $year)
     {
         return Account::withQueryConstraint(function ($query) use ($month, $year) {
             $query
-                ->withCount(['children' => fn($q) => $q->whereNull('member_id')])
-                ->withSum(['recursiveCrjTransactions as total_crj_debit' => fn($query) => $query->whereMonth('transaction_date', $month)->whereYear('transaction_date', $year)], 'debit')
-                ->withSum(['recursiveCrjTransactions as total_crj_credit' => fn($query) => $query->whereMonth('transaction_date', $month)->whereYear('transaction_date', $year)], 'credit')
-                ->withSum(['recursiveCdjTransactions as total_cdj_debit' => fn($query) => $query->whereMonth('transaction_date', $month)->whereYear('transaction_date', $year)], 'debit')
-                ->withSum(['recursiveCdjTransactions as total_cdj_credit' => fn($query) => $query->whereMonth('transaction_date', $month)->whereYear('transaction_date', $year)], 'credit')
-                ->withSum(['recursiveJevTransactions as total_jev_debit' => fn($query) => $query->whereMonth('transaction_date', $month)->whereYear('transaction_date', $year)], 'debit')
-                ->withSum(['recursiveJevTransactions as total_jev_credit' => fn($query) => $query->whereMonth('transaction_date', $month)->whereYear('transaction_date', $year)], 'credit')
+                ->withCount(['children' => fn ($q) => $q->whereNull('member_id')])
+                ->withSum(['recursiveCrjTransactions as total_crj_debit' => fn ($query) => $query->whereMonth('transaction_date', $month)->whereYear('transaction_date', $year)], 'debit')
+                ->withSum(['recursiveCrjTransactions as total_crj_credit' => fn ($query) => $query->whereMonth('transaction_date', $month)->whereYear('transaction_date', $year)], 'credit')
+                ->withSum(['recursiveCdjTransactions as total_cdj_debit' => fn ($query) => $query->whereMonth('transaction_date', $month)->whereYear('transaction_date', $year)], 'debit')
+                ->withSum(['recursiveCdjTransactions as total_cdj_credit' => fn ($query) => $query->whereMonth('transaction_date', $month)->whereYear('transaction_date', $year)], 'credit')
+                ->withSum(['recursiveJevTransactions as total_jev_debit' => fn ($query) => $query->whereMonth('transaction_date', $month)->whereYear('transaction_date', $year)], 'debit')
+                ->withSum(['recursiveJevTransactions as total_jev_credit' => fn ($query) => $query->whereMonth('transaction_date', $month)->whereYear('transaction_date', $year)], 'credit')
                 ->whereNull('accounts.member_id');
         }, function () use ($month, $year) {
             $balance_forwarded_date = Carbon::create(year: $year, month: $month)->subMonthNoOverflow();
             $joinSub = BalanceForwardedEntry::whereHas(
                 'balance_forwarded_summary',
-                fn($q) => $q
+                fn ($q) => $q
                     ->whereMonth('generated_date', $balance_forwarded_date->month)
                     ->whereYear('generated_date', $balance_forwarded_date->year)
             )->groupByRaw('account_id, balance_forwarded_summary_id')->selectRaw('balance_forwarded_entries.balance_forwarded_summary_id, balance_forwarded_entries.account_id, sum(debit) as debit, sum(credit) as credit');

@@ -3,20 +3,16 @@
 namespace App\Filament\App\Resources;
 
 use App\Filament\App\Resources\OfficersListResource\Pages;
-use App\Filament\App\Resources\OfficersListResource\RelationManagers;
 use App\Models\Member;
 use App\Models\OfficersList;
 use App\Models\Position;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
-use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class OfficersListResource extends Resource
 {
@@ -40,7 +36,7 @@ class OfficersListResource extends Resource
                     ->schema([
                         Select::make('member_id')->options(Member::pluck('full_name', 'id'))->searchable()->label('Name')->required(),
                         Select::make('position_id')->options(Position::pluck('name', 'id'))->searchable()->label('Position')->required(),
-                    ])->hideLabels()
+                    ])->hideLabels(),
             ])
             ->columns(1);
     }
@@ -49,14 +45,14 @@ class OfficersListResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('year')
+                Tables\Columns\TextColumn::make('year'),
             ])
             ->filters([
                 //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make()
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

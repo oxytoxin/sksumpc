@@ -6,7 +6,6 @@ use App\Filament\App\Pages\Cashier\RequiresBookkeeperTransactionDate;
 use App\Models\AccountType;
 use App\Models\LoanType;
 use App\Models\TransactionType;
-use App\Oxytoxin\Providers\FinancialStatementProvider;
 use App\Oxytoxin\Providers\TrialBalanceProvider;
 use Auth;
 use Carbon\CarbonImmutable;
@@ -32,15 +31,15 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
 
     protected static ?string $navigationGroup = 'Bookkeeping';
 
-
-
     public static function shouldRegisterNavigation(): bool
     {
         return Auth::user()->can('manage bookkeeping');
     }
 
     public $data_loaded = false;
+
     public $data = [];
+
     public $load_data = true;
 
     public function form(Form $form): Form
@@ -51,7 +50,7 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
                     'single' => 'Single Month',
                     'comparative' => 'Comparative',
                     // 'period' => 'Period Covered',
-                    'yearly' => 'Yearly'
+                    'yearly' => 'Yearly',
                 ])
                 ->default('single')
                 ->live(),
@@ -59,26 +58,26 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
                 ->options(oxy_get_month_range())
                 ->default(config('app.transaction_date')?->month)
                 ->selectablePlaceholder(false)
-                ->visible(fn($get) => in_array($get('mode'), ['single']))
+                ->visible(fn ($get) => in_array($get('mode'), ['single']))
                 ->live(),
             Select::make('year')
                 ->options(oxy_get_year_range())
                 ->default(config('app.transaction_date')?->year)
                 ->selectablePlaceholder(false)
-                ->visible(fn($get) => in_array($get('mode'), ['single', 'yearly']))
+                ->visible(fn ($get) => in_array($get('mode'), ['single', 'yearly']))
                 ->live(),
             DatePicker::make('from')
                 ->live()
                 ->default(config('app.transaction_date')?->subMonthNoOverflow())
                 ->native(false)
                 ->displayFormat('m/d/Y')
-                ->visible(fn($get) => in_array($get('mode'), ['comparative'])),
+                ->visible(fn ($get) => in_array($get('mode'), ['comparative'])),
             DatePicker::make('to')
                 ->live()
                 ->default(config('app.transaction_date'))
                 ->native(false)
                 ->displayFormat('m/d/Y')
-                ->visible(fn($get) => in_array($get('mode'), ['comparative']))
+                ->visible(fn ($get) => in_array($get('mode'), ['comparative'])),
         ])
             ->columns(4)
             ->statePath('data');
@@ -88,7 +87,6 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
     {
         $this->form->fill();
     }
-
 
     #[Computed]
     public function SelectedMonth()
@@ -132,6 +130,7 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
             'current' => ['index' => 1, 'date' => $current],
             'next' => ['index' => 2, 'date' => $end],
         ];
+
         return $pairs;
     }
 
@@ -150,6 +149,7 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
             ];
             $current = $next;
         }
+
         return $pairs;
     }
 
@@ -182,6 +182,7 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
             'comparative' => TrialBalanceProvider::getComparativeTrialBalance($this->from_date, $this->to_date),
             'yearly' => TrialBalanceProvider::getYearlyTrialBalance($this->data['year']),
         };
+
         return $data;
     }
 
@@ -200,7 +201,7 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
                 $spreadsheet = IOFactory::load(storage_path('templates/trial_balance.xlsx'));
                 $worksheet = $spreadsheet->getActiveSheet();
 
-                $path = storage_path('app/livewire-tmp/trial_balance-' . today()->year . '.xlsx');
+                $path = storage_path('app/livewire-tmp/trial_balance-'.today()->year.'.xlsx');
                 $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
                 $writer->save($path);
 

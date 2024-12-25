@@ -21,7 +21,6 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Section;
@@ -173,7 +172,7 @@ class LoanApplicationResource extends Resource
                     ->color('danger')
                     ->visible(fn ($record) => $record->status == LoanApplication::STATUS_PROCESSING),
                 Action::make('disclosure')
-                    ->visible(fn ($record) => auth()->user()->can('manage loans') && !$record->loan && $record->status == LoanApplication::STATUS_APPROVED)
+                    ->visible(fn ($record) => auth()->user()->can('manage loans') && ! $record->loan && $record->status == LoanApplication::STATUS_APPROVED)
                     ->modalWidth(MaxWidth::ScreenExtraLarge)
                     ->fillForm(function ($record) {
                         $disclosure_sheet_items = LoansProvider::getDisclosureSheetItems($record->loan_type, $record->desired_amount, $record->member);
@@ -210,7 +209,7 @@ class LoanApplicationResource extends Resource
                             ->afterStateUpdated(function ($set, $state) {
                                 $items = collect($state);
                                 $net_amount = $items->firstWhere('code', 'net_amount');
-                                $items = $items->filter(fn ($i) => ($i['code'] ?? "") != 'net_amount');
+                                $items = $items->filter(fn ($i) => ($i['code'] ?? '') != 'net_amount');
                                 $net_amount['credit'] = $items->sum('debit') - $items->sum('credit');
                                 $items->push($net_amount);
                                 $set('disclosure_sheet_items', $items->toArray());
@@ -243,6 +242,7 @@ class LoanApplicationResource extends Resource
                         $accounts = Account::withCode()->find(collect($data['disclosure_sheet_items'])->pluck('account_id'));
                         $items = collect($data['disclosure_sheet_items'])->map(function ($item) use ($accounts) {
                             $item['name'] = $accounts->find($item['account_id'])->code;
+
                             return $item;
                         })->toArray();
                         $loanData = new LoanData(
@@ -300,7 +300,7 @@ class LoanApplicationResource extends Resource
             'view' => Pages\ViewLoanApplication::route('/{record}'),
             'application-form' => Pages\LoanApplicationForm::route('/{loan_application}/application-form'),
             'credit-and-background-investigation-form' => CreditAndBackgroundInvestigationForm::route('/cibi-form/{loan_application}'),
-            'credit-and-background-investigation-report' => CreditAndBackgroundInvestigationReport::route('/cibi-report/{cibi}')
+            'credit-and-background-investigation-report' => CreditAndBackgroundInvestigationReport::route('/cibi-report/{cibi}'),
         ];
     }
 }

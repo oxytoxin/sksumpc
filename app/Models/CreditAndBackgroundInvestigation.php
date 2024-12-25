@@ -13,7 +13,7 @@ class CreditAndBackgroundInvestigation extends Model
     use HasFactory;
 
     protected $casts = [
-        'details' => 'array'
+        'details' => 'array',
     ];
 
     public function loan_application()

@@ -3,33 +3,29 @@
 namespace App\Filament\App\Resources;
 
 use App\Actions\CashCollectionBilling\PostCashCollectibleBillingPayments;
-use Filament\Forms;
-use Filament\Tables;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Filament\Resources\Resource;
-use Filament\Forms\Components\Select;
+use App\Filament\App\Resources\CashCollectibleBillingResource\Pages;
+use App\Models\CashCollectibleAccount;
 use App\Models\CashCollectibleBilling;
 use Filament\Forms\Components\DatePicker;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\App\Resources\CashCollectibleBillingResource\Pages;
-use App\Filament\App\Resources\CashCollectibleBillingResource\RelationManagers;
-use App\Models\CashCollectible;
-use App\Models\CashCollectibleAccount;
-use App\Models\PaymentType;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
 use Filament\Notifications\Notification;
+use Filament\Resources\Resource;
+use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
 class CashCollectibleBillingResource extends Resource
 {
     protected static ?string $model = CashCollectibleBilling::class;
 
     protected static ?string $navigationGroup = 'Share Capital';
+
     protected static ?string $navigationLabel = 'Stakeholders';
+
     protected static ?int $navigationSort = 6;
 
     public static function form(Form $form): Form
@@ -71,7 +67,7 @@ class CashCollectibleBillingResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->visible(fn($record) => !$record->posted)
+                    ->visible(fn ($record) => ! $record->posted)
                     ->form([
                         Select::make('payment_type_id')
                             ->paymenttype()
@@ -80,7 +76,7 @@ class CashCollectibleBillingResource extends Resource
                         TextInput::make('reference_number'),
                     ]),
                 Tables\Actions\DeleteAction::make()
-                    ->visible(fn($record) => !$record->posted)
+                    ->visible(fn ($record) => ! $record->posted)
                     ->action(function (CashCollectibleBilling $record) {
                         $record->cash_collectible_billing_payments()->delete();
                         $record->delete();
@@ -88,12 +84,13 @@ class CashCollectibleBillingResource extends Resource
                 Action::make('for_or')
                     ->button()
                     ->color('success')
-                    ->visible(fn($record, $livewire) => !$record->posted && !$record->for_or && !$record->or_number && $livewire->user_is_cashier)
+                    ->visible(fn ($record, $livewire) => ! $record->posted && ! $record->for_or && ! $record->or_number && $livewire->user_is_cashier)
                     ->label('For OR')
                     ->requiresConfirmation()
                     ->action(function (CashCollectibleBilling $record) {
                         if ($record->cash_collectible_billing_payments()->doesntExist()) {
                             Notification::make()->title('No content, Subject for Review')->danger()->send();
+
                             return;
                         }
                         $record->update([
@@ -104,14 +101,14 @@ class CashCollectibleBillingResource extends Resource
                 Action::make('post_payments')
                     ->button()
                     ->color('success')
-                    ->visible(fn($record, $livewire) => !$record->posted && !$record->for_or && $record->or_number && $livewire->user_is_cbu_officer)
+                    ->visible(fn ($record, $livewire) => ! $record->posted && ! $record->for_or && $record->or_number && $livewire->user_is_cbu_officer)
                     ->requiresConfirmation()
                     ->action(function (CashCollectibleBilling $record) {
                         app(PostCashCollectibleBillingPayments::class)->handle(cashCollectibleBilling: $record);
                         Notification::make()->title('Payments posted!')->success()->send();
                     }),
                 Action::make('billing_receivables')
-                    ->url(fn($record) => route('filament.app.resources.cash-collectible-billings.billing-payments', ['cash_collectible_billing' => $record]))
+                    ->url(fn ($record) => route('filament.app.resources.cash-collectible-billings.billing-payments', ['cash_collectible_billing' => $record]))
                     ->button()
                     ->outlined(),
             ])

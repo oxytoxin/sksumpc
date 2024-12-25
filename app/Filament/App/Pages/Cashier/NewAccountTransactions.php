@@ -2,25 +2,25 @@
 
 namespace App\Filament\App\Pages\Cashier;
 
-use App\Models\Member;
-use Filament\Forms\Form;
-use Filament\Pages\Page;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
-use Filament\Forms\Components\Actions\Action;
-use App\Actions\Savings\GenerateAccountNumber;
 use App\Actions\Savings\CreateNewSavingsAccount;
+use App\Actions\Savings\GenerateAccountNumber;
+use App\Models\Member;
 use App\Oxytoxin\DTO\MSO\Accounts\SavingsAccountData;
+use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Notifications\Notification;
+use Filament\Pages\Page;
 
 class NewAccountTransactions extends Page
 {
-
     protected static bool $shouldRegisterNavigation = false;
+
     protected static string $view = 'filament.app.pages.cashier.new-account-transactions';
 
-    public $data =  [];
+    public $data = [];
 
     public function form(Form $form): Form
     {
@@ -52,8 +52,8 @@ class NewAccountTransactions extends Page
                             ));
                             Notification::make()->title('Savings account created!')->success()->send();
                             $this->reset('data');
-                        })
-                ])
+                        }),
+                ]),
             ])
             ->statePath('data');
     }

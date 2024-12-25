@@ -48,6 +48,7 @@ class CbuScheduleSummary extends Page
         if (count($dates) == 2 && $dates[0] == $dates[1]) {
             return $dates[0];
         }
+
         return implode(' - ', $dates);
     }
 
@@ -104,7 +105,7 @@ class CbuScheduleSummary extends Page
         return $form->schema([
             DateRangePicker::make('transaction_date')
                 ->format('m/d/Y')
-                ->displayFormat('MM/DD/YYYY')
+                ->displayFormat('MM/DD/YYYY'),
         ])->columns(4)->statePath('data');
     }
 }

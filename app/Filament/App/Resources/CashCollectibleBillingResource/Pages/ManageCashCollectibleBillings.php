@@ -4,13 +4,11 @@ namespace App\Filament\App\Resources\CashCollectibleBillingResource\Pages;
 
 use App\Actions\CashCollectionBilling\CreateIndividualBilling;
 use App\Filament\App\Resources\CashCollectibleBillingResource;
-use App\Models\CashCollectible;
 use App\Models\CashCollectibleAccount;
 use App\Models\CashCollectibleBilling;
 use App\Models\CashCollectibleBillingPayment;
 use App\Models\CashCollectibleSubscription;
 use App\Models\Member;
-use App\Models\PaymentType;
 use Auth;
 use DB;
 use Filament\Actions;
@@ -24,7 +22,9 @@ use Livewire\Attributes\Computed;
 class ManageCashCollectibleBillings extends ManageRecords
 {
     protected static string $resource = CashCollectibleBillingResource::class;
+
     protected ?string $heading = 'Stakeholders';
+
     protected static ?string $title = 'Stakeholders';
 
     #[Computed]
@@ -86,7 +86,7 @@ class ManageCashCollectibleBillings extends ManageRecords
                         ->options(Member::pluck('full_name', 'id'))
                         ->searchable()
                         ->reactive()
-                        ->afterStateUpdated(fn($set, $state) => $set('payee', Member::find($state)?->full_name))
+                        ->afterStateUpdated(fn ($set, $state) => $set('payee', Member::find($state)?->full_name))
                         ->preload(),
                     TextInput::make('payee')
                         ->required(),

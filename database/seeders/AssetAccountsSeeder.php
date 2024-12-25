@@ -28,10 +28,10 @@ class AssetAccountsSeeder extends Seeder
             ['account_type_id' => 1, 'name' => 'E-WALLET FUND', 'number' => '11190'],
         ]]);
         Account::create(['account_type_id' => 1, 'name' => 'LOAN RECEIVABLES', 'number' => '11210', 'tag' => 'loan_receivables', 'sum_description' => 'NET', 'children' => [
-            ['account_type_id' => 1, 'name' => 'ALLOWANCE FOR PROBABLE LOSSES-LOANS', 'number' => '11242', 'tag' => 'probable_loss', 'sort' => 1000]
+            ['account_type_id' => 1, 'name' => 'ALLOWANCE FOR PROBABLE LOSSES-LOANS', 'number' => '11242', 'tag' => 'probable_loss', 'sort' => 1000],
         ]]);
         Account::create(['account_type_id' => 1, 'name' => 'ACCOUNT RECEIVABLES', 'number' => '11250', 'tag' => 'account_receivables', 'sum_description' => 'NET', 'children' => [
-            ['account_type_id' => 1, 'name' => 'ALLOWANCE FOR PROBABLE LOSSES-RECEIVABLES', 'number' => '11281', 'tag' => 'probable_loss', 'sort' => 1000]
+            ['account_type_id' => 1, 'name' => 'ALLOWANCE FOR PROBABLE LOSSES-RECEIVABLES', 'number' => '11281', 'tag' => 'probable_loss', 'sort' => 1000],
         ]]);
         Account::create(['account_type_id' => 1, 'name' => 'MERCHANDISE INVENTORY', 'number' => '11510', 'tag' => 'merchandise_inventory']);
         Account::create(['account_type_id' => 1, 'name' => 'UNUSED SUPPLIES', 'number' => '12150']);

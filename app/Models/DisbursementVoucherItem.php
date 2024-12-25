@@ -2,29 +2,24 @@
 
 namespace App\Models;
 
-use App\Models\Account;
-use App\Models\LoanAccount;
-use App\Actions\Loans\PayLoan;
-use App\Models\TransactionType;
-use App\Models\DisbursementVoucher;
-use App\Models\SystemConfiguration;
-use App\Oxytoxin\DTO\MSO\ImprestData;
-use App\Oxytoxin\DTO\MSO\SavingsData;
-use App\Oxytoxin\DTO\MSO\LoveGiftData;
-use Illuminate\Database\Eloquent\Model;
-use App\Oxytoxin\DTO\Loan\LoanPaymentData;
-use App\Actions\Transactions\CreateTransaction;
-use App\Actions\Savings\DepositToSavingsAccount;
-use App\Actions\Imprests\DepositToImprestAccount;
-use App\Oxytoxin\DTO\Transactions\TransactionData;
-use App\Actions\Savings\WithdrawFromSavingsAccount;
-use App\Actions\Imprests\WithdrawFromImprestAccount;
-use App\Actions\LoveGifts\DepositToLoveGiftsAccount;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Actions\LoveGifts\WithdrawFromLoveGiftsAccount;
 use App\Actions\CapitalSubscription\PayCapitalSubscription;
+use App\Actions\Imprests\DepositToImprestAccount;
+use App\Actions\Imprests\WithdrawFromImprestAccount;
 use App\Actions\Loans\PayLegacyLoan;
+use App\Actions\Loans\PayLoan;
+use App\Actions\LoveGifts\DepositToLoveGiftsAccount;
+use App\Actions\LoveGifts\WithdrawFromLoveGiftsAccount;
+use App\Actions\Savings\DepositToSavingsAccount;
+use App\Actions\Savings\WithdrawFromSavingsAccount;
+use App\Actions\Transactions\CreateTransaction;
 use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionPaymentData;
+use App\Oxytoxin\DTO\Loan\LoanPaymentData;
+use App\Oxytoxin\DTO\MSO\ImprestData;
+use App\Oxytoxin\DTO\MSO\LoveGiftData;
+use App\Oxytoxin\DTO\MSO\SavingsData;
+use App\Oxytoxin\DTO\Transactions\TransactionData;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * @mixin IdeHelperDisbursementVoucherItem
@@ -36,7 +31,7 @@ class DisbursementVoucherItem extends Model
     protected $casts = [
         'credit' => 'decimal:4',
         'debit' => 'decimal:4',
-        'details' => 'array'
+        'details' => 'array',
     ];
 
     public function disbursement_voucher()
@@ -53,7 +48,7 @@ class DisbursementVoucherItem extends Model
     {
         static::creating(function (DisbursementVoucherItem $disbursementVoucherItem) {
             $account = Account::find($disbursementVoucherItem->account_id);
-            $transaction_date = SystemConfiguration::transaction_date() ?? today();
+            $transaction_date = config('app.transaction_date', today());
             $disbursementVoucherItem->transaction_date = $transaction_date;
             $transactionType = TransactionType::CDJ();
             if (in_array($account->tag, ['member_common_cbu_paid', 'member_preferred_cbu_paid', 'member_laboratory_cbu_paid'])) {
@@ -62,7 +57,7 @@ class DisbursementVoucherItem extends Model
                 } else {
                     $amount = $disbursementVoucherItem->debit * -1;
                     $account->member->capital_subscriptions_common->update([
-                        'is_common' => false
+                        'is_common' => false,
                     ]);
                 }
                 app(PayCapitalSubscription::class)
@@ -75,15 +70,15 @@ class DisbursementVoucherItem extends Model
                             transaction_date: $transaction_date
                         ),
                         transactionType: $transactionType,
-                        isJevOrDv: true,
+
                     );
 
                 if ($amount < 0) {
                     $account->member->capital_subscriptions_common->update([
-                        'is_common' => false
+                        'is_common' => false,
                     ]);
                 }
-            } else if (in_array($account->tag, ['regular_savings'])) {
+            } elseif (in_array($account->tag, ['regular_savings'])) {
                 if ($disbursementVoucherItem->credit) {
                     app(DepositToSavingsAccount::class)->handle(
                         member: $account->member,
@@ -95,7 +90,7 @@ class DisbursementVoucherItem extends Model
                             transaction_date: $transaction_date
                         ),
                         transactionType: $transactionType,
-                        isJevOrDv: true,
+
                     );
                 }
                 if ($disbursementVoucherItem->debit) {
@@ -109,10 +104,10 @@ class DisbursementVoucherItem extends Model
                             transaction_date: $transaction_date
                         ),
                         transactionType: $transactionType,
-                        isJevOrDv: true,
+
                     );
                 }
-            } else if (in_array($account->tag, ['imprest_savings'])) {
+            } elseif (in_array($account->tag, ['imprest_savings'])) {
                 if ($disbursementVoucherItem->credit) {
                     app(DepositToImprestAccount::class)->handle(
                         member: $account->member,
@@ -123,7 +118,7 @@ class DisbursementVoucherItem extends Model
                             transaction_date: $transaction_date
                         ),
                         transactionType: $transactionType,
-                        isJevOrDv: true,
+
                     );
                 }
                 if ($disbursementVoucherItem->debit) {
@@ -136,10 +131,10 @@ class DisbursementVoucherItem extends Model
                             transaction_date: $transaction_date
                         ),
                         transactionType: $transactionType,
-                        isJevOrDv: true,
+
                     );
                 }
-            } else if (in_array($account->tag, ['love_gift_savings'])) {
+            } elseif (in_array($account->tag, ['love_gift_savings'])) {
                 if ($disbursementVoucherItem->credit) {
                     app(DepositToLoveGiftsAccount::class)->handle(
                         member: $account->member,
@@ -150,7 +145,7 @@ class DisbursementVoucherItem extends Model
                             transaction_date: $transaction_date
                         ),
                         transactionType: $transactionType,
-                        isJevOrDv: true,
+
                     );
                 }
                 if ($disbursementVoucherItem->debit) {
@@ -163,10 +158,10 @@ class DisbursementVoucherItem extends Model
                             transaction_date: $transaction_date
                         ),
                         transactionType: $transactionType,
-                        isJevOrDv: true,
+
                     );
                 }
-            } else if (in_array($account->tag, ['member_loans_receivable'])) {
+            } elseif (in_array($account->tag, ['member_loans_receivable'])) {
                 $loan_account = LoanAccount::find($account->id);
                 if ($disbursementVoucherItem->credit) {
                     if ($disbursementVoucherItem->disbursement_voucher->is_legacy) {
@@ -179,7 +174,7 @@ class DisbursementVoucherItem extends Model
                                 reference_number: $disbursementVoucherItem->disbursement_voucher->reference_number,
                                 transaction_date: $transaction_date,
                                 transactionType: $transactionType,
-                                isJevOrDv: true,
+
                             );
                     } else {
                         app(PayLoan::class)->handle(
@@ -191,7 +186,7 @@ class DisbursementVoucherItem extends Model
                                 transaction_date: $transaction_date
                             ),
                             transactionType: $transactionType,
-                            isJevOrDv: true,
+
                         );
                     }
                 }

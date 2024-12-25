@@ -42,13 +42,13 @@ class Mmigs extends Page implements HasTable
                 TextColumn::make('alt_full_name')->label('Name')->searchable(),
                 TextColumn::make('patronage_status.name'),
                 TextColumn::make('membership_acceptance.bod_resolution')->label('BOD Resolution'),
-                TextColumn::make('membership_acceptance.effectivity_date')->label('Date Accepted')->date('F d, Y')
+                TextColumn::make('membership_acceptance.effectivity_date')->label('Date Accepted')->date('F d, Y'),
             ])
             ->filters([
                 SelectFilter::make('member_type')
                     ->relationship('member_type', 'name'),
                 SelectFilter::make('patronage_status')
-                    ->relationship('patronage_status', 'name')
+                    ->relationship('patronage_status', 'name'),
             ])
             ->filtersLayout(FiltersLayout::AboveContent);
     }

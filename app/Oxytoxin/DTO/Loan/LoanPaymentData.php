@@ -2,8 +2,6 @@
 
 namespace App\Oxytoxin\DTO\Loan;
 
-use Carbon\Carbon;
-use Carbon\CarbonImmutable;
 use Spatie\LaravelData\Data;
 
 class LoanPaymentData extends Data

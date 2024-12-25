@@ -10,14 +10,11 @@ use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionPaymentData;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\DB;
 
-
 class PostCapitalSubscriptionBillingPayments
 {
-
-
     public function handle(CapitalSubscriptionBilling $cbuBilling)
     {
-        if (!$cbuBilling->reference_number || !$cbuBilling->payment_type_id) {
+        if (! $cbuBilling->reference_number || ! $cbuBilling->payment_type_id) {
             return Notification::make()->title('Billing reference number and payment type is missing!')->danger()->send();
         }
         DB::beginTransaction();

@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('savings', function (Blueprint $table) {
-            $table->timestamp('transaction_datetime')->virtualAs("TIMESTAMP(transaction_date, CAST(created_at as TIME))")->after('transaction_date');
+            $table->timestamp('transaction_datetime')->virtualAs('TIMESTAMP(transaction_date, CAST(created_at as TIME))')->after('transaction_date');
         });
         Schema::table('imprests', function (Blueprint $table) {
-            $table->timestamp('transaction_datetime')->virtualAs("TIMESTAMP(transaction_date, CAST(created_at as TIME))")->after('transaction_date');
+            $table->timestamp('transaction_datetime')->virtualAs('TIMESTAMP(transaction_date, CAST(created_at as TIME))')->after('transaction_date');
         });
     }
 

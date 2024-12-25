@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->call(MemberTypesSeeder::class);
         $this->call(MemberSubtypesSeeder::class);
         $this->call(SystemConfigurationSeeder::class);
         $this->call(UserRoleSeeder::class);
@@ -41,8 +42,8 @@ class DatabaseSeeder extends Seeder
         Artisan::call('app:import-members');
         $this->command->info("Seeded members...\n");
 
-        $this->call(ImportExistingLoansSeeder::class);
-        Artisan::call('app:import-member-accounts');
+        // $this->call(ImportExistingLoansSeeder::class);
+        // Artisan::call('app:import-member-accounts');
         $this->call(DatabaseUpdatesSeeder::class);
     }
 }

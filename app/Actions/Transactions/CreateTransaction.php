@@ -5,11 +5,8 @@ namespace App\Actions\Transactions;
 use App\Models\Transaction;
 use App\Oxytoxin\DTO\Transactions\TransactionData;
 
-
 class CreateTransaction
 {
-
-
     public function handle(TransactionData $transactionData)
     {
         return Transaction::create([

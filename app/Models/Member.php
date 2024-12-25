@@ -23,7 +23,7 @@ class Member extends Model implements HasMedia
     protected $casts = [
         'dob' => 'immutable_date',
         'membership_date' => 'immutable_date',
-        'dependents' => DataCollection::class . ':' . MemberDependent::class,
+        'dependents' => DataCollection::class.':'.MemberDependent::class,
         'other_income_sources' => 'array',
         'annual_income' => 'decimal:4',
         'member_ids' => 'array',
@@ -32,7 +32,7 @@ class Member extends Model implements HasMedia
     protected static function booted(): void
     {
         static::created(function (Member $member) {
-            if (!$member->mpc_code) {
+            if (! $member->mpc_code) {
                 $member->mpc_code = str('SKSUMPC-0000-')->append(str_pad($member->id, 6, '0', STR_PAD_LEFT));
             }
             $member->save();

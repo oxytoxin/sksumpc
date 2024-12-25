@@ -4,13 +4,13 @@ namespace App\Filament\App\Pages;
 
 use App\Actions\RevolvingFund\ReplenishRevolvingFund;
 use App\Models\RevolvingFund;
-use Filament\Pages\Page;
-use Filament\Tables\Table;
-use Filament\Tables\Contracts\HasTable;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use Filament\Pages\Page;
 use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Table;
 
 class RevolvingFundManagement extends Page implements HasTable
 {
@@ -34,12 +34,12 @@ class RevolvingFundManagement extends Page implements HasTable
                 ->form([
                     TextInput::make('reference_number')->required(),
                     TextInput::make('amount')
-                        ->moneymask()
+                        ->moneymask(),
                 ])
                 ->action(function ($data, ReplenishRevolvingFund $replenishRevolvingFund) {
                     $replenishRevolvingFund->handle($data['reference_number'], $data['amount']);
                     Notification::make()->title('Revolving fund replenished!')->success()->send();
-                })
+                }),
         ];
     }
 

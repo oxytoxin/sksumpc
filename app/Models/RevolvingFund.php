@@ -33,5 +33,4 @@ class RevolvingFund extends Model
             $revolving_fund->cashier_id = auth()->id();
         });
     }
-
 }

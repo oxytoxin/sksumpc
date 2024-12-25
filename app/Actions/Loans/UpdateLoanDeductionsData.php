@@ -4,11 +4,8 @@ namespace App\Actions\Loans;
 
 use App\Models\Loan;
 
-
 class UpdateLoanDeductionsData
 {
-
-
     public function handle(Loan $loan)
     {
         $loan->outstanding_balance = $loan->gross_amount;

@@ -2,7 +2,6 @@
 
 namespace App\Filament\App\Pages\Cashier;
 
-use App\Models\SystemConfiguration;
 use Auth;
 use Filament\Forms\Components\Livewire;
 use Filament\Forms\Components\Tabs;
@@ -11,7 +10,6 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Pages\Page;
-use Livewire\Attributes\On;
 
 class CashierTransactionsPage extends Page implements HasForms
 {
@@ -20,8 +18,11 @@ class CashierTransactionsPage extends Page implements HasForms
     protected static string $view = 'filament.app.pages.cashier.cashier-transactions-page';
 
     protected static ?string $navigationGroup = 'Cashier';
+
     protected ?string $heading = 'Transactions';
+
     protected static ?string $navigationLabel = 'Transactions';
+
     protected static ?int $navigationSort = 2;
 
     public static function shouldRegisterNavigation(): bool

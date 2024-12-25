@@ -5,7 +5,6 @@ namespace App\Filament\App\Resources\OrganizationResource\Pages;
 use App\Actions\Memberships\CreateMemberInitialAccounts;
 use App\Filament\App\Resources\OrganizationResource;
 use App\Models\MemberType;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
 
@@ -25,6 +24,7 @@ class CreateOrganization extends CreateRecord
     {
         $organization = parent::handleRecordCreation($data);
         app(CreateMemberInitialAccounts::class)->handle($organization);
+
         return $organization;
     }
 }

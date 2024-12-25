@@ -12,7 +12,6 @@ use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Livewire\Attributes\Computed;
-use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 
 class CbuSchedule extends Page implements HasTable
 {
@@ -35,12 +34,12 @@ class CbuSchedule extends Page implements HasTable
 
     private function number_of_shares_paid($record)
     {
-        return $record->capital_subscriptions->map(fn($cs) => intdiv($cs->payments()->sum('amount'), $cs->par_value))->sum();
+        return $record->capital_subscriptions->map(fn ($cs) => intdiv($cs->payments()->sum('amount'), $cs->par_value))->sum();
     }
 
     private function amount_shares_paid($record)
     {
-        return $record->capital_subscriptions->map(fn($cs) => intdiv($cs->payments()->sum('amount'), $cs->par_value) * $cs->par_value)->sum();
+        return $record->capital_subscriptions->map(fn ($cs) => intdiv($cs->payments()->sum('amount'), $cs->par_value) * $cs->par_value)->sum();
     }
 
     #[Computed]
@@ -66,7 +65,7 @@ class CbuSchedule extends Page implements HasTable
                     ->withSum('capital_subscription_payments', 'amount')
                     ->orderBy('alt_full_name')
             )
-            ->content(fn() => view('filament.app.views.cbu-schedule'))
+            ->content(fn () => view('filament.app.views.cbu-schedule'))
             ->filters([
                 SelectFilter::make('member_type_id')
                     ->relationship('member_type', 'name')

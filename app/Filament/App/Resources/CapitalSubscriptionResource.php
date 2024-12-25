@@ -7,7 +7,6 @@ use App\Models\CapitalSubscription;
 use App\Models\MemberType;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\SelectFilter;
@@ -41,7 +40,7 @@ class CapitalSubscriptionResource extends Resource
             ])
             ->filters([
                 SelectFilter::make('member_type')
-                    ->options(MemberType::pluck('name', 'id'))
+                    ->options(MemberType::pluck('name', 'id')),
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
             ->defaultSort('member.alt_full_name')

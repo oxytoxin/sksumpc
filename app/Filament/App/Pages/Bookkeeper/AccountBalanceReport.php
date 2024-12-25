@@ -49,7 +49,7 @@ class AccountBalanceReport extends Page implements HasForms
                         2029 => 2029,
                         2030 => 2030,
                         2031 => 2031,
-                    ])
+                    ]),
             ]);
     }
 
@@ -57,13 +57,13 @@ class AccountBalanceReport extends Page implements HasForms
     public function Loans()
     {
         return LoanPayment::query()
-            ->whereIn("payment_type_id", [1, 3, 4, 5])
+            ->whereIn('payment_type_id', [1, 3, 4, 5])
             ->selectRaw(
-                "sum(amount) as credit, 0 as debit, MONTHNAME(transaction_date) as month_name, MONTH(transaction_date) as month, YEAR(transaction_date) as year"
+                'sum(amount) as credit, 0 as debit, MONTHNAME(transaction_date) as month_name, MONTH(transaction_date) as month, YEAR(transaction_date) as year'
             )
             ->whereYear('transaction_date', $this->year)
-            ->groupByRaw("month_name, month, year")
-            ->orderByRaw("year, month")
+            ->groupByRaw('month_name, month, year')
+            ->orderByRaw('year, month')
             ->get();
     }
 
@@ -71,14 +71,14 @@ class AccountBalanceReport extends Page implements HasForms
     public function Rice()
     {
         return Transaction::query()
-            ->whereIn("account_id", [OthersTransactionExcludedAccounts::RICE->value])
-            ->where("transaction_type_id", 1)
+            ->whereIn('account_id', [OthersTransactionExcludedAccounts::RICE->value])
+            ->where('transaction_type_id', 1)
             ->selectRaw(
-                "sum(debit) as credit, sum(credit) as debit, MONTHNAME(transaction_date) as month_name, MONTH(transaction_date) as month, YEAR(transaction_date) as year"
+                'sum(debit) as credit, sum(credit) as debit, MONTHNAME(transaction_date) as month_name, MONTH(transaction_date) as month, YEAR(transaction_date) as year'
             )
             ->whereYear('transaction_date', $this->year)
-            ->groupByRaw("month_name, month, year")
-            ->orderByRaw("year, month")
+            ->groupByRaw('month_name, month, year')
+            ->orderByRaw('year, month')
             ->get();
     }
 
@@ -86,14 +86,14 @@ class AccountBalanceReport extends Page implements HasForms
     public function Dormitory()
     {
         return Transaction::query()
-            ->whereIn("account_id", [OthersTransactionExcludedAccounts::RESERVATION_FEES_DORM->value, OthersTransactionExcludedAccounts::DORMITORY, OthersTransactionExcludedAccounts::RESERVATION->value])
-            ->where("transaction_type_id", 1)
+            ->whereIn('account_id', [OthersTransactionExcludedAccounts::RESERVATION_FEES_DORM->value, OthersTransactionExcludedAccounts::DORMITORY, OthersTransactionExcludedAccounts::RESERVATION->value])
+            ->where('transaction_type_id', 1)
             ->selectRaw(
-                "sum(debit) as credit, sum(credit) as debit, MONTHNAME(transaction_date) as month_name, MONTH(transaction_date) as month, YEAR(transaction_date) as year"
+                'sum(debit) as credit, sum(credit) as debit, MONTHNAME(transaction_date) as month_name, MONTH(transaction_date) as month, YEAR(transaction_date) as year'
             )
             ->whereYear('transaction_date', $this->year)
-            ->groupByRaw("month_name, month, year")
-            ->orderByRaw("year, month")
+            ->groupByRaw('month_name, month, year')
+            ->orderByRaw('year, month')
             ->get();
     }
 
@@ -102,70 +102,70 @@ class AccountBalanceReport extends Page implements HasForms
     {
         return Transaction::query()
             ->where(function ($query) {
-                $query->whereIn("account_id", [OthersTransactionExcludedAccounts::RICE->value])->orWhere(
-                    fn($query) => $query->whereRelation("account", function ($query) {
+                $query->whereIn('account_id', [OthersTransactionExcludedAccounts::RICE->value])->orWhere(
+                    fn ($query) => $query->whereRelation('account', function ($query) {
                         return $query->whereRelation(
-                            "parent",
-                            "tag",
-                            "member_laboratory_cbu_paid"
+                            'parent',
+                            'tag',
+                            'member_laboratory_cbu_paid'
                         );
                     })
                 );
             })
-            ->where("transaction_type_id", 1)
+            ->where('transaction_type_id', 1)
             ->selectRaw(
-                "sum(debit) as credit, sum(credit) as debit, MONTHNAME(transaction_date) as month_name, MONTH(transaction_date) as month, YEAR(transaction_date) as year"
+                'sum(debit) as credit, sum(credit) as debit, MONTHNAME(transaction_date) as month_name, MONTH(transaction_date) as month, YEAR(transaction_date) as year'
             )
             ->whereYear('transaction_date', $this->year)
-            ->groupByRaw("month_name, month, year")
-            ->orderByRaw("year, month")
+            ->groupByRaw('month_name, month, year')
+            ->orderByRaw('year, month')
             ->get();
     }
 
     #[Computed]
     public function Mso()
     {
-        return Transaction::whereIn("tag", MsoTransactionTag::get())
-            ->where("transaction_type_id", 1)
+        return Transaction::whereIn('tag', MsoTransactionTag::get())
+            ->where('transaction_type_id', 1)
             ->selectRaw(
-                "sum(debit) as credit, sum(credit) as debit, MONTHNAME(transaction_date) as month_name, MONTH(transaction_date) as month, YEAR(transaction_date) as year"
+                'sum(debit) as credit, sum(credit) as debit, MONTHNAME(transaction_date) as month_name, MONTH(transaction_date) as month, YEAR(transaction_date) as year'
             )
             ->whereYear('transaction_date', $this->year)
-            ->groupByRaw("month_name, month, year")
-            ->orderByRaw("year, month")
+            ->groupByRaw('month_name, month, year')
+            ->orderByRaw('year, month')
             ->get();
     }
 
     #[Computed]
     public function Others()
     {
-        return Transaction::whereDoesntHave("account", function ($query) {
+        return Transaction::whereDoesntHave('account', function ($query) {
             return $query->whereHas(
-                "rootAncestor",
-                fn($q) => $q->whereIn("id", OthersTransactionExcludedAccounts::get())
+                'rootAncestor',
+                fn ($q) => $q->whereIn('id', OthersTransactionExcludedAccounts::get())
             );
         })
             ->withoutMso()
-            ->where("transaction_type_id", 1)
+            ->where('transaction_type_id', 1)
             ->selectRaw(
-                "sum(debit) as credit, sum(credit) as debit, MONTHNAME(transaction_date) as month_name, MONTH(transaction_date) as month, YEAR(transaction_date) as year"
+                'sum(debit) as credit, sum(credit) as debit, MONTHNAME(transaction_date) as month_name, MONTH(transaction_date) as month, YEAR(transaction_date) as year'
             )
             ->whereYear('transaction_date', $this->year)
-            ->groupByRaw("month_name, month, year")
-            ->orderByRaw("year, month")
+            ->groupByRaw('month_name, month, year')
+            ->orderByRaw('year, month')
             ->get();
     }
 
     #[Computed]
     public function Jev()
     {
-        return JournalEntryVoucherItem::where("account_id", 2)
+        return JournalEntryVoucherItem::where('account_id', 2)
             ->selectRaw(
-                "sum(debit) as debit, sum(credit) as credit, MONTHNAME(transaction_date) as month_name, MONTH(transaction_date) as month, YEAR(transaction_date) as year"
+                'sum(debit) as debit, sum(credit) as credit, MONTHNAME(transaction_date) as month_name, MONTH(transaction_date) as month, YEAR(transaction_date) as year'
             )
             ->whereYear('transaction_date', $this->year)
-            ->groupByRaw("month_name, month, year")
-            ->orderByRaw("year, month")
+            ->groupByRaw('month_name, month, year')
+            ->orderByRaw('year, month')
             ->get();
     }
 }

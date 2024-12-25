@@ -42,8 +42,8 @@ class LoanBillingResource extends Resource
                     ->options(MemberType::pluck('name', 'id')),
                 Select::make('member_subtype_id')
                     ->label('Member Subtype')
-                    ->visible(fn($get) => MemberSubtype::whereMemberTypeId($get('member_type_id'))->count())
-                    ->options(fn($get) => MemberSubtype::whereMemberTypeId($get('member_type_id'))->pluck('name', 'id')),
+                    ->visible(fn ($get) => MemberSubtype::whereMemberTypeId($get('member_type_id'))->count())
+                    ->options(fn ($get) => MemberSubtype::whereMemberTypeId($get('member_type_id'))->pluck('name', 'id')),
                 Select::make('loan_type_id')
                     ->relationship('loan_type', 'name')
                     ->required(),
@@ -79,7 +79,7 @@ class LoanBillingResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->visible(fn($record, $livewire) => !$record->posted && !$record->or_number && $livewire->user_is_loan_officer)
+                    ->visible(fn ($record, $livewire) => ! $record->posted && ! $record->or_number && $livewire->user_is_loan_officer)
                     ->form([
                         Select::make('payment_type_id')
                             ->paymenttype()
@@ -88,7 +88,7 @@ class LoanBillingResource extends Resource
                         TextInput::make('reference_number'),
                     ]),
                 Tables\Actions\DeleteAction::make()
-                    ->visible(fn($record, $livewire) => !$record->posted && !$record->or_number && $livewire->user_is_loan_officer)
+                    ->visible(fn ($record, $livewire) => ! $record->posted && ! $record->or_number && $livewire->user_is_loan_officer)
                     ->action(function (LoanBilling $record) {
                         $record->loan_billing_payments()->delete();
                         $record->delete();
@@ -96,12 +96,13 @@ class LoanBillingResource extends Resource
                 Action::make('for_or')
                     ->button()
                     ->color('success')
-                    ->visible(fn($record, $livewire) => !$record->posted && !$record->for_or && !$record->or_number && $livewire->user_is_cashier)
+                    ->visible(fn ($record, $livewire) => ! $record->posted && ! $record->for_or && ! $record->or_number && $livewire->user_is_cashier)
                     ->label('For OR')
                     ->requiresConfirmation()
                     ->action(function (LoanBilling $record) {
                         if ($record->loan_billing_payments()->doesntExist()) {
                             Notification::make()->title('No content, Subject for Review')->danger()->send();
+
                             return;
                         }
                         $record->update([
@@ -112,18 +113,18 @@ class LoanBillingResource extends Resource
                 Action::make('post_payments')
                     ->button()
                     ->color('success')
-                    ->visible(fn($record, $livewire) => !$record->posted && !$record->for_or && $record->or_number && $livewire->user_is_loan_officer)
+                    ->visible(fn ($record, $livewire) => ! $record->posted && ! $record->for_or && $record->or_number && $livewire->user_is_loan_officer)
                     ->requiresConfirmation()
                     ->action(function (LoanBilling $record) {
                         app(PostLoanBillingPayments::class)->handle(loanBilling: $record);
                         Notification::make()->title('Payments posted!')->success()->send();
                     }),
                 Action::make('billing_receivables')
-                    ->url(fn($record) => route('filament.app.resources.loan-billings.billing-payments', ['loan_billing' => $record]))
+                    ->url(fn ($record) => route('filament.app.resources.loan-billings.billing-payments', ['loan_billing' => $record]))
                     ->button()
                     ->outlined(),
                 Action::make('print')
-                    ->url(fn($record) => route('filament.app.resources.loan-billings.statement-of-remittance', ['loan_billing' => $record]))
+                    ->url(fn ($record) => route('filament.app.resources.loan-billings.statement-of-remittance', ['loan_billing' => $record]))
                     ->icon('heroicon-o-printer')
                     ->button()
                     ->outlined(),

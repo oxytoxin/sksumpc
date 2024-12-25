@@ -2,7 +2,4 @@
 
 namespace App\Oxytoxin\Traits;
 
-trait NeedsTransactionDate
-{
-
-}
+trait NeedsTransactionDate {}

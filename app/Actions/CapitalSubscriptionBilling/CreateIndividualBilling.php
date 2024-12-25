@@ -6,11 +6,8 @@ use App\Models\CapitalSubscriptionBilling;
 use App\Models\Member;
 use DB;
 
-
 class CreateIndividualBilling
 {
-
-
     public function handle($payment_type_id, $date, $member_id)
     {
         DB::beginTransaction();
@@ -18,14 +15,14 @@ class CreateIndividualBilling
         $member = Member::find($member_id);
         $active_cbu = $member->capital_subscriptions_common;
 
-        if (!$active_cbu) {
+        if (! $active_cbu) {
             abort(403, 'No active CBU for member!');
         }
 
         $billing = CapitalSubscriptionBilling::forceCreateQuietly([
             'payment_type_id' => $payment_type_id,
             'date' => $date,
-            'cashier_id' => auth()->id()
+            'cashier_id' => auth()->id(),
         ]);
 
         $billing->reference_number = $billing->generateReferenceNumber($billing);

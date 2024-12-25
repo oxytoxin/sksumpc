@@ -15,8 +15,11 @@ use Livewire\Attributes\Computed;
 class ManageMsoBillings extends ManageRecords
 {
     protected static string $resource = MsoBillingResource::class;
+
     protected ?string $heading = 'MSO Billing';
+
     protected static ?string $title = 'MSO Billing';
+
     #[Computed]
     public function UserIsCashier()
     {
@@ -37,8 +40,8 @@ class ManageMsoBillings extends ManageRecords
                 ->action(function ($data) {
                     $amount = $data['amount'] ?? 0;
                     $members = Member::query()
-                        ->when($data['member_type_id'] ?? null, fn($query, $value) => $query->where('member_type_id', $value))
-                        ->when($data['member_subtype_id'] ?? null, fn($query, $value) => $query->where('member_subtype_id', $value));
+                        ->when($data['member_type_id'] ?? null, fn ($query, $value) => $query->where('member_type_id', $value))
+                        ->when($data['member_subtype_id'] ?? null, fn ($query, $value) => $query->where('member_subtype_id', $value));
                     unset($data['amount'], $data['member_type_id'], $data['member_subtype_id']);
                     DB::beginTransaction();
                     $mso_billing = MsoBilling::create($data);

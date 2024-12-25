@@ -10,11 +10,8 @@ use App\Oxytoxin\DTO\Loan\LoanPaymentData;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\DB;
 
-
 class PostLoanBillingPayments
 {
-
-
     public function handle(LoanBilling $loanBilling)
     {
         if (! $loanBilling->reference_number || ! $loanBilling->payment_type_id) {

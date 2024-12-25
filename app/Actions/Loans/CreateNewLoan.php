@@ -9,11 +9,8 @@ use App\Models\LoanType;
 use App\Oxytoxin\DTO\Loan\LoanData;
 use Illuminate\Support\Facades\DB;
 
-
 class CreateNewLoan
 {
-
-
     public function handle(LoanApplication $loanApplication, LoanData $loanData)
     {
         DB::beginTransaction();

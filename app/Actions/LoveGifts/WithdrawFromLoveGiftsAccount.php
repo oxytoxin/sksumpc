@@ -3,7 +3,6 @@
 namespace App\Actions\LoveGifts;
 
 use App\Actions\Transactions\CreateTransaction;
-use App\Models\Account;
 use App\Models\LoveGift;
 use App\Models\Member;
 use App\Models\TransactionType;
@@ -14,12 +13,9 @@ use DB;
 use Filament\Notifications\Notification;
 use Illuminate\Validation\ValidationException;
 
-
 class WithdrawFromLoveGiftsAccount
 {
-
-
-    public function handle(Member $member, LoveGiftData $data, TransactionType $transactionType, $isJevOrDv = false)
+    public function handle(Member $member, LoveGiftData $data, TransactionType $transactionType)
     {
         if ($member->love_gifts()->sum('amount') - $data->amount < 500) {
             Notification::make()->title('Invalid Amount')->body('A P500 balance should remain.')->danger()->send();
@@ -37,30 +33,6 @@ class WithdrawFromLoveGiftsAccount
             'member_id' => $member->id,
             'transaction_date' => $data->transaction_date,
         ]);
-        if (!$isJevOrDv) {
-            if ($data->payment_type_id == 1) {
-                app(CreateTransaction::class)->handle(new TransactionData(
-                    account_id: Account::getCashOnHand()->id,
-                    transactionType: $transactionType,
-                    payment_type_id: $data->payment_type_id,
-                    reference_number: $love_gift->reference_number,
-                    credit: $data->amount,
-                    member_id: $love_gift->member_id,
-                    remarks: 'Member Withdrawal from Love Gift',
-                ));
-            }
-            if ($data->payment_type_id == 4) {
-                app(CreateTransaction::class)->handle(new TransactionData(
-                    account_id: Account::getCashInBankMSO()->id,
-                    transactionType: $transactionType,
-                    payment_type_id: $data->payment_type_id,
-                    reference_number: $love_gift->reference_number,
-                    credit: $data->amount,
-                    member_id: $love_gift->member_id,
-                    remarks: 'Member Withdrawal from Love Gift',
-                ));
-            }
-        }
 
         app(CreateTransaction::class)->handle(new TransactionData(
             account_id: $love_gift_account->id,

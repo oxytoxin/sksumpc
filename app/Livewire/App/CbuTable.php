@@ -37,9 +37,7 @@ class CbuTable extends Component implements HasForms, HasTable
     public Member $member;
 
     #[On('refresh')]
-    public function loanCreated()
-    {
-    }
+    public function loanCreated() {}
 
     public function table(Table $table): Table
     {
@@ -84,13 +82,13 @@ class CbuTable extends Component implements HasForms, HasTable
                         ->url(fn ($record) => route('filament.app.resources.members.cbu-amortization-schedule', ['cbu' => $record])),
                     Action::make('share_certificate')
                         ->icon('heroicon-s-eye')
-                        ->url(fn ($record) => route('filament.app.resources.capital-subscriptions.share-certificate', ['capital_subscription' => $record]), true)
+                        ->url(fn ($record) => route('filament.app.resources.capital-subscriptions.share-certificate', ['capital_subscription' => $record]), true),
                 ]),
 
             ])
             ->headerActions([
                 CreateAction::make()
-                    ->visible(fn () => !$this->member->capital_subscriptions()->where('outstanding_balance', '>', 0)->exists() && auth()->user()->can('manage cbu'))
+                    ->visible(fn () => ! $this->member->capital_subscriptions()->where('outstanding_balance', '>', 0)->exists() && auth()->user()->can('manage cbu'))
                     ->createAnother(false)
                     ->form([
                         Placeholder::make('number_of_terms')->content($this->member->member_type->additional_number_of_terms),

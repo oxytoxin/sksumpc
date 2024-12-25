@@ -2,11 +2,8 @@
 
 namespace App\Filament\App\Resources\DisbursementVoucherResource\Pages;
 
-use App\Actions\Transactions\CreateTransaction;
 use App\Filament\App\Resources\DisbursementVoucherResource;
 use App\Models\DisbursementVoucher;
-use App\Models\TransactionType;
-use App\Oxytoxin\DTO\Transactions\TransactionData;
 use DB;
 use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
@@ -18,7 +15,7 @@ class ManageDisbursementVouchers extends ManageRecords
     public function mount(): void
     {
         parent::mount();
-        data_set($this, 'tableFilters.transaction_date.transaction_date', (config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')) . ' - ' . (config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')));
+        data_set($this, 'tableFilters.transaction_date.transaction_date', (config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')).' - '.(config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')));
     }
 
     protected function getHeaderActions(): array

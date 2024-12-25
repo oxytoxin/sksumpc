@@ -31,7 +31,7 @@ return new class extends Migration
             $table->foreignId('gender_id')->nullable()->constrained();
             $table->foreignId('civil_status_id')->nullable()->constrained();
             $table->foreignId('patronage_status_id')->default(1)->constrained();
-            $table->date('membership_date')->default(DB::raw("(CURRENT_DATE)"));
+            $table->date('membership_date')->default(DB::raw('(CURRENT_DATE)'));
             $table->date('contact')->nullable();
             $table->date('dob')->nullable();
             $table->string('place_of_birth')->nullable();

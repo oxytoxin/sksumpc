@@ -9,7 +9,6 @@ use App\Models\Member;
 use App\Models\TransactionType;
 use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionPaymentData;
 use App\Oxytoxin\DTO\Transactions\TransactionData;
-use App\Oxytoxin\Providers\SavingsProvider;
 
 class CashierTransactionsPageOthers
 {

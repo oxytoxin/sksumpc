@@ -23,7 +23,7 @@ class DisapprovedLoanApplications extends Page implements HasTable
 
     public function mount(): void
     {
-        data_set($this, 'tableFilters.transaction_date.transaction_date', (config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')) . ' - ' . (config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')));
+        data_set($this, 'tableFilters.transaction_date.transaction_date', (config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')).' - '.(config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')));
     }
 
     public static function shouldRegisterNavigation(): bool
@@ -43,7 +43,7 @@ class DisapprovedLoanApplications extends Page implements HasTable
                 TextColumn::make('desired_amount')->money('PHP'),
                 TextColumn::make('disapproval_date')->date('m/d/Y')->label('Date Disapproved'),
                 TextColumn::make('status')
-                    ->formatStateUsing(fn($state) => match ($state) {
+                    ->formatStateUsing(fn ($state) => match ($state) {
                         LoanApplication::STATUS_DISAPPROVED => 'Disapproved',
                     })
                     ->colors([

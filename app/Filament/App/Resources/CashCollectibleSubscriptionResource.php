@@ -3,10 +3,8 @@
 namespace App\Filament\App\Resources;
 
 use App\Filament\App\Resources\CashCollectibleSubscriptionResource\Pages;
-use App\Filament\App\Resources\CashCollectibleSubscriptionResource\RelationManagers;
 use App\Models\CashCollectibleSubscription;
 use App\Models\Member;
-use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -16,14 +14,13 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class CashCollectibleSubscriptionResource extends Resource
 {
     protected static ?string $model = CashCollectibleSubscription::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
     public static function shouldRegisterNavigation(): bool
     {
         return false;
@@ -47,7 +44,7 @@ class CashCollectibleSubscriptionResource extends Resource
                     ->required(),
                 Select::make('member_id')
                     ->live()
-                    ->afterStateUpdated(fn($set, $state) => $set('payee', Member::find($state)?->full_name))
+                    ->afterStateUpdated(fn ($set, $state) => $set('payee', Member::find($state)?->full_name))
                     ->searchable()
                     ->preload()
                     ->relationship('member', 'full_name'),
@@ -55,7 +52,7 @@ class CashCollectibleSubscriptionResource extends Resource
                     ->required(),
                 TextInput::make('amount')
                     ->numeric()
-                    ->required()
+                    ->required(),
             ]);
     }
 
@@ -71,7 +68,7 @@ class CashCollectibleSubscriptionResource extends Resource
             ])
             ->filters([
                 SelectFilter::make('cash_collectible_account')
-                    ->relationship('cash_collectible_account', 'name')
+                    ->relationship('cash_collectible_account', 'name'),
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
             ->actions([

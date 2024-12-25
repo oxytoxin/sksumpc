@@ -3,7 +3,6 @@
 namespace App\Filament\App\Resources;
 
 use App\Actions\Loans\ApproveLoanPosting;
-use App\Actions\Transactions\CreateTransaction;
 use App\Filament\App\Resources\LoanResource\Actions\ViewLoanDetailsActionGroup;
 use App\Filament\App\Resources\LoanResource\Pages;
 use App\Livewire\App\Loans\Traits\HasViewLoanDetailsActionGroup;
@@ -13,10 +12,8 @@ use App\Models\Loan;
 use App\Models\LoanType;
 use App\Models\Member;
 use App\Models\TransactionType;
-use App\Oxytoxin\DTO\Transactions\TransactionData;
 use App\Rules\BalancedBookkeepingEntries;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
-use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -27,10 +24,8 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
-use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 
@@ -88,11 +83,11 @@ class LoanResource extends Resource
             ->actions([
                 Action::make('dv')
                     ->label('DV')
-                    ->action(fn(Loan $record) => app(ApproveLoanPosting::class)->handle($record))
-                    ->hidden(fn($record) => $record->posted)
+                    ->action(fn (Loan $record) => app(ApproveLoanPosting::class)->handle($record))
+                    ->hidden(fn ($record) => $record->posted)
                     ->modalWidth(MaxWidth::ScreenExtraLarge)
                     ->button()
-                    ->fillForm(fn($record) => [
+                    ->fillForm(fn ($record) => [
                         'name' => $record->member->full_name,
                         'reference_number' => $record->reference_number,
                         'disbursement_voucher_items' => $record->disclosure_sheet_items,
@@ -112,7 +107,7 @@ class LoanResource extends Resource
                             ->afterStateUpdated(function ($get, $set, $state) {
                                 $items = collect($state);
                                 $net_amount = $items->firstWhere('code', 'net_amount');
-                                $items = $items->filter(fn($i) => $i['code'] != 'net_amount');
+                                $items = $items->filter(fn ($i) => $i['code'] != 'net_amount');
                                 $net_amount['credit'] = $items->sum('debit') - $items->sum('credit');
                                 $items->push($net_amount);
                                 $set('disbursement_voucher_items', $items->toArray());
@@ -126,7 +121,7 @@ class LoanResource extends Resource
                                     ->preload(),
                                 Select::make('account_id')
                                     ->options(
-                                        fn($get) => Account::withCode()->whereDoesntHave('children', fn($q) => $q->whereNull('member_id'))->where('member_id', $get('member_id') ?? null)->pluck('code', 'id')
+                                        fn ($get) => Account::withCode()->whereDoesntHave('children', fn ($q) => $q->whereNull('member_id'))->where('member_id', $get('member_id') ?? null)->pluck('code', 'id')
                                     )
                                     ->searchable()
                                     ->required()
@@ -166,7 +161,7 @@ class LoanResource extends Resource
                 ViewLoanDetailsActionGroup::getActions(),
                 Action::make('print')
                     ->icon('heroicon-o-printer')
-                    ->url(fn($record) => route('filament.app.resources.loan-applications.application-form', ['loan_application' => $record->loan_application]), true),
+                    ->url(fn ($record) => route('filament.app.resources.loan-applications.application-form', ['loan_application' => $record->loan_application]), true),
             ])
             ->bulkActions([])
             ->emptyStateActions([]);

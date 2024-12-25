@@ -2,25 +2,25 @@
 
 namespace App\Providers\Filament;
 
-use Filament\Panel;
-use Filament\PanelProvider;
-use App\Models\SystemConfiguration;
-use Filament\View\PanelsRenderHook;
-use Illuminate\Support\Facades\Vite;
-use Illuminate\Support\Facades\Blade;
-use Filament\Navigation\NavigationGroup;
+use App\Http\Middleware\EnsurePresentBookkeeperTransactionDate;
+use App\Models\TransactionDateHistory;
 use Filament\Http\Middleware\Authenticate;
-use Filament\Support\Facades\FilamentView;
-use Illuminate\Session\Middleware\StartSession;
-use Illuminate\Cookie\Middleware\EncryptCookies;
-use Illuminate\Routing\Middleware\SubstituteBindings;
-use Illuminate\Session\Middleware\AuthenticateSession;
-use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Filament\Navigation\NavigationGroup;
+use Filament\Panel;
+use Filament\PanelProvider;
+use Filament\Support\Facades\FilamentView;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
-use App\Http\Middleware\EnsurePresentBookkeeperTransactionDate;
+use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Session\Middleware\AuthenticateSession;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Vite;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AppPanelProvider extends PanelProvider
 {
@@ -31,22 +31,23 @@ class AppPanelProvider extends PanelProvider
         } catch (\Throwable $th) {
         }
         try {
-            $transaction_date = SystemConfiguration::transaction_date();
+            $transaction_date = TransactionDateHistory::current_date();
         } catch (\Exception $e) {
         }
         config(['app.transaction_date' => $transaction_date ?? null]);
         FilamentView::registerRenderHook(
             PanelsRenderHook::TOPBAR_START,
-            fn() => Blade::render('<strong>Transaction Date: ' . $transaction_date?->format('m/d/Y') . '</strong>')
+            fn () => Blade::render('<strong>Transaction Date: '.$transaction_date?->format('m/d/Y').'</strong>')
         );
         FilamentView::registerRenderHook(
             PanelsRenderHook::CONTENT_START,
-            fn() => Blade::render("@livewire('bookkeeper-transaction-date-checker')")
+            fn () => Blade::render("@livewire('bookkeeper-transaction-date-checker')")
         );
         FilamentView::registerRenderHook(
             PanelsRenderHook::CONTENT_START,
-            fn() => Blade::render("@livewire('cashier-revolving-fund-replenishment-checker')")
+            fn () => Blade::render("@livewire('cashier-revolving-fund-replenishment-checker')")
         );
+
         return $panel
             ->id('app')
             ->path('/')
@@ -78,7 +79,7 @@ class AppPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/App/Widgets'), for: 'App\\Filament\\App\\Widgets')
             ->maxContentWidth('full')
             ->middleware([
-                EnsurePresentBookkeeperTransactionDate::class
+                EnsurePresentBookkeeperTransactionDate::class,
             ], true)
             ->middleware([
                 EncryptCookies::class,
@@ -99,7 +100,7 @@ class AppPanelProvider extends PanelProvider
             ->darkMode(false)
             ->renderHook(
                 'panels::body.end',
-                fn(): string => Blade::render("
+                fn (): string => Blade::render("
                 <div x-data='{
                 init(){
                     Livewire.hook(`commit`, ({ succeed }) => {

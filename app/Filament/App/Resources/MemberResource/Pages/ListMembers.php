@@ -16,8 +16,8 @@ class ListMembers extends ListRecords
     {
         return [
             Actions\CreateAction::make()->icon('heroicon-o-plus')->iconPosition(IconPosition::After)->visible(auth()->user()->can('manage members')),
-            Action::make('generate report')->url(fn($livewire) => route('filament.app.resources.members.report', [
-                'query' => $livewire
+            Action::make('generate report')->url(fn ($livewire) => route('filament.app.resources.members.report', [
+                'query' => $livewire,
             ]), true),
         ];
     }

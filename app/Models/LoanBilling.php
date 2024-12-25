@@ -43,12 +43,12 @@ class LoanBilling extends Model
     {
         static::created(function (LoanBilling $loanBilling) {
             DB::beginTransaction();
-            $loanBilling->reference_number = $loanBilling->loan_type->code . '-' . today()->format('Y-m-') . str_pad($loanBilling->id, 6, '0', STR_PAD_LEFT);
+            $loanBilling->reference_number = $loanBilling->loan_type->code.'-'.today()->format('Y-m-').str_pad($loanBilling->id, 6, '0', STR_PAD_LEFT);
             Loan::wherePosted(true)
                 ->where('outstanding_balance', '>', 0)
                 ->whereLoanTypeId($loanBilling->loan_type_id)
-                ->when($loanBilling->member_type_id, fn($query, $value) => $query->whereRelation('member', 'member_type_id', $value))
-                ->when($loanBilling->member_subtype_id, fn($query, $value) => $query->whereRelation('member', 'member_subtype_id', $value))
+                ->when($loanBilling->member_type_id, fn ($query, $value) => $query->whereRelation('member', 'member_type_id', $value))
+                ->when($loanBilling->member_subtype_id, fn ($query, $value) => $query->whereRelation('member', 'member_subtype_id', $value))
                 ->each(function ($loan) use ($loanBilling) {
                     LoanBillingPayment::firstOrCreate([
                         'member_id' => $loan->member_id,

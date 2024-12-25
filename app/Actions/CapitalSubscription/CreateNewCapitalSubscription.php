@@ -7,11 +7,8 @@ use App\Models\Member;
 use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionData;
 use Illuminate\Support\Facades\DB;
 
-
 class CreateNewCapitalSubscription
 {
-
-
     public function handle(Member $member, CapitalSubscriptionData $data): CapitalSubscription
     {
         DB::beginTransaction();

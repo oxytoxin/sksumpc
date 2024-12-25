@@ -4,19 +4,20 @@ namespace App\Filament\App\Resources\CapitalSubscriptionBillingResource\Pages;
 
 use App\Actions\CapitalSubscriptionBilling\CreateIndividualBilling;
 use App\Filament\App\Pages\Cashier\RequiresBookkeeperTransactionDate;
-use Filament\Actions;
-use Livewire\Attributes\Computed;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\DatePicker;
-use Filament\Resources\Pages\ManageRecords;
 use App\Filament\App\Resources\CapitalSubscriptionBillingResource;
 use App\Models\Member;
 use Auth;
+use Filament\Actions;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
+use Filament\Resources\Pages\ManageRecords;
+use Livewire\Attributes\Computed;
 
 class ManageCapitalSubscriptionBillings extends ManageRecords
 {
     protected static string $resource = CapitalSubscriptionBillingResource::class;
+
     use RequiresBookkeeperTransactionDate;
 
     #[Computed]
@@ -55,7 +56,7 @@ class ManageCapitalSubscriptionBillings extends ManageRecords
                         ->options(Member::pluck('full_name', 'id'))
                         ->searchable()
                         ->required()
-                        ->preload()
+                        ->preload(),
                 ])
                 ->action(function ($data) {
                     app(CreateIndividualBilling::class)->handle(

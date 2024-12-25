@@ -12,8 +12,7 @@ use App\Oxytoxin\Providers\LoansProvider;
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertModelExists;
 
-it('test loan functions from phpspreadsheet', function () {
-});
+it('test loan functions from phpspreadsheet', function () {});
 
 it('can create a new loan', function () {
     $member = Member::find(664);
@@ -41,6 +40,7 @@ it('can create a new loan', function () {
     $accounts = Account::withCode()->find(collect($disclosure_sheet_items)->pluck('account_id'));
     $items = collect($disclosure_sheet_items)->map(function ($item) use ($accounts) {
         $item['name'] = $accounts->find($item['account_id'])->code;
+
         return $item;
     })->toArray();
     $loanData = new LoanData(

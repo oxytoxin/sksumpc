@@ -11,6 +11,5 @@ class JournalEntryVoucherItemData extends Data
         public int $trial_balance_entry_id,
         public ?string $debit = null,
         public ?string $credit = null,
-    ) {
-    }
+    ) {}
 }

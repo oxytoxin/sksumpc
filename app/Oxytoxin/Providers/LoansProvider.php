@@ -6,8 +6,6 @@ use App\Models\Account;
 use App\Models\Loan;
 use App\Models\LoanType;
 use App\Models\Member;
-use Carbon\Carbon;
-use Carbon\CarbonImmutable;
 
 class LoansProvider
 {
@@ -51,7 +49,7 @@ class LoansProvider
 
     public static function computeInterest($amount, ?LoanType $loanType, $number_of_terms, $transaction_date = null)
     {
-        if (!$loanType || !$amount || !$number_of_terms) {
+        if (! $loanType || ! $amount || ! $number_of_terms) {
             return 0;
         }
         $loan = Loan::make([
@@ -68,7 +66,7 @@ class LoansProvider
 
     public static function computeMonthlyPayment($amount, ?LoanType $loanType, $number_of_terms, $transaction_date = null)
     {
-        if (!$loanType || !$amount || !$number_of_terms) {
+        if (! $loanType || ! $amount || ! $number_of_terms) {
             return 0;
         }
 
@@ -99,7 +97,7 @@ class LoansProvider
 
     public static function getDisclosureSheetItems(?LoanType $loanType, $gross_amount, ?Member $member, $existing_loan_id = null): array
     {
-        if (!$loanType) {
+        if (! $loanType) {
             return [];
         }
         $items = [];
@@ -190,7 +188,7 @@ class LoansProvider
 
     public static function computeDeductions(?LoanType $loanType, $gross_amount, ?Member $member, $existing_loan_id = null): array
     {
-        if (!$loanType) {
+        if (! $loanType) {
             return [];
         }
         $deductions = [

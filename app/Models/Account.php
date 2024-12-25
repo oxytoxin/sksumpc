@@ -49,7 +49,6 @@ class Account extends Model
         return Account::firstWhere('tag', 'cash_in_bank_dbp_mso');
     }
 
-
     public static function getRevolvingFund()
     {
         return Account::firstWhere('tag', 'revolving_fund');

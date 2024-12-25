@@ -11,6 +11,7 @@ use Livewire\Attributes\Computed;
 class ManageLoanBillings extends ManageRecords
 {
     protected static string $resource = LoanBillingResource::class;
+
     use RequiresBookkeeperTransactionDate;
 
     #[Computed]

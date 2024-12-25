@@ -70,9 +70,9 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                     ->default('ongoing')
                     ->query(function (Builder $query, $data) {
                         $query
-                            ->when($data['value'] == 'matured', fn($query) => $query->whereNotNull('withdrawal_date'))
-                            ->when($data['value'] == 'ongoing', fn($query) => $query->whereNull('withdrawal_date'))
-                            ->when($data['value'] == 'terminated', fn($query) => $query->whereRaw('withdrawal_date <= maturity_date'));
+                            ->when($data['value'] == 'matured', fn ($query) => $query->whereNotNull('withdrawal_date'))
+                            ->when($data['value'] == 'ongoing', fn ($query) => $query->whereNull('withdrawal_date'))
+                            ->when($data['value'] == 'terminated', fn ($query) => $query->whereRaw('withdrawal_date <= maturity_date'));
                     }),
             ], layout: FiltersLayout::AboveContent)
             ->actions([
@@ -82,10 +82,10 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                     ->modalWidth(MaxWidth::SixExtraLarge)
                     ->modalSubmitAction(false)
                     ->modalCancelAction(false)->visible(auth()->user()->can('manage mso'))
-                    ->modalContent(fn($record) => view('filament.app.views.time-deposit-certificate', ['time_deposit' => $record])),
+                    ->modalContent(fn ($record) => view('filament.app.views.time-deposit-certificate', ['time_deposit' => $record])),
                 Action::make('Terminate')
                     ->form([
-                        Placeholder::make('note')->content(fn($record) => 'Pretermination will accrue only 1% interest.'),
+                        Placeholder::make('note')->content(fn ($record) => 'Pretermination will accrue only 1% interest.'),
                         DatePicker::make('withdrawal_date')
                             ->required()
                             ->default(today()),
@@ -95,7 +95,7 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                         Notification::make()->title('Time deposit claimed.')->success()->send();
                     })
                     ->color(Color::Red)
-                    ->visible(fn(TimeDeposit $record) => $record->transaction_date->isAfter(today()->subMonths(6)) && is_null($record->withdrawal_date))
+                    ->visible(fn (TimeDeposit $record) => $record->transaction_date->isAfter(today()->subMonths(6)) && is_null($record->withdrawal_date))
                     ->icon('heroicon-o-banknotes')
                     ->button(),
                 Action::make('claim')
@@ -108,26 +108,26 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                         app(ClaimTimeDeposit::class)->handle(timeDeposit: $record, withdrawal_date: $data['withdrawal_date']);
                         Notification::make()->title('Time deposit claimed.')->success()->send();
                     })
-                    ->visible(fn(TimeDeposit $record) => $record->maturity_date->isBefore(today()) && is_null($record->withdrawal_date))
+                    ->visible(fn (TimeDeposit $record) => $record->maturity_date->isBefore(today()) && is_null($record->withdrawal_date))
                     ->icon('heroicon-o-banknotes')
                     ->button(),
                 Action::make('rollover')
                     ->visible(auth()->user()->can('manage mso'))
-                    ->form(fn(TimeDeposit $record) => [
+                    ->form(fn (TimeDeposit $record) => [
                         DatePicker::make('withdrawal_date')
                             ->required()
                             ->native(false)
                             ->default(today()),
-                        DatePicker::make('transaction_date')->label('Roll-over date')->required()->default(today())->native(false)->live()->afterStateUpdated(fn(Set $set, $state) => $set('maturity_date', TimeDepositsProvider::getMaturityDate($state))),
+                        DatePicker::make('transaction_date')->label('Roll-over date')->required()->default(today())->native(false)->live()->afterStateUpdated(fn (Set $set, $state) => $set('maturity_date', TimeDepositsProvider::getMaturityDate($state))),
                         Placeholder::make('maturity_date')->content(TimeDepositsProvider::getMaturityDate(today())->format('F d, Y')),
                         Select::make('payment_type_id')
                             ->paymenttype()
                             ->required(),
                         TextInput::make('reference_number')->required()
                             ->unique('time_deposits'),
-                        Placeholder::make('amount')->content(fn() => format_money($record->maturity_amount, 'PHP')),
+                        Placeholder::make('amount')->content(fn () => format_money($record->maturity_amount, 'PHP')),
                         Placeholder::make('number_of_days')->content(TimeDepositsProvider::NUMBER_OF_DAYS),
-                        Placeholder::make('maturity_amount')->content(fn() => format_money(TimeDepositsProvider::getMaturityAmount($record->maturity_amount), 'PHP')),
+                        Placeholder::make('maturity_amount')->content(fn () => format_money(TimeDepositsProvider::getMaturityAmount($record->maturity_amount), 'PHP')),
                     ])
                     ->action(function ($record, $data) {
                         DB::beginTransaction();
@@ -142,7 +142,7 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                         DB::commit();
                         Notification::make()->title('Time deposit roll-overed.')->success()->send();
                     })
-                    ->visible(fn(TimeDeposit $record) => $record->maturity_date->isBefore(today()) && is_null($record->withdrawal_date))
+                    ->visible(fn (TimeDeposit $record) => $record->maturity_date->isBefore(today()) && is_null($record->withdrawal_date))
                     ->icon('heroicon-o-banknotes')
                     ->button(),
                 ActionGroup::make([
@@ -163,7 +163,7 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                             ), TransactionType::CDJ());
                             Notification::make()->title('Time deposit claimed.')->success()->send();
                         })
-                        ->visible(fn(TimeDeposit $record) => $record->maturity_date->isBefore(today()) && is_null($record->withdrawal_date))
+                        ->visible(fn (TimeDeposit $record) => $record->maturity_date->isBefore(today()) && is_null($record->withdrawal_date))
                         ->icon('heroicon-o-banknotes'),
                     Action::make('to_imprests')
                         ->requiresConfirmation()
@@ -176,7 +176,7 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                             ), TransactionType::CDJ());
                             Notification::make()->title('Time deposit claimed.')->success()->send();
                         })
-                        ->visible(fn(TimeDeposit $record) => $record->maturity_date->isBefore(today()) && is_null($record->withdrawal_date))
+                        ->visible(fn (TimeDeposit $record) => $record->maturity_date->isBefore(today()) && is_null($record->withdrawal_date))
                         ->icon('heroicon-o-banknotes'),
                 ])
                     ->visible(auth()->user()->can('manage mso'))

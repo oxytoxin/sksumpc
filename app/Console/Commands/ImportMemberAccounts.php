@@ -2,28 +2,27 @@
 
 namespace App\Console\Commands;
 
-use DB;
-use App\Models\Member;
-use App\Models\TransactionType;
-use Illuminate\Console\Command;
-use App\Oxytoxin\DTO\MSO\ImprestData;
-use App\Oxytoxin\DTO\MSO\SavingsData;
-use Illuminate\Support\LazyCollection;
-use App\Oxytoxin\DTO\MSO\TimeDepositData;
-use Spatie\SimpleExcel\SimpleExcelReader;
-use Illuminate\Database\Eloquent\Collection;
-use App\Actions\TimeDeposits\CreateTimeDeposit;
+use App\Actions\CapitalSubscription\CreateNewCapitalSubscriptionAccount;
+use App\Actions\Imprests\CreateNewImprestsAccount;
+use App\Actions\Imprests\DepositToImprestAccount;
+use App\Actions\LoveGifts\CreateNewLoveGiftsAccount;
 use App\Actions\Savings\CreateNewSavingsAccount;
 use App\Actions\Savings\DepositToSavingsAccount;
-use App\Oxytoxin\Providers\TimeDepositsProvider;
-use App\Actions\Imprests\DepositToImprestAccount;
-use App\Actions\Imprests\CreateNewImprestsAccount;
-use App\Actions\LoveGifts\CreateNewLoveGiftsAccount;
-use App\Oxytoxin\DTO\MSO\Accounts\ImprestAccountData;
-use App\Oxytoxin\DTO\MSO\Accounts\SavingsAccountData;
-use App\Oxytoxin\DTO\MSO\Accounts\LoveGiftAccountData;
+use App\Actions\TimeDeposits\CreateTimeDeposit;
+use App\Models\Member;
+use App\Models\TransactionType;
 use App\Oxytoxin\DTO\MSO\Accounts\CapitalSubscriptionAccountData;
-use App\Actions\CapitalSubscription\CreateNewCapitalSubscriptionAccount;
+use App\Oxytoxin\DTO\MSO\Accounts\ImprestAccountData;
+use App\Oxytoxin\DTO\MSO\Accounts\LoveGiftAccountData;
+use App\Oxytoxin\DTO\MSO\Accounts\SavingsAccountData;
+use App\Oxytoxin\DTO\MSO\ImprestData;
+use App\Oxytoxin\DTO\MSO\SavingsData;
+use App\Oxytoxin\DTO\MSO\TimeDepositData;
+use App\Oxytoxin\Providers\TimeDepositsProvider;
+use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\LazyCollection;
+use Spatie\SimpleExcel\SimpleExcelReader;
 
 class ImportMemberAccounts extends Command
 {
@@ -47,8 +46,8 @@ class ImportMemberAccounts extends Command
     public function handle()
     {
         $members = Member::get(['id', 'mpc_code']);
-        $members = $members->mapWithKeys(fn($m) => [$m->mpc_code => $m]);
-        $transaction_type = TransactionType::CRJ();
+        $members = $members->mapWithKeys(fn ($m) => [$m->mpc_code => $m]);
+        $transaction_type = TransactionType::JEV();
         $rows = SimpleExcelReader::create(storage_path('csv/accounts/regular_savings_accounts.xlsx'))->getRows();
         $this->importSavings(rows: $rows, members: $members, transaction_type: $transaction_type);
         $rows = SimpleExcelReader::create(storage_path('csv/accounts/associate_savings_accounts.xlsx'))->getRows();
@@ -62,25 +61,25 @@ class ImportMemberAccounts extends Command
         Member::doesntHave('capital_subscription_account')->each(function ($member) {
             app(CreateNewCapitalSubscriptionAccount::class)->handle(new CapitalSubscriptionAccountData(
                 member_id: $member->id,
-                name: $member->full_name ?? ($member->first_name . ' ' . $member->last_name)
+                name: $member->full_name ?? ($member->first_name.' '.$member->last_name)
             ));
         });
         Member::doesntHave('savings_accounts')->each(function ($member) {
             app(CreateNewSavingsAccount::class)->handle(new SavingsAccountData(
                 member_id: $member->id,
-                name: $member->full_name ?? ($member->first_name . ' ' . $member->last_name)
+                name: $member->full_name ?? ($member->first_name.' '.$member->last_name)
             ));
         });
         Member::doesntHave('imprest_account')->each(function ($member) {
             app(CreateNewImprestsAccount::class)->handle(new ImprestAccountData(
                 member_id: $member->id,
-                name: $member->full_name ?? ($member->first_name . ' ' . $member->last_name)
+                name: $member->full_name ?? ($member->first_name.' '.$member->last_name)
             ));
         });
         Member::doesntHave('love_gift_account')->each(function ($member) {
             app(CreateNewLoveGiftsAccount::class)->handle(new LoveGiftAccountData(
                 member_id: $member->id,
-                name: $member->full_name ?? ($member->first_name . ' ' . $member->last_name)
+                name: $member->full_name ?? ($member->first_name.' '.$member->last_name)
             ));
         });
     }

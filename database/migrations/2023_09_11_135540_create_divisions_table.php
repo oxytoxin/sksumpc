@@ -5,7 +5,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -27,6 +28,7 @@ return new class extends Migration {
                 ['name' => 'KALAMANSIG'],
                 ['name' => 'LUTAYAN'],
                 ['name' => 'TACURONG'],
+                ['name' => 'PALIMBANG'],
                 ['name' => 'RETIRED'],
                 ['name' => 'SKSU-MPC'],
                 ['name' => 'NOT CONNECTED'],

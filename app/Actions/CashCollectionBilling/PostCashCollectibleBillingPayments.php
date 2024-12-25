@@ -2,22 +2,19 @@
 
 namespace App\Actions\CashCollectionBilling;
 
-use App\Models\TransactionType;
-use Illuminate\Support\Facades\DB;
-use Filament\Notifications\Notification;
 use App\Actions\CashCollections\PayCashCollectible;
 use App\Models\CashCollectibleBilling;
 use App\Models\CashCollectibleBillingPayment;
+use App\Models\TransactionType;
 use App\Oxytoxin\DTO\CashCollectibles\CashCollectiblePaymentData;
-
+use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\DB;
 
 class PostCashCollectibleBillingPayments
 {
-
-
     public function handle(CashCollectibleBilling $cashCollectibleBilling)
     {
-        if (!$cashCollectibleBilling->reference_number || !$cashCollectibleBilling->payment_type_id) {
+        if (! $cashCollectibleBilling->reference_number || ! $cashCollectibleBilling->payment_type_id) {
             return Notification::make()->title('Billing reference number and payment type is missing!')->danger()->send();
         }
         DB::beginTransaction();

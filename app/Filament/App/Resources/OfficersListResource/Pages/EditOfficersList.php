@@ -22,8 +22,7 @@ class EditOfficersList extends EditRecord
     {
         $record->update(['year' => $data['year']]);
         $record->members()->sync($data['officers']);
+
         return $record;
     }
-
-
 }

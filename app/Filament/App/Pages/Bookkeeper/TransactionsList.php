@@ -5,7 +5,6 @@ namespace App\Filament\App\Pages\Bookkeeper;
 use App\Models\Account;
 use App\Models\Transaction;
 use Auth;
-use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Filament\Actions\Action;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -54,7 +53,7 @@ class TransactionsList extends Page implements HasForms, HasTable
     {
         return [
             Action::make('account_balance')
-                ->url(AccountBalanceReport::getUrl())
+                ->url(AccountBalanceReport::getUrl()),
         ];
     }
 
@@ -67,9 +66,9 @@ class TransactionsList extends Page implements HasForms, HasTable
         $year = request()->integer('year');
         if ($month && $year) {
             $date = CarbonImmutable::create(month: $month, year: $year);
-            $this->date_range = $date->format('m/d/Y') . ' - ' . $date->endOfMonth()->format('m/d/Y');
+            $this->date_range = $date->format('m/d/Y').' - '.$date->endOfMonth()->format('m/d/Y');
         } else {
-            $this->date_range = (config('app.transaction_date')->format('m/d/Y') ?? today()->format('m/d/Y')) . ' - ' . config('app.transaction_date')->format('m/d/Y') ?? today()->format('m/d/Y');
+            $this->date_range = (config('app.transaction_date')->format('m/d/Y') ?? today()->format('m/d/Y')).' - '.config('app.transaction_date')->format('m/d/Y') ?? today()->format('m/d/Y');
         }
         data_set($this, 'tableFilters.transaction_date.transaction_date', $this->date_range);
     }
@@ -79,10 +78,10 @@ class TransactionsList extends Page implements HasForms, HasTable
         return $table
             ->query(
                 Transaction::query()
-                    ->when($this->account_id, fn($q) => $q->whereIn('account_id', Account::find($this->account_id)->descendantsAndSelf()->pluck('id')))
-                    ->when($this->transaction_type, fn($q) => $q->where('transaction_type_id', $this->transaction_type))
-                    ->when($this->payment_mode == 1, fn($q) => $q->whereNotNull('debit'))
-                    ->when($this->payment_mode == -1, fn($q) => $q->whereNotNull('credit'))
+                    ->when($this->account_id, fn ($q) => $q->whereIn('account_id', Account::find($this->account_id)->descendantsAndSelf()->pluck('id')))
+                    ->when($this->transaction_type, fn ($q) => $q->where('transaction_type_id', $this->transaction_type))
+                    ->when($this->payment_mode == 1, fn ($q) => $q->whereNotNull('debit'))
+                    ->when($this->payment_mode == -1, fn ($q) => $q->whereNotNull('credit'))
                     ->orderByDesc('transaction_date')
                     ->orderByDesc('id')
             )
@@ -92,13 +91,13 @@ class TransactionsList extends Page implements HasForms, HasTable
                     ->displayFormat('MM/DD/YYYY'),
                 SelectFilter::make('transaction_type')
                     ->relationship('transaction_type', 'name')
-                    ->default($this->transaction_type)
+                    ->default($this->transaction_type),
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
             ->columns([
                 TextColumn::make('#')->state(
                     static function (HasTable $livewire, stdClass $rowLoop): string {
-                        return (string)(
+                        return (string) (
                             $rowLoop->iteration +
                             ($livewire->getTableRecordsPerPage() * (
                                 $livewire->getTablePage() - 1
@@ -112,8 +111,8 @@ class TransactionsList extends Page implements HasForms, HasTable
                 TextColumn::make('payee')->label('Payee'),
                 TextColumn::make('account.name')->label('Account Name'),
                 TextColumn::make('account.number')->label('Account Number'),
-                TextColumn::make('debit')->formatStateUsing(fn($state) => renumber_format($state, 4)),
-                TextColumn::make('credit')->formatStateUsing(fn($state) => renumber_format($state, 4)),
+                TextColumn::make('debit')->formatStateUsing(fn ($state) => renumber_format($state, 4)),
+                TextColumn::make('credit')->formatStateUsing(fn ($state) => renumber_format($state, 4)),
                 TextColumn::make('transaction_type.name'),
             ]);
     }

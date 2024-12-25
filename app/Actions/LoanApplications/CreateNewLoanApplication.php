@@ -6,11 +6,8 @@ use App\Models\LoanApplication;
 use App\Oxytoxin\DTO\Loan\LoanApplicationData;
 use DB;
 
-
 class CreateNewLoanApplication
 {
-
-
     public function handle(LoanApplicationData $loanApplicationData)
     {
         DB::beginTransaction();
@@ -27,6 +24,7 @@ class CreateNewLoanApplication
         ]);
         $loanApplication->comakers()->sync($loanApplicationData->comakers);
         DB::commit();
+
         return $loanApplication;
     }
 }

@@ -5,11 +5,8 @@ namespace App\Actions\CapitalSubscription;
 use App\Models\Account;
 use App\Oxytoxin\DTO\MSO\Accounts\CapitalSubscriptionAccountData;
 
-
 class CreateNewCapitalSubscriptionAccount
 {
-
-
     public function handle(CapitalSubscriptionAccountData $cbuAccountData)
     {
         Account::create([

@@ -15,11 +15,8 @@ use App\Oxytoxin\DTO\Transactions\TransactionData;
 use App\Oxytoxin\Providers\LoansProvider;
 use Illuminate\Support\Facades\DB;
 
-
 class ImportExistingLoan
 {
-
-
     public function handle(Member $member, LoanType $loanType, $reference_number, $amount, $balance_forwarded, $number_of_terms, $application_date)
     {
         DB::beginTransaction();

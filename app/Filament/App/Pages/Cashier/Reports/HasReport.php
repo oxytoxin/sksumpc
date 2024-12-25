@@ -3,11 +3,11 @@
 namespace App\Filament\App\Pages\Cashier\Reports;
 
 use App\Models\MemberType;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
-use Filament\Tables\Enums\FiltersLayout;
-use Filament\Tables\Concerns\InteractsWithTable;
-use Filament\Tables\Filters\SelectFilter;
 use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 
 trait HasReport
@@ -39,7 +39,7 @@ trait HasReport
 
     public function mountHasReport()
     {
-        data_set($this, 'tableFilters.transaction_date.transaction_date', (config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')) . ' - ' . (config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')));
+        data_set($this, 'tableFilters.transaction_date.transaction_date', (config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')).' - '.(config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')));
     }
 
     private function getReportQuery()

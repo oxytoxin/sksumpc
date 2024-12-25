@@ -39,16 +39,16 @@ class TransactionDateManager extends Page implements HasActions, HasForms
     {
         return $form->schema([
             Placeholder::make('current_transaction_date')
-                ->content(fn() => SystemConfiguration::config('Transaction Date')?->content['transaction_date']),
+                ->content(fn () => SystemConfiguration::config('Transaction Date')?->content['transaction_date']),
             Placeholder::make('note')
-                ->content(fn($get) => $get('transaction_date') ? "All transactions date will be set to " . Carbon::create($get('transaction_date'))->format('m/d/Y') : "No transaction date set for today's transactions."),
+                ->content(fn ($get) => $get('transaction_date') ? 'All transactions date will be set to '.Carbon::create($get('transaction_date'))->format('m/d/Y') : "No transaction date set for today's transactions."),
             DatePicker::make('transaction_date')
                 ->native(false)
                 ->unique('transaction_date_histories', 'date')
                 ->validationMessages([
-                    'unique' => 'This date has already been used in the past.'
+                    'unique' => 'This date has already been used in the past.',
                 ])
-                ->default(SystemConfiguration::transaction_date())
+                ->default(TransactionDateHistory::current_date())
                 ->required()
                 ->live(),
             Actions::make([
@@ -62,19 +62,8 @@ class TransactionDateManager extends Page implements HasActions, HasForms
                         ]);
                         TransactionDateHistory::create([
                             'date' => $this->transaction_date,
-                            'is_current' => true
+                            'is_current' => true,
                         ]);
-                        SystemConfiguration::updateOrCreate(
-                            [
-                                'name' => 'Transaction Date',
-                            ],
-                            [
-                                'content' => [
-                                    'transaction_date' => $this->transaction_date
-                                ]
-                            ]
-                        );
-
                         DB::commit();
                         Notification::make()->title('Transaction date set!')->success()->send();
                     })
@@ -90,8 +79,8 @@ class TransactionDateManager extends Page implements HasActions, HasForms
                         Notification::make()->title('Transaction date cleared!')->success()->send();
                     })
                     ->requiresConfirmation()
-                    ->color('danger')
-            ])
+                    ->color('danger'),
+            ]),
         ]);
     }
 }

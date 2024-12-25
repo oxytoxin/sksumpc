@@ -4,11 +4,8 @@ namespace App\Actions\Savings;
 
 use App\Models\Account;
 
-
 class GenerateAccountNumber
 {
-
-
     public function handle($member_type_id)
     {
         $account_number_prefix = match ($member_type_id) {

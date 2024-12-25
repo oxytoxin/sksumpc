@@ -15,7 +15,6 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Enums\FiltersLayout;
-use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Livewire\Attributes\Computed;
 
@@ -47,13 +46,13 @@ class AccountTransactionsList extends Page implements HasForms, HasTable
             ->schema([
                 Select::make('account')
                     ->searchable()
-                    ->options(Account::withCode()->whereDoesntHave('children', fn($q) => $q->whereNull('member_id'))->pluck('code', 'id'))
+                    ->options(Account::withCode()->whereDoesntHave('children', fn ($q) => $q->whereNull('member_id'))->pluck('code', 'id'))
                     ->default(2)
                     ->selectablePlaceholder(false)
                     ->reactive()
                     ->afterStateUpdated(function () {
                         $this->resetTable();
-                    })
+                    }),
             ]);
     }
 
@@ -62,6 +61,7 @@ class AccountTransactionsList extends Page implements HasForms, HasTable
     {
         $latest_balance_forwarded_summary = BalanceForwardedSummary::latest()->first();
         $balance_forwarded_summary_entry = $latest_balance_forwarded_summary?->balance_forwarded_entries()->whereAccountId($this->account)->first();
+
         return $balance_forwarded_summary_entry;
     }
 

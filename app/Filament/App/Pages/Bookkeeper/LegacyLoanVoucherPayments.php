@@ -2,27 +2,22 @@
 
 namespace App\Filament\App\Pages\Bookkeeper;
 
-use App\Models\Member;
 use App\Models\Account;
-use Filament\Forms\Form;
-use Filament\Pages\Page;
-use App\Models\LoanAccount;
-use App\Models\VoucherType;
-use App\Models\TransactionType;
-use Illuminate\Support\Facades\DB;
 use App\Models\DisbursementVoucher;
-use App\Actions\Loans\PayLegacyLoan;
 use App\Models\JournalEntryVoucher;
-use Filament\Forms\Components\Select;
+use App\Models\Member;
+use App\Models\VoucherType;
+use App\Rules\BalancedBookkeepingEntries;
+use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
 use Filament\Notifications\Notification;
-use App\Rules\BalancedBookkeepingEntries;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Actions\Action;
-use Awcodes\FilamentTableRepeater\Components\TableRepeater;
+use Filament\Pages\Page;
+use Illuminate\Support\Facades\DB;
 
 class LegacyLoanVoucherPayments extends Page
 {
@@ -51,7 +46,7 @@ class LegacyLoanVoucherPayments extends Page
                 Select::make('type')
                     ->options([
                         'dv' => 'Disbursement Voucher',
-                        'jev' => 'Journal Entry Voucher'
+                        'jev' => 'Journal Entry Voucher',
                     ])
                     ->required(),
                 Select::make('voucher_type_id')
@@ -74,7 +69,7 @@ class LegacyLoanVoucherPayments extends Page
                         $cib = Account::getCashInBankGF();
                         $net_amount = $items->firstWhere('account_id', $cib?->id);
                         if ($net_amount) {
-                            $items = $items->filter(fn($i) => $i['account_id'] != $net_amount['account_id']);
+                            $items = $items->filter(fn ($i) => $i['account_id'] != $net_amount['account_id']);
                             $net_amount['credit'] = $items->sum('debit') - $items->sum('credit');
                             $items->push($net_amount);
                         }
@@ -90,7 +85,7 @@ class LegacyLoanVoucherPayments extends Page
                                 ->preload(),
                             Select::make('account_id')
                                 ->options(
-                                    fn($get) => Account::withCode()->whereDoesntHave('children', fn($q) => $q->whereNull('member_id'))->where('member_id', $get('member_id') ?? null)->pluck('code', 'id')
+                                    fn ($get) => Account::withCode()->whereDoesntHave('children', fn ($q) => $q->whereNull('member_id'))->where('member_id', $get('member_id') ?? null)->pluck('code', 'id')
                                 )
                                 ->searchable()
                                 ->required()
@@ -100,21 +95,21 @@ class LegacyLoanVoucherPayments extends Page
                                     $set('principal', null);
                                 }),
                             TextInput::make('debit')
-                                ->disabled(fn($get) => Account::find($get('account_id'))?->tag == 'member_loans_receivable')
+                                ->disabled(fn ($get) => Account::find($get('account_id'))?->tag == 'member_loans_receivable')
                                 ->dehydrated()
                                 ->moneymask(),
                             TextInput::make('credit')
-                                ->disabled(fn($get) => Account::find($get('account_id'))?->tag == 'member_loans_receivable')
+                                ->disabled(fn ($get) => Account::find($get('account_id'))?->tag == 'member_loans_receivable')
                                 ->dehydrated()
                                 ->moneymask(),
                             TextInput::make('interest')
                                 ->moneymask()
-                                ->disabled(fn($get) => Account::find($get('account_id'))?->tag != 'member_loans_receivable')
-                                ->afterStateUpdated(fn($set, $get) => $set('credit', floatval($get('interest') + floatval($get('principal'))))),
+                                ->disabled(fn ($get) => Account::find($get('account_id'))?->tag != 'member_loans_receivable')
+                                ->afterStateUpdated(fn ($set, $get) => $set('credit', floatval($get('interest') + floatval($get('principal'))))),
                             TextInput::make('principal')
                                 ->moneymask()
-                                ->disabled(fn($get) => Account::find($get('account_id'))?->tag != 'member_loans_receivable')
-                                ->afterStateUpdated(fn($set, $get) => $set('credit', floatval($get('interest') + floatval($get('principal'))))),
+                                ->disabled(fn ($get) => Account::find($get('account_id'))?->tag != 'member_loans_receivable')
+                                ->afterStateUpdated(fn ($set, $get) => $set('credit', floatval($get('interest') + floatval($get('principal'))))),
                         ];
                     }),
                 Actions::make([
@@ -135,7 +130,7 @@ class LegacyLoanVoucherPayments extends Page
                                     if (isset($item['interest']) && isset($item['principal'])) {
                                         $item['details'] = [
                                             'interest' => $item['interest'],
-                                            'principal' => $item['principal']
+                                            'principal' => $item['principal'],
                                         ];
                                     }
                                     unset($item['interest'], $item['principal']);
@@ -149,7 +144,7 @@ class LegacyLoanVoucherPayments extends Page
                                     if (isset($item['interest']) && isset($item['principal'])) {
                                         $item['details'] = [
                                             'interest' => $item['interest'],
-                                            'principal' => $item['principal']
+                                            'principal' => $item['principal'],
                                         ];
                                     }
                                     unset($item['interest'], $item['principal']);
@@ -159,8 +154,8 @@ class LegacyLoanVoucherPayments extends Page
                             DB::commit();
                             Notification::make()->title('Legacy loan payment posted!')->success()->send();
                             $this->reset();
-                        })
-                ])
+                        }),
+                ]),
             ])
             ->statePath('data');
     }

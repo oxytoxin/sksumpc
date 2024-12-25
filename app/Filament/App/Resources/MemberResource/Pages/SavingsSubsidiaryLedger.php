@@ -6,7 +6,6 @@ use App\Filament\App\Pages\Cashier\Reports\HasSignatories;
 use App\Filament\App\Resources\MemberResource;
 use App\Models\Saving;
 use App\Models\SavingsAccount;
-use App\Models\Transaction;
 use App\Models\User;
 use Filament\Resources\Pages\Page;
 use Filament\Tables\Actions\Action;

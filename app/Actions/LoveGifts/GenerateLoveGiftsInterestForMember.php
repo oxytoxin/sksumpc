@@ -9,11 +9,8 @@ use App\Oxytoxin\Providers\LoveGiftProvider;
 use App\Oxytoxin\Services\InterestCalculator;
 use DB;
 
-
 class GenerateLoveGiftsInterestForMember
 {
-
-
     public function handle(Member $member)
     {
         $interestCalculator = app(InterestCalculator::class);

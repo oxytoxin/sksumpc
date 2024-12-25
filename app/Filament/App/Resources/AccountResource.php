@@ -73,7 +73,7 @@ class AccountResource extends Resource
                     ->label('Show Total on FS')
                     ->boolean(),
                 TextColumn::make('sum_description')
-                    ->label('Total String')
+                    ->label('Total String'),
             ])
             ->filters([
                 //

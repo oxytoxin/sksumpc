@@ -3,7 +3,6 @@
 namespace App\Filament\App\Resources;
 
 use App\Models\Position;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -66,5 +65,4 @@ class PositionResource extends Resource
             'edit' => \App\Filament\App\Resources\PositionResource\Pages\EditPosition::route('/{record}/edit'),
         ];
     }
-
 }

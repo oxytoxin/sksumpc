@@ -2,27 +2,23 @@
 
 namespace App\Filament\App\Resources;
 
-use Filament\Tables;
-use App\Models\Member;
+use App\Filament\App\Resources\JournalEntryVoucherResource\Pages;
 use App\Models\Account;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use App\Models\VoucherType;
-use Filament\Resources\Resource;
 use App\Models\JournalEntryVoucher;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Filters\Filter;
+use App\Models\Member;
+use App\Rules\BalancedBookkeepingEntries;
+use Auth;
+use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
-use App\Rules\BalancedBookkeepingEntries;
-use Awcodes\FilamentTableRepeater\Components\TableRepeater;
-use App\Filament\App\Resources\JournalEntryVoucherResource\Pages;
+use Filament\Tables\Table;
 use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
-use App\Filament\App\Resources\JournalEntryVoucherResource\Pages\ManageJournalEntryVouchers;
-use Auth;
 
 class JournalEntryVoucherResource extends Resource
 {
@@ -57,7 +53,7 @@ class JournalEntryVoucherResource extends Resource
                         $cib = Account::getCashInBankGF();
                         $net_amount = $items->firstWhere('account_id', $cib?->id);
                         if ($net_amount) {
-                            $items = $items->filter(fn($i) => $i['account_id'] != $net_amount['account_id']);
+                            $items = $items->filter(fn ($i) => $i['account_id'] != $net_amount['account_id']);
                             $net_amount['credit'] = $items->sum('debit') - $items->sum('credit');
                             $items->push($net_amount);
                         }
@@ -72,7 +68,7 @@ class JournalEntryVoucherResource extends Resource
                             ->preload(),
                         Select::make('account_id')
                             ->options(
-                                fn($get) => Account::withCode()->whereDoesntHave('children', fn($q) => $q->whereNull('member_id'))->where('member_id', $get('member_id') ?? null)->pluck('code', 'id')
+                                fn ($get) => Account::withCode()->whereDoesntHave('children', fn ($q) => $q->whereNull('member_id'))->where('member_id', $get('member_id') ?? null)->pluck('code', 'id')
                             )
                             ->searchable()
                             ->required()
@@ -112,7 +108,7 @@ class JournalEntryVoucherResource extends Resource
                     ->modalHeading('JEV Preview')
                     ->modalCancelAction(false)
                     ->modalSubmitAction(false)
-                    ->modalContent(fn($record) => view('components.app.bookkeeper.reports.journal-entry-voucher-preview', ['journal_entry_voucher' => $record])),
+                    ->modalContent(fn ($record) => view('components.app.bookkeeper.reports.journal-entry-voucher-preview', ['journal_entry_voucher' => $record])),
             ])
             ->bulkActions([]);
     }

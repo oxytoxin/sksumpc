@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
-use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -27,7 +26,6 @@ class AppServiceProvider extends ServiceProvider
 
             return $this;
         });
-
 
         Select::macro('paymenttype', function () {
             $this->options(PaymentType::whereIn('id', [1, 3, 4, 5])->pluck('name', 'id'))

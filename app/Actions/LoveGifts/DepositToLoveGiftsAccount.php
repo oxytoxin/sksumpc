@@ -3,7 +3,6 @@
 namespace App\Actions\LoveGifts;
 
 use App\Actions\Transactions\CreateTransaction;
-use App\Models\Account;
 use App\Models\LoveGift;
 use App\Models\Member;
 use App\Models\TransactionType;
@@ -12,12 +11,9 @@ use App\Oxytoxin\DTO\Transactions\TransactionData;
 use App\Oxytoxin\Providers\LoveGiftProvider;
 use DB;
 
-
 class DepositToLoveGiftsAccount
 {
-
-
-    public function handle(Member $member, LoveGiftData $data, TransactionType $transactionType, $isJevOrDv = false)
+    public function handle(Member $member, LoveGiftData $data, TransactionType $transactionType)
     {
         DB::beginTransaction();
         $love_gift_account = $member->love_gift_account;
@@ -29,30 +25,6 @@ class DepositToLoveGiftsAccount
             'member_id' => $member->id,
             'transaction_date' => $data->transaction_date,
         ]);
-        if (!$isJevOrDv) {
-            if ($data->payment_type_id == 1) {
-                app(CreateTransaction::class)->handle(new TransactionData(
-                    account_id: Account::getCashOnHand()->id,
-                    transactionType: $transactionType,
-                    payment_type_id: $data->payment_type_id,
-                    reference_number: $love_gift->reference_number,
-                    debit: $love_gift->amount,
-                    member_id: $love_gift->member_id,
-                    remarks: 'Member Deposit to Love Gift',
-                ));
-            }
-            if ($data->payment_type_id == 4) {
-                app(CreateTransaction::class)->handle(new TransactionData(
-                    account_id: Account::getCashInBankMSO()->id,
-                    transactionType: $transactionType,
-                    payment_type_id: $data->payment_type_id,
-                    reference_number: $love_gift->reference_number,
-                    debit: $love_gift->amount,
-                    member_id: $love_gift->member_id,
-                    remarks: 'Member Deposit to Love Gift',
-                ));
-            }
-        }
 
         app(CreateTransaction::class)->handle(new TransactionData(
             account_id: $love_gift_account->id,

@@ -4,7 +4,6 @@ namespace App\Filament\App\Resources\CapitalSubscriptionResource\Pages;
 
 use App\Filament\App\Resources\CapitalSubscriptionResource;
 use App\Models\CapitalSubscription;
-use App\Models\Member;
 use Filament\Resources\Pages\Page;
 use Livewire\Attributes\Computed;
 use NumberFormatter;
@@ -27,6 +26,7 @@ class ShareCertificate extends Page
     public function ParValue()
     {
         $formatter = NumberFormatter::create('en', NumberFormatter::SPELLOUT);
-        return strtoupper($formatter->format($this->capital_subscription->par_value)) . ' PESOS';
+
+        return strtoupper($formatter->format($this->capital_subscription->par_value)).' PESOS';
     }
 }

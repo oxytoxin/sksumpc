@@ -27,8 +27,8 @@ class FinancialOperationEditor extends Page
                             ->options(Account::whereNull('member_id')->pluck('name', 'id'))
                             ->multiple()
                             ->searchable()
-                            ->preload()
-                    ])
+                            ->preload(),
+                    ]),
             ]);
     }
 }

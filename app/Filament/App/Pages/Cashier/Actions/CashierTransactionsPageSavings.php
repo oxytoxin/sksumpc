@@ -5,7 +5,6 @@ namespace App\Filament\App\Pages\Cashier\Actions;
 use App\Actions\Savings\DepositToSavingsAccount;
 use App\Actions\Savings\WithdrawFromSavingsAccount;
 use App\Models\Member;
-use App\Models\PaymentType;
 use App\Models\SavingsAccount;
 use App\Models\TransactionType;
 use App\Oxytoxin\DTO\MSO\SavingsData;
@@ -38,7 +37,6 @@ class CashierTransactionsPageSavings
                 'transaction_date' => $savings->transaction_date,
             ]);
         }
-
 
         return [
             'account_number' => $savings_account->number,

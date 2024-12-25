@@ -11,4 +11,13 @@ use Illuminate\Database\Eloquent\Model;
 class TransactionDateHistory extends Model
 {
     use HasFactory;
+
+    protected $casts = [
+        'date' => 'immutable_datetime',
+    ];
+
+    public static function current_date()
+    {
+        return self::firstWhere('is_current', true)?->date ?? null;
+    }
 }

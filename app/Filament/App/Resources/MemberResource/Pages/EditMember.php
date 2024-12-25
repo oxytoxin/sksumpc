@@ -22,8 +22,7 @@ class EditMember extends EditRecord
         }
         unset($data['officers_list_id'], $data['position_id']);
         $record->update($data);
+
         return $record;
     }
-
-
 }

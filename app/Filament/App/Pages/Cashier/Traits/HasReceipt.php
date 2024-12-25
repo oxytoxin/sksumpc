@@ -11,7 +11,7 @@ trait HasReceipt
     public function receipt(): Action
     {
         return Action::make('receipt')
-            ->modalContent(fn($arguments) => view('filament.app.pages.cashier.transaction-receipt', ['transactions' => $arguments['transactions']]))
+            ->modalContent(fn ($arguments) => view('filament.app.pages.cashier.transaction-receipt', ['transactions' => $arguments['transactions']]))
             ->modalCancelAction(false)
             ->closeModalByClickingAway(false)
             ->modalCloseButton(false)
