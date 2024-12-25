@@ -11,9 +11,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Number;
 use NumberFormatter;
-
-use function Filament\Support\format_money;
 
 /**
  * @mixin IdeHelperLoan
@@ -65,7 +64,7 @@ class Loan extends Model
 
     public function getDeductionsListAttribute()
     {
-        return collect($this->deductions)->map(fn ($d) => $d['name'].': '.format_money($d['amount'], 'PHP'))->toArray();
+        return collect($this->deductions)->map(fn ($d) => $d['name'].': '.Number::currency($d['amount'], 'PHP'))->toArray();
     }
 
     public function getMaturityDateAttribute()

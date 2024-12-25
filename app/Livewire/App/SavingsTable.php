@@ -29,7 +29,7 @@ class SavingsTable extends Component implements HasForms, HasTable
     {
         return $table
             ->query(Saving::whereMemberId($this->member_id))
-            ->recordClasses(fn ($record) => $record->amount > 0 ? 'bg-green-200' : 'bg-red-200')
+            ->recordclasses(fn ($record) => $record->amount > 0 ? 'bg-green-200' : 'bg-red-200')
             ->columns([
                 TextColumn::make('savings_account.number'),
                 TextColumn::make('transaction_date')->date('F d, Y'),

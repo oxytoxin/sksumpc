@@ -7,7 +7,6 @@ use App\Actions\Imprests\CreateNewImprestsAccount;
 use App\Actions\LoveGifts\CreateNewLoveGiftsAccount;
 use App\Actions\MSO\DepositToMsoAccount;
 use App\Actions\Savings\CreateNewSavingsAccount;
-use App\Actions\Savings\DepositToSavingsAccount;
 use App\Actions\TimeDeposits\CreateTimeDeposit;
 use App\Enums\MsoType;
 use App\Models\Member;
@@ -94,7 +93,7 @@ class ImportMemberAccounts extends Command
                     name: $data['name'],
                     number: $data['account_number'],
                 ));
-                app(DepositToSavingsAccount::class)->handle(new TransactionData(
+                app(DepositToMsoAccount::class)->handle(MsoType::SAVINGS, new TransactionData(
                     account_id: $account->id,
                     transactionType: $transaction_type,
                     reference_number: '#BALANCEFORWARDED',

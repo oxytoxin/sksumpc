@@ -31,8 +31,7 @@ use Filament\Tables\Table;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
-
-use function Filament\Support\format_money;
+use Number;
 
 class LoansTable extends Component implements HasForms, HasTable
 {
@@ -124,9 +123,9 @@ class LoansTable extends Component implements HasForms, HasTable
                                 Placeholder::make('interest_rate')
                                     ->content(fn ($get) => str(LoanType::find($get('loan_type_id'))?->interest_rate * 100 ?? 0)->append('%')->toString()),
                                 Placeholder::make('interest')
-                                    ->content(fn ($get) => format_money(LoansProvider::computeInterest(str_replace(',', '', $get('gross_amount') ?? 0), LoanType::find($get('loan_type_id')), $get('number_of_terms'), $get('transaction_date')), 'PHP')),
+                                    ->content(fn ($get) => Number::currency(LoansProvider::computeInterest(str_replace(',', '', $get('gross_amount') ?? 0), LoanType::find($get('loan_type_id')), $get('number_of_terms'), $get('transaction_date')), 'PHP')),
                                 Placeholder::make('monthly_payment')
-                                    ->content(fn ($get) => format_money(LoansProvider::computeMonthlyPayment(str_replace(',', '', $get('gross_amount') ?? 0), LoanType::find($get('loan_type_id')), $get('number_of_terms'), $get('transaction_date')), 'PHP')),
+                                    ->content(fn ($get) => Number::currency(LoansProvider::computeMonthlyPayment(str_replace(',', '', $get('gross_amount') ?? 0), LoanType::find($get('loan_type_id')), $get('number_of_terms'), $get('transaction_date')), 'PHP')),
                             ]),
                         TableRepeater::make('deductions')
                             ->schema([
@@ -142,13 +141,13 @@ class LoansTable extends Component implements HasForms, HasTable
                         Grid::make(2)
                             ->schema([
                                 Placeholder::make('deductions_amount')
-                                    ->content(fn ($get) => format_money(collect($get('deductions'))->map(function ($d) {
+                                    ->content(fn ($get) => Number::currency(collect($get('deductions'))->map(function ($d) {
                                         $d['amount'] = str_replace(',', '', filled($d['amount']) ? $d['amount'] : 0);
 
                                         return $d;
                                     })->sum('amount'), 'PHP')),
                                 Placeholder::make('net_amount')
-                                    ->content(fn ($get) => format_money(floatval(str_replace(',', '', $get('gross_amount') ?? 0)) - collect($get('deductions'))->map(function ($d) {
+                                    ->content(fn ($get) => Number::currency(floatval(str_replace(',', '', $get('gross_amount') ?? 0)) - collect($get('deductions'))->map(function ($d) {
                                         $d['amount'] = str_replace(',', '', filled($d['amount']) ? $d['amount'] : 0);
 
                                         return $d;

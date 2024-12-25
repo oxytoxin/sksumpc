@@ -27,7 +27,7 @@ class LoveGiftsTable extends Component implements HasForms, HasTable
     {
         return $table
             ->query(LoveGift::whereMemberId($this->member_id))
-            ->recordClasses(fn ($record) => $record->amount > 0 ? 'bg-green-200' : 'bg-red-200')
+            ->recordclasses(fn ($record) => $record->amount > 0 ? 'bg-green-200' : 'bg-red-200')
             ->columns([
                 TextColumn::make('transaction_date')->date('m/d/Y'),
                 TextColumn::make('reference_number'),

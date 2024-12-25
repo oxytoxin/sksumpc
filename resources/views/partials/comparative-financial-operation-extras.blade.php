@@ -1,11 +1,11 @@
 @php
     $accounts = $this->trial_balance;
-    $current_revenue_ending_balance = sum_no_children_recursive($accounts->where('account_type_id', 3), "2_ending_balance_credit");
-    $previous_revenue_ending_balance = sum_no_children_recursive($accounts->where('account_type_id', 3), "1_ending_balance_credit");
-    $forwarded_revenue_ending_balance = sum_no_children_recursive($accounts->where('account_type_id', 3), "0_ending_balance_credit");
-    $current_expenses_ending_balance = sum_no_children_recursive($accounts->where('account_type_id', 5), "2_ending_balance_debit");
-    $previous_expenses_ending_balance = sum_no_children_recursive($accounts->where('account_type_id', 5), "1_ending_balance_debit");
-    $forwarded_expenses_ending_balance = sum_no_children_recursive($accounts->where('account_type_id', 5), "0_ending_balance_debit");
+    $current_revenue_ending_balance = sum_no_children_recursive($accounts->where('account_type_id', 3), '2_ending_balance_credit');
+    $previous_revenue_ending_balance = sum_no_children_recursive($accounts->where('account_type_id', 3), '1_ending_balance_credit');
+    $forwarded_revenue_ending_balance = sum_no_children_recursive($accounts->where('account_type_id', 3), '0_ending_balance_credit');
+    $current_expenses_ending_balance = sum_no_children_recursive($accounts->where('account_type_id', 5), '2_ending_balance_debit');
+    $previous_expenses_ending_balance = sum_no_children_recursive($accounts->where('account_type_id', 5), '1_ending_balance_debit');
+    $forwarded_expenses_ending_balance = sum_no_children_recursive($accounts->where('account_type_id', 5), '0_ending_balance_debit');
     $extra = [
         'current_net_surplus' => $current_revenue_ending_balance - $current_expenses_ending_balance,
         'previous_net_surplus' => $previous_revenue_ending_balance - $previous_expenses_ending_balance,

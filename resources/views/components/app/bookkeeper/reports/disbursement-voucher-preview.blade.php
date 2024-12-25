@@ -14,19 +14,19 @@
                 <td colspan="6" class="text-center text-sm font-bold">TIN 005-811-330 NON - VAT</td>
             </tr>
             <tr>
-                <td colspan="6" class="text-center font-bold text-2xl">DISBURSEMENT VOUCHER</td>
+                <td colspan="6" class="text-center text-2xl font-bold">DISBURSEMENT VOUCHER</td>
             </tr>
         </thead>
         <tbody class="mt-4 text-xs">
             <tr class="border-x-2 border-t-2 border-black">
                 <td class="w-1/6 border-black px-2">PAID TO:</td>
-                <td colspan="3" class="border-t border-r-2 border-black px-2">{{ $disbursement_voucher->name }}</td>
+                <td colspan="3" class="border-r-2 border-t border-black px-2">{{ $disbursement_voucher->name }}</td>
                 <td class="w-1/6 border-t border-black px-2">VOUCHER:</td>
                 <td colspan="1" class="border-t border-black px-2">{{ $disbursement_voucher->reference_number }}</td>
             </tr>
             <tr class="border-x-2 border-b-2 border-black">
                 <td class="w-1/6 border-t border-black px-2">ADDRESS/STATION:</td>
-                <td colspan="3" class="border-t border-r-2 border-black px-2">{{ $disbursement_voucher->address }}</td>
+                <td colspan="3" class="border-r-2 border-t border-black px-2">{{ $disbursement_voucher->address }}</td>
                 <td class="w-1/6 border-t border-black px-2">DATE:</td>
                 <td colspan="1" class="border-t border-black px-2">{{ $disbursement_voucher->transaction_date->format('m/d/Y') }}</td>
             </tr>
@@ -65,43 +65,43 @@
                 </td>
             </tr>
             <tr>
-                <td class="pt-4 px-2 whitespace-nowrap border-black border-b">Check No. ___________</td>
-                <td class="pt-4 px-2 whitespace-nowrap border-black border-r border-b">Amount P___________</td>
+                <td class="whitespace-nowrap border-b border-black px-2 pt-4">Check No. ___________</td>
+                <td class="whitespace-nowrap border-b border-r border-black px-2 pt-4">Amount P___________</td>
                 <td colspan="4" class="px-2">DESCRIPTION OF ENTRY</td>
             </tr>
             <tr>
-                <td class="border-black border-r px-2 w-1/6">Prepared and Certified Correct:</td>
-                <td class="px-2 w-1/6">Funds Available:</td>
-                <td colspan="4" class="border-black border-l px-2 border-b">{{ $disbursement_voucher->description }}</td>
+                <td class="w-1/6 border-r border-black px-2">Prepared and Certified Correct:</td>
+                <td class="w-1/6 px-2">Funds Available:</td>
+                <td colspan="4" class="border-b border-l border-black px-2">{{ $disbursement_voucher->description }}</td>
             </tr>
             <tr>
-                <td class="border-black border-r"></td>
-                <td class="border-black border-r"></td>
-                <td class="border-black border-r px-2" colspan="2">Approved:</td>
+                <td class="border-r border-black"></td>
+                <td class="border-r border-black"></td>
+                <td class="border-r border-black px-2" colspan="2">Approved:</td>
                 <td colspan="2" class="px-2">Received by:</td>
             </tr>
             <tr>
-                <td class="p-0 border-black border-r">&nbsp;</td>
-                <td class="p-0 border-black border-r">&nbsp;</td>
+                <td class="border-r border-black p-0">&nbsp;</td>
+                <td class="border-r border-black p-0">&nbsp;</td>
                 <td class="p-0">&nbsp;</td>
-                <td class="p-0 border-black border-r">&nbsp;</td>
+                <td class="border-r border-black p-0">&nbsp;</td>
                 <td class="p-0">&nbsp;</td>
                 <td class="p-0">&nbsp;</td>
             </tr>
             <tr>
-                <td class="p-0 border-black border-b border-r">&nbsp;</td>
-                <td class="p-0 border-black border-b border-r">&nbsp;</td>
-                <td class="p-0 border-black border-b">&nbsp;</td>
-                <td class="p-0 border-black border-b border-r">&nbsp;</td>
-                <td class="p-0 border-black border-b">&nbsp;</td>
-                <td class="p-0 border-black border-b">&nbsp;</td>
+                <td class="border-b border-r border-black p-0">&nbsp;</td>
+                <td class="border-b border-r border-black p-0">&nbsp;</td>
+                <td class="border-b border-black p-0">&nbsp;</td>
+                <td class="border-b border-r border-black p-0">&nbsp;</td>
+                <td class="border-b border-black p-0">&nbsp;</td>
+                <td class="border-b border-black p-0">&nbsp;</td>
             </tr>
             <tr>
-                <td class="border-black border-r px-2 text-center">Bookkeeper</td>
-                <td class="px-2 border-black border-r text-center">Treasurer</td>
-                <td class="px-2 w-1/6">General Manager</td>
-                <td class="border-black border-r w-1/6">BOD Chairman</td>
-                <td class="px-2 whitespace-nowrap">Name & Signature/Date</td>
+                <td class="border-r border-black px-2 text-center">Bookkeeper</td>
+                <td class="border-r border-black px-2 text-center">Treasurer</td>
+                <td class="w-1/6 px-2">General Manager</td>
+                <td class="w-1/6 border-r border-black">BOD Chairman</td>
+                <td class="whitespace-nowrap px-2">Name & Signature/Date</td>
                 <td></td>
             </tr>
         </tbody>

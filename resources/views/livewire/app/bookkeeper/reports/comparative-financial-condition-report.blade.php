@@ -1,4 +1,4 @@
-<div  x-data>
+<div x-data>
     <div x-ref="print" class="flex max-h-[32rem] flex-col print:text-[10pt]">
         <div class="hidden print:block">
             <x-app.cashier.reports.report-heading />
@@ -13,18 +13,18 @@
             <table class="w-full border-separate border-spacing-0 border border-black">
                 <thead class="sticky top-0 bg-white">
                     <tr>
-                        <th class="print:text-[8pt] border border-black px-2"></th>
-                        <th class="print:text-[8pt] whitespace-nowrap border border-black px-2">{{ $this->to_date->format('F d, Y') }}</th>
-                        <th class="print:text-[8pt] whitespace-nowrap border border-black px-2">{{ $this->from_date->format('F d, Y') }}</th>
-                        <th class="print:text-[8pt] border border-black px-2">INCREASE /DECREASE</th>
-                        <th class="print:text-[8pt] whitespace-nowrap border border-black px-2">{{ $this->formatted_balance_forwarded_date }}</th>
-                        <th class="print:text-[8pt] border border-black px-2">INCREASE /DECREASE</th>
+                        <th class="border border-black px-2 print:text-[8pt]"></th>
+                        <th class="whitespace-nowrap border border-black px-2 print:text-[8pt]">{{ $this->to_date->format('F d, Y') }}</th>
+                        <th class="whitespace-nowrap border border-black px-2 print:text-[8pt]">{{ $this->from_date->format('F d, Y') }}</th>
+                        <th class="border border-black px-2 print:text-[8pt]">INCREASE /DECREASE</th>
+                        <th class="whitespace-nowrap border border-black px-2 print:text-[8pt]">{{ $this->formatted_balance_forwarded_date }}</th>
+                        <th class="border border-black px-2 print:text-[8pt]">INCREASE /DECREASE</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($this->account_types->whereIn('id', [1, 2, 4]) as $account_type)
                         <tr>
-                            <th colspan="11" class="print:text-[8pt] whitespace-nowrap border border-black bg-green-300 px-4 text-left">{{ $account_type->name }}</th>
+                            <th colspan="11" class="whitespace-nowrap border border-black bg-green-300 px-4 text-left print:text-[8pt]">{{ $account_type->name }}</th>
                         </tr>
                         @if ($account_type->id == 4)
                             @include('partials.comparative-financial-condition-equity-extras')
@@ -44,7 +44,7 @@
             </table>
         </div>
     </div>
-    <div class="p-4 flex justify-end">
+    <div class="flex justify-end p-4">
         <x-filament::button icon="heroicon-o-printer" @click="printOut($refs.print.outerHTML, 'Statement of Financial Condition')">Print</x-filament::button>
     </div>
 </div>

@@ -43,8 +43,7 @@ use Filament\Notifications\Notification;
 use Filament\Support\Colors\Color;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
-
-use function Filament\Support\format_money;
+use Number;
 
 class PaymentTransactions extends Component implements HasActions, HasForms
 {
@@ -242,7 +241,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                             ->minValue(TimeDepositsProvider::MINIMUM_DEPOSIT)->default(TimeDepositsProvider::MINIMUM_DEPOSIT),
                                         Placeholder::make('number_of_days')->content(TimeDepositsProvider::NUMBER_OF_DAYS),
                                         Placeholder::make('maturity_date')->content(TimeDepositsProvider::getMaturityDate($this->transaction_date)->format('F d, Y')),
-                                        Placeholder::make('maturity_amount')->content(fn ($get) => format_money(TimeDepositsProvider::getMaturityAmount(floatval($get('amount'))), 'PHP')),
+                                        Placeholder::make('maturity_amount')->content(fn ($get) => Number::currency(TimeDepositsProvider::getMaturityAmount(floatval($get('amount'))), 'PHP')),
                                     ]),
                             ]),
                         Block::make('cash_collection')

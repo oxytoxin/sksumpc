@@ -3,7 +3,6 @@
 namespace App\Livewire\App;
 
 use App\Actions\MSO\DepositToMsoAccount;
-use App\Actions\Savings\DepositToSavingsAccount;
 use App\Actions\TimeDeposits\ClaimTimeDeposit;
 use App\Actions\TimeDeposits\TerminateTimeDeposit;
 use App\Enums\MsoType;
@@ -36,8 +35,7 @@ use Filament\Tables\Table;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
-
-use function Filament\Support\format_money;
+use Number;
 
 class TimeDepositsTable extends Component implements HasForms, HasTable
 {
@@ -125,9 +123,9 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                             ->required(),
                         TextInput::make('reference_number')->required()
                             ->unique('time_deposits'),
-                        Placeholder::make('amount')->content(fn () => format_money($record->maturity_amount, 'PHP')),
+                        Placeholder::make('amount')->content(fn () => Number::currency($record->maturity_amount, 'PHP')),
                         Placeholder::make('number_of_days')->content(TimeDepositsProvider::NUMBER_OF_DAYS),
-                        Placeholder::make('maturity_amount')->content(fn () => format_money(TimeDepositsProvider::getMaturityAmount($record->maturity_amount), 'PHP')),
+                        Placeholder::make('maturity_amount')->content(fn () => Number::currency(TimeDepositsProvider::getMaturityAmount($record->maturity_amount), 'PHP')),
                     ])
                     ->action(function ($record, $data) {
                         DB::beginTransaction();
@@ -156,7 +154,7 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                         ->action(function ($record, $data) {
                             app(ClaimTimeDeposit::class)->handle(timeDeposit: $record, withdrawal_date: today());
                             $member = Member::find($this->member_id);
-                            app(DepositToSavingsAccount::class)->handle(new TransactionData(
+                            app(DepositToMsoAccount::class)->handle(MsoType::SAVINGS, new TransactionData(
                                 account_id: $data['savings_account_id'],
                                 transactionType: TransactionType::CDJ(),
                                 payment_type_id: 1,

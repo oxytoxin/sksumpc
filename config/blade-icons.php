@@ -26,7 +26,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Global Default Classes
+    | Global Default classes
     |--------------------------------------------------------------------------
     |
     | This config option allows you to define some classes which

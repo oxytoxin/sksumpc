@@ -18,7 +18,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Livewire\Attributes\Computed;
 use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
-use stdClass;
+use stdclass;
 
 class TransactionsList extends Page implements HasForms, HasTable
 {
@@ -96,7 +96,7 @@ class TransactionsList extends Page implements HasForms, HasTable
             ->filtersLayout(FiltersLayout::AboveContent)
             ->columns([
                 TextColumn::make('#')->state(
-                    static function (HasTable $livewire, stdClass $rowLoop): string {
+                    static function (HasTable $livewire, stdclass $rowLoop): string {
                         return (string) (
                             $rowLoop->iteration +
                             ($livewire->getTableRecordsPerPage() * (

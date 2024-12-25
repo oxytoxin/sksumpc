@@ -6,7 +6,7 @@
         {{ $this->form }}
     </div>
     <div class="mt-8">
-        <table class="border border-black w-full">
+        <table class="w-full border border-black">
             <thead>
                 <tr>
                     <th class="border border-black">DATE</th>
@@ -21,22 +21,22 @@
                     $balance = $cash_beginning?->amount ?? 0;
                 @endphp
                 <tr>
-                    <td class="px-4 text-center border border-black">{{ date_create($data['transaction_date'])->format('m/d/Y') }}</td>
-                    <td class="px-4 text-center border border-black">CASH BEGINNING</td>
-                    <td class="px-4 border border-black"></td>
-                    <td class="px-4 border border-black text-right">{{ format_money($balance, 'PHP') }}</td>
-                    <td class="px-4 border border-black text-right">{{ format_money($balance, 'PHP') }}</td>
+                    <td class="border border-black px-4 text-center">{{ date_create($data['transaction_date'])->format('m/d/Y') }}</td>
+                    <td class="border border-black px-4 text-center">CASH BEGINNING</td>
+                    <td class="border border-black px-4"></td>
+                    <td class="border border-black px-4 text-right">{{ format_money($balance, 'PHP') }}</td>
+                    <td class="border border-black px-4 text-right">{{ format_money($balance, 'PHP') }}</td>
                 </tr>
                 @forelse ($withdrawals as $withdrawal)
                     @php
                         $balance -= $withdrawal->withdrawal;
                     @endphp
                     <tr>
-                        <td class="px-4 text-center border border-black">{{ date_create($withdrawal->transaction_date)->format('m/d/Y') }}</td>
-                        <td class="px-4 text-center border border-black">{{ $withdrawal->reference_number }}</td>
-                        <td class="px-4 border border-black text-right">{{ format_money($withdrawal->withdrawal, 'PHP') }}</td>
-                        <td class="px-4 border border-black"></td>
-                        <td class="px-4 border border-black text-right">{{ format_money($balance, 'PHP') }}</td>
+                        <td class="border border-black px-4 text-center">{{ date_create($withdrawal->transaction_date)->format('m/d/Y') }}</td>
+                        <td class="border border-black px-4 text-center">{{ $withdrawal->reference_number }}</td>
+                        <td class="border border-black px-4 text-right">{{ format_money($withdrawal->withdrawal, 'PHP') }}</td>
+                        <td class="border border-black px-4"></td>
+                        <td class="border border-black px-4 text-right">{{ format_money($balance, 'PHP') }}</td>
                     </tr>
                 @empty
                     <tr>
@@ -45,11 +45,11 @@
                 @endforelse
             </tbody>
             <tr>
-                <td class="px-4 text-center border border-black">{{ date_create($data['transaction_date'])->format('m/d/Y') }}</td>
-                <td class="px-4 text-center border border-black">CASH END</td>
-                <td class="px-4 border border-black"></td>
-                <td class="px-4 border border-black text-right">{{ format_money($balance, 'PHP') }}</td>
-                <td class="px-4 border border-black text-right">{{ format_money($balance, 'PHP') }}</td>
+                <td class="border border-black px-4 text-center">{{ date_create($data['transaction_date'])->format('m/d/Y') }}</td>
+                <td class="border border-black px-4 text-center">CASH END</td>
+                <td class="border border-black px-4"></td>
+                <td class="border border-black px-4 text-right">{{ format_money($balance, 'PHP') }}</td>
+                <td class="border border-black px-4 text-right">{{ format_money($balance, 'PHP') }}</td>
             </tr>
         </table>
     </div>

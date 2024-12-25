@@ -10,6 +10,7 @@ use App\Models\Member;
 use App\Models\PaymentType;
 use App\Models\TransactionType;
 use App\Oxytoxin\DTO\Transactions\TransactionData;
+use App\Oxytoxin\Providers\LoveGiftProvider;
 
 class CashierTransactionsPageLoveGifts
 {
@@ -31,7 +32,7 @@ class CashierTransactionsPageLoveGifts
                 account_id: $love_gift_account->id,
                 transactionType: $transaction_type,
                 payment_type_id: $payment_type->id,
-                reference_number: $reference_number,
+                reference_number: LoveGiftProvider::WITHDRAWAL_TRANSFER_CODE,
                 debit: $amount,
                 member_id: $member->id,
                 payee: $member->full_name,

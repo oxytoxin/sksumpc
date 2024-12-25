@@ -70,18 +70,18 @@
                         <div class="px-8">
                             <table class="my-4 w-full text-xs">
                                 <thead>
-                                <th class="border border-black">Name</th>
-                                <th class="border border-black">Value</th>
-                                <th class="border border-black">Status</th>
+                                    <th class="border border-black">Name</th>
+                                    <th class="border border-black">Value</th>
+                                    <th class="border border-black">Status</th>
                                 </thead>
                                 <tbody>
-                                @foreach ($cibi->details['assets'] ?? [] as $asset)
-                                    <tr>
-                                        <td class="border border-black text-center">{{ $asset['name'] ?? '' }}</td>
-                                        <td class="border border-black text-center">{{ $asset['value'] ?? '' }}</td>
-                                        <td class="border border-black text-center">{{ $asset['status'] ?? '' }}</td>
-                                    </tr>
-                                @endforeach
+                                    @foreach ($cibi->details['assets'] ?? [] as $asset)
+                                        <tr>
+                                            <td class="border border-black text-center">{{ $asset['name'] ?? '' }}</td>
+                                            <td class="border border-black text-center">{{ $asset['value'] ?? '' }}</td>
+                                            <td class="border border-black text-center">{{ $asset['status'] ?? '' }}</td>
+                                        </tr>
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>
@@ -91,16 +91,16 @@
                         <div class="px-8">
                             <table class="my-4 w-full text-xs print:text-[8pt]">
                                 <thead>
-                                <th class="border border-black">Name</th>
-                                <th class="border border-black">Rate</th>
+                                    <th class="border border-black">Name</th>
+                                    <th class="border border-black">Rate</th>
                                 </thead>
                                 <tbody>
-                                @foreach ($cibi->details['existing_structure'] ?? [] as $existing_structure)
-                                    <tr>
-                                        <td class="border border-black text-center">{{ $existing_structure['name'] ?? '' }}</td>
-                                        <td class="border border-black text-center">{{ $existing_structure['rate'] ?? '' }}</td>
-                                    </tr>
-                                @endforeach
+                                    @foreach ($cibi->details['existing_structure'] ?? [] as $existing_structure)
+                                        <tr>
+                                            <td class="border border-black text-center">{{ $existing_structure['name'] ?? '' }}</td>
+                                            <td class="border border-black text-center">{{ $existing_structure['rate'] ?? '' }}</td>
+                                        </tr>
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>

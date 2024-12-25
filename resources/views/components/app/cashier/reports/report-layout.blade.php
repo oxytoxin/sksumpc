@@ -2,7 +2,7 @@
 <div x-data class="mx-auto max-w-7xl">
     <div class="p-4" x-ref="print">
         @if ($hasHeader)
-            <x-app.cashier.reports.report-heading/>
+            <x-app.cashier.reports.report-heading />
         @endif
         @isset($title)
             <h4 wire:ignore class="mt-4 text-center text-xl font-bold">{{ $title }}</h4>
@@ -13,7 +13,7 @@
             {{ $slot }}
         </div>
         @isset($signatories)
-            <x-app.cashier.reports.signatories :signatories="$signatories"/>
+            <x-app.cashier.reports.signatories :signatories="$signatories" />
         @endisset
     </div>
     <div class="flex justify-end gap-4 p-4">

@@ -30,14 +30,20 @@
                 <td class="w-1/6 border-x border-t border-black px-2"> JEV#:</td>
                 <td colspan="2" class="border-t border-black px-2">{{ $journal_entry_voucher->reference_number }}</td>
             </tr>
-            <tr><td colspan="6">&nbsp</td></tr>
-            <tr><td colspan="6" class="border-2 border-black text-center">DESCRIPTION</td></tr>
+            <tr>
+                <td colspan="6">&nbsp</td>
+            </tr>
+            <tr>
+                <td colspan="6" class="border-2 border-black text-center">DESCRIPTION</td>
+            </tr>
             <tr>
                 <td colspan="6" class="whitespace-pre-line border-2 border-black px-2 text-justify">
                     {{ $journal_entry_voucher->description }}
                 </td>
             </tr>
-            <tr><td colspan="6">&nbsp</td></tr>
+            <tr>
+                <td colspan="6">&nbsp</td>
+            </tr>
             <tr>
                 <td colspan="2" class="border border-black text-center">ACCOUNT NAME</td>
                 <td colspan="2" class="border border-black text-center">ACCT. CODE</td>
@@ -71,7 +77,9 @@
                     {{ $journal_entry_items->sum('credit') ? number_format($journal_entry_items->sum('credit'), 2) : '' }}
                 </td>
             </tr>
-            <tr><td class="border-b border-black" colspan="6">&nbsp</td></tr>
+            <tr>
+                <td class="border-b border-black" colspan="6">&nbsp</td>
+            </tr>
             <tr>
                 <td colspan="2" class="border-r border-black px-2">PREPARED BY:</td>
                 <td colspan="2" class="border-r border-black px-2">NOTED:</td>

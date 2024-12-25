@@ -4,19 +4,18 @@
             <div class="text-sm">
                 <x-app.cashier.reports.report-heading />
             </div>
-            <div class="text-center my-8">
+            <div class="my-8 text-center">
                 <h1 class="text-4xl font-bold text-green-600">CERTIFICATE OF TIME DEPOSIT</h1>
                 <p>NO. <span class="underline">{{ $time_deposit->time_deposit_account->number }}</span></p>
             </div>
-            <div class="text-center flex flex-col items-center">
+            <div class="flex flex-col items-center text-center">
                 <p>This certifies that:</p>
-                <p class="uppercase text-2xl border-b-2 border-amber-600 text-amber-600 px-8 my-4 font-bold">
+                <p class="my-4 border-b-2 border-amber-600 px-8 text-2xl font-bold uppercase text-amber-600">
                     {{ $time_deposit->member->full_name }}</p>
             </div>
             <div class="text-center">
                 <p>
-                    has deposited with this Cooperative the sum of <strong
-                        class="uppercase">{{ $time_deposit->amount_in_words }} pesos
+                    has deposited with this Cooperative the sum of <strong class="uppercase">{{ $time_deposit->amount_in_words }} pesos
                         (Php {{ renumber_format($time_deposit->amount, 2) }})</strong>
                     for the period of {{ $time_deposit->days_in_words }} ({{ $time_deposit->number_of_days }})days from
                     the date of issuance hereof, bearing an
@@ -28,17 +27,17 @@
                 </p>
             </div>
             <div class="mt-8 grid grid-cols-2 gap-4">
-                <div class="flex flex-col items-center mt-8">
+                <div class="mt-8 flex flex-col items-center">
                     <p class="font-bold uppercase">ROLANDO F. HECHANOVA</p>
                     <p>BOD Chairperson</p>
                 </div>
-                <div class="flex flex-col items-center mt-8">
+                <div class="mt-8 flex flex-col items-center">
                     <p class="font-bold uppercase">DESIREE G. LEGASPI</p>
                     <p>Treasurer</p>
                 </div>
             </div>
         </div>
-        <div class="flex gap-4 break-before-page">
+        <div class="flex break-before-page gap-4">
             <div class="max-w-md text-sm">
                 <h2 class="border-b border-black text-center">CONDITIONS</h2>
                 <p class="text-justify">
@@ -119,7 +118,7 @@
                         <p class="border-t border-black px-16 text-sm">Date</p>
                     </div>
                     <div>
-                        <p class="border-b px-8 border-black text-center uppercase">
+                        <p class="border-b border-black px-8 text-center uppercase">
                             {{ $time_deposit->member->full_name }}
                         </p>
                         <p class="text-sm">(Depositor's Signature Over Printed Name)</p>
