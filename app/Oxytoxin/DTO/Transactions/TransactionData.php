@@ -21,7 +21,7 @@ class TransactionData extends Data
         public $transaction_date = null,
         public $payee = null,
     ) {
-        $this->transaction_date ??= today();
+        $this->transaction_date ??= config('app.transaction_date', today());
         if (! $this->payee) {
             $this->payee = $this->member_id ? Member::find($this->member_id)->full_name : 'SKSU-MPC';
         }

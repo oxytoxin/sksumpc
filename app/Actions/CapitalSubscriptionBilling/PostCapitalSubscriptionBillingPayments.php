@@ -6,7 +6,7 @@ use App\Actions\CapitalSubscription\PayCapitalSubscription;
 use App\Models\CapitalSubscriptionBilling;
 use App\Models\CapitalSubscriptionBillingPayment;
 use App\Models\TransactionType;
-use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionPaymentData;
+use App\Oxytoxin\DTO\Transactions\TransactionData;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\DB;
 
@@ -19,13 +19,17 @@ class PostCapitalSubscriptionBillingPayments
         }
         DB::beginTransaction();
         $transaction_type = TransactionType::CRJ();
-        $cbuBilling->capital_subscription_billing_payments()->with('capital_subscription')->each(function (CapitalSubscriptionBillingPayment $cbup) use ($cbuBilling, $transaction_type) {
-            app(PayCapitalSubscription::class)->handle($cbup->capital_subscription, new CapitalSubscriptionPaymentData(
-                payment_type_id: $cbuBilling->payment_type_id,
+        $cbuBilling->capital_subscription_billing_payments()->with('capital_subscription.member.capital_subscription_account')->each(function (CapitalSubscriptionBillingPayment $cbup) use ($cbuBilling, $transaction_type) {
+            app(PayCapitalSubscription::class)->handle($cbup->capital_subscription, new TransactionData(
+                account_id: $cbup->capital_subscription->member->capital_subscription_account->id,
+                transactionType: $transaction_type,
                 reference_number: $cbuBilling->or_number,
-                amount: $cbup->amount_paid,
+                payment_type_id: $cbuBilling->payment_type_id,
+                credit: $cbup->amount_paid,
+                member_id: $cbup->capital_subscription->member_id,
                 transaction_date: $cbuBilling->date,
-            ), $transaction_type);
+                payee: $cbup->capital_subscription->member->full_name,
+            ));
             $cbup->update([
                 'posted' => true,
             ]);
@@ -34,6 +38,5 @@ class PostCapitalSubscriptionBillingPayments
             'posted' => true,
         ]);
         DB::commit();
-        Notification::make()->title('Payments posted!')->success()->send();
     }
 }

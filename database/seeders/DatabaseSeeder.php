@@ -5,7 +5,6 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Artisan;
 
 class DatabaseSeeder extends Seeder
@@ -43,7 +42,7 @@ class DatabaseSeeder extends Seeder
         $this->command->info("Seeded members...\n");
 
         // $this->call(ImportExistingLoansSeeder::class);
-        // Artisan::call('app:import-member-accounts');
+        Artisan::call('app:import-member-accounts');
         $this->call(DatabaseUpdatesSeeder::class);
     }
 }

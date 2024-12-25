@@ -15,8 +15,8 @@ class ExpenseAccountsSeeder extends Seeder
         Account::create(['account_type_id' => 5, 'name' => 'INTEREST EXPENSE ON BORROWINGS', 'number' => '71100']);
         Account::create(['account_type_id' => 5, 'name' => 'OTHER CHARGES ON BORROWINGS', 'number' => '71110']);
         Account::create(['account_type_id' => 5, 'name' => 'INTEREST EXPENSE ON DEPOSITS', 'number' => '71200', 'children' => [
-            ['account_type_id' => 5, 'name' => 'SAVINGS DEPOSIT', 'number' => '71200-001'],
-            ['account_type_id' => 5, 'name' => 'TIME DEPOSIT', 'number' => '71200-002'],
+            ['account_type_id' => 5, 'name' => 'SAVINGS DEPOSIT', 'number' => '71200-001', 'tag' => 'savings_deposit_interest_expense'],
+            ['account_type_id' => 5, 'name' => 'TIME DEPOSIT', 'number' => '71200-002', 'tag' => 'time_deposit_interest_expense'],
         ]]);
         Account::create(['account_type_id' => 5, 'name' => 'OTHER FINANCING CHARGES', 'number' => '71300']);
         Account::create(['account_type_id' => 5, 'name' => 'SALARIES & WAGES', 'number' => '72140']);

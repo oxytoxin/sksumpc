@@ -2,12 +2,13 @@
 
 namespace App\Filament\App\Pages\Cashier\Actions;
 
-use App\Actions\Imprests\DepositToImprestAccount;
-use App\Actions\Imprests\WithdrawFromImprestAccount;
+use App\Actions\MSO\DepositToMsoAccount;
+use App\Actions\MSO\WithdrawFromMsoAccount;
+use App\Enums\MsoType;
 use App\Models\ImprestAccount;
 use App\Models\Member;
 use App\Models\TransactionType;
-use App\Oxytoxin\DTO\MSO\ImprestData;
+use App\Oxytoxin\DTO\Transactions\TransactionData;
 use App\Oxytoxin\Providers\ImprestsProvider;
 
 class CashierTransactionsPageImprests
@@ -15,19 +16,28 @@ class CashierTransactionsPageImprests
     public static function handle($is_deposit, Member $member, ImprestAccount $imprest_account, TransactionType $transaction_type, $payment_type, $reference_number, $amount, $transaction_date)
     {
         if ($is_deposit) {
-            app(DepositToImprestAccount::class)->handle($member, new ImprestData(
+            $imprest = app(DepositToMsoAccount::class)->handle(MsoType::IMPREST, new TransactionData(
+                account_id: $imprest_account->id,
+                transactionType: $transaction_type,
                 payment_type_id: $payment_type->id,
                 reference_number: $reference_number,
-                amount: $amount,
+                credit: $amount,
+                member_id: $member->id,
+                payee: $member->full_name,
                 transaction_date: $transaction_date,
-            ), $transaction_type);
+            ));
         } else {
-            $imprest = app(WithdrawFromImprestAccount::class)->handle($member, new ImprestData(
+            $imprest = app(WithdrawFromMsoAccount::class)->handle(MsoType::IMPREST, new TransactionData(
+                account_id: $imprest_account->id,
+                transactionType: $transaction_type,
                 payment_type_id: $payment_type->id,
                 reference_number: ImprestsProvider::WITHDRAWAL_TRANSFER_CODE,
-                amount: $amount,
+                debit: $amount,
+                member_id: $member->id,
+                payee: $member->full_name,
                 transaction_date: $transaction_date,
-            ), $transaction_type);
+            ));
+
             $imprest->revolving_fund()->create([
                 'reference_number' => $imprest->reference_number,
                 'withdrawal' => $amount,
@@ -38,7 +48,7 @@ class CashierTransactionsPageImprests
         return [
             'account_number' => $imprest_account->number,
             'account_name' => $imprest_account->name,
-            'reference_number' => $is_deposit ? $reference_number : ImprestsProvider::WITHDRAWAL_TRANSFER_CODE,
+            'reference_number' => $imprest->reference_number,
             'amount' => $amount,
             'payment_type' => $payment_type->name ?? 'CASH',
             'remarks' => $is_deposit ? 'IMPREST DEPOSIT' : 'IMPREST WITHDRAWAL',

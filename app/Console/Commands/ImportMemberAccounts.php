@@ -4,20 +4,20 @@ namespace App\Console\Commands;
 
 use App\Actions\CapitalSubscription\CreateNewCapitalSubscriptionAccount;
 use App\Actions\Imprests\CreateNewImprestsAccount;
-use App\Actions\Imprests\DepositToImprestAccount;
 use App\Actions\LoveGifts\CreateNewLoveGiftsAccount;
+use App\Actions\MSO\DepositToMsoAccount;
 use App\Actions\Savings\CreateNewSavingsAccount;
 use App\Actions\Savings\DepositToSavingsAccount;
 use App\Actions\TimeDeposits\CreateTimeDeposit;
+use App\Enums\MsoType;
 use App\Models\Member;
 use App\Models\TransactionType;
 use App\Oxytoxin\DTO\MSO\Accounts\CapitalSubscriptionAccountData;
 use App\Oxytoxin\DTO\MSO\Accounts\ImprestAccountData;
 use App\Oxytoxin\DTO\MSO\Accounts\LoveGiftAccountData;
 use App\Oxytoxin\DTO\MSO\Accounts\SavingsAccountData;
-use App\Oxytoxin\DTO\MSO\ImprestData;
-use App\Oxytoxin\DTO\MSO\SavingsData;
 use App\Oxytoxin\DTO\MSO\TimeDepositData;
+use App\Oxytoxin\DTO\Transactions\TransactionData;
 use App\Oxytoxin\Providers\TimeDepositsProvider;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection;
@@ -48,16 +48,16 @@ class ImportMemberAccounts extends Command
         $members = Member::get(['id', 'mpc_code']);
         $members = $members->mapWithKeys(fn ($m) => [$m->mpc_code => $m]);
         $transaction_type = TransactionType::JEV();
-        $rows = SimpleExcelReader::create(storage_path('csv/accounts/regular_savings_accounts.xlsx'))->getRows();
-        $this->importSavings(rows: $rows, members: $members, transaction_type: $transaction_type);
-        $rows = SimpleExcelReader::create(storage_path('csv/accounts/associate_savings_accounts.xlsx'))->getRows();
-        $this->importSavings(rows: $rows, members: $members, transaction_type: $transaction_type);
-        $rows = SimpleExcelReader::create(storage_path('csv/accounts/laboratory_savings_accounts.xlsx'))->getRows();
-        $this->importSavings(rows: $rows, members: $members, transaction_type: $transaction_type);
-        $rows = SimpleExcelReader::create(storage_path('csv/accounts/imprest_accounts.xlsx'))->getRows();
-        $this->importImprests(rows: $rows, members: $members, transaction_type: $transaction_type);
-        $rows = SimpleExcelReader::create(storage_path('csv/accounts/time_deposit_accounts.xlsx'))->getRows();
-        $this->importTimeDeposits(rows: $rows, members: $members, transaction_type: $transaction_type);
+        // $rows = SimpleExcelReader::create(storage_path('csv/accounts/regular_savings_accounts.xlsx'))->getRows();
+        // $this->importSavings(rows: $rows, members: $members, transaction_type: $transaction_type);
+        // $rows = SimpleExcelReader::create(storage_path('csv/accounts/associate_savings_accounts.xlsx'))->getRows();
+        // $this->importSavings(rows: $rows, members: $members, transaction_type: $transaction_type);
+        // $rows = SimpleExcelReader::create(storage_path('csv/accounts/laboratory_savings_accounts.xlsx'))->getRows();
+        // $this->importSavings(rows: $rows, members: $members, transaction_type: $transaction_type);
+        // $rows = SimpleExcelReader::create(storage_path('csv/accounts/imprest_accounts.xlsx'))->getRows();
+        // $this->importImprests(rows: $rows, members: $members, transaction_type: $transaction_type);
+        // $rows = SimpleExcelReader::create(storage_path('csv/accounts/time_deposit_accounts.xlsx'))->getRows();
+        // $this->importTimeDeposits(rows: $rows, members: $members, transaction_type: $transaction_type);
         Member::doesntHave('capital_subscription_account')->each(function ($member) {
             app(CreateNewCapitalSubscriptionAccount::class)->handle(new CapitalSubscriptionAccountData(
                 member_id: $member->id,
@@ -94,13 +94,16 @@ class ImportMemberAccounts extends Command
                     name: $data['name'],
                     number: $data['account_number'],
                 ));
-                app(DepositToSavingsAccount::class)->handle($member, new SavingsData(
-                    payment_type_id: 1,
+                app(DepositToSavingsAccount::class)->handle(new TransactionData(
+                    account_id: $account->id,
+                    transactionType: $transaction_type,
                     reference_number: '#BALANCEFORWARDED',
-                    amount: $data['amount'],
-                    savings_account_id: $account->id,
-                    transaction_date: '12/31/2023',
-                ), $transaction_type);
+                    payment_type_id: 1,
+                    credit: $data['amount'],
+                    member_id: $member->id,
+                    transaction_date: '12/31/2024',
+                    payee: $member->full_name,
+                ));
             }
         });
     }
@@ -115,12 +118,16 @@ class ImportMemberAccounts extends Command
                     name: $data['name'],
                     number: $data['account_number']
                 ));
-                app(DepositToImprestAccount::class)->handle($member, new ImprestData(
+                app(DepositToMsoAccount::class)->handle(MsoType::IMPREST, new TransactionData(
+                    account_id: $account->id,
+                    transactionType: $transaction_type,
                     payment_type_id: 1,
                     reference_number: '#BALANCEFORWARDED',
-                    amount: $data['amount'],
-                    transaction_date: '12/31/2023',
-                ), $transaction_type);
+                    credit: $data['amount'],
+                    member_id: $member->id,
+                    transaction_date: '12/31/2024',
+                    payee: $member->full_name,
+                ));
             }
         });
     }

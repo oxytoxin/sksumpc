@@ -2,16 +2,16 @@
 
 namespace App\Livewire\App;
 
-use App\Actions\Imprests\DepositToImprestAccount;
+use App\Actions\MSO\DepositToMsoAccount;
 use App\Actions\Savings\DepositToSavingsAccount;
 use App\Actions\TimeDeposits\ClaimTimeDeposit;
 use App\Actions\TimeDeposits\TerminateTimeDeposit;
+use App\Enums\MsoType;
 use App\Models\Member;
 use App\Models\SavingsAccount;
 use App\Models\TimeDeposit;
 use App\Models\TransactionType;
-use App\Oxytoxin\DTO\MSO\ImprestData;
-use App\Oxytoxin\DTO\MSO\SavingsData;
+use App\Oxytoxin\DTO\Transactions\TransactionData;
 use App\Oxytoxin\Providers\TimeDepositsProvider;
 use DB;
 use Filament\Forms\Components\DatePicker;
@@ -155,12 +155,16 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                         ])
                         ->action(function ($record, $data) {
                             app(ClaimTimeDeposit::class)->handle(timeDeposit: $record, withdrawal_date: today());
-                            app(DepositToSavingsAccount::class)->handle(Member::find($this->member_id), new SavingsData(
+                            $member = Member::find($this->member_id);
+                            app(DepositToSavingsAccount::class)->handle(new TransactionData(
+                                account_id: $data['savings_account_id'],
+                                transactionType: TransactionType::CDJ(),
                                 payment_type_id: 1,
                                 reference_number: TimeDepositsProvider::FROM_TRANSFER_CODE,
-                                amount: $record->maturity_amount,
-                                savings_account_id: $data['savings_account_id']
-                            ), TransactionType::CDJ());
+                                credit: $record->maturity_amount,
+                                member_id: $this->member_id,
+                                payee: $member->full_name,
+                            ));
                             Notification::make()->title('Time deposit claimed.')->success()->send();
                         })
                         ->visible(fn (TimeDeposit $record) => $record->maturity_date->isBefore(today()) && is_null($record->withdrawal_date))
@@ -168,12 +172,17 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                     Action::make('to_imprests')
                         ->requiresConfirmation()
                         ->action(function ($record) {
+                            $member = Member::find($this->member_id);
                             app(ClaimTimeDeposit::class)->handle(timeDeposit: $record, withdrawal_date: today());
-                            app(DepositToImprestAccount::class)->handle(Member::find($this->member_id), new ImprestData(
+                            app(DepositToMsoAccount::class)->handle(MsoType::IMPREST, new TransactionData(
+                                account_id: $member->imprest_account->id,
+                                transactionType: TransactionType::CDJ(),
                                 payment_type_id: 1,
                                 reference_number: TimeDepositsProvider::FROM_TRANSFER_CODE,
-                                amount: $record->maturity_amount
-                            ), TransactionType::CDJ());
+                                credit: $record->maturity_amount,
+                                member_id: $this->member_id,
+                                payee: $member->full_name,
+                            ));
                             Notification::make()->title('Time deposit claimed.')->success()->send();
                         })
                         ->visible(fn (TimeDeposit $record) => $record->maturity_date->isBefore(today()) && is_null($record->withdrawal_date))

@@ -10,161 +10,164 @@ use App\Actions\MSO\WithdrawFromMsoAccount;
 use App\Actions\Transactions\CreateTransaction;
 use App\Enums\MsoType;
 use App\Models\Account;
-use App\Models\JournalEntryVoucherItem;
+use App\Models\DisbursementVoucherItem;
 use App\Models\LoanAccount;
 use App\Models\TransactionType;
 use App\Oxytoxin\DTO\Loan\LoanPaymentData;
 use App\Oxytoxin\DTO\Transactions\TransactionData;
 
-class JournalEntryVoucherItemObserver
+class DisbursementVoucherItemObserver
 {
-    private function getCbuAmount(JournalEntryVoucherItem $journalEntryVoucherItem)
+    /**
+     * Handle the DisbursementVoucherItem "created" event.
+     */
+    public function creating(DisbursementVoucherItem $disbursementVoucherItem): void
     {
-        if ($journalEntryVoucherItem->credit > 0) {
-            return $journalEntryVoucherItem->credit;
-        }
-
-        return $journalEntryVoucherItem->debit * -1;
-    }
-
-    private function processCbu() {}
-
-    public function creating(JournalEntryVoucherItem $journalEntryVoucherItem): void
-    {
-        $account = Account::find($journalEntryVoucherItem->account_id);
+        $account = Account::find($disbursementVoucherItem->account_id);
         $transaction_date = config('app.transaction_date', today());
-        $transactionType = TransactionType::JEV();
-        $transaction_data = new TransactionData(
-            member_id: $account->member_id,
-            account_id: $account->id,
-            transactionType: $transactionType,
-            payment_type_id: 2,
-            reference_number: $journalEntryVoucherItem->journal_entry_voucher->reference_number,
-            debit: $journalEntryVoucherItem->debit,
-            credit: $journalEntryVoucherItem->credit,
-            transaction_date: $transaction_date,
-            payee: $account->member->full_name,
-        );
+        $disbursementVoucherItem->transaction_date = $transaction_date;
+        $transactionType = TransactionType::CDJ();
         if (in_array($account->tag, ['member_common_cbu_paid', 'member_preferred_cbu_paid', 'member_laboratory_cbu_paid'])) {
-            $amount = self::getCbuAmount($journalEntryVoucherItem);
-            app(PayCapitalSubscription::class)
-                ->handle(
-                    $account->member->capital_subscriptions_common,
-                    $transaction_data
-                );
+            if ($disbursementVoucherItem->credit > 0) {
+                $amount = $disbursementVoucherItem->credit;
+            } else {
+                $amount = $disbursementVoucherItem->debit * -1;
+                $account->member->capital_subscriptions_common->update([
+                    'is_common' => false,
+                ]);
+            }
+            app(PayCapitalSubscription::class)->handle($account->member->capital_subscriptions_common, new TransactionData(
+                account_id: $account->id,
+                transactionType: $transactionType,
+                reference_number: $disbursementVoucherItem->disbursement_voucher->reference_number,
+                payment_type_id: 4,
+                credit: $amount,
+                member_id: $account->member_id,
+                transaction_date: $transaction_date,
+                payee: $account->member->full_name,
+            ));
+
             if ($amount < 0) {
                 $account->member->capital_subscriptions_common->update([
                     'is_common' => false,
                 ]);
             }
         } elseif (in_array($account->tag, ['regular_savings'])) {
-            if ($journalEntryVoucherItem->credit) {
+            if ($disbursementVoucherItem->credit) {
                 app(DepositToMsoAccount::class)->handle(MsoType::SAVINGS, new TransactionData(
                     account_id: $account->id,
                     transactionType: $transactionType,
                     payment_type_id: 4,
-                    reference_number: $journalEntryVoucherItem->journal_entry_voucher->reference_number,
-                    credit: $journalEntryVoucherItem->credit,
+                    reference_number: $disbursementVoucherItem->disbursement_voucher->reference_number,
+                    credit: $disbursementVoucherItem->credit,
                     member_id: $account->member_id,
                     transaction_date: $transaction_date,
                     payee: $account->member->full_name,
                 ));
             }
-            if ($journalEntryVoucherItem->debit) {
+            if ($disbursementVoucherItem->debit) {
                 app(WithdrawFromMsoAccount::class)->handle(MsoType::SAVINGS, new TransactionData(
                     account_id: $account->id,
                     transactionType: $transactionType,
                     payment_type_id: 4,
-                    reference_number: $journalEntryVoucherItem->journal_entry_voucher->reference_number,
-                    debit: $journalEntryVoucherItem->debit,
+                    reference_number: $disbursementVoucherItem->disbursement_voucher->reference_number,
+                    debit: $disbursementVoucherItem->debit,
                     member_id: $account->member_id,
-                    payee: $account->member->full_name,
                     transaction_date: $transaction_date,
+                    payee: $account->member->full_name,
                 ));
             }
         } elseif (in_array($account->tag, ['imprest_savings'])) {
-            if ($journalEntryVoucherItem->credit) {
+            if ($disbursementVoucherItem->credit) {
                 app(DepositToMsoAccount::class)->handle(MsoType::IMPREST, new TransactionData(
                     account_id: $account->id,
                     transactionType: $transactionType,
                     payment_type_id: 4,
-                    reference_number: $journalEntryVoucherItem->disbursement_voucher->reference_number,
-                    credit: $journalEntryVoucherItem->credit,
+                    reference_number: $disbursementVoucherItem->disbursement_voucher->reference_number,
+                    credit: $disbursementVoucherItem->credit,
                     member_id: $account->member_id,
                     transaction_date: $transaction_date,
                     payee: $account->member->full_name,
                 ));
-
             }
-            if ($journalEntryVoucherItem->debit) {
+            if ($disbursementVoucherItem->debit) {
                 app(WithdrawFromMsoAccount::class)->handle(MsoType::IMPREST, new TransactionData(
                     account_id: $account->id,
                     transactionType: $transactionType,
                     payment_type_id: 4,
-                    reference_number: $journalEntryVoucherItem->disbursement_voucher->reference_number,
-                    debit: $journalEntryVoucherItem->debit,
+                    reference_number: $disbursementVoucherItem->disbursement_voucher->reference_number,
+                    debit: $disbursementVoucherItem->debit,
                     member_id: $account->member_id,
                     payee: $account->member->full_name,
                     transaction_date: $transaction_date,
                 ));
-
             }
         } elseif (in_array($account->tag, ['love_gift_savings'])) {
-            if ($journalEntryVoucherItem->credit) {
+            if ($disbursementVoucherItem->credit) {
                 app(DepositToMsoAccount::class)->handle(MsoType::LOVE_GIFT, new TransactionData(
                     account_id: $account->id,
                     transactionType: $transactionType,
                     payment_type_id: 4,
-                    reference_number: $journalEntryVoucherItem->journal_entry_voucher->reference_number,
-                    credit: $journalEntryVoucherItem->credit,
+                    reference_number: $disbursementVoucherItem->disbursement_voucher->reference_number,
+                    credit: $disbursementVoucherItem->credit,
                     member_id: $account->member_id,
                     transaction_date: $transaction_date,
                     payee: $account->member->full_name,
                 ));
 
             }
-            if ($journalEntryVoucherItem->debit) {
+            if ($disbursementVoucherItem->debit) {
                 app(WithdrawFromMsoAccount::class)->handle(MsoType::LOVE_GIFT, new TransactionData(
                     account_id: $account->id,
                     transactionType: $transactionType,
                     payment_type_id: 4,
-                    reference_number: $journalEntryVoucherItem->journal_entry_voucher->reference_number,
-                    debit: $journalEntryVoucherItem->debit,
+                    reference_number: $disbursementVoucherItem->disbursement_voucher->reference_number,
+                    debit: $disbursementVoucherItem->debit,
                     member_id: $account->member_id,
                     payee: $account->member->full_name,
                     transaction_date: $transaction_date,
                 ));
-
             }
         } elseif (in_array($account->tag, ['member_loans_receivable'])) {
             $loan_account = LoanAccount::find($account->id);
-            if ($journalEntryVoucherItem->credit) {
-                if ($journalEntryVoucherItem->journal_entry_voucher->is_legacy) {
+            if ($disbursementVoucherItem->credit) {
+                if ($disbursementVoucherItem->disbursement_voucher->is_legacy) {
                     app(PayLegacyLoan::class)
                         ->handle(
                             loanAccount: $loan_account,
-                            principal: $journalEntryVoucherItem->details['principal'],
-                            interest: $journalEntryVoucherItem->details['interest'],
-                            payment_type_id: 2,
-                            reference_number: $journalEntryVoucherItem->journal_entry_voucher->reference_number,
+                            principal: $disbursementVoucherItem->details['principal'],
+                            interest: $disbursementVoucherItem->details['interest'],
+                            payment_type_id: 4,
+                            reference_number: $disbursementVoucherItem->disbursement_voucher->reference_number,
                             transaction_date: $transaction_date,
                             transactionType: $transactionType,
+
                         );
                 } else {
                     app(PayLoan::class)->handle(
                         loan: $loan_account->loan,
                         loanPaymentData: new LoanPaymentData(
-                            payment_type_id: 2,
-                            reference_number: $journalEntryVoucherItem->journal_entry_voucher->reference_number,
-                            amount: $journalEntryVoucherItem->credit,
+                            payment_type_id: 4,
+                            reference_number: $disbursementVoucherItem->disbursement_voucher->reference_number,
+                            amount: $disbursementVoucherItem->credit,
                             transaction_date: $transaction_date
                         ),
                         transactionType: $transactionType,
+
                     );
                 }
             }
         } else {
-            app(CreateTransaction::class)->handle($transaction_data);
+            app(CreateTransaction::class)->handle(new TransactionData(
+                member_id: $account->member_id,
+                account_id: $account->id,
+                transactionType: $transactionType,
+                payment_type_id: 4,
+                reference_number: $disbursementVoucherItem->disbursement_voucher->reference_number,
+                debit: $disbursementVoucherItem->debit,
+                credit: $disbursementVoucherItem->credit,
+                transaction_date: $transaction_date
+            ));
         }
     }
 }

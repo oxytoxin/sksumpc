@@ -2,9 +2,13 @@
 
 namespace App\Actions\LoveGifts;
 
+use App\Actions\MSO\DepositToMsoAccount;
+use App\Actions\Transactions\CreateTransaction;
+use App\Enums\MsoType;
+use App\Models\Account;
 use App\Models\Member;
 use App\Models\TransactionType;
-use App\Oxytoxin\DTO\MSO\LoveGiftData;
+use App\Oxytoxin\DTO\Transactions\TransactionData;
 use App\Oxytoxin\Providers\LoveGiftProvider;
 use App\Oxytoxin\Services\InterestCalculator;
 use DB;
@@ -27,13 +31,29 @@ class GenerateLoveGiftsInterestForMember
             ]);
         });
 
-        $total_interest = $member->imprests_unaccrued()->sum('interest');
-        app(DepositToLoveGiftsAccount::class)->handle($member, new LoveGiftData(
+        $total_interest = $member->love_gifts_unaccrued()->sum('interest');
+        app(DepositToMsoAccount::class)->handle(MsoType::LOVE_GIFT, new TransactionData(
+            account_id: $member->imprest_account->id,
+            transactionType: TransactionType::CDJ(),
             payment_type_id: 1,
-            reference_number: '#INTEREST',
-            amount: $total_interest
-        ), TransactionType::CDJ());
-        $member->imprests_unaccrued()->update([
+            reference_number: '#INTERESTACCRUED-'.$member->love_gift_account->number,
+            credit: $total_interest,
+            member_id: $member->id,
+            remarks: 'Love Gift Interest',
+            payee: $member->full_name,
+            transaction_date: today(),
+        ));
+        app(CreateTransaction::class)->handle(new TransactionData(
+            account_id: Account::getSavingsInterestExpense()->id,
+            transactionType: TransactionType::CDJ(),
+            payment_type_id: 1,
+            reference_number: '#INTERESTACCRUED-'.$member->love_gift_account->number,
+            debit: $total_interest,
+            member_id: $member->id,
+            remarks: 'Love Gift Interest',
+            transaction_date: today(),
+        ));
+        $member->love_gifts_unaccrued()->update([
             'accrued' => true,
         ]);
         DB::commit();

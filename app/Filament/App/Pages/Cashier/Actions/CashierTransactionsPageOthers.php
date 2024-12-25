@@ -7,7 +7,6 @@ use App\Actions\Transactions\CreateTransaction;
 use App\Models\Account;
 use App\Models\Member;
 use App\Models\TransactionType;
-use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionPaymentData;
 use App\Oxytoxin\DTO\Transactions\TransactionData;
 
 class CashierTransactionsPageOthers
@@ -19,14 +18,18 @@ class CashierTransactionsPageOthers
             app(PayCapitalSubscription::class)
                 ->handle(
                     cbu: $member->capital_subscriptions_common,
-                    data: new CapitalSubscriptionPaymentData(
-                        payment_type_id: $payment_type->id,
+                    transactionData: new TransactionData(
+                        account_id: $member->capital_subscription_account->id,
+                        transactionType: $transaction_type,
                         reference_number: $reference_number,
-                        amount: $amount,
-                        transaction_date: $transaction_date
-                    ),
-                    transactionType: $transaction_type
+                        payment_type_id: $payment_type->id,
+                        credit: $amount,
+                        member_id: $member->id,
+                        transaction_date: $transaction_date,
+                        payee: $member->full_name,
+                    )
                 );
+
         } else {
             app(CreateTransaction::class)->handle(new TransactionData(
                 account_id: Account::getCashOnHand()->id,

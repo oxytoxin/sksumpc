@@ -13,8 +13,8 @@ use App\Models\Religion;
 use App\Models\TransactionType;
 use App\Models\User;
 use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionData;
-use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionPaymentData;
 use App\Oxytoxin\DTO\MSO\Accounts\CapitalSubscriptionAccountData;
+use App\Oxytoxin\DTO\Transactions\TransactionData;
 use DateTimeImmutable;
 use DB;
 use Illuminate\Console\Command;
@@ -112,12 +112,16 @@ class ImportMembers extends Command
                             is_common: true,
                             transaction_date: '12/31/2023'
                         ));
-                        app(PayCapitalSubscription::class)->handle($cbu, new CapitalSubscriptionPaymentData(
-                            payment_type_id: 1,
+                        app(PayCapitalSubscription::class)->handle($cbu, new TransactionData(
+                            account_id: $member->capital_subscription_account->id,
+                            transactionType: $transaction_type,
                             reference_number: '#BALANCEFORWARDED',
-                            amount: $memberData['amount_paid'],
-                            transaction_date: '12/31/2023'
-                        ), $transaction_type);
+                            payment_type_id: 1,
+                            credit: $memberData['amount_paid'],
+                            member_id: $member->id,
+                            transaction_date: '12/31/2024',
+                            payee: $member->full_name,
+                        ));
 
                         $user = User::create([
                             'member_id' => $member->id,

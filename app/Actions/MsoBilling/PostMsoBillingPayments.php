@@ -2,15 +2,12 @@
 
 namespace App\Actions\MsoBilling;
 
-use App\Actions\Imprests\DepositToImprestAccount;
-use App\Actions\LoveGifts\DepositToLoveGiftsAccount;
-use App\Actions\Savings\DepositToSavingsAccount;
+use App\Actions\MSO\DepositToMsoAccount;
+use App\Enums\MsoType;
 use App\Models\MsoBilling;
 use App\Models\MsoBillingPayment;
 use App\Models\TransactionType;
-use App\Oxytoxin\DTO\MSO\ImprestData;
-use App\Oxytoxin\DTO\MSO\LoveGiftData;
-use App\Oxytoxin\DTO\MSO\SavingsData;
+use App\Oxytoxin\DTO\Transactions\TransactionData;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\DB;
 
@@ -25,30 +22,25 @@ class PostMsoBillingPayments
         $transaction_type = TransactionType::CRJ();
         $msoBilling->payments()->with('member')->each(function (MsoBillingPayment $payment) use ($msoBilling, $transaction_type) {
             $member = $payment->member;
+            $data = new TransactionData(
+                account_id: $payment->account_id,
+                transactionType: $transaction_type,
+                reference_number: $msoBilling->or_number,
+                payment_type_id: $msoBilling->payment_type_id,
+                credit: $payment->amount_paid,
+                member_id: $member->id,
+                transaction_date: $msoBilling->date,
+                payee: $member->full_name,
+            );
+
             if ($msoBilling->type == 1) {
-                app(DepositToSavingsAccount::class)->handle($member, new SavingsData(
-                    payment_type_id: $msoBilling->payment_type_id,
-                    reference_number: $msoBilling->reference_number,
-                    amount: $payment->amount_paid,
-                    savings_account_id: $payment->account_id,
-                    transaction_date: $msoBilling->date,
-                ), $transaction_type);
+                app(DepositToMsoAccount::class)->handle(MsoType::SAVINGS, $data);
             }
             if ($msoBilling->type == 2) {
-                app(DepositToImprestAccount::class)->handle($member, new ImprestData(
-                    payment_type_id: $msoBilling->payment_type_id,
-                    reference_number: $msoBilling->reference_number,
-                    amount: $payment->amount_paid,
-                    transaction_date: $msoBilling->date,
-                ), $transaction_type);
+                app(DepositToMsoAccount::class)->handle(MsoType::IMPREST, $data);
             }
             if ($msoBilling->type == 3) {
-                app(DepositToLoveGiftsAccount::class)->handle($member, new LoveGiftData(
-                    payment_type_id: $msoBilling->payment_type_id,
-                    reference_number: $msoBilling->reference_number,
-                    amount: $payment->amount_paid,
-                    transaction_date: $msoBilling->date,
-                ), $transaction_type);
+                app(DepositToMsoAccount::class)->handle(MsoType::LOVE_GIFT, $data);
             }
             $payment->update([
                 'posted' => true,

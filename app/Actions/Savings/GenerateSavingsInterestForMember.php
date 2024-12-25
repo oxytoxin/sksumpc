@@ -2,9 +2,13 @@
 
 namespace App\Actions\Savings;
 
+use App\Actions\MSO\DepositToMsoAccount;
+use App\Actions\Transactions\CreateTransaction;
+use App\Enums\MsoType;
+use App\Models\Account;
 use App\Models\Member;
 use App\Models\TransactionType;
-use App\Oxytoxin\DTO\MSO\SavingsData;
+use App\Oxytoxin\DTO\Transactions\TransactionData;
 use App\Oxytoxin\Providers\SavingsProvider;
 use App\Oxytoxin\Services\InterestCalculator;
 use DB;
@@ -29,12 +33,27 @@ class GenerateSavingsInterestForMember
             });
 
             $total_interest = $account->savings_unaccrued()->sum('interest');
-            app(DepositToSavingsAccount::class)->handle($member, new SavingsData(
+            app(DepositToMsoAccount::class)->handle(MsoType::SAVINGS, new TransactionData(
+                account_id: $account->id,
+                transactionType: TransactionType::CDJ(),
                 payment_type_id: 1,
-                reference_number: '#INTEREST',
-                amount: $total_interest,
-                savings_account_id: $account->id,
-            ), TransactionType::CDJ());
+                reference_number: '#INTERESTACCRUED-'.$account->number,
+                credit: $total_interest,
+                member_id: $member->id,
+                remarks: 'Savings Interest',
+                payee: $member->full_name,
+                transaction_date: today(),
+            ));
+            app(CreateTransaction::class)->handle(new TransactionData(
+                account_id: Account::getSavingsInterestExpense()->id,
+                transactionType: TransactionType::CDJ(),
+                payment_type_id: 1,
+                reference_number: '#INTERESTACCRUED-'.$account->number,
+                debit: $total_interest,
+                member_id: $member->id,
+                remarks: 'Savings Interest',
+                transaction_date: today(),
+            ));
             $account->savings_unaccrued()->update([
                 'accrued' => true,
             ]);

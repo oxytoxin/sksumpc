@@ -54,6 +54,16 @@ class Account extends Model
         return Account::firstWhere('tag', 'revolving_fund');
     }
 
+    public static function getTimeDepositInterestExpense()
+    {
+        return Account::firstWhere('tag', 'time_deposit_interest_expense');
+    }
+
+    public static function getSavingsInterestExpense()
+    {
+        return Account::firstWhere('tag', 'savings_deposit_interest_expense');
+    }
+
     public static function getMemberTimeDeposits()
     {
         return Account::firstWhere('tag', 'member_time_deposits');
