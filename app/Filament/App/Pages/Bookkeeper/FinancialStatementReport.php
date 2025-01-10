@@ -58,26 +58,26 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
                 ->options(oxy_get_month_range())
                 ->default(config('app.transaction_date')?->month)
                 ->selectablePlaceholder(false)
-                ->visible(fn ($get) => in_array($get('mode'), ['single']))
+                ->visible(fn($get) => in_array($get('mode'), ['single']))
                 ->live(),
             Select::make('year')
                 ->options(oxy_get_year_range())
                 ->default(config('app.transaction_date')?->year)
                 ->selectablePlaceholder(false)
-                ->visible(fn ($get) => in_array($get('mode'), ['single', 'yearly']))
+                ->visible(fn($get) => in_array($get('mode'), ['single', 'yearly']))
                 ->live(),
             DatePicker::make('from')
                 ->live()
                 ->default(config('app.transaction_date')?->subMonthNoOverflow())
                 ->native(false)
                 ->displayFormat('m/d/Y')
-                ->visible(fn ($get) => in_array($get('mode'), ['comparative'])),
+                ->visible(fn($get) => in_array($get('mode'), ['comparative'])),
             DatePicker::make('to')
                 ->live()
                 ->default(config('app.transaction_date'))
                 ->native(false)
                 ->displayFormat('m/d/Y')
-                ->visible(fn ($get) => in_array($get('mode'), ['comparative'])),
+                ->visible(fn($get) => in_array($get('mode'), ['comparative'])),
         ])
             ->columns(4)
             ->statePath('data');
@@ -201,7 +201,7 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
                 $spreadsheet = IOFactory::load(storage_path('templates/trial_balance.xlsx'));
                 $worksheet = $spreadsheet->getActiveSheet();
 
-                $path = storage_path('app/livewire-tmp/trial_balance-'.today()->year.'.xlsx');
+                $path = storage_path('app/livewire-tmp/trial_balance-' . today()->year . '.xlsx');
                 $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
                 $writer->save($path);
 

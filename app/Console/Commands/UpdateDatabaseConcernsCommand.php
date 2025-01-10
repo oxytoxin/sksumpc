@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\DisbursementVoucherItem;
+use App\Models\TransactionDateHistory;
 use Illuminate\Console\Command;
 
 class UpdateDatabaseConcernsCommand extends Command
@@ -33,6 +34,11 @@ class UpdateDatabaseConcernsCommand extends Command
                 'transaction_date' => $item->disbursement_voucher->transaction_date,
             ]);
         });
+
+        TransactionDateHistory::create([
+            'date' => '12/31/2024',
+            'is_current' => true,
+        ]);
 
         \DB::commit();
     }

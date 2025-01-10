@@ -26,7 +26,7 @@
 @endphp
 <tfoot>
     <tr class="hover:bg-green-100">
-        <td class="sticky left-0 whitespace-nowrap border border-black bg-white px-2 text-lg font-bold uppercase hover:bg-green-300">
+        <td class="sticky left-0 whitespace-nowrap border  border-black bg-white px-2 text-lg font-bold uppercase hover:bg-green-300">
             TOTAL
         </td>
         <td class="whitespace-nowrap border border-black px-2 text-right text-xs uppercase hover:bg-green-300">

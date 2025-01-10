@@ -39,10 +39,12 @@ class DatabaseSeeder extends Seeder
 
         $this->command->info("Seeding members...\n");
         Artisan::call('app:import-members');
+        Artisan::call('app:import-organizations');
         $this->command->info("Seeded members...\n");
 
         // $this->call(ImportExistingLoansSeeder::class);
-        Artisan::call('app:import-member-accounts');
+        // Artisan::call('app:import-member-accounts');
+        Artisan::call('app:import-balance-forwarded2024');
         $this->call(DatabaseUpdatesSeeder::class);
     }
 }

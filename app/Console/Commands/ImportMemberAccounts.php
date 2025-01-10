@@ -45,7 +45,7 @@ class ImportMemberAccounts extends Command
     public function handle()
     {
         $members = Member::get(['id', 'mpc_code']);
-        $members = $members->mapWithKeys(fn ($m) => [$m->mpc_code => $m]);
+        $members = $members->mapWithKeys(fn($m) => [$m->mpc_code => $m]);
         $transaction_type = TransactionType::JEV();
         // $rows = SimpleExcelReader::create(storage_path('csv/accounts/regular_savings_accounts.xlsx'))->getRows();
         // $this->importSavings(rows: $rows, members: $members, transaction_type: $transaction_type);
@@ -60,25 +60,25 @@ class ImportMemberAccounts extends Command
         Member::doesntHave('capital_subscription_account')->each(function ($member) {
             app(CreateNewCapitalSubscriptionAccount::class)->handle(new CapitalSubscriptionAccountData(
                 member_id: $member->id,
-                name: $member->full_name ?? ($member->first_name.' '.$member->last_name)
+                name: $member->full_name ?? ($member->first_name . ' ' . $member->last_name)
             ));
         });
         Member::doesntHave('savings_accounts')->each(function ($member) {
             app(CreateNewSavingsAccount::class)->handle(new SavingsAccountData(
                 member_id: $member->id,
-                name: $member->full_name ?? ($member->first_name.' '.$member->last_name)
+                name: $member->full_name ?? ($member->first_name . ' ' . $member->last_name)
             ));
         });
         Member::doesntHave('imprest_account')->each(function ($member) {
             app(CreateNewImprestsAccount::class)->handle(new ImprestAccountData(
                 member_id: $member->id,
-                name: $member->full_name ?? ($member->first_name.' '.$member->last_name)
+                name: $member->full_name ?? ($member->first_name . ' ' . $member->last_name)
             ));
         });
         Member::doesntHave('love_gift_account')->each(function ($member) {
             app(CreateNewLoveGiftsAccount::class)->handle(new LoveGiftAccountData(
                 member_id: $member->id,
-                name: $member->full_name ?? ($member->first_name.' '.$member->last_name)
+                name: $member->full_name ?? ($member->first_name . ' ' . $member->last_name)
             ));
         });
     }

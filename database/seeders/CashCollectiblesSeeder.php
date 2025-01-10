@@ -91,5 +91,9 @@ class CashCollectiblesSeeder extends Seeder
             'cash_collectible_category_id' => $ccg->id,
             'name' => 'LAND RENTAL',
         ]);
+        CashCollectible::create([
+            'cash_collectible_category_id' => $ccg->id,
+            'name' => 'COMPUTER',
+        ]);
     }
 }

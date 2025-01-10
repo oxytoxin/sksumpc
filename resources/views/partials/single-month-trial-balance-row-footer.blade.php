@@ -21,7 +21,7 @@
 @endphp
 <tfoot>
     <tr class="hover:bg-green-100">
-        <td class="whitespace-nowrap border border-black px-2 text-lg font-bold uppercase hover:bg-green-300">
+        <td class="whitespace-nowrap border border-black sticky left-0 bg-white px-2 text-lg font-bold uppercase hover:bg-green-300">
             TOTAL
         </td>
         <td class="whitespace-nowrap border border-black px-2 text-right text-xs uppercase hover:bg-green-300">
@@ -74,7 +74,7 @@
         </td>
     </tr>
     <tr>
-        <td class="whitespace-nowrap border border-black px-2 text-lg font-bold uppercase hover:bg-green-300">
+        <td class="whitespace-nowrap border border-black px-2 sticky left-0 bg-white text-lg font-bold uppercase hover:bg-green-300">
             VARIANCE
         </td>
         <td colspan="2" class="whitespace-nowrap border border-black px-2 text-right text-xs uppercase hover:bg-green-300">

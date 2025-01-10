@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Actions\CapitalSubscription\CreateNewCapitalSubscription;
 use App\Actions\CapitalSubscription\CreateNewCapitalSubscriptionAccount;
 use App\Actions\CapitalSubscription\PayCapitalSubscription;
+use App\Actions\Memberships\CreateMemberInitialAccounts;
 use App\Models\CivilStatus;
 use App\Models\Division;
 use App\Models\Gender;
@@ -43,103 +44,80 @@ class ImportMembers extends Command
      */
     public function handle()
     {
-        if (! Member::count()) {
-            $rows = SimpleExcelReader::create(storage_path('csv/PROFILING.xlsx'))
-                ->getRows();
-            $divisions = Division::get();
-            $religions = Religion::get();
-            $genders = Gender::get();
-            $civil_statuses = CivilStatus::get();
-            $transaction_type = TransactionType::CRJ();
-            $rows->each(function (array $memberData) use ($divisions, $religions, $genders, $civil_statuses, $transaction_type) {
-                try {
-                    if ($memberData['mpc_code']) {
-                        $address = [];
-                        $address_parts = [
-                            $memberData['barangay'],
-                            $memberData['municipality'],
-                            $memberData['province'],
-                            $memberData['region'],
-                        ];
-                        foreach ($address_parts as $part) {
-                            if (filled($part)) {
-                                $address[] = $part;
-                            }
-                        }
-                        $member_address = implode(', ', $address);
-                        $memberData = collect($memberData)->map(fn ($d) => filled($d) ? trim($d instanceof DateTimeImmutable ? strtoupper($d->format('m/d/Y')) : strtoupper($d)) : null)->toArray();
-                        $member = Member::create([
-                            'mpc_code' => $memberData['mpc_code'],
-                            'first_name' => $memberData['firstname'],
-                            'last_name' => $memberData['lastname'],
-                            'middle_name' => $memberData['mi'],
-                            'middle_initial' => isset($memberData['mi']) ? $memberData['mi'][0] : null,
-                            'address' => $member_address,
-                            'member_type_id' => match ($memberData['member_type']) {
-                                'REGULAR' => 1,
-                                'ASSOCIATE' => 3,
-                                'LABORATORY' => 4,
-                                default => dd($memberData)
-                            },
-                            'division_id' => $divisions->firstWhere('name', $memberData['division'])?->id,
-                            'religion_id' => $religions->firstWhere('name', $memberData['religion'])?->id,
-                            'gender_id' => $genders->firstWhere('name', $memberData['gender'])?->id,
-                            'civil_status_id' => $civil_statuses->firstWhere('name', $memberData['civil_status'])?->id,
-                            'dob' => $memberData['dob'],
-                            'tin' => $memberData['tin'],
-                            'place_of_birth' => $memberData['birthplace'],
-                            'present_employer' => $memberData['present_employer'],
-                            'annual_income' => $memberData['annual_income'],
-                            'highest_educational_attainment' => $memberData['highest_educational_attainment'],
-                            'membership_date' => '12/31/2023',
-                        ]);
-                        $member->refresh();
-                        app(CreateNewCapitalSubscriptionAccount::class)->handle(new CapitalSubscriptionAccountData(
-                            member_id: $member->id,
-                            name: $member->full_name
-                        ));
-                        $monthly_payment = ($memberData['amount_shares'] - $memberData['amount_paid']) / 36;
-                        if ($monthly_payment < 0) {
-                            $monthly_payment = 0;
-                        }
-                        $cbu = app(CreateNewCapitalSubscription::class)->handle($member, new CapitalSubscriptionData(
-                            number_of_terms: 36,
-                            number_of_shares: $memberData['no_shares'],
-                            initial_amount_paid: $memberData['amount_paid'],
-                            monthly_payment: $monthly_payment,
-                            amount_subscribed: $memberData['amount_shares'],
-                            par_value: $memberData['par_value'],
-                            is_common: true,
-                            transaction_date: '12/31/2023'
-                        ));
-                        app(PayCapitalSubscription::class)->handle($cbu, new TransactionData(
-                            account_id: $member->capital_subscription_account->id,
-                            transactionType: $transaction_type,
-                            reference_number: '#BALANCEFORWARDED',
-                            payment_type_id: 1,
-                            credit: $memberData['amount_paid'],
-                            member_id: $member->id,
-                            transaction_date: '12/31/2024',
-                            payee: $member->full_name,
-                        ));
-
-                        $user = User::create([
-                            'member_id' => $member->id,
-                            'name' => $member->full_name,
-                            'email' => str($member->mpc_code)->lower()->append('@gmail.com'),
-                            'password' => 'password',
-                        ]);
-                        $user->assignRole(Role::firstWhere('name', 'member'));
-                    }
-                } catch (\Throwable $e) {
-                    dd($memberData, $e);
-                }
-            });
-        }
         Schema::disableForeignKeyConstraints();
         DB::table('members')->truncate();
-        DB::statement('ALTER TABLE members AUTO_INCREMENT =  1');
-        DB::unprepared(file_get_contents(database_path('migrations/members.sql')));
+        $rows = SimpleExcelReader::create(storage_path('csv/deployment/MEMBERS PROFILING AS OF DECEMBER 2024 - FINAL.xlsx'))
+            ->getRows();
+        $divisions = Division::get()->mapWithKeys(fn($g) => [$g->name => $g->id]);
+        $religions = Religion::get()->mapWithKeys(fn($g) => [$g->name => $g->id]);
+        $genders = Gender::get()->mapWithKeys(fn($g) => [$g->name => $g->id]);
+        $civil_statuses = CivilStatus::get()->mapWithKeys(fn($g) => [$g->name => $g->id]);
+        $role = Role::firstWhere('name', 'member');
+        $rows->each(function (array $row) use ($divisions, $religions, $genders, $civil_statuses, $role) {
+            try {
+                if ($row['mpc_code']) {
+                    $address = [];
+                    $address_parts = [
+                        $row['barangay'],
+                        $row['municipality'],
+                        $row['province'],
+                        $row['region'],
+                    ];
+                    foreach ($address_parts as $part) {
+                        if (filled($part)) {
+                            $address[] = $part;
+                        }
+                    }
+                    $member_address = implode(', ', $address);
+                    $row = collect($row)->map(fn($d) => filled($d) ? trim($d instanceof DateTimeImmutable ? strtoupper($d->format('m/d/Y')) : strtoupper($d)) : null)->toArray();
+                    $member = Member::create([
+                        'mpc_code' => trim(strtoupper($row['mpc_code'])),
+                        'first_name' => trim(strtoupper($row['fname'])),
+                        'last_name' => trim(strtoupper($row['lname'])),
+                        'middle_name' => trim(strtoupper($row['mname'])),
+                        'address' => trim(strtoupper($member_address)),
+                        'member_type_id' => match ($row['member_type']) {
+                            'REGULAR' => 1,
+                            'NOT CONNECTED' => 1,
+                            'ASSOCIATE' => 2,
+                            'LABORATORY' => 3,
+                            default => dd($row)
+                        },
+                        'member_subtype_id' => match ($row['member_type']) {
+                            'REGULAR' => 1,
+                            'NOT CONNECTED' => 3,
+                            default => null
+                        },
+                        'occupation_description' => trim(strtoupper($row['occupation'])),
+                        'division_id' => $divisions[$row['division']] ?? null,
+                        'religion_id' => $religions[$row['religion']] ?? null,
+                        'gender_id' => $genders[$row['gender']] ?? null,
+                        'civil_status_id' => $civil_statuses[$row['civil_status']] ?? null,
+                        'dob' => $row['dob'],
+                        'tin' => trim($row['tin']),
+                        'place_of_birth' => filled($row['place_of_birth']) ? trim(strtoupper($row['place_of_birth'])) : null,
+                        'present_employer' => filled($row['present_employer']) ? trim(strtoupper($row['present_employer'])) : null,
+                        'annual_income' => filled($row['annual_income']) ? trim($row['annual_income']) : null,
+                        'highest_educational_attainment' => trim(strtoupper($row['highest_educational_attainment'])),
+                        'membership_date' => $row['effectivity_date'] ?? '12/31/2024',
+                    ]);
+                    $member->refresh();
+                    $user = User::create([
+                        'member_id' => $member->id,
+                        'name' => $member->full_name ?? ($member->first_name . ' ' . $member->last_name),
+                        'email' => str($member->mpc_code)->lower()->append('@gmail.com'),
+                        'password' => 'password',
+                    ]);
+                    $user->assignRole($role);
+                    app(CreateMemberInitialAccounts::class)->handle($member);
+                }
+            } catch (\Throwable $e) {
+                dump($row['mpc_code'], $e->getMessage());
+            }
+        });
+
+        // DB::statement('ALTER TABLE members AUTO_INCREMENT =  1');
+        // DB::unprepared(file_get_contents(database_path('migrations/members.sql')));
         Schema::enableForeignKeyConstraints();
     }
 }

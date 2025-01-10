@@ -5,6 +5,7 @@ namespace App\Filament\App\Resources;
 use App\Filament\App\Resources\OrganizationResource\Pages;
 use App\Models\Member;
 use App\Models\Organization;
+use Auth;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -23,7 +24,7 @@ class OrganizationResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return auth()->user()->can('manage payments');
+        return Auth::user()->can('manage payments');
     }
 
     public static function form(Form $form): Form
@@ -45,6 +46,7 @@ class OrganizationResource extends Resource
     {
         return $table
             ->columns([
+                TextColumn::make('mpc_code')->label('MPC Code')->searchable(),
                 TextColumn::make('full_name')->label('Name')->searchable(),
             ])
             ->filters([

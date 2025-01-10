@@ -14,7 +14,10 @@ class LiabilitiesAccountsSeeder extends Seeder
     {
         Account::create(['account_type_id' => 2, 'name' => 'CURRENT LIABILITIES', 'number' => '21000', 'children' => [
             [
-                'account_type_id' => 2, 'name' => 'DEPOSIT LIABILITIES', 'number' => '21100', 'children' => [
+                'account_type_id' => 2,
+                'name' => 'DEPOSIT LIABILITIES',
+                'number' => '21100',
+                'children' => [
                     ['account_type_id' => 2, 'name' => 'SAVINGS DEPOSIT', 'number' => '21110', 'tag' => 'member_savings'],
                     ['account_type_id' => 2, 'name' => 'TIME DEPOSIT', 'number' => '21112', 'tag' => 'member_time_deposits'],
                     ['account_type_id' => 2, 'name' => 'OTHER DEPOSIT LIABILITIES', 'number' => '21113'],
@@ -36,7 +39,7 @@ class LiabilitiesAccountsSeeder extends Seeder
             ]],
         ]]);
 
-        Account::create(['account_type_id' => 2, 'name' => 'NON-CURRENT LIABILITIES', 'number' => '21000', 'children' => [
+        Account::create(['account_type_id' => 2, 'name' => 'NON-CURRENT LIABILITIES', 'number' => '22000', 'children' => [
             ['account_type_id' => 2, 'name' => 'EMPLOYEES RETIREMENT FUND PAYABLE', 'number' => '22400'],
             ['account_type_id' => 2, 'name' => 'MEMBERS BENEFIT FUND PAYABLE', 'number' => '24120'],
             ['account_type_id' => 2, 'name' => 'WITHHOLDING TAX PAYABLE', 'number' => '21340'],
