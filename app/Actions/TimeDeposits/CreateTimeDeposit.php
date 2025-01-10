@@ -6,7 +6,6 @@ use App\Actions\Transactions\CreateTransaction;
 use App\Models\Account;
 use App\Models\Member;
 use App\Models\TimeDeposit;
-use App\Models\TimeDepositAccount;
 use App\Models\TransactionType;
 use App\Oxytoxin\DTO\MSO\TimeDepositData;
 use App\Oxytoxin\DTO\Transactions\TransactionData;
@@ -17,8 +16,7 @@ class CreateTimeDeposit
     public function handle(TimeDepositData $timeDepositData, TransactionType $transactionType, $account_number = null)
     {
         DB::beginTransaction();
-        $account_number ??= str('21112-1015-')
-            ->append(str_pad((TimeDepositAccount::latest('id')->first()?->id ?? 0) + 1, 6, '0', STR_PAD_LEFT));
+        $account_number ??= str('21112-1015-')->append(str_pad((TimeDeposit::latest('id')->first()?->id ?? 0) + 1, 6, '0', STR_PAD_LEFT));
         $member = Member::find($timeDepositData->member_id);
         $member_time_deposits = Account::getMemberTimeDeposits();
         $tda = Account::create([
@@ -28,6 +26,7 @@ class CreateTimeDeposit
             'member_id' => $member->id,
             'tag' => 'member_time_deposits',
         ], $member_time_deposits);
+
         $td = TimeDeposit::create([
             'member_id' => $timeDepositData->member_id,
             'maturity_date' => $timeDepositData->maturity_date,
@@ -50,6 +49,7 @@ class CreateTimeDeposit
             tag: 'member_time_deposit',
             transaction_date: $timeDepositData->transaction_date,
         ));
+
         DB::commit();
 
         return $td;

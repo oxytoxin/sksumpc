@@ -57,7 +57,7 @@ class CbuTable extends Component implements HasForms, HasTable
                     ->summarize(Sum::make()->money('PHP')->label('')),
                 TextColumn::make('outstanding_balance')->money('PHP')
                     ->summarize(Sum::make()->money('PHP')->label('')),
-                IconColumn::make('is_common')->boolean(),
+                IconColumn::make('is_active')->boolean(),
             ])
             ->filters([
                 SelectFilter::make('status')
@@ -136,7 +136,7 @@ class CbuTable extends Component implements HasForms, HasTable
                             monthly_payment: $data['monthly_payment'],
                             amount_subscribed: $data['amount_subscribed'],
                             par_value: $this->member->member_type->par_value,
-                            is_common: true,
+                            is_active: true,
                             code: Str::random(12)
                         );
                         app(CreateNewCapitalSubscription::class)->handle($this->member, $cbu_data);

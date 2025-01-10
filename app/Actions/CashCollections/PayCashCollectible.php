@@ -23,7 +23,7 @@ class PayCashCollectible
             member_id: $cashCollectiblePaymentData->member_id,
             payee: $cashCollectiblePaymentData->payee,
             remarks: 'Payment for '.strtoupper($cashCollectibleAccount->name),
-            transaction_date: $cashCollectiblePaymentData->transaction_date
+            transaction_date: $cashCollectiblePaymentData->transaction_date,
         ));
         DB::commit();
     }

@@ -199,7 +199,7 @@ namespace App\Models{
  *
  * @property int $id
  * @property int $member_id
- * @property bool $is_common
+ * @property bool $is_active
  * @property string|null $code
  * @property int $number_of_terms
  * @property string $number_of_shares
@@ -1743,7 +1743,7 @@ namespace App\Models{
  * @property-read int|null $capital_subscription_payments_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CapitalSubscription> $capital_subscriptions
  * @property-read int|null $capital_subscriptions_count
- * @property-read \App\Models\CapitalSubscription|null $capital_subscriptions_common
+ * @property-read \App\Models\CapitalSubscription|null $active_capital_subscription
  * @property-read \App\Models\CivilStatus|null $civil_status
  * @property-read \App\Models\Division|null $division
  * @property-read \App\Models\Gender|null $gender
@@ -2236,7 +2236,7 @@ namespace App\Models{
  * @property-read int|null $capital_subscription_payments_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CapitalSubscription> $capital_subscriptions
  * @property-read int|null $capital_subscriptions_count
- * @property-read \App\Models\CapitalSubscription|null $capital_subscriptions_common
+ * @property-read \App\Models\CapitalSubscription|null $active_capital_subscription
  * @property-read \App\Models\CivilStatus|null $civil_status
  * @property-read \App\Models\Division|null $division
  * @property-read \App\Models\Gender|null $gender

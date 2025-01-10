@@ -109,7 +109,7 @@ class ImportMembers extends Command
                             monthly_payment: $monthly_payment,
                             amount_subscribed: $memberData['amount_shares'],
                             par_value: $memberData['par_value'],
-                            is_common: true,
+                            is_active: true,
                             transaction_date: '12/31/2023'
                         ));
                         app(PayCapitalSubscription::class)->handle($cbu, new TransactionData(

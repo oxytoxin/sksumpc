@@ -75,7 +75,7 @@ class AccountTransactionsList extends Page implements HasForms, HasTable
     {
         return $table->query(
             Transaction::query()
-                ->whereAccountId($this->account)
+                ->whereHas('account', fn ($query) => $query->whereRelation('ancestorsAndSelf', 'id', $this->account))
                 ->whereYear('transaction_date', config('app.transaction_date')?->year)
         )
             ->content(view('filament.app.pages.bookkeeper.account-transactions-list-table'))

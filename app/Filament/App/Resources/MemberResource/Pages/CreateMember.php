@@ -42,7 +42,7 @@ class CreateMember extends CreateRecord
             'number_of_shares' => $number_of_shares,
             'amount_subscribed' => $amount_subscribed,
             'outstanding_balance' => $amount_subscribed,
-            'is_common' => true,
+            'is_active' => true,
             'transaction_date' => today(),
             'par_value' => $member->member_type->par_value,
         ]);

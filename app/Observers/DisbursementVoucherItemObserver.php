@@ -50,10 +50,10 @@ class DisbursementVoucherItemObserver
         );
         if (in_array($account->tag, ['member_common_cbu_paid', 'member_preferred_cbu_paid', 'member_laboratory_cbu_paid'])) {
             $amount = self::getCbuAmount($disbursementVoucherItem);
-            app(PayCapitalSubscription::class)->handle($account->member->capital_subscriptions_common, $transaction_data);
+            app(PayCapitalSubscription::class)->handle($account->member->active_capital_subscription, $transaction_data);
             if ($amount < 0) {
-                $account->member->capital_subscriptions_common->update([
-                    'is_common' => false,
+                $account->member->active_capital_subscription->update([
+                    'is_active' => false,
                 ]);
             }
         } elseif (in_array($account->tag, ['regular_savings'])) {
@@ -91,7 +91,6 @@ class DisbursementVoucherItemObserver
                             reference_number: $disbursementVoucherItem->disbursement_voucher->reference_number,
                             transaction_date: $transaction_date,
                             transactionType: $transactionType,
-
                         );
                 } else {
                     app(PayLoan::class)->handle(
@@ -103,7 +102,6 @@ class DisbursementVoucherItemObserver
                             transaction_date: $transaction_date
                         ),
                         transactionType: $transactionType,
-
                     );
                 }
             }

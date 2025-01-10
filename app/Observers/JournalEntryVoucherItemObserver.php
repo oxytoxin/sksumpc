@@ -47,10 +47,10 @@ class JournalEntryVoucherItemObserver
         );
         if (in_array($account->tag, ['member_common_cbu_paid', 'member_preferred_cbu_paid', 'member_laboratory_cbu_paid'])) {
             $amount = self::getCbuAmount($journalEntryVoucherItem);
-            app(PayCapitalSubscription::class)->handle($account->member->capital_subscriptions_common, $transaction_data);
+            app(PayCapitalSubscription::class)->handle($account->member->active_capital_subscription, $transaction_data);
             if ($amount < 0) {
-                $account->member->capital_subscriptions_common->update([
-                    'is_common' => false,
+                $account->member->active_capital_subscription->update([
+                    'is_active' => false,
                 ]);
             }
         } elseif (in_array($account->tag, ['regular_savings'])) {
