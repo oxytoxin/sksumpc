@@ -45,7 +45,7 @@ class CapitalSubscriptionBilling extends Model
             DB::beginTransaction();
             $capitalSubscriptionBilling->reference_number = $capitalSubscriptionBilling->generateReferenceNumber($capitalSubscriptionBilling);
             CapitalSubscription::query()
-                ->where('is_common', true)
+                ->where('is_active', true)
                 ->where('outstanding_balance', '>', 0)
                 ->withCount('payments')
                 ->when($capitalSubscriptionBilling->member_type_id, fn ($query, $value) => $query->whereRelation('member', 'member_type_id', $value))

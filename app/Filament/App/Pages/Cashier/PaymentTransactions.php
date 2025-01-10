@@ -2,29 +2,24 @@
 
 namespace App\Filament\App\Pages\Cashier;
 
-use App\Actions\CashCollections\PayCashCollectible;
-use App\Actions\Loans\PayLoan;
 use App\Actions\Savings\CreateNewSavingsAccount;
-use App\Actions\TimeDeposits\CreateTimeDeposit;
+use App\Enums\MsoType;
 use App\Enums\OtherPaymentTransactionExcludedAccounts;
 use App\Enums\PaymentTypes;
 use App\Filament\App\Pages\Cashier\Actions\CashierTransactionsPageCbuPayment;
-use App\Filament\App\Pages\Cashier\Actions\CashierTransactionsPageImprests;
-use App\Filament\App\Pages\Cashier\Actions\CashierTransactionsPageLoveGifts;
+use App\Filament\App\Pages\Cashier\Actions\CashierTransactionsPageLoan;
+use App\Filament\App\Pages\Cashier\Actions\CashierTransactionsPageMSO;
 use App\Filament\App\Pages\Cashier\Actions\CashierTransactionsPageOthers;
-use App\Filament\App\Pages\Cashier\Actions\CashierTransactionsPageSavings;
+use App\Filament\App\Pages\Cashier\Actions\CashierTransactionsPageTimeDeposit;
 use App\Filament\App\Pages\Cashier\Traits\HasReceipt;
 use App\Models\Account;
 use App\Models\CashCollectibleAccount;
 use App\Models\LoanAccount;
 use App\Models\Member;
-use App\Models\PaymentType;
 use App\Models\SavingsAccount;
 use App\Models\TransactionType;
-use App\Oxytoxin\DTO\CashCollectibles\CashCollectiblePaymentData;
-use App\Oxytoxin\DTO\Loan\LoanPaymentData;
 use App\Oxytoxin\DTO\MSO\Accounts\SavingsAccountData;
-use App\Oxytoxin\DTO\MSO\TimeDepositData;
+use App\Oxytoxin\DTO\Transactions\TransactionData;
 use App\Oxytoxin\Providers\TimeDepositsProvider;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
@@ -301,151 +296,67 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                             $formData = $this->form->getState();
                             $member = Member::find($formData['member_id']);
                             $transactions = [];
-                            $payment_types = PaymentType::get();
                             $transaction_type = TransactionType::CRJ();
+
                             foreach ($formData['transactions'] as $key => $transaction) {
+                                $data = new TransactionData(
+                                    account_id: $transaction['data']['account_id'] ?? 0,
+                                    transactionType: $transaction_type,
+                                    reference_number: $transaction['data']['reference_number'] ?? '',
+                                    payment_type_id: $transaction['data']['payment_type_id'],
+                                    member_id: $member->id,
+                                    transaction_date: $this->transaction_date,
+                                    payee: $member->full_name,
+                                );
+                                if ($data->payment_type_id == PaymentTypes::DEPOSIT_SLIP->value) {
+                                    $data->reference_number = str('SLIP')->append(config('app.transaction_date', today())->format('Y').'-')->append(str_pad(random_int(1, 100000), 6, '0', STR_PAD_LEFT));
+                                }
+
                                 if ($transaction['type'] == 'cbu') {
-                                    $transaction_data = CashierTransactionsPageCbuPayment::handle(
-                                        member: $member,
-                                        transaction_type: $transaction_type,
-                                        reference_number: $transaction['data']['reference_number'],
-                                        payment_type: $payment_types->firstWhere('id', $transaction['data']['payment_type_id']),
-                                        amount: $transaction['data']['amount'],
-                                        transaction_date: $this->transaction_date
-                                    );
-                                    $transaction_data['payee'] = $member->full_name;
-                                    $transactions[] = $transaction_data;
+                                    $data->account_id = $member->capital_subscription_account->id;
+                                    $data->credit = $transaction['data']['amount'];
+                                    $transactions[] = app(CashierTransactionsPageCbuPayment::class)->handle($data);
                                 }
                                 if ($transaction['type'] == 'others') {
-                                    $transaction_data = CashierTransactionsPageOthers::handle(
-                                        member_id: $member?->id,
-                                        payee: $transaction['data']['payee'],
-                                        account: Account::find($transaction['data']['account_id']),
-                                        transaction_type: $transaction_type,
-                                        reference_number: $transaction['data']['reference_number'],
-                                        payment_type: $payment_types->firstWhere('id', $transaction['data']['payment_type_id']),
-                                        amount: $transaction['data']['amount'],
-                                        transaction_date: $this->transaction_date
-                                    );
-                                    $transaction_data['payee'] = $transaction['data']['payee'];
-                                    $transactions[] = $transaction_data;
+                                    $data->account_id = $transaction['data']['account_id'];
+                                    $data->payee = $transaction['data']['payee'];
+                                    $data->credit = $transaction['data']['amount'];
+                                    $transactions[] = app(CashierTransactionsPageOthers::class)->handle($data);
                                 }
-                                if ($transaction['type'] == 'savings') {
+                                if (in_array($transaction['type'], ['savings', 'imprest', 'love_gift'])) {
                                     $is_deposit = $transaction['data']['action'] == 1;
-                                    $savings_account = SavingsAccount::find($transaction['data']['savings_account_id']);
-                                    if ($transaction['data']['payment_type_id'] == PaymentTypes::DEPOSIT_SLIP->value) {
-                                        $transaction['data']['reference_number'] = str('SLIP')->append(config('app.transaction_date', today())->format('Y').'-')->append(str_pad(random_int(1, 100000), 6, '0', STR_PAD_LEFT));
+                                    $mso_type = match ($transaction['type']) {
+                                        'savings' => MsoType::SAVINGS,
+                                        'imprest' => MsoType::IMPREST,
+                                        'love_gift' => MsoType::LOVE_GIFT,
+                                    };
+                                    $data->account_id = match ($transaction['type']) {
+                                        'savings' => $transaction['data']['savings_account_id'],
+                                        'imprest' => $member->imprest_account->id,
+                                        'love_gift' => $member->love_gift_account->id,
+                                    };
+                                    if ($is_deposit) {
+                                        $data->credit = $transaction['data']['amount'];
+                                    } else {
+                                        $data->debit = $transaction['data']['amount'];
                                     }
-                                    $transaction_data = CashierTransactionsPageSavings::handle(
+                                    $transactions[] = app(CashierTransactionsPageMSO::class)->handle(
+                                        msoType: $mso_type,
                                         is_deposit: $is_deposit,
-                                        member: $member,
-                                        savings_account: $savings_account,
-                                        transaction_type: $transaction_type,
-                                        payment_type: $payment_types->firstWhere('id', $transaction['data']['payment_type_id']),
-                                        reference_number: $transaction['data']['reference_number'],
-                                        amount: $transaction['data']['amount'],
-                                        transaction_date: $this->transaction_date,
+                                        data: $data
                                     );
-                                    $transaction_data['payee'] = $member->full_name;
-                                    $transactions[] = $transaction_data;
                                 }
-                                if ($transaction['type'] == 'imprest') {
-                                    $is_deposit = $transaction['data']['action'] == 1;
-                                    $imprest_account = $member->imprest_account;
-                                    if ($transaction['data']['payment_type_id'] == PaymentTypes::DEPOSIT_SLIP->value) {
-                                        $transaction['data']['reference_number'] = str('SLIP')->append(config('app.transaction_date', today())->format('Y').'-')->append(str_pad(random_int(1, 100000), 6, '0', STR_PAD_LEFT));
-                                    }
-                                    $transaction_data = CashierTransactionsPageImprests::handle(
-                                        is_deposit: $is_deposit,
-                                        member: $member,
-                                        imprest_account: $imprest_account,
-                                        transaction_type: $transaction_type,
-                                        payment_type: $payment_types->firstWhere('id', $transaction['data']['payment_type_id']),
-                                        reference_number: $transaction['data']['reference_number'],
-                                        amount: $transaction['data']['amount'],
-                                        transaction_date: $this->transaction_date,
-                                    );
-                                    $transaction_data['payee'] = $member->full_name;
-                                    $transactions[] = $transaction_data;
-                                }
-                                if ($transaction['type'] == 'love_gift') {
-                                    $is_deposit = $transaction['data']['action'] == 1;
-                                    if ($transaction['data']['payment_type_id'] == PaymentTypes::DEPOSIT_SLIP->value) {
-                                        $transaction['data']['reference_number'] = str('SLIP')->append(config('app.transaction_date', today())->format('Y').'-')->append(str_pad(random_int(1, 100000), 6, '0', STR_PAD_LEFT));
-                                    }
-                                    $transaction_data = CashierTransactionsPageLoveGifts::handle(
-                                        is_deposit: $is_deposit,
-                                        member: $member,
-                                        love_gift_account: $member->love_gift_account,
-                                        transaction_type: $transaction_type,
-                                        payment_type: $payment_types->firstWhere('id', $transaction['data']['payment_type_id']),
-                                        reference_number: $transaction['data']['reference_number'],
-                                        amount: $transaction['data']['amount'],
-                                        transaction_date: $this->transaction_date,
-                                    );
-                                    $transaction_data['payee'] = $member->full_name;
-                                    $transactions[] = $transaction_data;
-                                }
+
                                 if ($transaction['type'] == 'time_deposit') {
-                                    $td = app(CreateTimeDeposit::class)->handle(timeDepositData: new TimeDepositData(
-                                        member_id: $member->id,
-                                        maturity_date: TimeDepositsProvider::getMaturityDate(today()),
-                                        reference_number: $transaction['data']['reference_number'],
-                                        payment_type_id: $transaction['data']['payment_type_id'],
-                                        amount: $transaction['data']['amount'],
-                                        maturity_amount: TimeDepositsProvider::getMaturityAmount(floatval($transaction['data']['amount'])),
-                                        transaction_date: $this->transaction_date,
-                                    ), transactionType: TransactionType::CRJ());
-                                    $time_deposit_account = $td->time_deposit_account;
-                                    $transactions[] = [
-                                        'payee' => $member->full_name,
-                                        'account_number' => $time_deposit_account->number,
-                                        'account_name' => $time_deposit_account->name,
-                                        'reference_number' => $transaction['data']['reference_number'],
-                                        'amount' => $transaction['data']['amount'],
-                                        'payment_type' => $payment_types->firstWhere('id', $transaction['data']['payment_type_id'])?->name ?? 'CASH',
-                                        'remarks' => 'TIME DEPOSIT',
-                                    ];
+                                    $data->credit = $transaction['data']['amount'];
+                                    $transactions[] = app(CashierTransactionsPageTimeDeposit::class)->handle($data);
                                 }
-                                if ($transaction['type'] == 'cash_collection') {
-                                    $cashCollectible = CashCollectibleAccount::find($transaction['data']['cash_collectible_account_id']);
-                                    app(PayCashCollectible::class)->handle($cashCollectible, new CashCollectiblePaymentData(
-                                        member_id: $member?->id,
-                                        payee: $transaction['data']['payee'],
-                                        payment_type_id: $transaction['data']['payment_type_id'],
-                                        reference_number: $transaction['data']['reference_number'],
-                                        amount: $transaction['data']['amount'],
-                                        transaction_date: $this->transaction_date,
-                                    ), TransactionType::CRJ());
-                                    $transactions[] = [
-                                        'payee' => $transaction['data']['payee'],
-                                        'account_number' => '',
-                                        'account_name' => '',
-                                        'reference_number' => $transaction['data']['reference_number'],
-                                        'amount' => $transaction['data']['amount'],
-                                        'payment_type' => $payment_types->firstWhere('id', $transaction['data']['payment_type_id'])?->name ?? 'CASH',
-                                        'remarks' => 'CASH COLLECTIBLE PAYMENT: '.strtoupper($cashCollectible->name),
-                                    ];
-                                }
+
                                 if ($transaction['type'] == 'loan') {
-                                    $loan_account = LoanAccount::find($transaction['data']['loan_account_id']);
-                                    $loan = $loan_account?->loan;
-                                    app(PayLoan::class)->handle($loan, new LoanPaymentData(
-                                        payment_type_id: $transaction['data']['payment_type_id'],
-                                        reference_number: $transaction['data']['reference_number'],
-                                        amount: $transaction['data']['amount'],
-                                        remarks: $transaction['data']['remarks'],
-                                        transaction_date: $this->transaction_date,
-                                    ), TransactionType::CRJ());
-                                    $transactions[] = [
-                                        'payee' => $member->full_name,
-                                        'account_number' => $loan_account->number,
-                                        'account_name' => $loan_account->name,
-                                        'reference_number' => $transaction['data']['reference_number'],
-                                        'amount' => $transaction['data']['amount'],
-                                        'payment_type' => $payment_types->firstWhere('id', $transaction['data']['payment_type_id'])?->name ?? 'CASH',
-                                        'remarks' => 'LOAN PAYMENT',
-                                    ];
+                                    $data->account_id = $transaction['data']['loan_account_id'];
+                                    $data->credit = $transaction['data']['amount'];
+                                    $data->remarks = $transaction['data']['remarks'];
+                                    $transactions[] = app(CashierTransactionsPageLoan::class)->handle($data);
                                 }
                             }
                             $this->transactions = $transactions;

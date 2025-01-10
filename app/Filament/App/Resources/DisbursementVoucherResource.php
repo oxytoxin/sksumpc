@@ -6,7 +6,6 @@ use App\Filament\App\Resources\DisbursementVoucherResource\Pages;
 use App\Models\Account;
 use App\Models\DisbursementVoucher;
 use App\Models\Member;
-use App\Models\VoucherType;
 use App\Rules\BalancedBookkeepingEntries;
 use Auth;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
@@ -38,9 +37,6 @@ class DisbursementVoucherResource extends Resource
     {
         return $form
             ->schema([
-                // Select::make('voucher_type_id')
-                //     ->label('Voucher Type')
-                //     ->options(VoucherType::pluck('name', 'id')),
                 TextInput::make('name')->required(),
                 TextInput::make('address')->required(),
                 TextInput::make('reference_number')->required(),

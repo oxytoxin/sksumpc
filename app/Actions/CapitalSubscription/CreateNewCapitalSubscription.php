@@ -13,7 +13,7 @@ class CreateNewCapitalSubscription
     {
         DB::beginTransaction();
         $member->capital_subscriptions()->update([
-            'is_common' => false,
+            'is_active' => false,
         ]);
         $cbu = $member->capital_subscriptions()->create($data->toArray());
         DB::commit();

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('capital_subscriptions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('member_id')->constrained();
-            $table->boolean('is_common');
+            $table->boolean('is_active');
             $table->string('code')->nullable();
             $table->integer('number_of_terms')->default(12);
             $table->decimal('number_of_shares', 18, 4);

@@ -16,7 +16,7 @@ class CapitalSubscription extends Model
     use HasFactory;
 
     protected $casts = [
-        'is_common' => 'boolean',
+        'is_active' => 'boolean',
         'number_of_shares' => 'decimal:4',
         'par_value' => 'decimal:4',
         'amount_subscribed' => 'decimal:4',

@@ -13,7 +13,7 @@ class CapitalSubscriptionData extends Data
         public string $monthly_payment,
         public string $amount_subscribed,
         public string $par_value,
-        public bool $is_common,
+        public bool $is_active,
         public ?string $code = null,
         public $transaction_date = null,
     ) {

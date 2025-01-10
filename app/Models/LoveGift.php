@@ -68,4 +68,9 @@ class LoveGift extends Model
             $loveGift->save();
         });
     }
+
+    public function revolving_fund()
+    {
+        return $this->morphOne(RevolvingFund::class, 'withdrawable');
+    }
 }

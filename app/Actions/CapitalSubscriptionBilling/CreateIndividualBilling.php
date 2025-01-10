@@ -13,7 +13,7 @@ class CreateIndividualBilling
         DB::beginTransaction();
 
         $member = Member::find($member_id);
-        $active_cbu = $member->capital_subscriptions_common;
+        $active_cbu = $member->active_capital_subscription;
 
         if (! $active_cbu) {
             abort(403, 'No active CBU for member!');

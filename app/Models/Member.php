@@ -126,9 +126,9 @@ class Member extends Model implements HasMedia
         return $this->dob?->diffInYears(today());
     }
 
-    public function capital_subscriptions_common(): HasOne
+    public function active_capital_subscription(): HasOne
     {
-        return $this->hasOne(CapitalSubscription::class)->where('is_common', true)->latestOfMany();
+        return $this->hasOne(CapitalSubscription::class)->where('is_active', true)->latestOfMany();
     }
 
     public function capital_subscription_payments(): HasManyThrough
@@ -138,7 +138,7 @@ class Member extends Model implements HasMedia
 
     public function initial_capital_subscription(): HasOne
     {
-        return $this->hasOne(CapitalSubscription::class)->latestOfMany();
+        return $this->hasOne(CapitalSubscription::class)->oldestOfMany();
     }
 
     public function savings_accounts()
