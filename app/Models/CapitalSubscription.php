@@ -59,9 +59,9 @@ class CapitalSubscription extends Model
 
         static::created(function (CapitalSubscription $cbu) {
             if ($cbu->member->capital_subscriptions()->count() == 1) {
-                $code = str('ICS-')->append(today()->format('Y'))->append('-')->append(str_pad($cbu->id, 6, '0', STR_PAD_LEFT));
+                $code = str('ICS-')->append((config('app.transaction_date') ?? today())->format('Y'))->append('-')->append(str_pad($cbu->id, 6, '0', STR_PAD_LEFT));
             } else {
-                $code = str('ACS-')->append(today()->format('Y'))->append('-')->append(str_pad($cbu->id, 6, '0', STR_PAD_LEFT));
+                $code = str('ACS-')->append((config('app.transaction_date') ?? today())->format('Y'))->append('-')->append(str_pad($cbu->id, 6, '0', STR_PAD_LEFT));
             }
             $cbu->code = $code;
             $cbu->save();
@@ -74,7 +74,7 @@ class CapitalSubscription extends Model
     public function amountSharesSubscribed(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->number_of_shares * $this->par_value
+            get: fn() => $this->number_of_shares * $this->par_value
         );
     }
 }

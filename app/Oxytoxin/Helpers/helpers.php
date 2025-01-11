@@ -39,16 +39,16 @@ function sum_no_children_recursive(Collection|Model $items, string $key): float
     $sum = 0;
     if ($items instanceof Model) {
         if ($items->children_count == 0) {
-            $sum += $items[$key];
+            $sum += round($items[$key], 2);
         } else {
-            $sum += sum_no_children_recursive($items->children ?? collect(), $key);
+            $sum += round(sum_no_children_recursive($items->children ?? collect(), $key), 2);
         }
     } else {
         foreach ($items as $item) {
             if ($item->children_count == 0) {
-                $sum += $item[$key];
+                $sum += round($item[$key], 2);
             } else {
-                $sum += sum_no_children_recursive($item->children ?? collect(), $key);
+                $sum += round(sum_no_children_recursive($item->children ?? collect(), $key), 2);
             }
         }
     }
@@ -112,12 +112,12 @@ function findRecursive($collection, $callback)
 
 function oxy_get_month_range(): array
 {
-    return collect(range(1, 12))->mapWithKeys(fn ($m) => [$m => Carbon::create(null, $m)->format('F')])->toArray();
+    return collect(range(1, 12))->mapWithKeys(fn($m) => [$m => Carbon::create(null, $m)->format('F')])->toArray();
 }
 
 function oxy_get_year_range(): array
 {
-    return collect(range(today()->addYears(10)->year, 2000))->mapWithKeys(fn ($y) => [$y => $y])->toArray();
+    return collect(range(today()->addYears(10)->year, 2000))->mapWithKeys(fn($y) => [$y => $y])->toArray();
 }
 
 function renumber_format($number, $decimals = 2)

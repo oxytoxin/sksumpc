@@ -164,7 +164,7 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
     {
         return match ($this->data['mode']) {
             'yearly' => CarbonImmutable::create(year: $this->data['year'])->subYearNoOverflow()->endOfYear()->format('F Y'),
-            'comparative' => $this->to_date->subMonthNoOverflow()->endOfMonth()->format('F d, Y'),
+            'comparative' => $this->from_date->subMonthNoOverflow()->endOfMonth()->format('F d, Y'),
         };
     }
 

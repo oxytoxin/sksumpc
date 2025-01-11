@@ -23,7 +23,7 @@ class Member extends Model implements HasMedia
     protected $casts = [
         'dob' => 'immutable_date',
         'membership_date' => 'immutable_date',
-        'dependents' => DataCollection::class.':'.MemberDependent::class,
+        'dependents' => DataCollection::class . ':' . MemberDependent::class,
         'other_income_sources' => 'array',
         'annual_income' => 'decimal:4',
         'member_ids' => 'array',
@@ -114,9 +114,8 @@ class Member extends Model implements HasMedia
     {
         return match ($this->member_type_id) {
             1 => $this->hasOne(Account::class)->whereTag('member_common_cbu_paid'),
-            2 => $this->hasOne(Account::class)->whereTag('member_common_cbu_paid'),
-            3 => $this->hasOne(Account::class)->whereTag('member_preferred_cbu_paid'),
-            4 => $this->hasOne(Account::class)->whereTag('member_laboratory_cbu_paid'),
+            2 => $this->hasOne(Account::class)->whereTag('member_preferred_cbu_paid'),
+            3 => $this->hasOne(Account::class)->whereTag('member_laboratory_cbu_paid'),
             default => $this->hasOne(Account::class)->whereTag('member_common_cbu_paid'),
         };
     }

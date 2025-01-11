@@ -36,7 +36,7 @@ class ImportExistingLoansSeeder extends Seeder
 
     protected function importLoansFromFile(string $filename, LoanType $loanType)
     {
-        $reader = SimpleExcelReader::create(storage_path('csv/loans/'.$filename), 'xlsx');
+        $reader = SimpleExcelReader::create(storage_path('csv/loans/' . $filename), 'xlsx');
         $members_code = $reader->getRows()->pluck('MEMBERS ID');
         $members = Member::whereIn('mpc_code', $members_code->all())->get();
         $reader->getRows()->each(function ($data) use ($members, $loanType) {
@@ -50,6 +50,7 @@ class ImportExistingLoansSeeder extends Seeder
                         balance_forwarded: $data['BALANCE TO FORWARD'],
                         number_of_terms: $data['NUMBER OF TERMS'],
                         application_date: $data['DATE APPLIED'],
+                        last_transaction_date: '12/31/2023'
                     );
                 }
             } catch (\Throwable $th) {

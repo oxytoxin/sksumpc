@@ -20,7 +20,7 @@ class MsoBilling extends Model
 
     public function generateReferenceNumber(self $msoBilling)
     {
-        return 'MSOBILLING'.'-'.today()->format('Y-m-').str_pad($msoBilling->id, 6, '0', STR_PAD_LEFT);
+        return 'MSOBILLING' . '-' . (config('app.transaction_date') ?? today())->format('Y-m-') . str_pad($msoBilling->id, 6, '0', STR_PAD_LEFT);
     }
 
     protected static function booted(): void

@@ -49,6 +49,66 @@ class ImportBalanceForwarded2024 extends Command
                 ));
             }
         });
+        app(CreateTransaction::class)->handle(new TransactionData(
+            account_id: 100,
+            transactionType: $transactionType,
+            reference_number: '#BALANCEFORWARDED',
+            payment_type_id: 2,
+            debit: 89012.48,
+            credit: null,
+            remarks: 'CBU PAID UP',
+            transaction_date: '12/31/2024',
+        ));
+        app(CreateTransaction::class)->handle(new TransactionData(
+            account_id: 104,
+            transactionType: $transactionType,
+            reference_number: '#BALANCEFORWARDED',
+            payment_type_id: 2,
+            debit: null,
+            credit: 89012.48,
+            remarks: 'CBU DEPOSIT',
+            transaction_date: '12/31/2024',
+        ));
+        app(CreateTransaction::class)->handle(new TransactionData(
+            account_id: 101,
+            transactionType: $transactionType,
+            reference_number: '#BALANCEFORWARDED',
+            payment_type_id: 2,
+            debit: 11158.24,
+            credit: null,
+            remarks: 'CBU PAID UP',
+            transaction_date: '12/31/2024',
+        ));
+        app(CreateTransaction::class)->handle(new TransactionData(
+            account_id: 105,
+            transactionType: $transactionType,
+            reference_number: '#BALANCEFORWARDED',
+            payment_type_id: 2,
+            debit: null,
+            credit: 11158.24,
+            remarks: 'CBU DEPOSIT',
+            transaction_date: '12/31/2024',
+        ));
+        app(CreateTransaction::class)->handle(new TransactionData(
+            account_id: 102,
+            transactionType: $transactionType,
+            reference_number: '#BALANCEFORWARDED',
+            payment_type_id: 2,
+            debit: 14461.23,
+            credit: null,
+            remarks: 'CBU PAID UP',
+            transaction_date: '12/31/2024',
+        ));
+        app(CreateTransaction::class)->handle(new TransactionData(
+            account_id: 106,
+            transactionType: $transactionType,
+            reference_number: '#BALANCEFORWARDED',
+            payment_type_id: 2,
+            debit: null,
+            credit: 14461.23,
+            remarks: 'CBU DEPOSIT',
+            transaction_date: '12/31/2024',
+        ));
         DB::commit();
     }
 }

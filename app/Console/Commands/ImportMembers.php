@@ -109,7 +109,7 @@ class ImportMembers extends Command
                         'password' => 'password',
                     ]);
                     $user->assignRole($role);
-                    app(CreateMemberInitialAccounts::class)->handle($member);
+                    // app(CreateMemberInitialAccounts::class)->handle($member);
                 }
             } catch (\Throwable $e) {
                 dump($row['mpc_code'], $e->getMessage());

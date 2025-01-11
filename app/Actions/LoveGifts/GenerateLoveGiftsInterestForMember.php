@@ -27,7 +27,7 @@ class GenerateLoveGiftsInterestForMember
                     days: $i->days_till_next_transaction,
                     minimum_amount: LoveGiftProvider::MINIMUM_AMOUNT_FOR_INTEREST
                 ),
-                'interest_date' => config('app.transaction_date') ?? today(),
+                'interest_date' => today(),
             ]);
         });
 
@@ -36,7 +36,7 @@ class GenerateLoveGiftsInterestForMember
             account_id: $member->imprest_account->id,
             transactionType: TransactionType::CDJ(),
             payment_type_id: 1,
-            reference_number: '#INTERESTACCRUED-'.$member->love_gift_account->number,
+            reference_number: '#INTERESTACCRUED-' . $member->love_gift_account->number,
             credit: $total_interest,
             member_id: $member->id,
             remarks: 'Love Gift Interest',
@@ -47,7 +47,7 @@ class GenerateLoveGiftsInterestForMember
             account_id: Account::getSavingsInterestExpense()->id,
             transactionType: TransactionType::CDJ(),
             payment_type_id: 1,
-            reference_number: '#INTERESTACCRUED-'.$member->love_gift_account->number,
+            reference_number: '#INTERESTACCRUED-' . $member->love_gift_account->number,
             debit: $total_interest,
             member_id: $member->id,
             remarks: 'Love Gift Interest',

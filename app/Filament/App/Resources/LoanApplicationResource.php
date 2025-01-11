@@ -16,6 +16,7 @@ use App\Models\Member;
 use App\Oxytoxin\DTO\Loan\LoanData;
 use App\Oxytoxin\Providers\LoansProvider;
 use App\Rules\BalancedBookkeepingEntries;
+use Auth;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
@@ -49,12 +50,12 @@ class LoanApplicationResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return auth()->user()->can('manage loans');
+        return Auth::user()->can('manage loans');
     }
 
     public static function infolist(Infolist $infolist): Infolist
     {
-        return $infolist->schema(fn ($record) => [
+        return $infolist->schema(fn($record) => [
             TextEntry::make('reference_number'),
             TextEntry::make('member.full_name'),
             TextEntry::make('loan_type.name'),
@@ -64,12 +65,12 @@ class LoanApplicationResource extends Resource
             TextEntry::make('transaction_date')->date('m/d/Y'),
             TextEntry::make('purpose'),
             Section::make('Loan Details')
-                ->visible(fn ($record) => $record->loan)
+                ->visible(fn($record) => $record->loan)
                 ->schema([
                     TextEntry::make('loan.gross_amount')->money('PHP')->label('Gross Amount'),
                     TextEntry::make('loan.deductions_amount')->money('PHP')->label('Deductions Amount'),
                     TextEntry::make('loan.net_amount')->money('PHP')->label('Net Amount'),
-                    TextEntry::make('loan.interest_rate')->formatStateUsing(fn ($state) => str($state * 100)->append('%'))->label('Interest Rate'),
+                    TextEntry::make('loan.interest_rate')->formatStateUsing(fn($state) => str($state * 100)->append('%'))->label('Interest Rate'),
                     TextEntry::make('loan.interest')->money('PHP')->label('Interest Amount'),
                     TextEntry::make('loan.monthly_payment')->money('PHP')->label('Monthly Payment'),
                     TextEntry::make('loan.release_date')->date('m/d/Y')->label('Release Date'),
@@ -114,7 +115,7 @@ class LoanApplicationResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn ($query) => $query->with('loan'))
+            ->modifyQueryUsing(fn($query) => $query->with('loan'))
             ->columns([
                 TextColumn::make('member.full_name')->searchable(),
                 TextColumn::make('priority_number')->searchable(),
@@ -122,7 +123,7 @@ class LoanApplicationResource extends Resource
                 TextColumn::make('loan_type.name'),
                 TextColumn::make('desired_amount')->money('PHP'),
                 TextColumn::make('status')
-                    ->formatStateUsing(fn ($state) => match ($state) {
+                    ->formatStateUsing(fn($state) => match ($state) {
                         LoanApplication::STATUS_PROCESSING => 'For Approval',
                         LoanApplication::STATUS_APPROVED => 'Approved',
                         LoanApplication::STATUS_DISAPPROVED => 'Disapproved',
@@ -138,8 +139,8 @@ class LoanApplicationResource extends Resource
             ])
             ->defaultLoanApplicationFilters()
             ->actions([
-                Tables\Actions\EditAction::make()->visible(fn ($record) => auth()->user()->can('manage loans') && $record->status == LoanApplication::STATUS_PROCESSING),
-                Action::make('CIBI')->label('CIBI')->button()->url(fn ($record) => route('filament.app.resources.loan-applications.credit-and-background-investigation-form', ['loan_application' => $record])),
+                Tables\Actions\EditAction::make()->visible(fn($record) => Auth::user()->can('manage loans') && $record->status == LoanApplication::STATUS_PROCESSING),
+                Action::make('CIBI')->label('CIBI')->button()->url(fn($record) => route('filament.app.resources.loan-applications.credit-and-background-investigation-form', ['loan_application' => $record])),
                 Action::make('Approve')
                     ->action(function (LoanApplication $record) {
                         app(ApproveLoanApplication::class)->handle($record, config('app.transaction_date'));
@@ -148,10 +149,10 @@ class LoanApplicationResource extends Resource
                     ->requiresConfirmation()
                     ->button()
                     ->color('success')
-                    ->visible(fn ($record) => $record->status == LoanApplication::STATUS_PROCESSING),
+                    ->visible(fn($record) => $record->status == LoanApplication::STATUS_PROCESSING),
                 Action::make('Disapprove')
                     ->form([
-                        TextInput::make('priority_number')->default(fn ($record) => $record->priority_number),
+                        TextInput::make('priority_number')->default(fn($record) => $record->priority_number),
                         Select::make('disapproval_reason_id')
                             ->relationship('disapproval_reason', 'name')
                             ->required(),
@@ -170,9 +171,9 @@ class LoanApplicationResource extends Resource
                     ->requiresConfirmation()
                     ->button()
                     ->color('danger')
-                    ->visible(fn ($record) => $record->status == LoanApplication::STATUS_PROCESSING),
+                    ->visible(fn($record) => $record->status == LoanApplication::STATUS_PROCESSING),
                 Action::make('disclosure')
-                    ->visible(fn ($record) => auth()->user()->can('manage loans') && ! $record->loan && $record->status == LoanApplication::STATUS_APPROVED)
+                    ->visible(fn($record) => Auth::user()->can('manage loans') && ! $record->loan && $record->status == LoanApplication::STATUS_APPROVED)
                     ->modalWidth(MaxWidth::ScreenExtraLarge)
                     ->fillForm(function ($record) {
                         $disclosure_sheet_items = LoansProvider::getDisclosureSheetItems($record->loan_type, $record->desired_amount, $record->member);
@@ -186,7 +187,7 @@ class LoanApplicationResource extends Resource
                             'disclosure_sheet_items' => $disclosure_sheet_items,
                         ];
                     })
-                    ->form(fn ($record) => [
+                    ->form(fn($record) => [
                         TextInput::make('priority_number')->required(),
                         TextInput::make('gross_amount')->required()
                             ->readOnly()
@@ -196,11 +197,11 @@ class LoanApplicationResource extends Resource
                         Grid::make(3)
                             ->schema([
                                 Placeholder::make('interest_rate')
-                                    ->content(fn ($record) => str($record->loan_type?->interest_rate * 100 ?? 0)->append('%')->toString()),
+                                    ->content(fn($record) => str($record->loan_type?->interest_rate * 100 ?? 0)->append('%')->toString()),
                                 Placeholder::make('interest')
-                                    ->content(fn ($get) => format_money(LoansProvider::computeInterest($get('gross_amount') ?? 0, $record->loan_type, $get('number_of_terms'), $get('transaction_date')), 'PHP')),
+                                    ->content(fn($get) => format_money(LoansProvider::computeInterest($get('gross_amount') ?? 0, $record->loan_type, $get('number_of_terms'), $get('transaction_date')), 'PHP')),
                                 Placeholder::make('monthly_payment')
-                                    ->content(fn ($get) => format_money(LoansProvider::computeMonthlyPayment($get('gross_amount') ?? 0, $record->loan_type, $get('number_of_terms'), $get('transaction_date')), 'PHP')),
+                                    ->content(fn($get) => format_money(LoansProvider::computeMonthlyPayment($get('gross_amount') ?? 0, $record->loan_type, $get('number_of_terms'), $get('transaction_date')), 'PHP')),
                             ]),
                         TableRepeater::make('disclosure_sheet_items')
                             ->hideLabels()
@@ -209,12 +210,12 @@ class LoanApplicationResource extends Resource
                             ->afterStateUpdated(function ($set, $state) {
                                 $items = collect($state);
                                 $net_amount = $items->firstWhere('code', 'net_amount');
-                                $items = $items->filter(fn ($i) => ($i['code'] ?? '') != 'net_amount');
-                                $net_amount['credit'] = $items->sum('debit') - $items->sum('credit');
+                                $items = $items->filter(fn($i) => ($i['code'] ?? '') != 'net_amount');
+                                $net_amount['credit'] = round($items->sum('debit') - $items->sum('credit'), 2);
                                 $items->push($net_amount);
                                 $set('disclosure_sheet_items', $items->toArray());
                             })
-                            ->columnWidths(['account_id' => '40%', 'member_id' => '13rem'])
+                            ->columnWidths(['account_id' => '40%', 'member_id' => '15rem'])
                             ->rule(new BalancedBookkeepingEntries)
                             ->schema([
                                 Select::make('member_id')
@@ -225,7 +226,7 @@ class LoanApplicationResource extends Resource
                                     ->preload(),
                                 Select::make('account_id')
                                     ->options(
-                                        fn ($get) => Account::withCode()->whereDoesntHave('children', fn ($q) => $q->whereNull('member_id'))->where('member_id', $get('member_id') ?? null)->pluck('code', 'id')
+                                        fn($get) => Account::withCode()->whereDoesntHave('children', fn($q) => $q->whereNull('member_id'))->where('member_id', $get('member_id') ?? null)->pluck('code', 'id')
                                     )
                                     ->searchable()
                                     ->required()
@@ -279,7 +280,7 @@ class LoanApplicationResource extends Resource
                     ]),
                 Action::make('print')
                     ->icon('heroicon-o-printer')
-                    ->url(fn ($record) => route('filament.app.resources.loan-applications.application-form', ['loan_application' => $record]), true),
+                    ->url(fn($record) => route('filament.app.resources.loan-applications.application-form', ['loan_application' => $record]), true),
                 ViewLoanDetailsActionGroup::getActions(),
 
             ])

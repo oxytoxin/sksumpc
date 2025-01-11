@@ -32,7 +32,7 @@ class JournalEntryVoucherItemObserver
     public function creating(JournalEntryVoucherItem $journalEntryVoucherItem): void
     {
         $account = Account::find($journalEntryVoucherItem->account_id);
-        $transaction_date = config('app.transaction_date', today());
+        $transaction_date = (config('app.transaction_date') ?? today());
         $transactionType = TransactionType::JEV();
         $transaction_data = new TransactionData(
             member_id: $account->member_id,

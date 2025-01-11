@@ -33,7 +33,7 @@ class DisbursementVoucherItemObserver
     public function creating(DisbursementVoucherItem $disbursementVoucherItem): void
     {
         $account = Account::find($disbursementVoucherItem->account_id);
-        $transaction_date = config('app.transaction_date', today());
+        $transaction_date = (config('app.transaction_date') ?? today());
         $disbursementVoucherItem->transaction_date = $transaction_date;
         $transactionType = TransactionType::CDJ();
 
@@ -73,7 +73,6 @@ class DisbursementVoucherItemObserver
         } elseif (in_array($account->tag, ['love_gift_savings'])) {
             if ($disbursementVoucherItem->credit) {
                 app(DepositToMsoAccount::class)->handle(MsoType::LOVE_GIFT, $transaction_data);
-
             }
             if ($disbursementVoucherItem->debit) {
                 app(WithdrawFromMsoAccount::class)->handle(MsoType::LOVE_GIFT, $transaction_data);

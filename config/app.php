@@ -20,7 +20,7 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
-    'transaction_date' => null,
+    'transaction_date' => env('TRANSACTION_DATE'),
     /*
     |--------------------------------------------------------------------------
     | Application Environment

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignIdFor(AccountType::class)->constrained();
             $table->foreignIdFor(Member::class)->nullable()->constrained();
             $table->foreignId('parent_id')->nullable()->index();
-            $table->string('name');
+            $table->tinyText('name');
             $table->string('number')->index();
             $table->string('tag')->index()->nullable();
             $table->nullableMorphs('accountable');

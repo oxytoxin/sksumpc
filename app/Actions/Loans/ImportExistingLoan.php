@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\DB;
 
 class ImportExistingLoan
 {
-    public function handle(Member $member, LoanType $loanType, $reference_number, $amount, $balance_forwarded, $number_of_terms, $application_date)
+    public function handle(Member $member, LoanType $loanType, $reference_number, $amount, $balance_forwarded, $number_of_terms, $application_date, $last_transaction_date)
     {
         DB::beginTransaction();
         $loan_application = app(CreateNewLoanApplication::class)->handle(new LoanApplicationData(
@@ -60,7 +60,6 @@ class ImportExistingLoan
         $accounts = Account::withCode()->find(collect($loan_disclosure_sheet_items)->pluck('account_id'));
         $items = collect($loan_disclosure_sheet_items)->map(function ($item) use ($accounts) {
             $item['name'] = $accounts->find($item['account_id'])->code;
-
             return $item;
         })->toArray();
         $loanData = new LoanData(
@@ -91,38 +90,37 @@ class ImportExistingLoan
         $loan->save();
 
         $principal_payment = $loan->gross_amount - $balance_forwarded;
-        $transactionType = TransactionType::CRJ();
-        app(CreateTransaction::class)->handle(new TransactionData(
-            account_id: Account::getCashOnHand()->id,
-            transactionType: $transactionType,
-            payment_type_id: 1,
-            reference_number: '#BALANCEFORWARDEDPAYMENT',
-            debit: $principal_payment,
-            member_id: $loan->member_id,
-            remarks: 'Member Loan Payment Before Balance Forwarded',
-            transaction_date: '12/31/2023',
-        ));
-
+        $transactionType = TransactionType::JEV();
+        if ($principal_payment)
+            app(CreateTransaction::class)->handle(new TransactionData(
+                account_id: $loan->loan_account->id,
+                transactionType: $transactionType,
+                payment_type_id: 2,
+                reference_number: '#BALANCEFORWARDED',
+                credit: $principal_payment,
+                member_id: $loan->member_id,
+                remarks: 'Member Loan Receivable Before Balance Forwarded',
+                transaction_date: $last_transaction_date,
+            ));
         app(CreateTransaction::class)->handle(new TransactionData(
             account_id: $loan->loan_account->id,
             transactionType: $transactionType,
-            payment_type_id: 1,
-            reference_number: '#BALANCEFORWARDEDPAYMENT',
-            credit: $principal_payment,
+            payment_type_id: 2,
+            reference_number: '#BALANCEFORWARDED',
+            debit: $loan->gross_amount,
             member_id: $loan->member_id,
-            remarks: 'Member Loan Payment Before Balance Forwarded',
-            transaction_date: '12/31/2023',
+            remarks: 'Member Loan Balance Forwarded',
+            transaction_date: $last_transaction_date,
         ));
-
         $loan->payments()->create([
             'member_id' => $loan->member_id,
-            'payment_type_id' => 1,
+            'payment_type_id' => 2,
             'amount' => $principal_payment,
             'interest_payment' => 0,
             'principal_payment' => $principal_payment,
-            'reference_number' => '#BALANCEFORWARDEDPAYMENT',
+            'reference_number' => '#BALANCEFORWARDED',
             'remarks' => 'Member Loan Payment Before Balance Forwarded',
-            'transaction_date' => '12/31/2023',
+            'transaction_date' => $last_transaction_date,
         ]);
         DB::commit();
     }

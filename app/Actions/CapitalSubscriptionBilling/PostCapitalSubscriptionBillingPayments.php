@@ -2,13 +2,16 @@
 
 namespace App\Actions\CapitalSubscriptionBilling;
 
-use App\Actions\CapitalSubscription\PayCapitalSubscription;
-use App\Models\CapitalSubscriptionBilling;
-use App\Models\CapitalSubscriptionBillingPayment;
+use App\Models\Account;
+use App\Enums\PaymentTypes;
 use App\Models\TransactionType;
-use App\Oxytoxin\DTO\Transactions\TransactionData;
-use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\DB;
+use Filament\Notifications\Notification;
+use App\Models\CapitalSubscriptionBilling;
+use App\Actions\Transactions\CreateTransaction;
+use App\Models\CapitalSubscriptionBillingPayment;
+use App\Oxytoxin\DTO\Transactions\TransactionData;
+use App\Actions\CapitalSubscription\PayCapitalSubscription;
 
 class PostCapitalSubscriptionBillingPayments
 {
@@ -18,18 +21,31 @@ class PostCapitalSubscriptionBillingPayments
             return Notification::make()->title('Billing reference number and payment type is missing!')->danger()->send();
         }
         DB::beginTransaction();
-        $transaction_type = TransactionType::CRJ();
-        $cbuBilling->capital_subscription_billing_payments()->with('capital_subscription.member.capital_subscription_account')->each(function (CapitalSubscriptionBillingPayment $cbup) use ($cbuBilling, $transaction_type) {
-            app(PayCapitalSubscription::class)->handle($cbup->capital_subscription, new TransactionData(
+        $transactionType = TransactionType::CRJ();
+        $cash_in_bank_account_id = Account::getCashInBankGF()->id;
+        $cash_on_hand_account_id = Account::getCashOnHand()->id;
+        $cbuBilling->capital_subscription_billing_payments()->with('capital_subscription.member.capital_subscription_account')->each(function (CapitalSubscriptionBillingPayment $cbup) use ($cbuBilling, $transactionType, $cash_in_bank_account_id, $cash_on_hand_account_id) {
+            $data = new TransactionData(
                 account_id: $cbup->capital_subscription->member->capital_subscription_account->id,
-                transactionType: $transaction_type,
+                transactionType: $transactionType,
                 reference_number: $cbuBilling->or_number,
                 payment_type_id: $cbuBilling->payment_type_id,
                 credit: $cbup->amount_paid,
                 member_id: $cbup->capital_subscription->member_id,
                 transaction_date: $cbuBilling->date,
                 payee: $cbup->capital_subscription->member->full_name,
-            ));
+            );
+            app(PayCapitalSubscription::class)->handle($cbup->capital_subscription, $data);
+
+            if ($data->payment_type_id == PaymentTypes::ADA->value) {
+                $data->account_id = $cash_in_bank_account_id;
+            } else {
+                $data->account_id = $cash_on_hand_account_id;
+            }
+            $data->debit = $cbup->amount_paid;
+            $data->credit = null;
+            app(CreateTransaction::class)->handle($data);
+
             $cbup->update([
                 'posted' => true,
             ]);

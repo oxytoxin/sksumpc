@@ -36,10 +36,29 @@ class ImportCbu extends Command
     public function handle()
     {
         DB::beginTransaction();
-        $rows = SimpleExcelReader::create(storage_path('csv/deployment/CBU FORWARDED AS OF DECEMBER 2024.xlsx'))
-            ->getRows();
+
         $members = Member::get()->mapWithKeys(fn($m) => [$m->mpc_code => $m]);
         $transactionType = TransactionType::JEV();
+        $source = SimpleExcelReader::create(storage_path('csv/deployment/CBU FORWARDED AS OF DECEMBER 2024.xlsx'));
+        $rows = $source
+            ->fromSheetName('REGULAR')
+            ->getRows();
+        $this->import($rows, $members, $transactionType);
+        $rows = $source
+            ->fromSheetName('ASSOCIATE')
+            ->getRows();
+        $this->import($rows, $members, $transactionType);
+        $rows = $source
+            ->fromSheetName('LABORATORY')
+            ->getRows();
+        $this->import($rows, $members, $transactionType);
+
+        DB::commit();
+    }
+
+    private function import($rows, $members, $transactionType)
+    {
+
         $rows->each(function ($row) use ($members, $transactionType) {
             if (filled($row['mpc_code'])) {
                 $member = $members[$row['mpc_code']];
@@ -58,7 +77,7 @@ class ImportCbu extends Command
                     monthly_payment: $monthly_payment,
                     amount_subscribed: round($row['number_of_shares'] * $row['par_value'], 2),
                     par_value: $row['par_value'],
-                    is_common: true,
+                    is_active: true,
                     transaction_date: $row['date_subscribed']
                 ));
                 app(PayCapitalSubscription::class)->handle($cbu, new TransactionData(
@@ -68,11 +87,10 @@ class ImportCbu extends Command
                     payment_type_id: 1,
                     credit: $row['amount_paid'],
                     member_id: $member->id,
-                    transaction_date: $row['date_subscribed'],
+                    transaction_date: '12/31/2024',
                     payee: $member->full_name,
                 ));
             }
         });
-        DB::commit();
     }
 }

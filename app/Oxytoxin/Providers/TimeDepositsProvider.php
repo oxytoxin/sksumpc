@@ -8,7 +8,7 @@ class TimeDepositsProvider
 {
     const NUMBER_OF_DAYS = 180;
 
-    const DAYS_ANNUALLY = 365;
+    const DAYS_ANNUALLY = 360;
 
     const MINIMUM_DEPOSIT = 10000;
 

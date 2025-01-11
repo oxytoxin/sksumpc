@@ -149,7 +149,7 @@ class LoansProvider
         $existing = $member?->loans()->wherePosted(true)->where('loan_type_id', $loanType->id)->where('outstanding_balance', '>', 0)->whereNot('id', $existing_loan_id)->first();
         if ($existing) {
             $start = $existing->last_payment?->transaction_date ?? $existing->transaction_date;
-            $end = today();
+            $end = (config('app.transaction_date') ?? today());
             $total_days = LoansProvider::getAccruableDays($start, $end);
             $interest_remaining = LoansProvider::computeAccruedInterest($existing, $existing->outstanding_balance, $total_days);
             $loan_receivables_account = Account::whereAccountableType(LoanType::class)->whereAccountableId($existing->loan_type_id)->whereTag('loan_receivables')->first();
@@ -220,7 +220,7 @@ class LoansProvider
         $existing = $member?->loans()->wherePosted(true)->where('loan_type_id', $loanType->id)->where('outstanding_balance', '>', 0)->whereNot('id', $existing_loan_id)->first();
         if ($existing) {
             $start = $existing->last_payment?->transaction_date ?? $existing->transaction_date;
-            $end = today();
+            $end = (config('app.transaction_date') ?? today());
             $total_days = LoansProvider::getAccruableDays($start, $end);
             $interest_remaining = LoansProvider::computeAccruedInterest($existing, $existing->outstanding_balance, $total_days);
             $deductions[] = [
@@ -255,8 +255,6 @@ class LoansProvider
             if ($start->day <= 10) {
                 if ($i == 1) {
                     $days = LoansProvider::DAYS_IN_MONTH - $start->day;
-                } elseif ($i == $loan->number_of_terms) {
-                    $days = LoansProvider::DAYS_IN_MONTH + $start->day;
                 } else {
                     $days = LoansProvider::DAYS_IN_MONTH;
                 }
@@ -264,8 +262,6 @@ class LoansProvider
             } else {
                 if ($i == 1) {
                     $days = (LoansProvider::DAYS_IN_MONTH * 2) - $start->day;
-                } elseif ($i == $loan->number_of_terms) {
-                    $days = $start->day;
                 } else {
                     $days = LoansProvider::DAYS_IN_MONTH;
                 }

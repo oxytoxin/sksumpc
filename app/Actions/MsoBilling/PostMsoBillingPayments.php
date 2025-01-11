@@ -3,7 +3,10 @@
 namespace App\Actions\MsoBilling;
 
 use App\Actions\MSO\DepositToMsoAccount;
+use App\Actions\Transactions\CreateTransaction;
 use App\Enums\MsoType;
+use App\Enums\PaymentTypes;
+use App\Models\Account;
 use App\Models\MsoBilling;
 use App\Models\MsoBillingPayment;
 use App\Models\TransactionType;
@@ -20,7 +23,9 @@ class PostMsoBillingPayments
         }
         DB::beginTransaction();
         $transaction_type = TransactionType::CRJ();
-        $msoBilling->payments()->with('member')->each(function (MsoBillingPayment $payment) use ($msoBilling, $transaction_type) {
+        $cash_in_bank_account_id = Account::getCashInBankGF()->id;
+        $cash_on_hand_account_id = Account::getCashOnHand()->id;
+        $msoBilling->payments()->with('member')->each(function (MsoBillingPayment $payment) use ($msoBilling, $transaction_type, $cash_in_bank_account_id, $cash_on_hand_account_id) {
             $member = $payment->member;
             $data = new TransactionData(
                 account_id: $payment->account_id,
@@ -42,6 +47,16 @@ class PostMsoBillingPayments
             if ($msoBilling->type == 3) {
                 app(DepositToMsoAccount::class)->handle(MsoType::LOVE_GIFT, $data);
             }
+
+            if ($data->payment_type_id == PaymentTypes::ADA->value) {
+                $data->account_id = $cash_in_bank_account_id;
+            } else {
+                $data->account_id = $cash_on_hand_account_id;
+            }
+            $data->debit = $payment->amount_paid;
+            $data->credit = null;
+            app(CreateTransaction::class)->handle($data);
+
             $payment->update([
                 'posted' => true,
             ]);
