@@ -29,6 +29,7 @@ class DailyCollectionsReport extends Page
     #[Computed]
     public function GeneralFundDeposits()
     {
+        return '';
         return Account::getCashInBankGF()
             ->recursiveTransactions()
             ->whereDate('transaction_date', config('app.transaction_date'))
@@ -38,6 +39,7 @@ class DailyCollectionsReport extends Page
     #[Computed]
     public function MsoDeposits()
     {
+        return '';
         return Account::getCashInBankMSO()
             ->recursiveTransactions()
             ->whereDate('transaction_date', config('app.transaction_date'))
@@ -103,7 +105,7 @@ class DailyCollectionsReport extends Page
         $laboratory = Transaction::query()
             ->where(function ($query) {
                 $query->whereIn('account_id', [OthersTransactionExcludedAccounts::MEMBERSHIP_FEES->value])
-                    ->orWhere(fn ($query) => $query->whereRelation('account', function ($query) {
+                    ->orWhere(fn($query) => $query->whereRelation('account', function ($query) {
                         return $query->whereRelation('parent', 'tag', 'member_laboratory_cbu_paid');
                     }));
             })
@@ -118,11 +120,8 @@ class DailyCollectionsReport extends Page
             )
             ->whereDate('transaction_date', config('app.transaction_date'))
             ->groupBy('payment_type_id');
-        $others = Transaction::whereDoesntHave('account', function ($query) {
-            return $query->whereHas(
-                'rootAncestor',
-                fn ($q) => $q->whereIn('id', OthersTransactionExcludedAccounts::get())
-            );
+        $others = Transaction::whereHas('account', function ($query) {
+            return $query->whereNotIn('id', OthersTransactionExcludedAccounts::get());
         })
             ->withoutMso()
             ->selectRaw(
