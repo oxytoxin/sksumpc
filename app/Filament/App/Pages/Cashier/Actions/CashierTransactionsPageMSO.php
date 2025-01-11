@@ -2,17 +2,18 @@
 
 namespace App\Filament\App\Pages\Cashier\Actions;
 
+use App\Enums\MsoType;
+use App\Models\Member;
+use App\Models\Account;
+use App\Enums\PaymentTypes;
+use App\Models\PaymentType;
 use App\Actions\MSO\DepositToMsoAccount;
 use App\Actions\MSO\WithdrawFromMsoAccount;
-use App\Actions\Transactions\CreateTransaction;
-use App\Enums\MsoType;
-use App\Models\Account;
-use App\Models\Member;
-use App\Models\PaymentType;
-use App\Oxytoxin\DTO\Transactions\TransactionData;
+use App\Oxytoxin\Providers\SavingsProvider;
 use App\Oxytoxin\Providers\ImprestsProvider;
 use App\Oxytoxin\Providers\LoveGiftProvider;
-use App\Oxytoxin\Providers\SavingsProvider;
+use App\Actions\Transactions\CreateTransaction;
+use App\Oxytoxin\DTO\Transactions\TransactionData;
 
 class CashierTransactionsPageMSO
 {
@@ -54,8 +55,15 @@ class CashierTransactionsPageMSO
                 'transaction_date' => $mso->transaction_date,
             ]);
         }
+        $cash_in_bank_account_id = Account::getCashInBankGF()->id;
+        $cash_on_hand_account_id = Account::getCashOnHand()->id;
+        if ($data->payment_type_id == PaymentTypes::ADA->value) {
+            $account_id = $cash_in_bank_account_id;
+        } else {
+            $account_id = $cash_on_hand_account_id;
+        }
         app(CreateTransaction::class)->handle(new TransactionData(
-            account_id: Account::getCashOnHand()->id,
+            account_id: $account_id,
             transactionType: $data->transactionType,
             reference_number: $mso->reference_number,
             payment_type_id: $data->payment_type_id,
