@@ -2,7 +2,9 @@
 
 namespace App\Filament\App\Pages\Cashier\Reports;
 
+use App\Enums\AccountIds;
 use App\Enums\OthersTransactionExcludedAccounts;
+use App\Enums\TransactionTypes;
 use App\Models\Account;
 use App\Models\Imprest;
 use App\Models\LoanPayment;
@@ -29,9 +31,16 @@ class DailyCollectionsReport extends Page
     #[Computed]
     public function GeneralFundDeposits()
     {
-        return '';
-        return Account::getCashInBankGF()
-            ->recursiveTransactions()
+        return Transaction::whereHas("account", function ($q1) {
+            $q1->whereDoesntHave("ancestorsAndSelf", function ($q2) {
+                $q2->whereIn("id", [
+                    OthersTransactionExcludedAccounts::CASH_AND_CASH_EQUIVALENTS->value,
+                    AccountIds::SAVINGS_DEPOSIT->value,
+                    AccountIds::TIME_DEPOSIT->value,
+                ]);
+            });
+        })
+            ->where("transaction_type_id", TransactionTypes::CRJ->value)
             ->whereDate('transaction_date', config('app.transaction_date'))
             ->sum('credit');
     }
@@ -39,9 +48,15 @@ class DailyCollectionsReport extends Page
     #[Computed]
     public function MsoDeposits()
     {
-        return '';
-        return Account::getCashInBankMSO()
-            ->recursiveTransactions()
+        return Transaction::whereHas("account", function ($q1) {
+            $q1->whereHas("ancestorsAndSelf", function ($q2) {
+                $q2->whereIn("id", [
+                    AccountIds::SAVINGS_DEPOSIT->value,
+                    AccountIds::TIME_DEPOSIT->value,
+                ]);
+            });
+        })
+            ->where("transaction_type_id", TransactionTypes::CRJ->value)
             ->whereDate('transaction_date', config('app.transaction_date'))
             ->sum('credit');
     }
@@ -49,81 +64,117 @@ class DailyCollectionsReport extends Page
     #[Computed]
     public function DailyCollections()
     {
-        $dormitory = Transaction::query()->whereIn('account_id', [
-            OthersTransactionExcludedAccounts::RESERVATION_FEES_DORM->value,
-            OthersTransactionExcludedAccounts::DORMITORY->value,
-            OthersTransactionExcludedAccounts::RESERVATION->value,
-            OthersTransactionExcludedAccounts::OTHER_INCOME_ELECTRICITY->value,
-            OthersTransactionExcludedAccounts::OTHER_INCOME_ELECTRICITY->value,
-        ])
+        $dormitory = Transaction::whereHas("account", function ($q1) {
+            $q1->whereHas("ancestorsAndSelf", function ($q2) {
+                $q2->whereIn("id", [
+                    OthersTransactionExcludedAccounts::RESERVATION_FEES_DORM->value,
+                    OthersTransactionExcludedAccounts::DORMITORY->value,
+                    OthersTransactionExcludedAccounts::RESERVATION->value,
+                    OthersTransactionExcludedAccounts::OTHER_INCOME_ELECTRICITY->value,
+                    OthersTransactionExcludedAccounts::OTHER_INCOME_RENTALS->value
+                ]);
+            });
+        })
+            ->where("transaction_type_id", TransactionTypes::CRJ->value)
             ->selectRaw(
                 "sum(credit) as total_amount, 'Dormitory' as name, payment_type_id"
             )
-            ->whereDate('transaction_date', config('app.transaction_date'))
-            ->groupBy('payment_type_id');
-        $rice_and_groceries = Transaction::query()->whereIn('account_id', [
-            OthersTransactionExcludedAccounts::RICE->value,
-            OthersTransactionExcludedAccounts::GROCERIES->value,
-        ])->where('transaction_type_id', 1)
+            ->whereDate("transaction_date", config("app.transaction_date"))
+            ->groupBy("payment_type_id");
+
+        $rice_and_groceries = Transaction::whereHas("account", function ($q1) {
+            $q1->whereHas("ancestorsAndSelf", function ($q2) {
+                $q2->whereIn("id", [
+                    OthersTransactionExcludedAccounts::RICE->value,
+                    OthersTransactionExcludedAccounts::GROCERIES->value,
+                ]);
+            });
+        })
+            ->where("transaction_type_id", TransactionTypes::CRJ->value)
             ->selectRaw(
                 "sum(credit) as total_amount, 'Rice and Groceries' as name, payment_type_id"
             )
             ->whereDate('transaction_date', config('app.transaction_date'))
             ->groupBy('payment_type_id');
 
-        $savings = Saving::query()
-            ->withoutGlobalScopes()
+        $savings = Transaction::whereIn("tag", [
+            'member_savings_deposit'
+        ])
+            ->where("transaction_type_id", TransactionTypes::CRJ->value)
             ->selectRaw(
-                "sum(deposit) as total_amount, 'Savings' as name, payment_type_id"
+                "sum(credit) as total_amount, 'Savings' as name, payment_type_id"
             )
             ->whereDate('transaction_date', config('app.transaction_date'))
             ->groupBy('payment_type_id');
 
-        $imprests = Imprest::query()
-            ->withoutGlobalScopes()
+        $imprests = Transaction::whereIn("tag", [
+            'member_imprest_deposit'
+        ])
+            ->where("transaction_type_id", TransactionTypes::CRJ->value)
             ->selectRaw(
-                "sum(deposit) as total_amount, 'Imprests' as name, payment_type_id"
+                "sum(credit) as total_amount, 'Imprests' as name, payment_type_id"
             )
             ->whereDate('transaction_date', config('app.transaction_date'))
             ->groupBy('payment_type_id');
 
-        $love_gifts = LoveGift::query()
-            ->withoutGlobalScopes()
+        $love_gifts = Transaction::whereIn("tag", [
+            'member_love_gift_deposit'
+        ])
+            ->where("transaction_type_id", TransactionTypes::CRJ->value)
             ->selectRaw(
-                "sum(deposit) as total_amount, 'Love Gift' as name, payment_type_id"
+                "sum(credit) as total_amount, 'Love Gift' as name, payment_type_id"
             )
             ->whereDate('transaction_date', config('app.transaction_date'))
             ->groupBy('payment_type_id');
 
-        $time_deposits = TimeDeposit::query()
+        $time_deposits = Transaction::whereHas("account", function ($q1) {
+            $q1->whereHas("ancestorsAndSelf", function ($q2) {
+                $q2->whereIn("tag", [
+                    'member_time_deposits'
+                ]);
+            });
+        })
+            ->where("transaction_type_id", TransactionTypes::CRJ->value)
             ->selectRaw(
-                "sum(amount) as total_amount, 'Time Deposit' as name, payment_type_id"
+                "sum(credit) as total_amount, 'Time Deposit' as name, payment_type_id"
             )
             ->whereDate('transaction_date', config('app.transaction_date'))
             ->groupBy('payment_type_id');
 
-        $laboratory = Transaction::query()
-            ->where(function ($query) {
-                $query->whereIn('account_id', [OthersTransactionExcludedAccounts::MEMBERSHIP_FEES->value])
-                    ->orWhere(fn($query) => $query->whereRelation('account', function ($query) {
-                        return $query->whereRelation('parent', 'tag', 'member_laboratory_cbu_paid');
-                    }));
-            })
+        $laboratory = Transaction::whereHas("account", function ($q1) {
+            $q1->whereHas("ancestorsAndSelf", function ($q2) {
+                $q2->whereIn("id", [
+                    OthersTransactionExcludedAccounts::MEMBERSHIP_FEES->value,
+                    OthersTransactionExcludedAccounts::LABORATORY_CBU_PAID->value,
+                ]);
+            });
+        })
+            ->where("transaction_type_id", TransactionTypes::CRJ->value)
             ->selectRaw(
                 "sum(credit) as total_amount, 'Laboratory' as name, payment_type_id"
             )
             ->whereDate('transaction_date', config('app.transaction_date'))
             ->groupBy('payment_type_id');
-        $loans = LoanPayment::query()->whereIn('payment_type_id', [1, 3, 4, 5])
+        $loans = Transaction::whereHas("account", function ($q1) {
+            $q1->whereHas("ancestorsAndSelf", function ($q2) {
+                $q2->whereIn("id", [
+                    OthersTransactionExcludedAccounts::LOAN_RECEIVABLES->value,
+                ]);
+            });
+        })
+            ->where("transaction_type_id", TransactionTypes::CRJ->value)
             ->selectRaw(
-                "sum(amount) as total_amount, 'Loans' as name, payment_type_id"
+                "sum(credit) as total_amount, 'Loans' as name, payment_type_id"
             )
             ->whereDate('transaction_date', config('app.transaction_date'))
             ->groupBy('payment_type_id');
-        $others = Transaction::whereHas('account', function ($query) {
-            return $query->whereNotIn('id', OthersTransactionExcludedAccounts::get());
+
+        $others = Transaction::whereHas("account", function ($q1) {
+            $q1->whereDoesntHave("ancestorsAndSelf", function ($q2) {
+                $q2->whereIn("id", OthersTransactionExcludedAccounts::get());
+            });
         })
-            ->withoutMso()
+            ->where("transaction_type_id", TransactionTypes::CRJ->value)
             ->selectRaw(
                 "sum(credit) as total_amount, 'Others' as name, payment_type_id"
             )

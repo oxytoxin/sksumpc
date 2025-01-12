@@ -9,12 +9,22 @@ use App\Models\PaymentType;
 use App\Actions\Transactions\CreateTransaction;
 use App\Oxytoxin\DTO\Transactions\TransactionData;
 use App\Actions\CapitalSubscription\PayCapitalSubscription;
+use Filament\Notifications\Notification;
+use Illuminate\Validation\ValidationException;
 
 class CashierTransactionsPageCbuPayment
 {
     public static function handle(TransactionData $data): array
     {
         $member = Member::find($data->member_id);
+        if (!$member->active_capital_subscription) {
+            Notification::make()
+                ->title('Error')
+                ->body('Member has no active capital subscription.')
+                ->danger()
+                ->send();
+            throw ValidationException::withMessages(['member_id' => 'Member has no active capital subscription.']);
+        }
         app(PayCapitalSubscription::class)->handle($member->active_capital_subscription, $data);
         $data->debit = $data->credit;
         $data->credit = null;
