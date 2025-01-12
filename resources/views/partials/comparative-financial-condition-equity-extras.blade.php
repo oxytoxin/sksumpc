@@ -38,15 +38,15 @@
         LESS: SUBSCRIPTION RECEIVABLES
     </td>
     <td class="fs-row-data !text-center">
-        {{ renumber_format(175512000 - $children_accounts->whereIn('id', [98, 99])->sum('2_ending_balance_credit')) }}
+        {{ renumber_format(175512000 - $children_accounts->whereIn('tag', ['member_regular_cbu_paid', 'member_laboratory_cbu_paid'])->sum('2_ending_balance_credit')) }}
     </td>
     <td class="fs-row-data !text-center">
-        {{ renumber_format(175512000 - $children_accounts->whereIn('id', [98, 99])->sum('1_ending_balance_credit')) }}
+        {{ renumber_format(175512000 - $children_accounts->whereIn('tag', ['member_regular_cbu_paid', 'member_laboratory_cbu_paid'])->sum('1_ending_balance_credit')) }}
     </td>
     <td class="fs-row-data !text-center">
     </td>
     <td class="fs-row-data !text-center">
-        {{ renumber_format(175512000 - $children_accounts->whereIn('id', [98, 99])->sum('0_ending_balance_credit')) }}
+        {{ renumber_format(175512000 - $children_accounts->whereIn('tag', ['member_regular_cbu_paid', 'member_laboratory_cbu_paid'])->sum('0_ending_balance_credit')) }}
     </td>
 </tr>
 <tr>
@@ -86,14 +86,14 @@
         LESS: SUBSCRIPTION RECEIVABLES
     </td>
     <td class="fs-row-data !text-center">
-        {{ renumber_format(12616000 - $children_accounts->where('id', 100)->sum('2_ending_balance_credit')) }}
+        {{ renumber_format(12616000 - $children_accounts->whereIn('tag', ['member_preferred_cbu_paid'])->sum('2_ending_balance_credit')) }}
     </td>
     <td class="fs-row-data !text-center">
-        {{ renumber_format(12616000 - $children_accounts->where('id', 100)->sum('1_ending_balance_credit')) }}
+        {{ renumber_format(12616000 - $children_accounts->whereIn('tag', ['member_preferred_cbu_paid'])->sum('1_ending_balance_credit')) }}
     </td>
     <td class="fs-row-data !text-center">
     </td>
     <td class="fs-row-data !text-center">
-        {{ renumber_format(12616000 - $children_accounts->where('id', 100)->sum('0_ending_balance_credit')) }}
+        {{ renumber_format(12616000 - $children_accounts->whereIn('tag', ['member_preferred_cbu_paid'])->sum('0_ending_balance_credit')) }}
     </td>
 </tr>

@@ -2,8 +2,10 @@
 
 namespace App\Filament\App\Pages;
 
+use App\Enums\MemberTypes;
 use App\Models\CapitalSubscriptionPayment;
 use App\Models\MemberType;
+use Auth;
 use Filament\Forms\Form;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
@@ -29,7 +31,7 @@ class CbuScheduleSummary extends Page
 
     public static function shouldRegisterNavigation(): bool
     {
-        return auth()->user()->can('manage cbu');
+        return Auth::user()->can('manage cbu');
     }
 
     private function getAmounts($amount_paid, MemberType $memberType)
@@ -44,7 +46,7 @@ class CbuScheduleSummary extends Page
     #[Computed]
     public function DateRange()
     {
-        $dates = collect(explode(' - ', $this->data['transaction_date']))->map(fn ($d) => date_create($d)->format('F d, Y'))->toArray();
+        $dates = collect(explode(' - ', $this->data['transaction_date']))->map(fn($d) => date_create($d)->format('F d, Y'))->toArray();
         if (count($dates) == 2 && $dates[0] == $dates[1]) {
             return $dates[0];
         }
@@ -57,8 +59,8 @@ class CbuScheduleSummary extends Page
     {
         $memberType = MemberType::find(4);
         $amount_paid = CapitalSubscriptionPayment::whereHas('capital_subscription', function ($q) {
-            return $q->whereRelation('member', 'member_type_id', 4);
-        })->when($this->data['transaction_date'], fn ($q, $v) => $q->whereBetween('transaction_date', collect(explode(' - ', $v))->map(fn ($d) => date_create_immutable($d)->format('Y-m-d'))->toArray()))
+            return $q->whereRelation('member', 'member_type_id', MemberTypes::LABORATORY->value);
+        })->when($this->data['transaction_date'], fn($q, $v) => $q->whereBetween('transaction_date', collect(explode(' - ', $v))->map(fn($d) => date_create_immutable($d)->format('Y-m-d'))->toArray()))
             ->sum('amount');
 
         return $this->getAmounts($amount_paid, $memberType);
@@ -69,9 +71,9 @@ class CbuScheduleSummary extends Page
     {
         $memberType = MemberType::find(1);
         $amount_paid = CapitalSubscriptionPayment::whereHas('capital_subscription', function ($q) {
-            return $q->whereHas('member', fn ($qu) => $qu->where('member_type_id', 1));
+            return $q->whereHas('member', fn($qu) => $qu->where('member_type_id', MemberTypes::REGULAR->value));
         })
-            ->when($this->data['transaction_date'], fn ($q, $v) => $q->whereBetween('transaction_date', collect(explode(' - ', $v))->map(fn ($d) => date_create_immutable($d)->format('Y-m-d'))->toArray()))
+            ->when($this->data['transaction_date'], fn($q, $v) => $q->whereBetween('transaction_date', collect(explode(' - ', $v))->map(fn($d) => date_create_immutable($d)->format('Y-m-d'))->toArray()))
             ->sum('amount');
         $amounts = $this->getAmounts($amount_paid, $memberType);
 
@@ -87,9 +89,9 @@ class CbuScheduleSummary extends Page
     {
         $memberType = MemberType::find(3);
         $amount_paid = CapitalSubscriptionPayment::whereHas('capital_subscription', function ($q) {
-            return $q->whereRelation('member', 'member_type_id', 3);
+            return $q->whereRelation('member', 'member_type_id', MemberTypes::ASSOCIATE->value);
         })
-            ->when($this->data['transaction_date'], fn ($q, $v) => $q->whereBetween('transaction_date', collect(collect(explode(' - ', $v))->map(fn ($d) => date_create_immutable($d)->format('Y-m-d'))->toArray())->map(fn ($d) => date_create_immutable($d)->format('Y-m-d'))->toArray()))
+            ->when($this->data['transaction_date'], fn($q, $v) => $q->whereBetween('transaction_date', collect(collect(explode(' - ', $v))->map(fn($d) => date_create_immutable($d)->format('Y-m-d'))->toArray())->map(fn($d) => date_create_immutable($d)->format('Y-m-d'))->toArray()))
             ->sum('amount');
 
         return $this->getAmounts($amount_paid, $memberType);

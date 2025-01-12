@@ -14,13 +14,6 @@ return new class extends Migration
         Schema::table('transactions', function (Blueprint $table) {
             $table->foreignId('payment_type_id')->after('member_id')->nullable()->constrained()->cascadeOnDelete();
         });
-        \App\Models\Transaction::where('transaction_type_id', 1)->update(['payment_type_id' => 1]);
-        \App\Models\Transaction::where('transaction_type_id', 2)->update(['payment_type_id' => 4]);
-        \App\Models\Transaction::where('transaction_type_id', 3)->update(['payment_type_id' => 2]);
-        \App\Models\Transaction::query()
-            ->where('credit', '<', 0)
-            ->orWhere('debit', '<', 0)
-            ->each(fn ($t) => $t->update(['debit' => abs($t->debit), 'credit' => abs($t->credit)]));
     }
 
     /**

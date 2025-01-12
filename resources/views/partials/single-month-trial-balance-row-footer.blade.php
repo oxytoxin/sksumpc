@@ -1,12 +1,12 @@
 @php
-    $mso_account = findRecursive($this->trial_balance, fn($item) => $item->id == 55);
+    $mso_account = findRecursive($this->trial_balance, fn($item) => $item->id == App\Enums\AccountIds::SAVINGS_DEPOSIT->value);
     $total = [
-        'total_crj_debit' => sum_no_children_recursive($this->trial_balance->where('id', '!=', 55), 'month_crj_debit') - $mso_account['month_crj_debit'],
-        'total_crj_credit' => sum_no_children_recursive($this->trial_balance->where('id', '!=', 55), 'month_crj_credit') - $mso_account['month_crj_credit'],
-        'total_cdj_debit' => sum_no_children_recursive($this->trial_balance->where('id', '!=', 55), 'month_cdj_debit') - $mso_account['month_cdj_debit'],
-        'total_cdj_credit' => sum_no_children_recursive($this->trial_balance->where('id', '!=', 55), 'month_cdj_credit') - $mso_account['month_cdj_credit'],
-        'total_jev_debit' => sum_no_children_recursive($this->trial_balance->where('id', '!=', 55), 'month_jev_debit') - $mso_account['month_jev_debit'],
-        'total_jev_credit' => sum_no_children_recursive($this->trial_balance->where('id', '!=', 55), 'month_jev_credit') - $mso_account['month_jev_credit'],
+        'total_crj_debit' => sum_no_children_recursive($this->trial_balance->where('id', '!=', App\Enums\AccountIds::SAVINGS_DEPOSIT->value), 'month_crj_debit') - $mso_account['month_crj_debit'],
+        'total_crj_credit' => sum_no_children_recursive($this->trial_balance->where('id', '!=', App\Enums\AccountIds::SAVINGS_DEPOSIT->value), 'month_crj_credit') - $mso_account['month_crj_credit'],
+        'total_cdj_debit' => sum_no_children_recursive($this->trial_balance->where('id', '!=', App\Enums\AccountIds::SAVINGS_DEPOSIT->value), 'month_cdj_debit') - $mso_account['month_cdj_debit'],
+        'total_cdj_credit' => sum_no_children_recursive($this->trial_balance->where('id', '!=', App\Enums\AccountIds::SAVINGS_DEPOSIT->value), 'month_cdj_credit') - $mso_account['month_cdj_credit'],
+        'total_jev_debit' => sum_no_children_recursive($this->trial_balance->where('id', '!=', App\Enums\AccountIds::SAVINGS_DEPOSIT->value), 'month_jev_debit') - $mso_account['month_jev_debit'],
+        'total_jev_credit' => sum_no_children_recursive($this->trial_balance->where('id', '!=', App\Enums\AccountIds::SAVINGS_DEPOSIT->value), 'month_jev_credit') - $mso_account['month_jev_credit'],
         'total_crj_mso_debit' => $mso_account['month_crj_debit'],
         'total_crj_mso_credit' => $mso_account['month_crj_credit'],
         'total_cdj_mso_debit' => $mso_account['month_cdj_debit'],

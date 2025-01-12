@@ -4,6 +4,8 @@ namespace App\Filament\App\Pages\Bookkeeper;
 
 use App\Enums\MsoTransactionTag;
 use App\Enums\OthersTransactionExcludedAccounts;
+use App\Enums\PaymentTypes;
+use App\Enums\TransactionTypes;
 use App\Models\JournalEntryVoucherItem;
 use App\Models\LoanPayment;
 use App\Models\Transaction;
@@ -57,7 +59,12 @@ class AccountBalanceReport extends Page implements HasForms
     public function Loans()
     {
         return LoanPayment::query()
-            ->whereIn('payment_type_id', [1, 3, 4, 5])
+            ->whereIn('payment_type_id', [
+                PaymentTypes::CASH->value,
+                PaymentTypes::CHECK->value,
+                PaymentTypes::ADA->value,
+                PaymentTypes::DEPOSIT_SLIP->value,
+            ])
             ->selectRaw(
                 'sum(amount) as credit, 0 as debit, MONTHNAME(transaction_date) as month_name, MONTH(transaction_date) as month, YEAR(transaction_date) as year'
             )
@@ -72,7 +79,7 @@ class AccountBalanceReport extends Page implements HasForms
     {
         return Transaction::query()
             ->whereIn('account_id', [OthersTransactionExcludedAccounts::RICE->value])
-            ->where('transaction_type_id', 1)
+            ->where('transaction_type_id', TransactionTypes::CRJ->value)
             ->selectRaw(
                 'sum(debit) as credit, sum(credit) as debit, MONTHNAME(transaction_date) as month_name, MONTH(transaction_date) as month, YEAR(transaction_date) as year'
             )
@@ -87,7 +94,7 @@ class AccountBalanceReport extends Page implements HasForms
     {
         return Transaction::query()
             ->whereIn('account_id', [OthersTransactionExcludedAccounts::RESERVATION_FEES_DORM->value, OthersTransactionExcludedAccounts::DORMITORY, OthersTransactionExcludedAccounts::RESERVATION->value])
-            ->where('transaction_type_id', 1)
+            ->where('transaction_type_id', TransactionTypes::CRJ->value)
             ->selectRaw(
                 'sum(debit) as credit, sum(credit) as debit, MONTHNAME(transaction_date) as month_name, MONTH(transaction_date) as month, YEAR(transaction_date) as year'
             )
@@ -103,7 +110,7 @@ class AccountBalanceReport extends Page implements HasForms
         return Transaction::query()
             ->where(function ($query) {
                 $query->whereIn('account_id', [OthersTransactionExcludedAccounts::RICE->value])->orWhere(
-                    fn ($query) => $query->whereRelation('account', function ($query) {
+                    fn($query) => $query->whereRelation('account', function ($query) {
                         return $query->whereRelation(
                             'parent',
                             'tag',
@@ -112,7 +119,7 @@ class AccountBalanceReport extends Page implements HasForms
                     })
                 );
             })
-            ->where('transaction_type_id', 1)
+            ->where('transaction_type_id', TransactionTypes::CRJ->value)
             ->selectRaw(
                 'sum(debit) as credit, sum(credit) as debit, MONTHNAME(transaction_date) as month_name, MONTH(transaction_date) as month, YEAR(transaction_date) as year'
             )
@@ -126,7 +133,7 @@ class AccountBalanceReport extends Page implements HasForms
     public function Mso()
     {
         return Transaction::whereIn('tag', MsoTransactionTag::get())
-            ->where('transaction_type_id', 1)
+            ->where('transaction_type_id', TransactionTypes::CRJ->value)
             ->selectRaw(
                 'sum(debit) as credit, sum(credit) as debit, MONTHNAME(transaction_date) as month_name, MONTH(transaction_date) as month, YEAR(transaction_date) as year'
             )
@@ -142,11 +149,11 @@ class AccountBalanceReport extends Page implements HasForms
         return Transaction::whereDoesntHave('account', function ($query) {
             return $query->whereHas(
                 'rootAncestor',
-                fn ($q) => $q->whereIn('id', OthersTransactionExcludedAccounts::get())
+                fn($q) => $q->whereIn('id', OthersTransactionExcludedAccounts::get())
             );
         })
             ->withoutMso()
-            ->where('transaction_type_id', 1)
+            ->where('transaction_type_id',  TransactionTypes::CRJ->value)
             ->selectRaw(
                 'sum(debit) as credit, sum(credit) as debit, MONTHNAME(transaction_date) as month_name, MONTH(transaction_date) as month, YEAR(transaction_date) as year'
             )

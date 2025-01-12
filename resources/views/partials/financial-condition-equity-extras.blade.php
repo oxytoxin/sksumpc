@@ -41,10 +41,10 @@
     </td>
     @foreach ($this->month_pairs as $month_pair)
         <td colspan="2" class="fs-row-data !text-center">
-            {{ renumber_format(175512000 - $children_accounts->whereIn('id', [98, 99])->sum("{$month_pair['next']['index']}_ending_balance_credit")) }}
+            {{ renumber_format(175512000 - $children_accounts->whereIn('tag', ['member_regular_cbu_paid', 'member_laboratory_cbu_paid'])->sum("{$month_pair['next']['index']}_ending_balance_credit")) }}
         </td>
         <td colspan="2" class="fs-row-data !text-center">
-            {{ renumber_format(175512000 - $children_accounts->whereIn('id', [98, 99])->sum("{$month_pair['current']['index']}_ending_balance_credit")) }}
+            {{ renumber_format(175512000 - $children_accounts->whereIn('tag', ['member_regular_cbu_paid', 'member_laboratory_cbu_paid'])->sum("{$month_pair['current']['index']}_ending_balance_credit")) }}
         </td>
         <td class="fs-row-data !text-center">
         </td>
@@ -92,10 +92,10 @@
     </td>
     @foreach ($this->month_pairs as $month_pair)
         <td colspan="2" class="fs-row-data !text-center">
-            {{ renumber_format(12616000 - $children_accounts->where('id', 100)->sum("{$month_pair['next']['index']}_ending_balance_credit")) }}
+            {{ renumber_format(12616000 - $children_accounts->whereIn('tag', ['member_preferred_cbu_paid'])->sum("{$month_pair['next']['index']}_ending_balance_credit")) }}
         </td>
         <td colspan="2" class="fs-row-data !text-center">
-            {{ renumber_format(12616000 - $children_accounts->where('id', 100)->sum("{$month_pair['current']['index']}_ending_balance_credit")) }}
+            {{ renumber_format(12616000 - $children_accounts->whereIn('tag', ['member_preferred_cbu_paid'])->sum("{$month_pair['current']['index']}_ending_balance_credit")) }}
         </td>
         <td class="fs-row-data !text-center">
         </td>

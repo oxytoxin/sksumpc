@@ -2,19 +2,20 @@
 
 namespace App\Filament\App\Pages\Cashier\Reports;
 
-use App\Enums\AccountIds;
-use App\Enums\OthersTransactionExcludedAccounts;
-use App\Enums\TransactionTypes;
+use App\Models\Saving;
 use App\Models\Account;
 use App\Models\Imprest;
-use App\Models\LoanPayment;
 use App\Models\LoveGift;
+use Filament\Pages\Page;
+use App\Enums\AccountIds;
+use App\Enums\PaymentTypes;
+use App\Models\LoanPayment;
 use App\Models\PaymentType;
-use App\Models\Saving;
 use App\Models\TimeDeposit;
 use App\Models\Transaction;
-use Filament\Pages\Page;
+use App\Enums\TransactionTypes;
 use Livewire\Attributes\Computed;
+use App\Enums\OthersTransactionExcludedAccounts;
 
 class DailyCollectionsReport extends Page
 {
@@ -25,7 +26,12 @@ class DailyCollectionsReport extends Page
     #[Computed]
     public function PaymentTypes()
     {
-        return PaymentType::whereIn('id', [1, 3, 4, 5])->get();
+        return PaymentType::whereIn('id', [
+            PaymentTypes::CASH->value,
+            PaymentTypes::CHECK->value,
+            PaymentTypes::ADA->value,
+            PaymentTypes::DEPOSIT_SLIP->value,
+        ])->get();
     }
 
     #[Computed]

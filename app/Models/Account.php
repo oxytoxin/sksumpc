@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
-use App\Oxytoxin\Traits\CreatesChildren;
 use DB;
+use App\Enums\TransactionTypes;
+use Illuminate\Database\Eloquent\Model;
+use App\Oxytoxin\Traits\CreatesChildren;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 
 /**
@@ -106,16 +107,16 @@ class Account extends Model
 
     public function recursiveCrjTransactions()
     {
-        return $this->hasManyOfDescendantsAndSelf(Transaction::class)->where('transaction_type_id', 1);
+        return $this->hasManyOfDescendantsAndSelf(Transaction::class)->where('transaction_type_id', TransactionTypes::CRJ->value);
     }
 
     public function recursiveCdjTransactions()
     {
-        return $this->hasManyOfDescendantsAndSelf(Transaction::class)->where('transaction_type_id', 2);
+        return $this->hasManyOfDescendantsAndSelf(Transaction::class)->where('transaction_type_id', TransactionTypes::CDJ->value);
     }
 
     public function recursiveJevTransactions()
     {
-        return $this->hasManyOfDescendantsAndSelf(Transaction::class)->where('transaction_type_id', 3);
+        return $this->hasManyOfDescendantsAndSelf(Transaction::class)->where('transaction_type_id', TransactionTypes::JEV->value);
     }
 }
