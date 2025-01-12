@@ -113,10 +113,10 @@ class Member extends Model implements HasMedia
     public function capital_subscription_account(): HasOne
     {
         return match ($this->member_type_id) {
-            1 => $this->hasOne(Account::class)->whereTag('member_common_cbu_paid'),
+            1 => $this->hasOne(Account::class)->whereTag('member_regular_cbu_paid'),
             2 => $this->hasOne(Account::class)->whereTag('member_preferred_cbu_paid'),
             3 => $this->hasOne(Account::class)->whereTag('member_laboratory_cbu_paid'),
-            default => $this->hasOne(Account::class)->whereTag('member_common_cbu_paid'),
+            default => $this->hasOne(Account::class)->whereTag('member_regular_cbu_paid'),
         };
     }
 

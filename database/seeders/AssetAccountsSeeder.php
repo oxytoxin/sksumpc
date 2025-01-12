@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Account;
+use DB;
 use Illuminate\Database\Seeder;
 
 class AssetAccountsSeeder extends Seeder
@@ -12,7 +13,13 @@ class AssetAccountsSeeder extends Seeder
      */
     public function run(): void
     {
-        Account::create(['account_type_id' => 1, 'name' => 'CASH AND CASH EQUIVALENTS', 'number' => '11100', 'children' => [
+        Account::create(['id' => 0, 'account_type_id' => 1, 'name' => 'CURRENT ASSETS', 'number' => '11100']);
+        DB::update(
+            'update accounts set id = 0 where name = ?',
+            ['CURRENT ASSETS']
+        );
+        DB::unprepared('ALTER TABLE accounts AUTO_INCREMENT = 1');
+        Account::create(['account_type_id' => 1, 'name' => 'CASH AND CASH EQUIVALENTS', 'number' => '11100', 'parent_id' => 0, 'children' => [
             ['account_type_id' => 1, 'name' => 'CASH ON HAND', 'number' => '11110', 'tag' => 'cash_on_hand'],
             ['account_type_id' => 1, 'name' => 'CASH IN BANK', 'number' => '11130', 'tag' => 'cash_in_bank', 'show_sum' => false, 'children' => [
                 ['account_type_id' => 1, 'name' => 'DBP (GENERAL FUND)', 'number' => '11130-0001', 'tag' => 'cash_in_bank_dbp_gf'],
@@ -27,16 +34,16 @@ class AssetAccountsSeeder extends Seeder
             ['account_type_id' => 1, 'name' => 'ATM FUND', 'number' => '11180'],
             ['account_type_id' => 1, 'name' => 'E-WALLET FUND', 'number' => '11190'],
         ]]);
-        Account::create(['account_type_id' => 1, 'name' => 'LOAN RECEIVABLES', 'number' => '11210', 'tag' => 'loan_receivables', 'sum_description' => 'NET', 'children' => [
+        Account::create(['account_type_id' => 1, 'name' => 'LOAN RECEIVABLES', 'number' => '11210', 'tag' => 'loan_receivables', 'sum_description' => 'NET', 'parent_id' => 0, 'children' => [
             ['account_type_id' => 1, 'name' => 'ALLOWANCE FOR PROBABLE LOSSES-LOANS', 'number' => '11242', 'tag' => 'probable_loss', 'sort' => 1000],
         ]]);
-        Account::create(['account_type_id' => 1, 'name' => 'ACCOUNT RECEIVABLES', 'number' => '11250', 'tag' => 'account_receivables', 'sum_description' => 'NET', 'children' => [
+        Account::create(['account_type_id' => 1, 'name' => 'ACCOUNT RECEIVABLES', 'number' => '11250', 'tag' => 'account_receivables', 'sum_description' => 'NET', 'parent_id' => 0, 'children' => [
             ['account_type_id' => 1, 'name' => 'ALLOWANCE FOR PROBABLE LOSSES-RECEIVABLES', 'number' => '11281', 'tag' => 'probable_loss', 'sort' => 1000],
         ]]);
-        Account::create(['account_type_id' => 1, 'name' => 'MERCHANDISE INVENTORY', 'number' => '11510', 'tag' => 'merchandise_inventory']);
+        Account::create(['account_type_id' => 1, 'name' => 'MERCHANDISE INVENTORY', 'number' => '11510', 'tag' => 'merchandise_inventory', 'parent_id' => 0]);
         Account::create(['account_type_id' => 1, 'name' => 'UNUSED SUPPLIES', 'number' => '12150']);
         Account::create(['account_type_id' => 1, 'name' => 'PREPAID EXPENSES', 'number' => '12170']);
-        Account::create(['account_type_id' => 1, 'name' => 'OTHER CURRENT ASSETS', 'number' => '12200', 'children' => [
+        Account::create(['account_type_id' => 1, 'name' => 'OTHER CURRENT ASSETS', 'number' => '12200', 'parent_id' => 0, 'children' => [
             ['account_type_id' => 1, 'name' => 'DEPOSIT TO SUPPLIERS', 'number' => '12140'],
         ]]);
         Account::create(['account_type_id' => 1, 'name' => 'NON CURRENT ASSETS', 'number' => '12300', 'children' => [

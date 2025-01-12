@@ -2,7 +2,7 @@
     $children_accounts = $this->trial_balance->flatMap->children;
 @endphp
 <tr>
-    <td class="fs-row-header">
+    <td class="font-semibold text-xs px-4 border border-black">
         AUTHORIZED SHARE CAPITAL COMMON 1,404,096 @ P500 PAR VALUE
     </td>
     <td class="fs-row-data !text-center">
@@ -18,7 +18,7 @@
     </td>
 </tr>
 <tr>
-    <td class="fs-row-header">
+    <td class="font-semibold text-xs px-4 border border-black">
         SUBSCRIBED SHARE CAPITAL COMMON
     </td>
     <td class="fs-row-data !text-center">
@@ -34,7 +34,7 @@
     </td>
 </tr>
 <tr>
-    <td class="fs-row-header">
+    <td class="font-semibold text-xs px-4 border border-black">
         LESS: SUBSCRIPTION RECEIVABLES
     </td>
     <td class="fs-row-data !text-center">
@@ -50,7 +50,7 @@
     </td>
 </tr>
 <tr>
-    <td class="fs-row-header">
+    <td class="font-semibold text-xs px-4 border border-black">
         AUTHORIZED SHARE CAPITAL PREFERRED 100,928 @ P500 PAR VALUE
     </td>
     <td class="fs-row-data !text-center">
@@ -66,7 +66,7 @@
     </td>
 </tr>
 <tr>
-    <td class="fs-row-header">
+    <td class="font-semibold text-xs px-4 border border-black">
         SUBSCRIBED SHARE CAPITAL PREFERRED
     </td>
     <td class="fs-row-data !text-center">
@@ -82,7 +82,7 @@
     </td>
 </tr>
 <tr>
-    <td class="fs-row-header">
+    <td class="font-semibold text-xs px-4 border border-black">
         LESS: SUBSCRIPTION RECEIVABLES
     </td>
     <td class="fs-row-data !text-center">

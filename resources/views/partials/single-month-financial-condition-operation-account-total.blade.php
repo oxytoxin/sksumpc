@@ -1,5 +1,5 @@
 <tr>
-    <td class="whitespace-nowrap border border-black px-2 pl-4 text-sm font-bold uppercase">
+    <td style="padding-left: {{ $account->depth + 1 }}rem;" class="whitespace-nowrap border border-black text-sm font-bold uppercase">
         {{ $account->sum_description }} {{ format_account_name_from_depth($account->fullname, $account->depth) }}
     </td>
     <td class="whitespace-nowrap border border-black px-2 text-right font-bold text-xs uppercase hover:bg-green-300">

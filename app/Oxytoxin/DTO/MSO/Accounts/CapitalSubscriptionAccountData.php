@@ -17,10 +17,10 @@ class CapitalSubscriptionAccountData extends Data
         $member = Member::find($this->member_id);
         if (! $this->parent) {
             $this->parent = match ($member->member_type_id) {
-                1 => Account::whereNull('member_id')->whereTag('member_common_cbu_paid')->first(),
+                1 => Account::whereNull('member_id')->whereTag('member_regular_cbu_paid')->first(),
                 2 => Account::whereNull('member_id')->whereTag('member_preferred_cbu_paid')->first(),
                 3 => Account::whereNull('member_id')->whereTag('member_laboratory_cbu_paid')->first(),
-                default => Account::whereNull('member_id')->whereTag('member_common_cbu_paid')->first(),
+                default => Account::whereNull('member_id')->whereTag('member_regular_cbu_paid')->first(),
             };
         }
         if (! $this->number) {
