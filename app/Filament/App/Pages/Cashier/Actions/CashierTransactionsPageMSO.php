@@ -22,11 +22,16 @@ class CashierTransactionsPageMSO
         $member = Member::find($data->member_id);
         $account = Account::find($data->account_id);
         if ($is_deposit) {
+            $reference_number = match ($msoType) {
+                MsoType::SAVINGS => SavingsProvider::DEPOSIT_TRANSFER_CODE,
+                MsoType::IMPREST => ImprestsProvider::DEPOSIT_TRANSFER_CODE,
+                MsoType::LOVE_GIFT => LoveGiftProvider::DEPOSIT_TRANSFER_CODE,
+            };
             $mso = app(DepositToMsoAccount::class)->handle($msoType, new TransactionData(
                 account_id: $data->account_id,
                 transactionType: $data->transactionType,
                 payment_type_id: $data->payment_type_id,
-                reference_number: $data->reference_number,
+                reference_number: $reference_number,
                 credit: $data->credit,
                 member_id: $data->member_id,
                 payee: $member->full_name,
@@ -61,6 +66,9 @@ class CashierTransactionsPageMSO
             $account_id = $cash_in_bank_account_id;
         } else {
             $account_id = $cash_on_hand_account_id;
+        }
+        if (!$is_deposit) {
+            $account_id = Account::getRevolvingFund()->id;
         }
         app(CreateTransaction::class)->handle(new TransactionData(
             account_id: $account_id,

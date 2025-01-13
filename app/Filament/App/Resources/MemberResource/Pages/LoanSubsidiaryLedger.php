@@ -7,6 +7,7 @@ use App\Models\Loan;
 use App\Oxytoxin\Providers\LoansProvider;
 use Filament\Resources\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
+use Livewire\Attributes\Computed;
 
 class LoanSubsidiaryLedger extends Page
 {
@@ -21,6 +22,16 @@ class LoanSubsidiaryLedger extends Page
     public function mount()
     {
         $this->schedule = LoansProvider::generateAmortizationSchedule($this->loan);
+    }
+
+    #[Computed]
+    public function AccruedInterest(): float
+    {
+        $start = $this->loan->last_payment?->transaction_date ?? $this->loan->transaction_date;
+        $end = config('app.transaction_date') ?? today();
+        $total_days = LoansProvider::getAccruableDays($start, $end);
+        $interest_due = LoansProvider::computeAccruedInterest($this->loan, $this->loan->outstanding_balance, $total_days);
+        return $interest_due;
     }
 
     public function getHeading(): string|Htmlable

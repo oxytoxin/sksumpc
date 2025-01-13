@@ -24,7 +24,7 @@
                 <p><strong>ACCOUNT NAME: </strong> {{ $accounts->find($transaction['account_id'])?->name }}</p>
                 <p><strong>ACCOUNT NUMBER: </strong> {{ $accounts->find($transaction['account_id'])?->number }}</p>
                 <p><strong>Payee:</strong> {{ $transaction['data']['payee'] ?? $member?->full_name }}</p>
-                <p>REFERENCE #: {{ $transaction['data']['reference_number'] }}</p>
+                <p>REFERENCE #: {{ $transaction['data']['reference_number'] ?? '' }}</p>
                 <div class="flex gap-4">
                     <strong>{{ $payment_types->find($transaction['data']['payment_type_id'])?->name }}</strong>
                     <p>{{ \Filament\Support\format_money($transaction['data']['amount'] ?? 0, 'PHP') }}</p>

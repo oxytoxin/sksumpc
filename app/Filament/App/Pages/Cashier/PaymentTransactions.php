@@ -157,9 +157,6 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                         Select::make('payment_type_id')
                                             ->paymenttype()
                                             ->required(),
-                                        TextInput::make('reference_number')->required()
-                                            ->visible(fn($get) => $get('action') == '1' && $get('payment_type_id') != PaymentTypes::DEPOSIT_SLIP->value)
-                                            ->unique('savings'),
                                         TextInput::make('amount')
                                             ->required()
                                             ->moneymask(),
@@ -183,9 +180,6 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                         Select::make('payment_type_id')
                                             ->paymenttype()
                                             ->required(),
-                                        TextInput::make('reference_number')->required()
-                                            ->visible(fn($get) => $get('action') == '1' && $get('payment_type_id') != PaymentTypes::DEPOSIT_SLIP->value)
-                                            ->unique('imprests'),
                                         TextInput::make('amount')
                                             ->required()
                                             ->moneymask(),
@@ -209,9 +203,6 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                         Select::make('payment_type_id')
                                             ->paymenttype()
                                             ->required(),
-                                        TextInput::make('reference_number')->required()
-                                            ->visible(fn($get) => $get('action') == '1' && $get('payment_type_id') != PaymentTypes::DEPOSIT_SLIP->value)
-                                            ->unique('love_gifts'),
                                         TextInput::make('amount')
                                             ->required()
                                             ->moneymask(),
@@ -268,7 +259,17 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                     ->schema([
                                         Select::make('loan_account_id')
                                             ->label('Loan Account')
-                                            ->options(fn($get) => LoanAccount::whereMemberId($get('../../../member_id'))->whereHas('loan', fn($q) => $q->where('posted', true)->where('outstanding_balance', '>', 0))->pluck('number', 'id'))
+                                            ->options(
+                                                fn($get) => Account::query()
+                                                    ->join('loans', 'accounts.id', '=', 'loans.loan_account_id')
+                                                    ->whereNotNull('accounts.member_id')
+                                                    ->whereTag('member_loans_receivable')
+                                                    ->where('accounts.member_id', $get('../../../member_id'))
+                                                    ->where('loans.posted', true)
+                                                    ->where('loans.outstanding_balance', '>', 0)
+                                                    ->selectRaw("accounts.id, CONCAT(accounts.number, ' > ', loans.reference_number) as identifier")
+                                                    ->pluck('identifier', 'id')
+                                            )
                                             ->searchable()
                                             ->live()
                                             ->afterStateUpdated(fn($set, $state) => $set('amount', LoanAccount::find($state)?->loan?->monthly_payment))

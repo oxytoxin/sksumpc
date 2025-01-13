@@ -207,6 +207,7 @@ class LoanApplicationResource extends Resource
                             ->hideLabels()
                             ->columnSpanFull()
                             ->reactive()
+                            ->reorderable(false)
                             ->afterStateUpdated(function ($set, $state) {
                                 $items = collect($state);
                                 $net_amount = $items->firstWhere('code', 'net_amount');

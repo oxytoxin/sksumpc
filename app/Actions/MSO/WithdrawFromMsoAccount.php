@@ -34,12 +34,18 @@ class WithdrawFromMsoAccount
             MsoType::IMPREST => $member->imprests()->sum('amount'),
             MsoType::LOVE_GIFT => $member->love_gifts()->sum('amount'),
         };
-        if ($balance - $data->debit < 500) {
-            Notification::make()->title('Invalid Amount')->body('A P500 balance should remain.')->danger()->send();
+        if ($balance - $data->debit < 0) {
+            Notification::make()->title('Invalid Amount')->body('Amount exceeds account balance.')->danger()->send();
             throw ValidationException::withMessages([
-                'mountedTableActionsData.0.amount' => 'Invalid Amount. A P500 balance should remain.',
+                'mountedTableActionsData.0.amount' => 'Invalid Amount. Amount exceeds account balance.',
             ]);
         }
+        // if ($balance - $data->debit < 500) {
+        //     Notification::make()->title('Invalid Amount')->body('A P500 balance should remain.')->danger()->send();
+        //     throw ValidationException::withMessages([
+        //         'mountedTableActionsData.0.amount' => 'Invalid Amount. A P500 balance should remain.',
+        //     ]);
+        // }
 
         switch ($msoType) {
             case MsoType::SAVINGS:
@@ -60,7 +66,6 @@ class WithdrawFromMsoAccount
 
                 $record = $this->withdrawToLoveGiftsAccount($data);
                 break;
-
         }
 
         app(CreateTransaction::class)->handle($data);

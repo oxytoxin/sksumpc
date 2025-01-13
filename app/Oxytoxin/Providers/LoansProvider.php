@@ -26,18 +26,21 @@ class LoansProvider
 
     public static function getAccruableDays($start, $end)
     {
+        //same month, same year just return difference of days
+        $days = 0;
         if ($start->month == $end->month && $start->year == $end->year) {
-            $days_of_start_month = max($end->day - $start->day, 0);
-            $days_of_end_month = 0;
+            $days = max($end->day - $start->day, 0);
         } else {
-            $days_of_start_month = max(LoansProvider::DAYS_IN_MONTH - $start->day, 0);
-            $days_of_end_month = min($end->day, LoansProvider::DAYS_IN_MONTH);
+            $days += max(LoansProvider::DAYS_IN_MONTH - $start->day, 0);
+            $start = $start->addMonthNoOverflow();
+            while ($start->month != $end->month && $start->year != $end->year) {
+                $days += LoansProvider::DAYS_IN_MONTH;
+                $start = $start->addMonthNoOverflow();
+            }
+            $days += min($end->day, LoansProvider::DAYS_IN_MONTH);
         }
-        $days_of_months_between = max($start->diffInMonths($end) - 1, 0) * LoansProvider::DAYS_IN_MONTH;
 
-        $total_days = $days_of_start_month + $days_of_months_between + $days_of_end_month;
-
-        return $total_days;
+        return $days;
     }
 
     public static function computeAccruedInterest(Loan $loan, $outstanding_balance, $days)
@@ -261,7 +264,7 @@ class LoansProvider
                 $date = $start->addMonthsNoOverflow($i - 1);
             } else {
                 if ($i == 1) {
-                    $days = (LoansProvider::DAYS_IN_MONTH * 2) - $start->day;
+                    $days = LoansProvider::DAYS_IN_MONTH +  max(LoansProvider::DAYS_IN_MONTH - $start->day, 0);
                 } else {
                     $days = LoansProvider::DAYS_IN_MONTH;
                 }

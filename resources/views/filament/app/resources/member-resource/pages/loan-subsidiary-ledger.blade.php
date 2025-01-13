@@ -22,6 +22,7 @@
                 <p>Terms of Payment: {{ $loan->number_of_terms }}</p>
                 <p>Interest Rate: {{ $loan->interest_rate * 100 }}%</p>
                 <p>Monthly Amortization: {{ number_format($loan->monthly_payment, 2) }}</p>
+                <p>Interest Due: {{ number_format($this->accrued_interest, 4) }}</p>
             </div>
         </div>
         <div class="mt-4">

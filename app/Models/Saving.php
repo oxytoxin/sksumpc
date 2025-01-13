@@ -64,6 +64,7 @@ class Saving extends Model
             $prefix = match ($saving->reference_number) {
                 SavingsProvider::FROM_TRANSFER_CODE => 'ST-',
                 SavingsProvider::WITHDRAWAL_TRANSFER_CODE => 'SW-',
+                SavingsProvider::DEPOSIT_TRANSFER_CODE => 'SD-',
                 TimeDepositsProvider::FROM_TRANSFER_CODE => 'TD-',
                 default => null
             };

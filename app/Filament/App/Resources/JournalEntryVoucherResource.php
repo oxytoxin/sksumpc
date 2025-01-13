@@ -53,12 +53,15 @@ class JournalEntryVoucherResource extends Resource
                         $cib = Account::getCashInBankGF();
                         $net_amount = $items->firstWhere('account_id', $cib?->id);
                         if ($net_amount) {
-                            $items = $items->filter(fn ($i) => $i['account_id'] != $net_amount['account_id']);
+                            $items = $items->filter(function ($i) use ($net_amount) {
+                                return $i['account_id'] != $net_amount['account_id'];
+                            });
                             $net_amount['credit'] = $items->sum('debit') - $items->sum('credit');
                             $items->push($net_amount);
                         }
                         $set('journal_entry_voucher_items', $items->toArray());
                     })
+                    ->reorderable(false)
                     ->schema([
                         Select::make('member_id')
                             ->options(Member::pluck('full_name', 'id'))
@@ -68,7 +71,7 @@ class JournalEntryVoucherResource extends Resource
                             ->preload(),
                         Select::make('account_id')
                             ->options(
-                                fn ($get) => Account::withCode()->whereDoesntHave('children', fn ($q) => $q->whereNull('member_id'))->where('member_id', $get('member_id') ?? null)->pluck('code', 'id')
+                                fn($get) => Account::withCode()->whereDoesntHave('children', fn($q) => $q->whereNull('member_id'))->where('member_id', $get('member_id') ?? null)->pluck('code', 'id')
                             )
                             ->searchable()
                             ->required()
@@ -108,7 +111,7 @@ class JournalEntryVoucherResource extends Resource
                     ->modalHeading('JEV Preview')
                     ->modalCancelAction(false)
                     ->modalSubmitAction(false)
-                    ->modalContent(fn ($record) => view('components.app.bookkeeper.reports.journal-entry-voucher-preview', ['journal_entry_voucher' => $record])),
+                    ->modalContent(fn($record) => view('components.app.bookkeeper.reports.journal-entry-voucher-preview', ['journal_entry_voucher' => $record])),
             ])
             ->bulkActions([]);
     }

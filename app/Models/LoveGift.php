@@ -44,7 +44,7 @@ class LoveGift extends Model
         static::addGlobalScope(function (Builder $q) {
             return $q->addSelect(DB::raw("
                 *, 
-                DATEDIFF(COALESCE(LEAD(transaction_date) OVER (ORDER BY transaction_date), '".today()->format('Y-m-d')."'), transaction_date) as days_till_next_transaction,
+                DATEDIFF(COALESCE(LEAD(transaction_date) OVER (ORDER BY transaction_date), '" . today()->format('Y-m-d') . "'), transaction_date) as days_till_next_transaction,
                 DATEDIFF(transaction_date, COALESCE(LAG(transaction_date) OVER (ORDER BY transaction_date), transaction_date)) as days_since_last_transaction
             "));
         });
@@ -57,12 +57,13 @@ class LoveGift extends Model
             $prefix = match ($loveGift->reference_number) {
                 LoveGiftProvider::FROM_TRANSFER_CODE => 'LGT-',
                 LoveGiftProvider::WITHDRAWAL_TRANSFER_CODE => 'LGW-',
+                LoveGiftProvider::DEPOSIT_TRANSFER_CODE => 'LGD-',
                 TimeDepositsProvider::FROM_TRANSFER_CODE => 'TD-',
                 default => null
             };
 
             if ($prefix) {
-                $loveGift->reference_number = str($prefix)->append(today()->format('Y').'-')->append(str_pad($loveGift->id, 6, '0', STR_PAD_LEFT));
+                $loveGift->reference_number = str($prefix)->append(today()->format('Y') . '-')->append(str_pad($loveGift->id, 6, '0', STR_PAD_LEFT));
             }
 
             $loveGift->save();
