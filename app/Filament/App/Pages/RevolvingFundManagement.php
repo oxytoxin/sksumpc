@@ -5,6 +5,7 @@ namespace App\Filament\App\Pages;
 use App\Actions\RevolvingFund\ReplenishRevolvingFund;
 use App\Models\RevolvingFund;
 use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -42,9 +43,10 @@ class RevolvingFundManagement extends Page implements HasTable
                 }),
             Action::make('clear_cash')
                 ->requiresConfirmation()
-                ->action(function ($data, ReplenishRevolvingFund $replenishRevolvingFund) {
-                    $replenishRevolvingFund->handle($data['reference_number'], $data['amount']);
-                    Notification::make()->title('Revolving fund replenished!')->success()->send();
+                ->color('danger')
+                ->action(function () {
+                    RevolvingFund::query()->delete();
+                    Notification::make()->title('Revolving fund cleared!')->success()->send();
                 }),
         ];
     }
