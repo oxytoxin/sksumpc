@@ -233,8 +233,10 @@ class LoanApplicationResource extends Resource
                                     ->required()
                                     ->label('Account'),
                                 TextInput::make('debit')
+                                    ->formatStateUsing(fn($state) => round($state, 4))
                                     ->moneymask(),
                                 TextInput::make('credit')
+                                    ->formatStateUsing(fn($state) => round($state, 4))
                                     ->moneymask(),
                             ]),
                         DatePicker::make('release_date')->required()->native(false),
