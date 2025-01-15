@@ -19,6 +19,7 @@ return new class extends Migration
             $table->date('transaction_date')->default(DB::raw('(CURRENT_DATE)'));
             $table->foreignId('cashier_id')->constrained('users');
             $table->nullableMorphs('withdrawable');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

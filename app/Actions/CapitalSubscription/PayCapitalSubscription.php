@@ -3,6 +3,7 @@
 namespace App\Actions\CapitalSubscription;
 
 use App\Actions\Transactions\CreateTransaction;
+use App\Models\Account;
 use App\Models\CapitalSubscription;
 use App\Models\CapitalSubscriptionPayment;
 use App\Oxytoxin\DTO\Transactions\TransactionData;
@@ -10,7 +11,7 @@ use DB;
 
 class PayCapitalSubscription
 {
-    public function handle(CapitalSubscription $cbu, TransactionData $transactionData)
+    public function handle(CapitalSubscription $cbu, TransactionData $transactionData, $autodeposit = true)
     {
         DB::beginTransaction();
         $amount = $transactionData->credit > 0 ? $transactionData->credit : $transactionData->debit * -1;
@@ -22,7 +23,21 @@ class PayCapitalSubscription
             'amount' => $amount,
             'transaction_date' => $transactionData->transaction_date,
         ]);
-        app(CreateTransaction::class)->handle($transactionData);
+        if ($autodeposit) {
+            $deposit = fmod($amount, $cbu->par_value);
+            if ($deposit > 0)
+                $transactionData->debit = $deposit;
+            app(CreateTransaction::class)->handle($transactionData);
+            if ($deposit > 0) {
+                $transactionData->debit = null;
+                $transactionData->credit = $deposit;
+                $transactionData->account_id = Account::getCbuDeposit($cbu->member->member_type_id)->id;
+                app(CreateTransaction::class)->handle($transactionData);
+            }
+        } else {
+            app(CreateTransaction::class)->handle($transactionData);
+        }
+
         DB::commit();
     }
 }

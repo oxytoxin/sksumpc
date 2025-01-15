@@ -3,9 +3,13 @@
 namespace App\Filament\App\Pages;
 
 use App\Enums\MemberTypes;
+use App\Models\Account;
 use App\Models\CapitalSubscriptionPayment;
 use App\Models\MemberType;
 use Auth;
+use Carbon\Carbon;
+use Carbon\CarbonImmutable;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Form;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
@@ -22,7 +26,7 @@ class CbuScheduleSummary extends Page
 
     protected static string $view = 'filament.app.pages.cbu-schedule-summary';
 
-    public $data = [];
+    public $transaction_date;
 
     public function getHeading(): string|Htmlable
     {
@@ -34,67 +38,43 @@ class CbuScheduleSummary extends Page
         return Auth::user()->can('manage cbu');
     }
 
-    private function getAmounts($amount_paid, MemberType $memberType)
+    private function getAmounts(MemberTypes $memberType)
     {
+        $transaction_date = CarbonImmutable::parse($this->transaction_date ?? today()->format('M d, Y'))->endOfDay();
+        $query = match ($memberType) {
+            MemberTypes::REGULAR => Account::whereTag('member_regular_cbu_paid'),
+            MemberTypes::ASSOCIATE => Account::whereTag('member_preferred_cbu_paid'),
+            MemberTypes::LABORATORY => Account::whereTag('member_laboratory_cbu_paid'),
+        };
+        $account = $query
+            ->withSum(['recursiveTransactions as debit' => fn($q) => $q->where('transaction_date', '<=', $transaction_date)], 'debit')
+            ->withSum(['recursiveTransactions as credit' => fn($q) => $q->where('transaction_date', '<=', $transaction_date)], 'credit')
+            ->first();
+
         return [
-            'shares_paid' => intdiv($amount_paid, $memberType->par_value) * $memberType->par_value,
-            'shares_deposit' => $amount_paid - intdiv($amount_paid, $memberType->par_value) * $memberType->par_value,
-            'amount_paid' => $amount_paid,
+            'shares_paid' => round($account->credit - $account->debit, 2),
+            'shares_deposit' => round($account->debit, 2),
+            'amount_paid' => round($account->credit, 2),
         ];
-    }
-
-    #[Computed]
-    public function DateRange()
-    {
-        $dates = collect(explode(' - ', $this->data['transaction_date']))->map(fn($d) => date_create($d)->format('F d, Y'))->toArray();
-        if (count($dates) == 2 && $dates[0] == $dates[1]) {
-            return $dates[0];
-        }
-
-        return implode(' - ', $dates);
     }
 
     #[Computed]
     public function laboratoryAmounts()
     {
-        $memberType = MemberType::find(4);
-        $amount_paid = CapitalSubscriptionPayment::whereHas('capital_subscription', function ($q) {
-            return $q->whereRelation('member', 'member_type_id', MemberTypes::LABORATORY->value);
-        })->when($this->data['transaction_date'], fn($q, $v) => $q->whereBetween('transaction_date', collect(explode(' - ', $v))->map(fn($d) => date_create_immutable($d)->format('Y-m-d'))->toArray()))
-            ->sum('amount');
-
-        return $this->getAmounts($amount_paid, $memberType);
+        return $this->getAmounts(MemberTypes::LABORATORY);
     }
 
     #[Computed]
     public function regularAmounts()
     {
-        $memberType = MemberType::find(1);
-        $amount_paid = CapitalSubscriptionPayment::whereHas('capital_subscription', function ($q) {
-            return $q->whereHas('member', fn($qu) => $qu->where('member_type_id', MemberTypes::REGULAR->value));
-        })
-            ->when($this->data['transaction_date'], fn($q, $v) => $q->whereBetween('transaction_date', collect(explode(' - ', $v))->map(fn($d) => date_create_immutable($d)->format('Y-m-d'))->toArray()))
-            ->sum('amount');
-        $amounts = $this->getAmounts($amount_paid, $memberType);
 
-        return [
-            'shares_paid' => $amounts['shares_paid'],
-            'shares_deposit' => $amounts['shares_deposit'],
-            'amount_paid' => $amounts['amount_paid'],
-        ];
+        return $this->getAmounts(MemberTypes::REGULAR);
     }
 
     #[Computed]
     public function associateAmounts()
     {
-        $memberType = MemberType::find(3);
-        $amount_paid = CapitalSubscriptionPayment::whereHas('capital_subscription', function ($q) {
-            return $q->whereRelation('member', 'member_type_id', MemberTypes::ASSOCIATE->value);
-        })
-            ->when($this->data['transaction_date'], fn($q, $v) => $q->whereBetween('transaction_date', collect(collect(explode(' - ', $v))->map(fn($d) => date_create_immutable($d)->format('Y-m-d'))->toArray())->map(fn($d) => date_create_immutable($d)->format('Y-m-d'))->toArray()))
-            ->sum('amount');
-
-        return $this->getAmounts($amount_paid, $memberType);
+        return $this->getAmounts(MemberTypes::ASSOCIATE);
     }
 
     public function mount()
@@ -105,9 +85,11 @@ class CbuScheduleSummary extends Page
     public function form(Form $form): Form
     {
         return $form->schema([
-            DateRangePicker::make('transaction_date')
-                ->format('m/d/Y')
-                ->displayFormat('MM/DD/YYYY'),
-        ])->columns(4)->statePath('data');
+            DatePicker::make('transaction_date')
+                ->native(false)
+                ->live()
+                ->default(config('app.transaction_date'))
+
+        ])->columns(4);
     }
 }

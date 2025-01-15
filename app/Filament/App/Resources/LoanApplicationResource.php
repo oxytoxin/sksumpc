@@ -275,7 +275,7 @@ class LoanApplicationResource extends Resource
                         app(CreateNewLoan::class)->handle($record, $loanData);
                         Notification::make()->title('New loan created.')->success()->send();
                     }),
-                EditAction::make()
+                EditAction::make('dates')
                     ->label('Dates')
                     ->form([
                         DatePicker::make('payment_start_date')->time(false)->native(false),

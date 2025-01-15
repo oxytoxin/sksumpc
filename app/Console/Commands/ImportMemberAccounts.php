@@ -44,10 +44,7 @@ class ImportMemberAccounts extends Command
      */
     public function handle()
     {
-        $members = Member::get(['id', 'mpc_code']);
-        $members = $members->mapWithKeys(fn($m) => [$m->mpc_code => $m]);
-        $transaction_type = TransactionType::JEV();
-        Member::doesntHave('capital_subscription_account')->each(function ($member) {
+        Member::doesntHave('existing_capital_subscription_account')->each(function ($member) {
             app(CreateNewCapitalSubscriptionAccount::class)->handle(new CapitalSubscriptionAccountData(
                 member_id: $member->id,
                 name: $member->full_name ?? ($member->first_name . ' ' . $member->last_name)

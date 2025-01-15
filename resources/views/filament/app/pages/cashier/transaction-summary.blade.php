@@ -1,8 +1,8 @@
 @php
-    $member = \App\Models\Member::with(['imprest_account', 'love_gift_account', 'capital_subscription_account'])->find($data['member_id']);
+    $member = \App\Models\Member::with(['imprest_account', 'love_gift_account', 'existing_capital_subscription_account'])->find($data['member_id']);
     $transactions = collect($data['transactions'])->map(function ($t) use ($member) {
         $t['account_id'] = match ($t['type']) {
-            'cbu' => $member->capital_subscription_account->id,
+            'cbu' => $member->existing_capital_subscription_account->id,
             'savings' => $t['data']['savings_account_id'],
             'imprest' => $member->imprest_account->id,
             'love_gift' => $member->love_gift_account->id,

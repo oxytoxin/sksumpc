@@ -89,7 +89,7 @@ class ImportCbu extends Command
                     member_id: $member->id,
                     transaction_date: '12/31/2024',
                     payee: $member->full_name,
-                ));
+                ), false);
             }
         });
     }

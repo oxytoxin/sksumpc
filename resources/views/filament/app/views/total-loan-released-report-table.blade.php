@@ -15,30 +15,41 @@
                 <tr>
                     <th rowspan="2" class="border-2 border-black text-center">No.</th>
                     <th rowspan="2" class="border-2 border-black text-center">Name of Borrower</th>
+                    <th rowspan="2" class="border-2 border-black text-center">Gender</th>
                     <th colspan="{{ $loan_types->count() + 1 }}" class="border-2 border-black text-center">GROSS AMOUNT</th>
-                    <th rowspan="2" class="border-2 border-black text-center">NET PROCEEDS</th>
+                    <th colspan="{{ $loan_types->count() + 1 }}" class="border-2 border-black text-center">NET AMOUNT</th>
                 </tr>
                 <tr>
                     <th class="whitespace-nowrap border-2 border-black px-4 text-center">GROSS TOTAL</th>
                     @foreach ($loan_types as $loan_type)
                         <th class="whitespace-nowrap border-2 border-black px-4 text-center">{{ $loan_type->code }}</th>
                     @endforeach
+                    @foreach ($loan_types as $loan_type)
+                        <th class="whitespace-nowrap border-2 border-black px-4 text-center">{{ $loan_type->code }}</th>
+                    @endforeach
+                    <th class="border-2 border-black text-center">NET PROCEEDS</th>
+
                 </tr>
             </thead>
             <tbody>
                 @php
                     $records = $this->table->getRecords();
-                    $members = $records->groupBy('member.alt_full_name')->ksort();
+                    $member_loans = $records->sortBy('member.alt_full_name')->groupBy('member_id');
+                    $members = App\Models\Member::findMany($member_loans->keys())->mapWithKeys(fn($m) => [$m->id => $m]);
                     $gross_amount = $records->sum('gross_amount');
                     $net_amount = $records->sum('net_amount');
                 @endphp
-                @foreach ($members as $member => $loans)
+                @foreach ($member_loans as $member_id => $loans)
                     <tr>
                         <th class="whitespace-nowrap border-2 border-black px-4 text-center">{{ $loop->iteration }}</th>
-                        <td class="whitespace-nowrap border-2 border-black px-4 text-left">{{ $member }}</td>
+                        <td class="whitespace-nowrap border-2 border-black px-4 text-left">{{ $members[$member_id]->alt_full_name }}</td>
+                        <td class="whitespace-nowrap border-2 border-black px-4 text-left">{{ $members[$member_id]->gender?->name }}</td>
                         <td class="whitespace-nowrap border-2 border-black px-4 text-right">{{ number_format($loans->sum('gross_amount'), 2) }}</td>
                         @foreach ($loan_types as $loan_type)
                             <td class="whitespace-nowrap border-2 border-black px-4 text-right">{{ $loans->where('loan_type_id', $loan_type->id)->sum('gross_amount') ? number_format($loans->where('loan_type_id', $loan_type->id)->sum('gross_amount'), 2) : '' }}</td>
+                        @endforeach
+                        @foreach ($loan_types as $loan_type)
+                            <td class="whitespace-nowrap border-2 border-black px-4 text-right">{{ $loans->where('loan_type_id', $loan_type->id)->sum('net_amount') ? number_format($loans->where('loan_type_id', $loan_type->id)->sum('net_amount'), 2) : '' }}</td>
                         @endforeach
                         <td class="whitespace-nowrap border-2 border-black px-4 text-right">{{ number_format($loans->sum('net_amount'), 2) }}</td>
                     </tr>

@@ -85,6 +85,17 @@ class Account extends Model
         return Account::firstWhere('tag', 'insurance_loans');
     }
 
+
+    public static function getCbuDeposit($member_type_id)
+    {
+        return match ($member_type_id) {
+            1 => Account::firstWhere('tag', 'member_regular_cbu_deposit'),
+            2 => Account::firstWhere('tag', 'member_preferred_cbu_deposit'),
+            3 => Account::firstWhere('tag', 'member_laboratory_cbu_deposit'),
+            default => Account::firstWhere('tag', 'member_regular_cbu_deposit'),
+        };
+    }
+
     public function scopeWithCode(Builder $query)
     {
         return $query->tree()->orderBy('id')->addSelect(DB::raw("*,concat(number,' - ', fullname) as code"));

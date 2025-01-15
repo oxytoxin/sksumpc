@@ -40,6 +40,12 @@ class RevolvingFundManagement extends Page implements HasTable
                     $replenishRevolvingFund->handle($data['reference_number'], $data['amount']);
                     Notification::make()->title('Revolving fund replenished!')->success()->send();
                 }),
+            Action::make('clear_cash')
+                ->requiresConfirmation()
+                ->action(function ($data, ReplenishRevolvingFund $replenishRevolvingFund) {
+                    $replenishRevolvingFund->handle($data['reference_number'], $data['amount']);
+                    Notification::make()->title('Revolving fund replenished!')->success()->send();
+                }),
         ];
     }
 
@@ -48,7 +54,6 @@ class RevolvingFundManagement extends Page implements HasTable
         return $table
             ->query(
                 RevolvingFund::query()
-                    ->whereCashierId(auth()->id())
                     ->whereDate('transaction_date', config('app.transaction_date'))
                 // ->whereMonth('transaction_date', config('app.transaction_date')->month)
                 // ->whereYear('transaction_date', config('app.transaction_date')->year)

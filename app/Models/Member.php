@@ -120,6 +120,16 @@ class Member extends Model implements HasMedia
         };
     }
 
+    public function existing_capital_subscription_account()
+    {
+        return $this->hasOne(Account::class)->whereIn('tag', [
+            'member_regular_cbu_paid',
+            'member_preferred_cbu_paid',
+            'member_laboratory_cbu_paid',
+        ]);
+    }
+
+
     public function getAgeAttribute()
     {
         return $this->dob?->diffInYears(today());
