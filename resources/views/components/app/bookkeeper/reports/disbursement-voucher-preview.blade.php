@@ -65,8 +65,8 @@
                 </td>
             </tr>
             <tr>
-                <td class="whitespace-nowrap border-b border-black px-2 pt-4">Check No. ___________</td>
-                <td class="whitespace-nowrap border-b border-r border-black px-2 pt-4">Amount P___________</td>
+                <td class="whitespace-nowrap border-b border-black px-2 pt-4">Check No. <span class="px-4 border-b border-black">{{ $disbursement_voucher->check_number }}</span></td>
+                <td class="whitespace-nowrap border-b border-r border-black px-2 pt-4">Amount P<span class="px-4 border-b border-black">{{ number_format($disbursement_voucher_items->last()->credit, 2) }}</span></td>
                 <td colspan="4" class="px-2">DESCRIPTION OF ENTRY</td>
             </tr>
             <tr>

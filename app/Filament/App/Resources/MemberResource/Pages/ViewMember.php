@@ -19,7 +19,7 @@ class ViewMember extends ViewRecord
 
     public function getSubheading(): string|Htmlable|null
     {
-        return new HtmlString("<h5 class='text-sm font-bold'>Member's Name: {$this->record->full_name}</h5>");
+        return new HtmlString("<h5 class='text-sm font-bold'>Member's Name: {$this->record->alt_full_name}</h5>");
     }
 
     protected function getHeaderActions(): array

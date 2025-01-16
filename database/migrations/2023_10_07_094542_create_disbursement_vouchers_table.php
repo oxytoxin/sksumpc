@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignIdFor(VoucherType::class)->constrained();
             $table->string('name');
             $table->string('address')->nullable();
+            $table->string('check_number')->nullable();
             $table->string('reference_number');
             $table->text('description');
             $table->date('transaction_date')->default(DB::raw('(CURRENT_DATE)'));
