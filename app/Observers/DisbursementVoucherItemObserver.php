@@ -46,7 +46,7 @@ class DisbursementVoucherItemObserver
             debit: $disbursementVoucherItem->debit,
             credit: $disbursementVoucherItem->credit,
             transaction_date: $transaction_date,
-            payee: $account->member->full_name,
+            payee: $account->member?->full_name ?? 'SKSU-MPC',
         );
         if (in_array($account->tag, ['member_regular_cbu_paid', 'member_preferred_cbu_paid', 'member_laboratory_cbu_paid'])) {
             $amount = self::getCbuAmount($disbursementVoucherItem);
