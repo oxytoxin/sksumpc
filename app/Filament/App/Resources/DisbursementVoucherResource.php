@@ -12,6 +12,7 @@ use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\Action;
@@ -41,6 +42,7 @@ class DisbursementVoucherResource extends Resource
                 TextInput::make('address')->required(),
                 TextInput::make('reference_number')->required(),
                 TextInput::make('voucher_number')->required(),
+                Toggle::make('compute_net')->label('Compute Net Amount')->default(true),
                 Textarea::make('description')->columnSpanFull()->required(),
                 TableRepeater::make('disbursement_voucher_items')
                     ->hideLabels()
@@ -49,16 +51,18 @@ class DisbursementVoucherResource extends Resource
                     ->rule(new BalancedBookkeepingEntries)
                     ->reactive()
                     ->reorderable(false)
-                    ->afterStateUpdated(function ($set, $state) {
-                        $items = collect($state);
-                        $cib = Account::getCashInBankGF();
-                        $net_amount = $items->firstWhere('account_id', $cib?->id);
-                        if ($net_amount) {
-                            $items = $items->filter(fn($i) => $i['account_id'] != $net_amount['account_id']);
-                            $net_amount['credit'] = $items->sum('debit') - $items->sum('credit');
-                            $items->push($net_amount);
+                    ->afterStateUpdated(function ($set, $get, $state) {
+                        if ($get('compute_net')) {
+                            $items = collect($state);
+                            $cib = Account::getCashInBankGF();
+                            $net_amount = $items->firstWhere('account_id', $cib?->id);
+                            if ($net_amount) {
+                                $items = $items->filter(fn($i) => $i['account_id'] != $net_amount['account_id']);
+                                $net_amount['credit'] = $items->sum('debit') - $items->sum('credit');
+                                $items->push($net_amount);
+                            }
+                            $set('disbursement_voucher_items', $items->toArray());
                         }
-                        $set('disbursement_voucher_items', $items->toArray());
                     })
                     ->schema([
                         Select::make('member_id')

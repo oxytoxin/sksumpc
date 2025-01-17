@@ -212,7 +212,7 @@ class LoanApplicationResource extends Resource
                                 $items = collect($state);
                                 $net_amount = $items->firstWhere('code', 'net_amount');
                                 $items = $items->filter(fn($i) => ($i['code'] ?? '') != 'net_amount');
-                                $net_amount['credit'] = round($items->sum('debit') - $items->sum('credit'), 2);
+                                $net_amount['credit'] = round($items->sum(fn($item) => (float) $item['debit']) - $items->sum(fn($item) => (float) $item['credit']), 4);
                                 $items->push($net_amount);
                                 $set('disclosure_sheet_items', $items->toArray());
                             })
@@ -227,7 +227,7 @@ class LoanApplicationResource extends Resource
                                     ->preload(),
                                 Select::make('account_id')
                                     ->options(
-                                        fn($get) => Account::withCode()->whereDoesntHave('children', fn($q) => $q->whereNull('member_id'))->where('member_id', $get('member_id') ?? null)->pluck('code', 'id')
+                                        fn($get) => Account::withCode()->pluck('code', 'id')
                                     )
                                     ->searchable()
                                     ->required()

@@ -36,9 +36,8 @@ class DepositToMsoAccount
 
                 $record = $this->depositToLoveGiftsAccount($data);
                 break;
-
         }
-
+        $data->reference_number = $record->reference_number;
         app(CreateTransaction::class)->handle($data);
 
         return $record;

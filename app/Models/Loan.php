@@ -33,8 +33,7 @@ class Loan extends Model
         'cbu_amount' => 'decimal:4',
         'imprest_amount' => 'decimal:4',
         'insurance_amount' => 'decimal:4',
-        'loan_buyout_interest' => 'decimal:4',
-        'loan_buyout_principal' => 'decimal:4',
+        'loan_buyout' => 'decimal:4',
         'interest_rate' => 'decimal:4',
         'monthly_payment' => 'decimal:4',
         'release_date' => 'immutable_date',
@@ -44,7 +43,7 @@ class Loan extends Model
 
     public function netAmountInWords(): Attribute
     {
-        return Attribute::make(get: fn () => (new NumberFormatter('en', NumberFormatter::SPELLOUT))->format($this->net_amount));
+        return Attribute::make(get: fn() => (new NumberFormatter('en', NumberFormatter::SPELLOUT))->format($this->net_amount));
     }
 
     public function disbursement_voucher()
@@ -64,7 +63,7 @@ class Loan extends Model
 
     public function getDeductionsListAttribute()
     {
-        return collect($this->deductions)->map(fn ($d) => $d['name'].': '.Number::currency($d['amount'], 'PHP'))->toArray();
+        return collect($this->deductions)->map(fn($d) => $d['name'] . ': ' . Number::currency($d['amount'], 'PHP'))->toArray();
     }
 
     public function getMaturityDateAttribute()

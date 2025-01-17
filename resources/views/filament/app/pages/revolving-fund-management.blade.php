@@ -34,6 +34,9 @@
                     <td class="border border-black px-4 text-right">{{ renumber_format($balance) }}</td>
                 </tr>
             @empty
+            <tr>
+                <td colspan="6" class="border border-black text-center">No transactions today.</td>
+            </tr>
             @endforelse
         </tbody>
         <tfoot>

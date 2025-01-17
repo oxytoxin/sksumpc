@@ -31,7 +31,7 @@ class RevolvingFund extends Model
     protected static function booted()
     {
         static::creating(function (RevolvingFund $revolving_fund) {
-            $revolving_fund->cashier_id = auth()->id();
+            $revolving_fund->cashier_id ??= auth()->id();
         });
     }
 }

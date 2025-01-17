@@ -33,13 +33,12 @@ class LoansProvider
         } else {
             $days += max(LoansProvider::DAYS_IN_MONTH - $start->day, 0);
             $start = $start->addMonthNoOverflow();
-            while ($start->month != $end->month && $start->year != $end->year) {
+            while (!($start->month == $end->month && $start->year == $end->year)) {
                 $days += LoansProvider::DAYS_IN_MONTH;
                 $start = $start->addMonthNoOverflow();
             }
             $days += min($end->day, LoansProvider::DAYS_IN_MONTH);
         }
-
         return $days;
     }
 
@@ -155,25 +154,13 @@ class LoansProvider
             $end = (config('app.transaction_date') ?? today());
             $total_days = LoansProvider::getAccruableDays($start, $end);
             $interest_remaining = LoansProvider::computeAccruedInterest($existing, $existing->outstanding_balance, $total_days);
-            $loan_receivables_account = Account::whereAccountableType(LoanType::class)->whereAccountableId($existing->loan_type_id)->whereTag('loan_receivables')->first();
-            $loan_interests_account = Account::whereAccountableType(LoanType::class)->whereAccountableId($existing->loan_type_id)->whereTag('loan_interests')->first();
-            if ($interest_remaining > 0) {
-                $items[] = [
-                    'member_id' => null,
-                    'account_id' => $loan_interests_account->id,
-                    'credit' => $interest_remaining,
-                    'debit' => null,
-                    'readonly' => true,
-                    'code' => 'loan_buyout_interest',
-                ];
-            }
             $items[] = [
                 'member_id' => null,
-                'account_id' => $loan_receivables_account->id,
-                'credit' => $existing->outstanding_balance,
+                'account_id' => $existing->loan_account_id,
+                'credit' => $existing->outstanding_balance + $interest_remaining,
                 'debit' => null,
                 'readonly' => true,
-                'code' => 'loan_buyout_principal',
+                'code' => 'loan_buyout',
                 'loan_id' => $existing->id,
             ];
         }
@@ -185,7 +172,6 @@ class LoansProvider
             'readonly' => true,
             'code' => 'net_amount',
         ];
-
         return $items;
     }
 
@@ -227,18 +213,10 @@ class LoansProvider
             $total_days = LoansProvider::getAccruableDays($start, $end);
             $interest_remaining = LoansProvider::computeAccruedInterest($existing, $existing->outstanding_balance, $total_days);
             $deductions[] = [
-                'name' => 'Loan Buy-out Interest',
-                'amount' => $interest_remaining,
+                'name' => 'Loan Buy-out',
+                'amount' => $existing->outstanding_balance + $interest_remaining,
                 'readonly' => true,
-                'code' => 'loan_buyout_interest',
-                'loan_id' => $existing->id,
-            ];
-
-            $deductions[] = [
-                'name' => 'Loan Buy-out Principal',
-                'amount' => $existing->outstanding_balance,
-                'readonly' => true,
-                'code' => 'loan_buyout_principal',
+                'code' => 'loan_buyout',
                 'loan_id' => $existing->id,
             ];
         }

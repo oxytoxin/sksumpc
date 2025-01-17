@@ -68,6 +68,7 @@ class WithdrawFromMsoAccount
                 break;
         }
 
+        $data->reference_number = $record->reference_number;
         app(CreateTransaction::class)->handle($data);
 
         return $record;

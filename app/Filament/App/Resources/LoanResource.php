@@ -13,6 +13,7 @@ use App\Models\LoanType;
 use App\Models\Member;
 use App\Models\TransactionType;
 use App\Rules\BalancedBookkeepingEntries;
+use Auth;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -43,7 +44,7 @@ class LoanResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return auth()->user()->canAny(['manage bookkeeping']);
+        return Auth::user()->canAny(['manage bookkeeping']);
     }
 
     public static function form(Form $form): Form
@@ -124,7 +125,7 @@ class LoanResource extends Resource
                                     ->preload(),
                                 Select::make('account_id')
                                     ->options(
-                                        fn($get) => Account::withCode()->whereDoesntHave('children', fn($q) => $q->whereNull('member_id'))->where('member_id', $get('member_id') ?? null)->pluck('code', 'id')
+                                        fn($get) => Account::withCode()->pluck('code', 'id')
                                     )
                                     ->searchable()
                                     ->required()

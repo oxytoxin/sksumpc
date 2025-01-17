@@ -14,10 +14,8 @@ class UpdateLoanDeductionsData
         $loan->cbu_amount = collect($loan->disclosure_sheet_items)->firstWhere('code', 'cbu_amount')['credit'] ?? 0;
         $loan->imprest_amount = collect($loan->disclosure_sheet_items)->firstWhere('code', 'imprest_amount')['credit'] ?? 0;
         $loan->insurance_amount = collect($loan->disclosure_sheet_items)->firstWhere('code', 'insurance_amount')['credit'] ?? 0;
-        $loan->loan_buyout_interest = collect($loan->disclosure_sheet_items)->firstWhere('code', 'loan_buyout_interest')['credit'] ?? 0;
-        $loan->loan_buyout_principal = collect($loan->disclosure_sheet_items)->firstWhere('code', 'loan_buyout_principal')['credit'] ?? 0;
-        $loan->loan_buyout_id = collect($loan->disclosure_sheet_items)->firstWhere('code', 'loan_buyout_principal')['loan_id'] ?? null;
-
+        $loan->loan_buyout = collect($loan->disclosure_sheet_items)->firstWhere('code', 'loan_buyout')['credit'] ?? 0;
+        $loan->loan_buyout_id = collect($loan->disclosure_sheet_items)->firstWhere('code', 'loan_buyout')['loan_id'] ?? null;
         return $loan;
     }
 }

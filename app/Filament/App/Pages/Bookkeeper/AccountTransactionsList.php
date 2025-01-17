@@ -46,7 +46,7 @@ class AccountTransactionsList extends Page implements HasForms, HasTable
             ->schema([
                 Select::make('account')
                     ->searchable()
-                    ->options(Account::withCode()->whereDoesntHave('children', fn ($q) => $q->whereNull('member_id'))->pluck('code', 'id'))
+                    ->options(Account::withCode()->whereDoesntHave('children', fn($q) => $q->whereNull('member_id'))->pluck('code', 'id'))
                     ->default(2)
                     ->selectablePlaceholder(false)
                     ->reactive()
@@ -59,10 +59,11 @@ class AccountTransactionsList extends Page implements HasForms, HasTable
     #[Computed]
     public function ForwardedBalance()
     {
-        $latest_balance_forwarded_summary = BalanceForwardedSummary::latest()->first();
-        $balance_forwarded_summary_entry = $latest_balance_forwarded_summary?->balance_forwarded_entries()->whereAccountId($this->account)->first();
-
-        return $balance_forwarded_summary_entry;
+        $account = Account::query()
+            ->withSum(['recursiveTransactions as total_debit' => fn($query) => $query->where('transaction_date', '<', config('app.transaction_date') ?? today())], 'debit')
+            ->withSum(['recursiveTransactions as total_credit' => fn($query) => $query->where('transaction_date', '<', config('app.transaction_date') ?? today())], 'credit')
+            ->find($this->account);
+        return $account;
     }
 
     #[Computed]
@@ -71,14 +72,14 @@ class AccountTransactionsList extends Page implements HasForms, HasTable
         return Account::withCode()->with('account_type')->find($this->account);
     }
 
+
     public function table(Table $table): Table
     {
         return $table->query(
             Transaction::query()
-                ->whereHas('account', fn ($query) => $query->whereRelation('ancestorsAndSelf', 'id', $this->account))
-                ->whereYear('transaction_date', config('app.transaction_date')?->year)
+                ->whereHas('account', fn($query) => $query->whereRelation('ancestorsAndSelf', 'id', $this->account))
+                ->whereDate('transaction_date', config('app.transaction_date') ?? today())
         )
-            ->content(view('filament.app.pages.bookkeeper.account-transactions-list-table'))
             ->columns([
                 TextColumn::make('member.name'),
                 TextColumn::make('payee'),

@@ -20,16 +20,15 @@
                 </thead>
                 <tbody>
                     @php
-                        $balance = $this->forwarded_balance?->debit * $this->selected_account?->account_type->debit_operator + $this->forwarded_balance?->credit * $this->selected_account?->account_type->credit_operator;
+                        $balance = $this->forwarded_balance?->total_debit * $this->selected_account?->account_type->debit_operator + $this->forwarded_balance?->total_credit * $this->selected_account?->account_type->credit_operator;
                     @endphp
                     <tr>
                         <th class="border border-black text-center"></th>
                         <td colspan="3" class="whitespace-nowrap border border-black px-2 text-left">FORWARDED BALANCE</td>
-                        <td class="border border-black text-center">{{ renumber_format($this->forwarded_balance?->debit) }}</td>
-                        <td class="border border-black text-center">{{ renumber_format($this->forwarded_balance?->credit) }}</td>
+                        <td class="border border-black text-center">{{ renumber_format($this->forwarded_balance?->total_debit) }}</td>
+                        <td class="border border-black text-center">{{ renumber_format($this->forwarded_balance?->total_credit) }}</td>
                         <td class="border border-black text-center">{{ renumber_format($balance) }}</td>
                     </tr>
-
                     @forelse ($this->table->getRecords() as $record)
                         @php
                             $balance += $record->debit * $this->selected_account?->account_type->debit_operator ?? 0;

@@ -4,18 +4,21 @@ namespace App\Filament\App\Pages;
 
 use App\Actions\RevolvingFund\ReplenishRevolvingFund;
 use App\Models\RevolvingFund;
+use Auth;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 
-class RevolvingFundManagement extends Page implements HasTable
+class RevolvingFundManagement extends Page implements HasTable, HasForms
 {
-    use InteractsWithTable;
+    use InteractsWithTable, InteractsWithForms;
 
     protected static string $view = 'filament.app.pages.revolving-fund-management';
 
@@ -25,7 +28,7 @@ class RevolvingFundManagement extends Page implements HasTable
 
     public static function shouldRegisterNavigation(): bool
     {
-        return auth()->user()->can('manage payments');
+        return Auth::user()->can('manage payments');
     }
 
     protected function getHeaderActions(): array
@@ -57,8 +60,8 @@ class RevolvingFundManagement extends Page implements HasTable
             ->query(
                 RevolvingFund::query()
                     ->whereDate('transaction_date', config('app.transaction_date'))
-                // ->whereMonth('transaction_date', config('app.transaction_date')->month)
-                // ->whereYear('transaction_date', config('app.transaction_date')->year)
-            );
+
+            )
+            ->paginated(false);
     }
 }
