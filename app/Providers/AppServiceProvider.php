@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
+use LogViewer;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -46,5 +47,9 @@ class AppServiceProvider extends ServiceProvider
         Schema::defaultStringLength(125);
         Date::use(CarbonImmutable::class);
         Model::unguard();
+
+        LogViewer::auth(function ($request) {
+            return config('app.debug');
+        });
     }
 }
