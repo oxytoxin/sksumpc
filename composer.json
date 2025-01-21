@@ -21,7 +21,7 @@
         "lorisleiva/laravel-actions": "^2.7",
         "malzariey/filament-daterangepicker-filter": "^2.3",
         "moneyphp/money": "^4.2",
-        "opcodesio/log-viewer": "^3.1",
+        "opcodesio/log-viewer": "^3.14",
         "phpoffice/phpspreadsheet": "^1.29",
         "spatie/laravel-data": "^3.9",
         "spatie/laravel-db-snapshots": "^2.5",
