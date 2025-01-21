@@ -42,6 +42,7 @@ class JournalEntryVoucherResource extends Resource
                 TextInput::make('address')->required(),
                 TextInput::make('reference_number')->required(),
                 TextInput::make('voucher_number')->required(),
+                Toggle::make('compute_net')->label('Compute Net Amount')->default(false),
                 Textarea::make('description')->columnSpanFull()->required(),
                 TableRepeater::make('journal_entry_voucher_items')
                     ->hideLabels()
@@ -49,6 +50,21 @@ class JournalEntryVoucherResource extends Resource
                     ->columnSpanFull()
                     ->columnWidths(['account_id' => '13rem', 'member_id' => '13rem'])
                     ->reactive()
+                    ->afterStateUpdated(function ($set, $get, $state) {
+                        if ($get('compute_net')) {
+                            $items = collect($state);
+                            $cib = Account::getCashInBankGF();
+                            $net_amount = $items->firstWhere('account_id', $cib?->id);
+                            if ($net_amount) {
+                                $items = $items->filter(function ($i) use ($net_amount) {
+                                    return $i['account_id'] != $net_amount['account_id'];
+                                });
+                                $net_amount['credit'] = $items->sum('debit') - $items->sum('credit');
+                                $items->push($net_amount);
+                            }
+                            $set('journal_entry_voucher_items', $items->toArray());
+                        }
+                    })
                     ->reorderable(false)
                     ->schema([
                         Select::make('member_id')

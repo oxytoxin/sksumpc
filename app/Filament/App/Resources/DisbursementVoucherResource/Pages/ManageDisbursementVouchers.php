@@ -15,7 +15,7 @@ class ManageDisbursementVouchers extends ManageRecords
     public function mount(): void
     {
         parent::mount();
-        data_set($this, 'tableFilters.transaction_date.transaction_date', (config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')).' - '.(config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')));
+        data_set($this, 'tableFilters.transaction_date.transaction_date', (config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')) . ' - ' . (config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')));
     }
 
     protected function getHeaderActions(): array
@@ -26,7 +26,7 @@ class ManageDisbursementVouchers extends ManageRecords
                     DB::beginTransaction();
                     $data['voucher_type_id'] = 6;
                     $items = $data['disbursement_voucher_items'];
-                    unset($data['disbursement_voucher_items']);
+                    unset($data['disbursement_voucher_items'], $data['compute_net']);
                     $data['transaction_date'] = config('app.transaction_date') ?? today();
                     $dv = DisbursementVoucher::create($data);
                     foreach ($items as $item) {
