@@ -41,6 +41,7 @@ class DisbursementVoucherResource extends Resource
                 TextInput::make('name')->required(),
                 TextInput::make('address')->required(),
                 TextInput::make('reference_number')->required(),
+                TextInput::make('check_number'),
                 TextInput::make('voucher_number')->required(),
                 Toggle::make('compute_net')->label('Compute Net Amount')->default(true),
                 Textarea::make('description')->columnSpanFull()->required(),
@@ -97,6 +98,7 @@ class DisbursementVoucherResource extends Resource
                     ->listWithLineBreaks(),
                 TextColumn::make('name'),
                 TextColumn::make('reference_number'),
+                TextColumn::make('check_number'),
                 TextColumn::make('voucher_number'),
                 TextColumn::make('description'),
             ])
