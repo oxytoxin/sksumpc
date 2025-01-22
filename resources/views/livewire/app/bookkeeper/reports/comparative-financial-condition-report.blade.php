@@ -40,6 +40,7 @@
                             'account_type' => $account_type,
                         ])
                     @endforeach
+                    @include('partials.comparative-financial-condition-extra-footers')
                 </tbody>
             </table>
         </div>

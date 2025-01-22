@@ -36,6 +36,7 @@
                         'account_type' => $account_type,
                     ])
                 @endforeach
+                @include('partials.single-month-financial-condition-extra-footers')
             </tbody>
         </table>
     </div>

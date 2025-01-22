@@ -4,6 +4,7 @@ namespace App\Filament\App\Resources;
 
 use App\Filament\App\Resources\CapitalSubscriptionResource\Pages;
 use App\Models\CapitalSubscription;
+use App\Models\MemberSubtype;
 use App\Models\MemberType;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -39,8 +40,24 @@ class CapitalSubscriptionResource extends Resource
                 TextColumn::make('outstanding_balance')->money('PHP'),
             ])
             ->filters([
-                SelectFilter::make('member_type')
+                SelectFilter::make('member_type_id')
+                    ->query(function ($query, $state) {
+                        return $query
+                            ->when($state['value'], function ($query, $value) {
+                                return $query->whereRelation('member', 'member_type_id', $value);
+                            });
+                    })
+                    ->label('Member Type')
                     ->options(MemberType::pluck('name', 'id')),
+                SelectFilter::make('member_subtype_id')
+                    ->query(function ($query, $state) {
+                        return $query
+                            ->when($state['value'], function ($query, $value) {
+                                return $query->whereRelation('member', 'member_subtype_id', $value);
+                            });
+                    })
+                    ->label('Member Subtype')
+                    ->options(MemberSubtype::pluck('name', 'id')),
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
             ->defaultSort('member.alt_full_name')
