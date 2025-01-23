@@ -12,6 +12,7 @@ class LoansProvider
     const LOAN_TERMS = [
         1 => 1,
         3 => 3,
+        4 => 4,
         6 => 6,
         12 => 12,
         24 => 24,
