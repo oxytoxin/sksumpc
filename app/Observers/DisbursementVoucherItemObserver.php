@@ -9,6 +9,7 @@ use App\Actions\MSO\DepositToMsoAccount;
 use App\Actions\MSO\WithdrawFromMsoAccount;
 use App\Actions\Transactions\CreateTransaction;
 use App\Enums\MsoType;
+use App\Enums\PaymentTypes;
 use App\Models\Account;
 use App\Models\DisbursementVoucherItem;
 use App\Models\LoanAccount;
@@ -41,7 +42,7 @@ class DisbursementVoucherItemObserver
             member_id: $account->member_id,
             account_id: $account->id,
             transactionType: $transactionType,
-            payment_type_id: 4,
+            payment_type_id: PaymentTypes::CDJ->value,
             reference_number: $disbursementVoucherItem->disbursement_voucher->reference_number,
             debit: $disbursementVoucherItem->debit,
             credit: $disbursementVoucherItem->credit,
@@ -86,7 +87,7 @@ class DisbursementVoucherItemObserver
                             loanAccount: $loan_account,
                             principal: $disbursementVoucherItem->details['principal'],
                             interest: $disbursementVoucherItem->details['interest'],
-                            payment_type_id: 4,
+                            payment_type_id: PaymentTypes::CDJ->value,
                             reference_number: $disbursementVoucherItem->disbursement_voucher->reference_number,
                             transaction_date: $transaction_date,
                             transactionType: $transactionType,
@@ -95,7 +96,7 @@ class DisbursementVoucherItemObserver
                     app(PayLoan::class)->handle(
                         loan: $loan_account->loan,
                         loanPaymentData: new LoanPaymentData(
-                            payment_type_id: 4,
+                            payment_type_id: PaymentTypes::CDJ->value,
                             reference_number: $disbursementVoucherItem->disbursement_voucher->reference_number,
                             amount: $disbursementVoucherItem->credit,
                             transaction_date: $transaction_date

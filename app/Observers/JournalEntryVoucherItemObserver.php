@@ -9,6 +9,7 @@ use App\Actions\MSO\DepositToMsoAccount;
 use App\Actions\MSO\WithdrawFromMsoAccount;
 use App\Actions\Transactions\CreateTransaction;
 use App\Enums\MsoType;
+use App\Enums\PaymentTypes;
 use App\Models\Account;
 use App\Models\JournalEntryVoucherItem;
 use App\Models\LoanAccount;
@@ -38,7 +39,7 @@ class JournalEntryVoucherItemObserver
             member_id: $account->member_id,
             account_id: $account->id,
             transactionType: $transactionType,
-            payment_type_id: 2,
+            payment_type_id: PaymentTypes::JEV->value,
             reference_number: $journalEntryVoucherItem->journal_entry_voucher->reference_number,
             debit: $journalEntryVoucherItem->debit,
             credit: $journalEntryVoucherItem->credit,
@@ -83,7 +84,7 @@ class JournalEntryVoucherItemObserver
                             loanAccount: $loan_account,
                             principal: $journalEntryVoucherItem->details['principal'],
                             interest: $journalEntryVoucherItem->details['interest'],
-                            payment_type_id: 2,
+                            payment_type_id: PaymentTypes::JEV->value,
                             reference_number: $journalEntryVoucherItem->journal_entry_voucher->reference_number,
                             transaction_date: $transaction_date,
                             transactionType: $transactionType,
@@ -92,7 +93,7 @@ class JournalEntryVoucherItemObserver
                     app(PayLoan::class)->handle(
                         loan: $loan_account->loan,
                         loanPaymentData: new LoanPaymentData(
-                            payment_type_id: 2,
+                            payment_type_id: PaymentTypes::JEV->value,
                             reference_number: $journalEntryVoucherItem->journal_entry_voucher->reference_number,
                             amount: $journalEntryVoucherItem->credit,
                             transaction_date: $transaction_date

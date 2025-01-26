@@ -165,6 +165,7 @@ class DailyCollectionsReport extends Page
             $q1->whereHas("ancestorsAndSelf", function ($q2) {
                 $q2->whereIn("id", [
                     OthersTransactionExcludedAccounts::LOAN_RECEIVABLES->value,
+                    OthersTransactionExcludedAccounts::INTEREST_INCOME_FROM_LOANS->value,
                 ]);
             });
         })

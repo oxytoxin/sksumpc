@@ -27,5 +27,8 @@ class PaymentTypesSeeder extends Seeder
         PaymentType::create([
             'name' => 'DEPOSIT SLIP',
         ]);
+        PaymentType::create([
+            'name' => 'CDJ',
+        ]);
     }
 }

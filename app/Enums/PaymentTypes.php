@@ -9,4 +9,5 @@ enum PaymentTypes: int
     case CHECK = 3;
     case ADA = 4;
     case DEPOSIT_SLIP = 5;
+    case CDJ = 6;
 }
