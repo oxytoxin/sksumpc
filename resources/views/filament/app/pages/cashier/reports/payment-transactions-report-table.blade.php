@@ -21,7 +21,7 @@
             @endphp
             @forelse ($this->table->getRecords() as $record)
                 @php
-                    $balance = $balance + ($record->debit ?? 0) - ($record->credit ?? 0);
+                    $balance = $balance + ($record->credit ?? 0) - ($record->debit ?? 0);
                     $total_debit += $record->debit ?? 0;
                     $total_credit += $record->credit ?? 0;
                 @endphp
