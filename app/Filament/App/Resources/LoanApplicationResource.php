@@ -116,10 +116,11 @@ class LoanApplicationResource extends Resource
     {
         return $table
             ->modifyQueryUsing(fn($query) => $query->with('loan'))
+            ->defaultSort('transaction_date', 'desc')
             ->columns([
                 TextColumn::make('member.full_name')->searchable(),
                 TextColumn::make('priority_number')->searchable(),
-                TextColumn::make('transaction_date')->date('m/d/Y')->label('Date Applied'),
+                TextColumn::make('transaction_date')->date('m/d/Y')->label('Date Applied')->sortable(),
                 TextColumn::make('loan_type.name'),
                 TextColumn::make('desired_amount')->money('PHP'),
                 TextColumn::make('status')

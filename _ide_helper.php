@@ -21442,6 +21442,16 @@ namespace Illuminate\Support {
                     /**
          * 
          *
+         * @see \Spatie\LaravelRay\RayServiceProvider::registerMacros()
+         * @param string $description
+         * @static 
+         */        public static function ray($description = '')
+        {
+                        return \Illuminate\Support\Collection::ray($description);
+        }
+                    /**
+         * 
+         *
          * @see \App\Providers\FilamentTableProvider::boot()
          * @static 
          */        public static function ksort()
@@ -21480,6 +21490,16 @@ namespace Illuminate\Support {
      * 
      *
      */        class Stringable {
+                    /**
+         * 
+         *
+         * @see \Spatie\LaravelRay\RayServiceProvider::registerMacros()
+         * @param string $description
+         * @static 
+         */        public static function ray($description = '')
+        {
+                        return \Illuminate\Support\Stringable::ray($description);
+        }
                     /**
          * 
          *
@@ -21612,6 +21632,15 @@ namespace Illuminate\Database\Query {
          */        public static function getSelect()
         {
                         return \Illuminate\Database\Query\Builder::getSelect();
+        }
+                    /**
+         * 
+         *
+         * @see \Spatie\LaravelRay\RayServiceProvider::registerMacros()
+         * @static 
+         */        public static function ray()
+        {
+                        return \Illuminate\Database\Query\Builder::ray();
         }
             }
     }
@@ -21850,6 +21879,24 @@ namespace Illuminate\Database\Eloquent\Relations {
          */        public static function getPowerJoinExistenceCompareKey()
         {
                         return \Illuminate\Database\Eloquent\Relations\Relation::getPowerJoinExistenceCompareKey();
+        }
+            }
+    }
+
+namespace Illuminate\Testing {
+            /**
+     * 
+     *
+     * @mixin \Illuminate\Http\Response
+     */        class TestResponse {
+                    /**
+         * 
+         *
+         * @see \Spatie\LaravelRay\RayServiceProvider::registerMacros()
+         * @static 
+         */        public static function ray()
+        {
+                        return \Illuminate\Testing\TestResponse::ray();
         }
             }
     }
@@ -25897,6 +25944,15 @@ namespace  {
             {
                                 /** @var \Illuminate\Database\Query\Builder $instance */
                                 return $instance->macroCall($method, $parameters);
+            }
+                            /**
+             * 
+             *
+             * @see \Spatie\LaravelRay\RayServiceProvider::registerMacros()
+             * @static 
+             */            public static function ray()
+            {
+                                return \Illuminate\Database\Query\Builder::ray();
             }
                     }
             class Event extends \Illuminate\Support\Facades\Event {}

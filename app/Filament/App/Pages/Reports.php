@@ -35,6 +35,7 @@ class Reports extends Page implements HasForms
         return $form->schema([
             Tabs::make()
                 ->activeTab(1)
+                ->persistTabInQueryString()
                 ->schema([
                     Tab::make('MSO TRANSACTIONS')
                         ->schema([

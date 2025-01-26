@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Pages\Cashier\Reports;
 
+use App\Enums\TransactionTypes;
 use App\Models\MemberType;
 use App\Models\Transaction;
 use Filament\Pages\Page;
@@ -29,14 +30,9 @@ class MsoTransactions extends Page implements HasTable
         return $table
             ->query(
                 Transaction::query()
-                    ->select('*')
-                    ->addSelect(
-                        \DB::raw(
-                            'SUM(debit) OVER (ORDER BY id ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) as running_debit, SUM(credit) OVER (ORDER BY id ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) as running_credit'
-                        )
-                    )
+                    ->where('transaction_type_id', TransactionTypes::CRJ->value)
             )
-            ->content(fn () => view('filament.app.pages.cashier.reports.mso-transactions-report-table', [
+            ->content(fn() => view('filament.app.pages.cashier.reports.mso-transactions-report-table', [
                 'signatories' => $this->signatories,
                 'report_title' => $this->report_title,
             ]))
@@ -47,7 +43,7 @@ class MsoTransactions extends Page implements HasTable
                 SelectFilter::make('member_type')
                     ->label('Member Type')
                     ->options(MemberType::pluck('name', 'id'))
-                    ->query(fn ($query, $state) => $query->when($state['value'], fn ($q, $v) => $q->whereRelation('member', 'member_type_id', $state['value']))),
+                    ->query(fn($query, $state) => $query->when($state['value'], fn($q, $v) => $q->whereRelation('member', 'member_type_id', $state['value']))),
                 SelectFilter::make('mso_type')
                     ->label('MSO Type')
                     ->multiple()
@@ -85,6 +81,6 @@ class MsoTransactions extends Page implements HasTable
 
     public function mount()
     {
-        data_set($this, 'tableFilters.transaction_date.transaction_date', (config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')).' - '.(config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')));
+        data_set($this, 'tableFilters.transaction_date.transaction_date', (config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')) . ' - ' . (config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')));
     }
 }

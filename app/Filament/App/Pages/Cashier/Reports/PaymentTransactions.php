@@ -70,11 +70,11 @@ class PaymentTransactions extends Page implements HasTable
 
                 return Transaction::whereDoesntHave('account', function ($query) {
                     return $query->whereHas(
-                        'rootAncestor',
+                        'ancestorsAndSelf',
                         fn($q) => $q->whereIn('id', OthersTransactionExcludedAccounts::get())
                     );
                 })
-                    ->withoutMso()
+
                     ->where('transaction_type_id', TransactionTypes::CRJ->value);
             })
             ->content(function ($livewire) {

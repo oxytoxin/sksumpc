@@ -37,12 +37,13 @@ class CashProof extends Page
     #[Computed]
     public function TotalDeposits()
     {
-        $total_savings_deposit = Saving::query()->whereIn('payment_type_id', [
-            PaymentTypes::CASH->value,
-            PaymentTypes::CHECK->value,
-            PaymentTypes::ADA->value,
-            PaymentTypes::DEPOSIT_SLIP->value,
-        ])->when($this->data['transaction_date'] ?? today()->format('m/d/Y - m/d/Y'), fn($q, $v) => $q->whereBetween('transaction_date', explode(' - ', $v)))->sum('deposit');
+        $total_savings_deposit = Saving::query()
+            ->whereIn('payment_type_id', [
+                PaymentTypes::CASH->value,
+                PaymentTypes::CHECK->value,
+                PaymentTypes::ADA->value,
+                PaymentTypes::DEPOSIT_SLIP->value,
+            ])->when($this->data['transaction_date'] ?? today()->format('m/d/Y - m/d/Y'), fn($q, $v) => $q->whereBetween('transaction_date', explode(' - ', $v)))->sum('deposit');
         $total_imprest_deposit = Imprest::query()->whereIn('payment_type_id', [
             PaymentTypes::CASH->value,
             PaymentTypes::CHECK->value,

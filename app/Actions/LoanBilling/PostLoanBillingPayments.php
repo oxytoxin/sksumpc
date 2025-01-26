@@ -26,16 +26,6 @@ class PostLoanBillingPayments
         $cash_in_bank_account_id = Account::getCashInBankGF()->id;
         $cash_on_hand_account_id = Account::getCashOnHand()->id;
         $loanBilling->loan_billing_payments()->each(function (LoanBillingPayment $lp) use ($loanBilling, $transactionType, $cash_in_bank_account_id, $cash_on_hand_account_id) {
-            $data = new TransactionData(
-                account_id: $cash_in_bank_account_id,
-                transactionType: $transactionType,
-                reference_number: $loanBilling->or_number,
-                payment_type_id: $loanBilling->payment_type_id,
-                debit: $lp->amount_paid,
-                member_id: $lp->member_id,
-                transaction_date: $loanBilling->date,
-                payee: $lp->member->full_name,
-            );
 
             app(PayLoan::class)->handle($lp->loan, new LoanPaymentData(
                 payment_type_id: $loanBilling->payment_type_id,
@@ -48,6 +38,17 @@ class PostLoanBillingPayments
             $lp->update([
                 'posted' => true,
             ]);
+
+            $data = new TransactionData(
+                account_id: $cash_in_bank_account_id,
+                transactionType: $transactionType,
+                reference_number: $loanBilling->or_number,
+                payment_type_id: $loanBilling->payment_type_id,
+                debit: $lp->amount_paid,
+                member_id: $lp->member_id,
+                transaction_date: $loanBilling->date,
+                payee: $lp->member->full_name,
+            );
 
             if ($data->payment_type_id == PaymentTypes::ADA->value) {
                 $data->account_id = $cash_in_bank_account_id;

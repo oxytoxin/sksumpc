@@ -57,9 +57,9 @@
             @endforelse
             <tr>
                 <th colspan="6" class="border border-black text-center">GRAND TOTAL</th>
-                <td class="border border-black text-center">{{ renumber_format($total_debit, 2) }}</td>
-                <td class="border border-black text-center">{{ renumber_format($total_credit, 2) }}</td>
-                <td class="border border-black text-center">{{ renumber_format($balance, 2) }}</td>
+                <td class="border border-black font-bold text-center">{{ renumber_format($total_debit, 2) }}</td>
+                <td class="border border-black font-bold text-center">{{ renumber_format($total_credit, 2) }}</td>
+                <td class="border border-black font-bold text-center">{{ renumber_format($balance, 2) }}</td>
             </tr>
         </tbody>
     </table>

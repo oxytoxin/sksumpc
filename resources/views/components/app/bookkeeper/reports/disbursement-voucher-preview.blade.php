@@ -40,16 +40,16 @@
                 $disbursement_voucher_items = $disbursement_voucher->disbursement_voucher_items()->with('account')->get();
             @endphp
             @foreach ($disbursement_voucher_items as $item)
-                <tr>
-                    <td colspan="2" class="w-1/2 border border-black px-2 text-justify uppercase">
+                <tr class="mt-2">
+                    <td colspan="2" class="w-1/2 border-x border-black px-2 text-left uppercase">
                         {{ $item->account->fullname }}
                     </td>
-                    <td colspan="2" class="w-1/6 border border-black text-center">{{ $item->account->number }}
+                    <td colspan="2" class="w-1/6 border-x border-black text-center">{{ $item->account->number }}
                     </td>
-                    <td class="w-1/6 border border-black text-right">
+                    <td class="w-1/6 border-x border-black text-right">
                         {{ $item->debit ? number_format($item->debit, 2) : '' }}
                     </td>
-                    <td class="w-1/6 border border-black text-right">
+                    <td class="w-1/6 border-x border-black text-right">
                         {{ $item->credit ? number_format($item->credit, 2) : '' }}
                     </td>
                 </tr>
@@ -57,10 +57,10 @@
             <tr>
                 <td colspan="2" class="border border-black uppercase"></td>
                 <td colspan="2" class="border border-black px-2 font-bold">TOTAL:</td>
-                <td class="border border-black text-right">
+                <td class="border border-black font-bold text-right">
                     {{ $disbursement_voucher_items->sum('debit') ? number_format($disbursement_voucher_items->sum('debit'), 2) : '' }}
                 </td>
-                <td class="border border-black text-right">
+                <td class="border border-black font-bold text-right">
                     {{ $disbursement_voucher_items->sum('credit') ? number_format($disbursement_voucher_items->sum('credit'), 2) : '' }}
                 </td>
             </tr>

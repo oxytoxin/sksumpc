@@ -15,7 +15,19 @@
             </tr>
         </thead>
         <tbody>
+            @php
+                $amount = 0;
+                $principal_payment = 0;
+                $interest_payment = 0;
+                $surcharge_payment = 0;
+            @endphp
             @forelse ($this->table->getRecords() as $record)
+                @php
+                    $amount += $record->amount;
+                    $principal_payment += $record->principal_payment;
+                    $interest_payment += $record->interest_payment;
+                    $surcharge_payment += $record->surcharge_payment;
+                @endphp
                 <tr>
                     <th class="border border-black text-center">{{ $loop->iteration }}</th>
                     <td class="whitespace-nowrap border border-black px-2 text-center">
@@ -41,6 +53,14 @@
                     <td colspan="5" class="border border-black text-center">No transactions today.</td>
                 </tr>
             @endforelse
+            <tr>
+                <th colspan="5" class="border border-black text-center">GRAND TOTAL</th>
+                <td class="border border-black font-bold text-center">{{ renumber_format($amount, 2) }}</td>
+                <td class="border border-black font-bold text-center">{{ renumber_format($principal_payment, 2) }}</td>
+                <td class="border border-black font-bold text-center">{{ renumber_format($interest_payment, 2) }}</td>
+                <td class="border border-black font-bold text-center">{{ renumber_format($surcharge_payment, 2) }}</td>
+                <td class="border border-black text-center"></td>
+            </tr>
         </tbody>
     </table>
 </x-app.cashier.reports.report-layout>

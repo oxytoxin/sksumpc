@@ -27,28 +27,20 @@ class PostCashCollectibleBillingPayments
         $cash_on_hand_account_id = Account::getCashOnHand()->id;
         $cashCollectibleBilling->cash_collectible_billing_payments()->each(function (CashCollectibleBillingPayment $payment) use ($cashCollectibleBilling, $transactionType, $cash_in_bank_account_id, $cash_on_hand_account_id) {
             $data = new TransactionData(
-                account_id: $cash_in_bank_account_id,
+                account_id: $cashCollectibleBilling->cash_collectible_account->id,
                 transactionType: $transactionType,
                 reference_number: $cashCollectibleBilling->or_number,
                 payment_type_id: $cashCollectibleBilling->payment_type_id,
-                debit: $payment->amount_paid,
+                credit: $payment->amount_paid,
                 member_id: $payment->member_id,
                 transaction_date: $cashCollectibleBilling->date,
                 payee: $payment->payee,
             );
 
-            app(PayCashCollectible::class)->handle(
-                cashCollectibleAccount: $cashCollectibleBilling->cash_collectible_account,
-                cashCollectiblePaymentData: new CashCollectiblePaymentData(
-                    member_id: $payment->member_id,
-                    payment_type_id: $cashCollectibleBilling->payment_type_id,
-                    reference_number: $cashCollectibleBilling->or_number,
-                    amount: $payment->amount_paid,
-                    payee: $payment->payee,
-                    transaction_date: $cashCollectibleBilling->date
-                ),
-                transactionType: $transactionType
-            );
+            app(CreateTransaction::class)->handle($data);
+
+            $data->debit = $data->credit;
+            $data->credit = null;
 
             if ($data->payment_type_id == PaymentTypes::ADA->value) {
                 $data->account_id = $cash_in_bank_account_id;

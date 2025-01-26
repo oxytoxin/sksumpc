@@ -5,7 +5,12 @@ namespace App\Filament\App\Pages;
 use App\Filament\App\Pages\Cashier\Reports\HasSignatories;
 use App\Models\Loan;
 use App\Models\LoanType;
+use App\Models\Member;
+use App\Models\MemberSubtype;
+use App\Models\MemberType;
 use App\Models\User;
+use Auth;
+use Filament\Forms\Components\Select;
 use Filament\Pages\Page;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -13,6 +18,7 @@ use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 
 class TotalLoanReleasedReport extends Page implements HasTable
 {
@@ -26,26 +32,64 @@ class TotalLoanReleasedReport extends Page implements HasTable
 
     public static function shouldRegisterNavigation(): bool
     {
-        return auth()->user()->can('manage loans');
+        return Auth::user()->can('manage loans');
     }
 
     public function table(Table $table): Table
     {
         return $table
             ->query(Loan::query()->wherePosted(true))
-            ->content(fn () => view('filament.app.views.total-loan-released-report-table', [
+            ->content(fn() => view('filament.app.views.total-loan-released-report-table', [
                 'signatories' => $this->signatories,
-                'loan_types' => LoanType::findMany($this->tableFilters['loan_type_ids']['values']),
+                'loan_types' => LoanType::query()
+                    ->when($this->tableFilters['loan_type_id']['values'], fn($query, $value) => $query->whereIn('id', $value))
+                    ->get(),
             ]))
             ->filters([
-                Filter::dateRange('release_date'),
-                SelectFilter::make('loan_type_ids')
-                    ->options(LoanType::pluck('name', 'id'))
+                SelectFilter::make('member_type')
+                    ->relationship('member.member_type', 'name'),
+                SelectFilter::make('member_subtype')
+                    ->relationship('member.member_subtype', 'name'),
+                SelectFilter::make('division')
+                    ->relationship('member.division', 'name'),
+                SelectFilter::make('patronage_status')
+                    ->relationship('member.patronage_status', 'name'),
+                SelectFilter::make('gender')
+                    ->relationship('member.gender', 'name'),
+                SelectFilter::make('status')
+                    ->options([
+                        1 => 'Active',
+                        2 => 'Terminated',
+                    ])
+                    ->default(1)
+                    ->query(
+                        fn($query, $state) => $query
+                            ->when($state['value'] == 1, fn($q) => $q->whereRelation('member', 'terminated_at', null))
+                            ->when($state['value'] == 2, fn($q) => $q->whereRelation('member', 'terminated_at', '!=',  null))
+                    ),
+                SelectFilter::make('civil_status')
+                    ->relationship('member.civil_status', 'name'),
+                SelectFilter::make('occupation')
+                    ->relationship('member.occupation', 'name'),
+                SelectFilter::make('highest_educational_attainment')
+                    ->label('Highest Educational Attainment')
+                    ->options(Member::whereNotNull('highest_educational_attainment')
+                        ->distinct('highest_educational_attainment')
+                        ->pluck('highest_educational_attainment', 'highest_educational_attainment'))
+                    ->searchable()
+                    ->preload()
+                    ->query(
+                        fn($query, $state) => $query
+                            ->when($state['value'], fn($q, $v) => $q->whereRelation('member', 'highest_educational_attainment', $v))
+                    ),
+                DateRangeFilter::make('release_date')
+                    ->displayFormat('MM/DD/YYYY')
+                    ->label('Release Date'),
+                SelectFilter::make('loan_type_id')
                     ->multiple()
-                    ->default(LoanType::pluck('id')->toArray())
                     ->label('Loan Types')
-                    ->columnSpanFull()
-                    ->query(fn ($query) => $query),
+                    ->preload()
+                    ->relationship('loan_type', 'name'),
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
             ->paginated(false);

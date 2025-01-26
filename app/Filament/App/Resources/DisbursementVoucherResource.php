@@ -16,6 +16,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Table;
@@ -100,7 +101,9 @@ class DisbursementVoucherResource extends Resource
                 TextColumn::make('reference_number'),
                 TextColumn::make('check_number'),
                 TextColumn::make('voucher_number'),
-                TextColumn::make('description'),
+                TextColumn::make('description')
+                    ->wrap()
+                    ->limit(50),
             ])
             ->filters([
                 DateRangeFilter::make('transaction_date')
@@ -109,6 +112,11 @@ class DisbursementVoucherResource extends Resource
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
             ->actions([
+                EditAction::make('check_number')
+                    ->label('Check Number')
+                    ->form([
+                        TextInput::make('check_number')
+                    ]),
                 Action::make('view')
                     ->button()
                     ->color('success')

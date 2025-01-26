@@ -13,6 +13,7 @@ class PayCapitalSubscription
 {
     public function handle(CapitalSubscription $cbu, TransactionData $transactionData, $autodeposit = true)
     {
+        $transactionData = clone $transactionData;
         DB::beginTransaction();
         $amount = $transactionData->credit > 0 ? $transactionData->credit : $transactionData->debit * -1;
         $payment = CapitalSubscriptionPayment::create([
@@ -23,7 +24,7 @@ class PayCapitalSubscription
             'amount' => $amount,
             'transaction_date' => $transactionData->transaction_date,
         ]);
-        if ($autodeposit) {
+        if ($autodeposit && $amount > 0) {
             $deposit = fmod($amount, $cbu->par_value);
             if ($deposit > 0)
                 $transactionData->debit = $deposit;
@@ -39,5 +40,7 @@ class PayCapitalSubscription
         }
 
         DB::commit();
+
+        return $payment;
     }
 }

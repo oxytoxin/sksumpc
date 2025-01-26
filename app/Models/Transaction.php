@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\CashEquivalentsTag;
 use App\Enums\MsoTransactionTag;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -39,6 +40,14 @@ class Transaction extends Model
     {
         $query->where(function ($query) {
             $query->whereNotIn('tag', MsoTransactionTag::get())
+                ->orWhereNull('tag');
+        });
+    }
+
+    public function scopeWithoutCashEquivalents(Builder $query)
+    {
+        $query->where(function ($query) {
+            $query->whereNotIn('tag', CashEquivalentsTag::get())
                 ->orWhereNull('tag');
         });
     }

@@ -17,25 +17,6 @@ class ReplenishRevolvingFund
             'deposit' => $amount,
             'transaction_date' => config('app.transaction_date'),
         ]);
-
-        // app(CreateTransaction::class)->handle(new TransactionData(
-        //     account_id: Account::getCashInBankMSO()->id,
-        //     transactionType: TransactionType::JEV(),
-        //     reference_number: $reference_number,
-        //     payment_type_id: 2,
-        //     credit: $amount,
-        //     transaction_date: config('app.transaction_date')
-        // ));
-
-        // app(CreateTransaction::class)->handle(new TransactionData(
-        //     account_id: Account::getRevolvingFund()->id,
-        //     transactionType: TransactionType::JEV(),
-        //     reference_number: $reference_number,
-        //     payment_type_id: 2,
-        //     debit: $amount,
-        //     transaction_date: config('app.transaction_date')
-        // ));
-
         return $rf;
     }
 }

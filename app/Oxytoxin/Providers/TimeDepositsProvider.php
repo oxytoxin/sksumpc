@@ -16,10 +16,10 @@ class TimeDepositsProvider
 
     public static function getInterestRate(?float $amount): float
     {
-        if ($amount < 9999.99) {
+        if ($amount < 100000) {
             return 0.03;
         }
-        if ($amount >= 10000.00 && $amount < 1000000.00) {
+        if ($amount >= 100000.00 && $amount < 1000000.00) {
             return 0.035;
         }
         if ($amount >= 1000000.00) {
