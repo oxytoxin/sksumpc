@@ -19,7 +19,6 @@ class CbuAmortizationSchedule extends Page
 
     public function mount()
     {
-        $this->cbu->load('capital_subscription_amortizations');
         $this->getSignatories();
     }
 }

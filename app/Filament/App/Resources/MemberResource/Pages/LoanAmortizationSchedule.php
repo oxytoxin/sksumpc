@@ -20,7 +20,6 @@ class LoanAmortizationSchedule extends Page
 
     public function mount()
     {
-        $this->loan->load('loan_amortizations');
         $this->getSignatories();
     }
 

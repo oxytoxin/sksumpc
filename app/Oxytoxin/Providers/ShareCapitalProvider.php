@@ -22,7 +22,7 @@ class ShareCapitalProvider
         ];
     }
 
-    public static function generateAmortizationSchedule(CapitalSubscription $cbu): array
+    public static function generateAmortizationSchedule(CapitalSubscription $cbu)
     {
         $schedule = [];
         $start = $cbu->transaction_date ?? today();
@@ -40,6 +40,6 @@ class ShareCapitalProvider
             $term++;
         } while ($term <= $cbu->number_of_terms);
 
-        return $schedule;
+        return collect($schedule);
     }
 }

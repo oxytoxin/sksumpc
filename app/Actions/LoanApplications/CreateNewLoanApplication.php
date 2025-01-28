@@ -22,7 +22,7 @@ class CreateNewLoanApplication
             'purpose' => $loanApplicationData->purpose,
             'transaction_date' => $loanApplicationData->transaction_date,
         ]);
-        $loanApplication->comakers()->sync($loanApplicationData->comakers);
+        $loanApplication->comakers()->createMany($loanApplicationData->comakers);
         DB::commit();
 
         return $loanApplication;

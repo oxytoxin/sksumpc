@@ -15,8 +15,6 @@ class RunLoanProcessesAfterPosting
         $loan->loan_application->update([
             'status' => LoanApplication::STATUS_POSTED,
         ]);
-        $amortization_schedule = LoansProvider::generateAmortizationSchedule($loan);
-        $loan->loan_amortizations()->createMany($amortization_schedule);
         DB::commit();
     }
 }

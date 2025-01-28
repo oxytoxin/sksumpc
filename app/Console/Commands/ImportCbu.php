@@ -66,7 +66,7 @@ class ImportCbu extends Command
                     member_id: $member->id,
                     name: $member->full_name
                 ));
-                $monthly_payment = ($row['number_of_shares'] - $row['amount_paid']) / 36;
+                $monthly_payment = (round($row['number_of_shares'] * $row['par_value'], 2) - $row['amount_paid']) / 36;
                 if ($monthly_payment < 0) {
                     $monthly_payment = 0;
                 }

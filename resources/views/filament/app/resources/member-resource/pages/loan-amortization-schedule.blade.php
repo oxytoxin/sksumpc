@@ -40,7 +40,7 @@
                     </tr>
                     @php
                         $ob = $loan->gross_amount;
-                        $amortizations = filled($loan->loan_amortizations) ? $loan->loan_amortizations : App\Oxytoxin\Providers\LoansProvider::generateAmortizationSchedule($loan);
+                        $amortizations = App\Oxytoxin\Providers\LoansProvider::generateAmortizationSchedule($loan);
                     @endphp
                     @foreach ($amortizations as $loan_amortization)
                         @php

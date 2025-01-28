@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('loan_application_comakers', function (Blueprint $table) {
+        Schema::create('loan_application_comaker', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(LoanApplication::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignIdFor(Member::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('loan_application_comakers');
+        Schema::dropIfExists('loan_application_comaker');
     }
 };

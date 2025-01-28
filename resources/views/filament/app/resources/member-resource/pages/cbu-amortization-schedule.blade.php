@@ -17,8 +17,6 @@
                         <th class="border border-black px-2 text-left">No.</th>
                         <th class="border border-black px-2 text-left">Month</th>
                         <th class="border border-black px-2 text-right">Amount Due</th>
-                        <th class="border border-black px-2 text-right">Amount Paid</th>
-                        <th class="border border-black px-2 text-right">Arrears</th>
                         <th class="border border-black px-2">Remarks</th>
                     </tr>
                 </thead>
@@ -27,26 +25,23 @@
                         <td class="border border-black px-2"></td>
                         <td class="whitespace-nowrap border border-black px-2">Initial Payment</td>
                         <td class="border border-black px-2 text-right">{{ format_money($cbu->initial_amount_paid, 'PHP') }}</td>
-                        <td class="border border-black px-2 text-right"></td>
-                        <td class="border border-black px-2 text-right"></td>
                         <td class="border border-black px-2"></td>
                     </tr>
-                    @foreach ($cbu->capital_subscription_amortizations as $amortization)
+                    @php
+                        $amortizations = App\Oxytoxin\Providers\ShareCapitalProvider::generateAmortizationSchedule($cbu);
+                    @endphp
+                    @foreach ($amortizations as $amortization)
                         <tr>
-                            <td class="border border-black px-2">{{ $amortization->term }}</td>
-                            <td class="whitespace-nowrap border border-black px-2">{{ $amortization->due_date->format('F Y') }}</td>
-                            <td class="border border-black px-2 text-right">{{ format_money($amortization->amount, 'PHP') }}</td>
-                            <td class="border border-black px-2 text-right">{{ format_money($amortization->amount_paid ?? 0, 'PHP') }}</td>
-                            <td class="border border-black px-2 text-right">{{ format_money($amortization->arrears ?? 0, 'PHP') }}</td>
+                            <td class="border border-black px-2">{{ $amortization['term'] }}</td>
+                            <td class="whitespace-nowrap border border-black px-2">{{ $amortization['due_date']->format('F Y') }}</td>
+                            <td class="border border-black px-2 text-right">{{ format_money($amortization['amount'], 'PHP') }}</td>
                             <td class="border border-black px-2"></td>
                         </tr>
                     @endforeach
                     <tr>
                         <td class="border border-black px-2"></td>
-                        <td class="border border-black px-2">TOTAL</td>
-                        <td class="border border-black px-2 text-right">{{ format_money($cbu->amount_subscribed, 'PHP') }}</td>
-                        <td class="border border-black px-2 text-right">{{ format_money($cbu->capital_subscription_amortizations->sum('amount_paid'), 'PHP') }}</td>
-                        <td class="border border-black px-2 text-right">{{ format_money($cbu->capital_subscription_amortizations->sum('arrears'), 'PHP') }}</td>
+                        <td class="border border-black font-bold px-2">TOTAL</td>
+                        <td class="border border-black font-bold px-2 text-right">{{ format_money($cbu->amount_subscribed, 'PHP') }}</td>
                         <td class="border border-black px-2"></td>
                     </tr>
                 </tbody>

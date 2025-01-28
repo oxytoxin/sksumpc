@@ -268,7 +268,7 @@ class LoansProvider
                 'previous_balance' => round($outstanding_balance, 4),
             ];
 
-            $outstanding_balance = round(bcsub($outstanding_balance, $principal), 4);
+            $outstanding_balance = round(bcsub($outstanding_balance, $principal), 6);
         }
 
         return $schedule;

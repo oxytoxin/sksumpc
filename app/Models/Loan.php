@@ -101,21 +101,6 @@ class Loan extends Model
         return $query->wherePosted(true)->where('outstanding_balance', '>', 0);
     }
 
-    public function loan_amortizations()
-    {
-        return $this->hasMany(LoanAmortization::class);
-    }
-
-    public function paid_loan_amortizations()
-    {
-        return $this->hasMany(LoanAmortization::class)->whereNotNull('amount_paid');
-    }
-
-    public function active_loan_amortization()
-    {
-        return $this->hasOne(LoanAmortization::class)->whereNull('amount_paid')->orWhere('arrears', '>', 0);
-    }
-
     public function loan_application()
     {
         return $this->belongsTo(LoanApplication::class);

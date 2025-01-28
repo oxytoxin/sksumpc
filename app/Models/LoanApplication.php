@@ -66,7 +66,7 @@ class LoanApplication extends Model
 
     public function comakers()
     {
-        return $this->belongsToMany(Member::class, 'loan_application_comakers');
+        return $this->hasMany(LoanApplicationComaker::class);
     }
 
     public function processor()

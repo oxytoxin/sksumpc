@@ -27,10 +27,9 @@ class PayCapitalSubscription
         if ($autodeposit && $amount > 0) {
             $deposit = fmod($amount, $cbu->par_value);
             if ($deposit > 0)
-                $transactionData->debit = $deposit;
+                $transactionData->credit = $amount - $deposit;
             app(CreateTransaction::class)->handle($transactionData);
             if ($deposit > 0) {
-                $transactionData->debit = null;
                 $transactionData->credit = $deposit;
                 $transactionData->account_id = Account::getCbuDeposit($cbu->member->member_type_id)->id;
                 app(CreateTransaction::class)->handle($transactionData);

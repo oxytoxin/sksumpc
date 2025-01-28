@@ -29,20 +29,10 @@ class ManageLoanApplications extends ManageRecords
     {
         return [
             CreateAction::make()
-                ->action(function ($data) {
-                    $loan_application_data = new LoanApplicationData(
-                        member_id: $data['member_id'],
-                        loan_type_id: $data['loan_type_id'],
-                        number_of_terms: $data['number_of_terms'],
-                        priority_number: $data['priority_number'],
-                        desired_amount: $data['desired_amount'],
-                        monthly_payment: LoansProvider::computeMonthlyPayment($data['desired_amount'], LoanType::find($data['loan_type_id']), $data['number_of_terms'], today()),
-                        purpose: $data['purpose'],
-                        comakers: $data['comakers'],
-                        transaction_date: config('app.transaction_date')
-                    );
-                    app(CreateNewLoanApplication::class)->handle($loan_application_data);
-                    Notification::make()->title('New loan application created.')->success()->send();
+                ->mutateFormDataUsing(function ($data) {
+                    $data['transaction_date'] = config('app.transaction_date') ?? today();
+                    $data['monthly_payment'] = LoansProvider::computeMonthlyPayment($data['desired_amount'], LoanType::find($data['loan_type_id']), $data['number_of_terms'], config('app.transaction_date') ?? today());
+                    return $data;
                 })
                 ->visible(Auth::user()->can('manage loans'))
                 ->createAnother(false),

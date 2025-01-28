@@ -102,12 +102,13 @@ class LoanApplicationResource extends Resource
                     ->schema([
                         Select::make('member_id')
                             ->label('Name')
-                            ->options(Member::pluck('full_name', 'id'))
                             ->searchable()
                             ->required()
+                            ->relationship('member', 'full_name')
                             ->preload(),
                     ])
                     ->default([])
+                    ->relationship()
                     ->hideLabels(),
             ]);
     }
@@ -140,7 +141,8 @@ class LoanApplicationResource extends Resource
             ])
             ->defaultLoanApplicationFilters()
             ->actions([
-                Tables\Actions\EditAction::make()->visible(fn($record) => Auth::user()->can('manage loans') && $record->status == LoanApplication::STATUS_PROCESSING),
+                Tables\Actions\EditAction::make()
+                    ->visible(fn($record) => Auth::user()->can('manage loans') && $record->status == LoanApplication::STATUS_PROCESSING),
                 Action::make('CIBI')->label('CIBI')->button()->url(fn($record) => route('filament.app.resources.loan-applications.credit-and-background-investigation-form', ['loan_application' => $record])),
                 Action::make('Approve')
                     ->action(function (LoanApplication $record) {
