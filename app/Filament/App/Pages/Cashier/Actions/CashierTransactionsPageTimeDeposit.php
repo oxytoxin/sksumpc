@@ -15,16 +15,18 @@ use App\Oxytoxin\DTO\Transactions\TransactionData;
 
 class CashierTransactionsPageTimeDeposit
 {
-    public function handle(TransactionData $data)
+    public function handle(TransactionData $data, $rate, $days)
     {
         $member = Member::find($data->member_id);
         $td = app(CreateTimeDeposit::class)->handle(timeDepositData: new TimeDepositData(
             member_id: $data->member_id,
-            maturity_date: TimeDepositsProvider::getMaturityDate($data->transaction_date),
+            maturity_date: TimeDepositsProvider::getMaturityDate($data->transaction_date, $days),
             reference_number: $data->reference_number,
             payment_type_id: $data->payment_type_id,
             amount: $data->credit,
-            maturity_amount: TimeDepositsProvider::getMaturityAmount(floatval($data->credit)),
+            maturity_amount: TimeDepositsProvider::getMaturityAmount(floatval($data->credit), $rate, $days),
+            number_of_days: $days,
+            interest_rate: $rate,
             transaction_date: $data->transaction_date,
         ), transactionType: TransactionType::CRJ());
 

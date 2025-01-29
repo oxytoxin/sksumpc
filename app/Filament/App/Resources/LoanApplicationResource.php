@@ -142,7 +142,7 @@ class LoanApplicationResource extends Resource
             ->defaultLoanApplicationFilters()
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->visible(fn($record) => Auth::user()->can('manage loans') && $record->status == LoanApplication::STATUS_PROCESSING),
+                    ->visible(fn($record) => Auth::user()->can('manage loans') && $record->status != LoanApplication::STATUS_POSTED),
                 Action::make('CIBI')->label('CIBI')->button()->url(fn($record) => route('filament.app.resources.loan-applications.credit-and-background-investigation-form', ['loan_application' => $record])),
                 Action::make('Approve')
                     ->action(function (LoanApplication $record) {

@@ -34,6 +34,8 @@ class CreateTimeDeposit
             'payment_type_id' => $timeDepositData->payment_type_id,
             'amount' => $timeDepositData->amount,
             'maturity_amount' => $timeDepositData->maturity_amount,
+            'interest_rate' => $timeDepositData->interest_rate,
+            'number_of_days' => $timeDepositData->number_of_days,
             'transaction_date' => $timeDepositData->transaction_date,
             'time_deposit_account_id' => $tda->id,
         ]);

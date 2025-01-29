@@ -29,15 +29,17 @@ class TimeDepositsProvider
         return 0.03;
     }
 
-    public static function getMaturityAmount(?float $amount, $interest_rate = null): float
+    public static function getMaturityAmount(?float $amount, $interest_rate = null, $number_of_days = null): float
     {
         $interest_rate ??= static::getInterestRate($amount);
+        $number_of_days ??= static::NUMBER_OF_DAYS;
 
-        return $amount ? round($amount * (1 + $interest_rate * static::NUMBER_OF_DAYS / static::DAYS_ANNUALLY), 2) : 0;
+        return $amount ? round($amount * (1 + $interest_rate * floatval($number_of_days ?? 0) / static::DAYS_ANNUALLY), 2) : 0;
     }
 
-    public static function getMaturityDate($date_from): CarbonImmutable
+    public static function getMaturityDate($date_from, $number_of_days = null): CarbonImmutable
     {
-        return CarbonImmutable::create($date_from)->addDays(static::NUMBER_OF_DAYS);
+        $number_of_days ??= static::NUMBER_OF_DAYS;
+        return CarbonImmutable::create($date_from)->addDays(floatval($number_of_days ?? 0));
     }
 }

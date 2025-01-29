@@ -17,6 +17,7 @@ use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\SelectFilter;
 use App\Enums\OthersTransactionExcludedAccounts;
 use App\Enums\TransactionTypes;
+use App\Models\Member;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 
@@ -92,13 +93,45 @@ class PaymentTransactions extends Page implements HasTable
                 ]);
             })
             ->filters([
+                SelectFilter::make('member_type')
+                    ->relationship('member.member_type', 'name'),
+                SelectFilter::make('member_subtype')
+                    ->relationship('member.member_subtype', 'name'),
+                SelectFilter::make('division')
+                    ->relationship('member.division', 'name'),
+                SelectFilter::make('patronage_status')
+                    ->relationship('member.patronage_status', 'name'),
+                SelectFilter::make('gender')
+                    ->relationship('member.gender', 'name'),
+                SelectFilter::make('status')
+                    ->options([
+                        1 => 'Active',
+                        2 => 'Terminated',
+                    ])
+                    ->default(1)
+                    ->query(
+                        fn($query, $state) => $query
+                            ->when($state['value'] == 1, fn($q) => $q->whereRelation('member', 'terminated_at', null))
+                            ->when($state['value'] == 2, fn($q) => $q->whereRelation('member', 'terminated_at', '!=',  null))
+                    ),
+                SelectFilter::make('civil_status')
+                    ->relationship('member.civil_status', 'name'),
+                SelectFilter::make('occupation')
+                    ->relationship('member.occupation', 'name'),
+                SelectFilter::make('highest_educational_attainment')
+                    ->label('Highest Educational Attainment')
+                    ->options(Member::whereNotNull('highest_educational_attainment')
+                        ->distinct('highest_educational_attainment')
+                        ->pluck('highest_educational_attainment', 'highest_educational_attainment'))
+                    ->searchable()
+                    ->preload()
+                    ->query(
+                        fn($query, $state) => $query
+                            ->when($state['value'], fn($q, $v) => $q->whereRelation('member', 'highest_educational_attainment', $v))
+                    ),
                 DateRangeFilter::make('transaction_date')
                     ->format('m/d/Y')
                     ->displayFormat('MM/DD/YYYY'),
-                SelectFilter::make('member_type')
-                    ->label('Member Type')
-                    ->options(MemberType::pluck('name', 'id'))
-                    ->query(fn($query, $state) => $query->when($state['value'], fn($q, $v) => $q->whereRelation('member', 'member_type_id', $state['value']))),
                 Filter::make('transaction_type')
                     ->columns(2)
                     ->columnSpan(2)

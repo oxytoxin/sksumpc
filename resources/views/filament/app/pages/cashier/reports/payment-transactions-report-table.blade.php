@@ -8,9 +8,10 @@
                 <th class="border border-black text-center">ACCOUNT NAME</th>
                 <th class="border border-black text-center">ACCOUNT NUMBER</th>
                 <th class="border border-black text-center">REFERENCE #</th>
-                <th class="border border-black text-center">DEBIT</th>
-                <th class="border border-black text-center">CREDIT</th>
-                <th class="border border-black text-center">RUNNING BALANCE</th>
+                {{-- <th class="border border-black text-center">DEBIT</th> --}}
+                {{-- <th class="border border-black text-center">CREDIT</th> --}}
+                <th class="border border-black text-center">TOTAL AMOUNT</th>
+                {{-- <th class="border border-black text-center">RUNNING BALANCE</th> --}}
             </tr>
         </thead>
         <tbody>
@@ -42,12 +43,12 @@
                     <td class="whitespace-nowrap border border-black px-2 text-center">
                         {{ $record->reference_number }}
                     </td>
-                    <td class="border border-black text-center">
-                        {{ renumber_format($record->debit, 2) }}</td>
+                    {{-- <td class="border border-black text-center">
+                        {{ renumber_format($record->debit, 2) }}</td> --}}
                     <td class="border border-black text-center">
                         {{ renumber_format($record->credit, 2) }}</td>
-                    <td class="border border-black text-center">
-                        {{ renumber_format($balance, 2) }}
+                    {{-- <td class="border border-black text-center">
+                        {{ renumber_format($balance, 2) }} --}}
                     </td>
                 </tr>
             @empty
@@ -57,9 +58,9 @@
             @endforelse
             <tr>
                 <th colspan="6" class="border border-black text-center">GRAND TOTAL</th>
-                <td class="border border-black font-bold text-center">{{ renumber_format($total_debit, 2) }}</td>
+                {{-- <td class="border border-black font-bold text-center">{{ renumber_format($total_debit, 2) }}</td> --}}
                 <td class="border border-black font-bold text-center">{{ renumber_format($total_credit, 2) }}</td>
-                <td class="border border-black font-bold text-center">{{ renumber_format($balance, 2) }}</td>
+                {{-- <td class="border border-black font-bold text-center">{{ renumber_format($balance, 2) }}</td> --}}
             </tr>
         </tbody>
     </table>

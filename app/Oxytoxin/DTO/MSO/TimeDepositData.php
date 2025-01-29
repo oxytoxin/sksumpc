@@ -13,6 +13,8 @@ class TimeDepositData extends Data
         public string $reference_number,
         public string $amount,
         public string $maturity_amount,
+        public ?float $number_of_days = null,
+        public ?float $interest_rate = null,
         public $withdrawal_date = null,
         public $transaction_date = null,
     ) {
