@@ -19,32 +19,42 @@ class PayLoan
         $start = $loan->last_payment?->transaction_date ?? $loan->transaction_date;
         $end = $loanPaymentData->transaction_date;
         $total_days = LoansProvider::getAccruableDays($start, $end);
-        $interest_due = LoansProvider::computeAccruedInterest($loan, $loan->outstanding_balance, $total_days);
+        $unpaid_interest = $loan->payments()->sum('unpaid_interest');
+        $interest_due = LoansProvider::computeAccruedInterest($loan, $loan->outstanding_balance, $total_days) + $unpaid_interest;
         $interest_payment = min($loanPaymentData->amount, $interest_due);
+        if ($interest_payment < $interest_due) {
+            $remaining_unpaid_interest = round($interest_due - $interest_payment, 6);
+        }
         $principal_payment = $loanPaymentData->amount - $interest_payment;
         $loan_receivables_account = $loan->loan_account;
         $loan_interests_account = Account::whereAccountableType(LoanType::class)->whereAccountableId($loan->loan_type_id)->whereTag('loan_interests')->first();
 
-        app(CreateTransaction::class)->handle(new TransactionData(
-            account_id: $loan_receivables_account->id,
-            transactionType: $transactionType,
-            payment_type_id: $loanPaymentData->payment_type_id,
-            reference_number: $loanPaymentData->reference_number,
-            credit: $principal_payment,
-            member_id: $loan->member_id,
-            remarks: 'Member Loan Payment Principal',
-            transaction_date: $loanPaymentData->transaction_date,
-        ));
-        app(CreateTransaction::class)->handle(new TransactionData(
-            account_id: $loan_interests_account->id,
-            transactionType: $transactionType,
-            payment_type_id: $loanPaymentData->payment_type_id,
-            reference_number: $loanPaymentData->reference_number,
-            credit: $interest_payment,
-            member_id: $loan->member_id,
-            remarks: 'Member Loan Payment Interest',
-            transaction_date: $loanPaymentData->transaction_date
-        ));
+        if ($principal_payment > 0)
+            app(CreateTransaction::class)->handle(new TransactionData(
+                account_id: $loan_receivables_account->id,
+                transactionType: $transactionType,
+                payment_type_id: $loanPaymentData->payment_type_id,
+                reference_number: $loanPaymentData->reference_number,
+                credit: $principal_payment,
+                member_id: $loan->member_id,
+                remarks: 'Member Loan Payment Principal',
+                transaction_date: $loanPaymentData->transaction_date,
+            ));
+        if ($interest_payment > 0)
+            app(CreateTransaction::class)->handle(new TransactionData(
+                account_id: $loan_interests_account->id,
+                transactionType: $transactionType,
+                payment_type_id: $loanPaymentData->payment_type_id,
+                reference_number: $loanPaymentData->reference_number,
+                credit: $interest_payment,
+                member_id: $loan->member_id,
+                remarks: 'Member Loan Payment Interest',
+                transaction_date: $loanPaymentData->transaction_date
+            ));
+
+        $loan->payments()->update([
+            'unpaid_interest' => 0
+        ]);
 
         return LoanPayment::create([
             'loan_id' => $loan->id,
@@ -54,6 +64,7 @@ class PayLoan
             'amount' => $loanPaymentData->amount,
             'interest_payment' => $interest_payment,
             'principal_payment' => $principal_payment,
+            'unpaid_interest' => $remaining_unpaid_interest ?? 0,
             'reference_number' => $loanPaymentData->reference_number,
             'remarks' => $loanPaymentData->remarks,
             'transaction_date' => $loanPaymentData->transaction_date,

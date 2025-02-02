@@ -6,6 +6,7 @@ use App\Filament\App\Pages\Cashier\RequiresBookkeeperTransactionDate;
 use App\Models\Account;
 use App\Models\BalanceForwardedSummary;
 use App\Models\Transaction;
+use Auth;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -17,6 +18,7 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Table;
 use Livewire\Attributes\Computed;
+use Malzariey\FilamentDaterangepickerFilter\Fields\DateRangePicker;
 
 class AccountTransactionsList extends Page implements HasForms, HasTable
 {
@@ -27,10 +29,11 @@ class AccountTransactionsList extends Page implements HasForms, HasTable
     protected static ?string $navigationGroup = 'Bookkeeping';
 
     public $account;
+    public $date;
 
     public static function shouldRegisterNavigation(): bool
     {
-        return auth()->user()->can('manage bookkeeping');
+        return Auth::user()->can('manage bookkeeping');
     }
 
     protected static string $view = 'filament.app.pages.bookkeeper.account-transactions-list';
@@ -38,6 +41,7 @@ class AccountTransactionsList extends Page implements HasForms, HasTable
     public function mount()
     {
         $this->form->fill();
+        $this->date = (config('app.transaction_date')->format('Y/m/d') ?? today()->format('Y/m/d')) . ' - ' . config('app.transaction_date')->format('Y/m/d') ?? today()->format('Y/m/d');
     }
 
     public function form(Form $form): Form
@@ -53,15 +57,24 @@ class AccountTransactionsList extends Page implements HasForms, HasTable
                     ->afterStateUpdated(function () {
                         $this->resetTable();
                     }),
-            ]);
+                DateRangePicker::make('date')
+                    ->format('Y/m/d')
+                    ->displayFormat('YYYY/MM/DD')
+                    ->reactive()
+                    ->afterStateUpdated(function () {
+                        $this->resetTable();
+                    }),
+            ])
+            ->columns(2);
     }
 
     #[Computed]
     public function ForwardedBalance()
     {
+        [$date_before, $date_after] = explode(' - ', $this->date);
         $account = Account::query()
-            ->withSum(['recursiveTransactions as total_debit' => fn($query) => $query->where('transaction_date', '<', config('app.transaction_date') ?? today())], 'debit')
-            ->withSum(['recursiveTransactions as total_credit' => fn($query) => $query->where('transaction_date', '<', config('app.transaction_date') ?? today())], 'credit')
+            ->withSum(['recursiveTransactions as total_debit' => fn($query) => $query->where('transaction_date', '<', $date_before)], 'debit')
+            ->withSum(['recursiveTransactions as total_credit' => fn($query) => $query->where('transaction_date', '<', $date_before)], 'credit')
             ->find($this->account);
         return $account;
     }
@@ -75,10 +88,11 @@ class AccountTransactionsList extends Page implements HasForms, HasTable
 
     public function table(Table $table): Table
     {
+        ray()->showQueries();
         return $table->query(
             Transaction::query()
                 ->whereHas('account', fn($query) => $query->whereRelation('ancestorsAndSelf', 'id', $this->account))
-                ->whereDate('transaction_date', config('app.transaction_date') ?? today())
+                ->whereBetween('transaction_date', explode(' - ', $this->date))
         )
             ->columns([
                 TextColumn::make('member.name'),

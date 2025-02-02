@@ -65,9 +65,6 @@ class CapitalSubscription extends Model
             }
             $cbu->code = $code;
             $cbu->save();
-            if ($cbu->monthly_payment) {
-                $cbu->capital_subscription_amortizations()->createMany(ShareCapitalProvider::generateAmortizationSchedule($cbu));
-            }
         });
     }
 
