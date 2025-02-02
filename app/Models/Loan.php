@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Actions\Loans\RunLoanProcessesAfterPosting;
 use App\Actions\Loans\UpdateLoanDeductionsData;
+use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Number;
 use NumberFormatter;
+use PDO;
 
 /**
  * @mixin IdeHelperLoan
@@ -68,6 +70,15 @@ class Loan extends Model
 
     public function getMaturityDateAttribute()
     {
+        $maturity_date = $this->transaction_date->addMonthsNoOverflow($this->number_of_terms);
+        if ($this->loan_type->code == 'SL') {
+            if ($maturity_date > CarbonImmutable::create($maturity_date->year, 5, 20))
+                return CarbonImmutable::create($maturity_date->year, 11, 20);
+            else if ($maturity_date > CarbonImmutable::create($maturity_date->year, 11, 20))
+                return CarbonImmutable::create($maturity_date->year + 1, 5, 20);
+            else
+                return CarbonImmutable::create($maturity_date->year, 5, 20);
+        }
         return $this->transaction_date->addMonthsNoOverflow($this->number_of_terms);
     }
 
