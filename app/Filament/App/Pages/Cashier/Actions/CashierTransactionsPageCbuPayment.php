@@ -25,9 +25,9 @@ class CashierTransactionsPageCbuPayment
                 ->send();
             throw ValidationException::withMessages(['member_id' => 'Member has no active capital subscription.']);
         }
-        ray($data);
+        
         app(PayCapitalSubscription::class)->handle($member->active_capital_subscription, $data);
-        ray($data);
+       
         $data->debit = $data->credit;
         $data->credit = null;
         $cash_in_bank_account_id = Account::getCashInBankGF()->id;
