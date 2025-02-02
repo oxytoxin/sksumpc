@@ -88,7 +88,6 @@ class AccountTransactionsList extends Page implements HasForms, HasTable
 
     public function table(Table $table): Table
     {
-        ray()->showQueries();
         return $table->query(
             Transaction::query()
                 ->whereHas('account', fn($query) => $query->whereRelation('ancestorsAndSelf', 'id', $this->account))
