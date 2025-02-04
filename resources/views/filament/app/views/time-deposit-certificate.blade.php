@@ -37,10 +37,10 @@
                 </div>
             </div>
         </div>
-        <div class="flex break-before-page gap-4">
-            <div class="max-w-md text-sm">
+        <div class="flex flex-col break-before-page gap-12">
+            <div class="px-32 mx-auto text-sm">
                 <h2 class="border-b border-black text-center">CONDITIONS</h2>
-                <p class="text-justify">
+                <p class="text-center">
                     The depositors must present this certificate, properly endorsed, when applying for payment and/ or
                     renewal
                     at maturity date. This must be surrendered upon payment of the amount due to member. Interest on
