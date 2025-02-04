@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Resources;
 
+use App\Enums\MemberTypes;
 use App\Filament\App\Resources\MemberResource\Pages;
 use App\Filament\App\Resources\MemberResource\Pages\CbuAmortizationSchedule;
 use App\Filament\App\Resources\MemberResource\Pages\CbuSubsidiaryLedger;
@@ -187,12 +188,12 @@ class MemberResource extends Resource
                                         $member_type = MemberType::find($state);
                                         $set('number_of_shares', round($member_type->default_number_of_shares, 0));
                                         $set('amount_subscribed', round($member_type->default_amount_subscribed, 0));
-                                        if ($member_type?->id == 1) {
+                                        if ($member_type?->id == MemberTypes::REGULAR->value) {
                                             $set('present_employer', 'SKSU-Sultan Kudarat State University');
 
                                             return;
                                         }
-                                        if ($member_type?->id == 4) {
+                                        if ($member_type?->id == MemberTypes::LABORATORY->value) {
                                             $set('dependents', [
                                                 [
                                                     'relationship' => 'FATHER',
@@ -209,16 +210,16 @@ class MemberResource extends Resource
                                 Select::make('member_subtype_id')
                                     ->relationship('member_subtype', 'name')
                                     ->options(fn($get) => MemberSubtype::whereMemberTypeId($get('member_type_id'))->pluck('name', 'id'))
-                                    ->required(fn($get) => $get('member_type_id') == 1)
-                                    ->visible(fn($get) => $get('member_type_id') == 1)
+                                    ->required(fn($get) => $get('member_type_id') == MemberTypes::REGULAR->value)
+                                    ->visible(fn($get) => $get('member_type_id') == MemberTypes::REGULAR->value)
                                     ->live(),
                                 Select::make('division_id')
-                                    ->visible(fn($get) => $get('member_type_id') != 4)
+                                    ->visible(fn($get) => $get('member_type_id') != MemberTypes::LABORATORY->value)
                                     ->relationship('division', 'name'),
                                 TextInput::make('grade')
-                                    ->visible(fn($get) => $get('member_type_id') == 4),
+                                    ->visible(fn($get) => $get('member_type_id') == MemberTypes::LABORATORY->value),
                                 TextInput::make('section')
-                                    ->visible(fn($get) => $get('member_type_id') == 4),
+                                    ->visible(fn($get) => $get('member_type_id') == MemberTypes::LABORATORY->value),
                                 Select::make('patronage_status_id')
                                     ->label('Patronage Status')
                                     ->default(1)
