@@ -39,7 +39,6 @@ class CreateTimeDeposit
             'transaction_date' => $timeDepositData->transaction_date,
             'time_deposit_account_id' => $tda->id,
         ]);
-
         app(CreateTransaction::class)->handle(new TransactionData(
             account_id: $tda->id,
             transactionType: $transactionType,
