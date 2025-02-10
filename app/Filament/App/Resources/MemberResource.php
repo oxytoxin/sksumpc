@@ -12,6 +12,7 @@ use App\Filament\App\Resources\MemberResource\Pages\LoanDisclosureSheet;
 use App\Filament\App\Resources\MemberResource\Pages\LoanSubsidiaryLedger;
 use App\Filament\App\Resources\MemberResource\Pages\LoveGiftsSubsidiaryLedger;
 use App\Filament\App\Resources\MemberResource\Pages\SavingsSubsidiaryLedger;
+use App\Filament\App\Resources\MemberResource\Pages\TimeDepositSubsidiaryLedger;
 use App\Infolists\Components\DependentsEntry;
 use App\Livewire\App\CbuTable;
 use App\Livewire\App\LoansTable;
@@ -521,6 +522,7 @@ class MemberResource extends Resource
             'loan-subsidiary-ledger' => LoanSubsidiaryLedger::route('loan-subsidiary-ledger/{loan}'),
             'loan-amortization-schedule' => LoanAmortizationSchedule::route('loan-amortization-schedule/{loan}'),
             'loan-disclosure-sheet' => LoanDisclosureSheet::route('loan-disclosure-sheet/{loan}'),
+            'time-deposit-subsidiary-ledger' => TimeDepositSubsidiaryLedger::route('time-deposit-subsidiary-ledger/{time_deposit_account}'),
         ];
     }
 }

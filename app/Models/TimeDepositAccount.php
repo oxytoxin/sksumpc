@@ -19,8 +19,19 @@ class TimeDepositAccount extends Account
         });
     }
 
+
+    public function time_deposits()
+    {
+        return $this->hasMany(TimeDeposit::class)->orderBy('transaction_date');
+    }
+
     public function time_deposit()
     {
-        return $this->hasOne(TimeDeposit::class);
+        return $this->hasOne(TimeDeposit::class)->latestOfMany('transaction_date');
+    }
+
+    public function original_time_deposit()
+    {
+        return $this->hasOne(TimeDeposit::class)->oldestOfMany('transaction_date');
     }
 }

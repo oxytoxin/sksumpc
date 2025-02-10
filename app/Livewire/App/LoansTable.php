@@ -9,6 +9,7 @@ use App\Models\LoanType;
 use App\Models\Member;
 use App\Oxytoxin\Providers\LoansProvider;
 use App\Oxytoxin\Providers\OverrideProvider;
+use Auth;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
@@ -47,8 +48,6 @@ class LoansTable extends Component implements HasForms, HasTable
                 TextColumn::make('loan_account.number'),
                 TextColumn::make('reference_number'),
                 TextColumn::make('loan_type.code'),
-                // TextColumn::make('deductions_list')
-                //     ->listWithLineBreaks(),
                 TextColumn::make('number_of_terms'),
                 TextColumn::make('gross_amount')->money('PHP'),
                 TextColumn::make('interest')->money('PHP'),
@@ -67,14 +66,14 @@ class LoansTable extends Component implements HasForms, HasTable
                     ])
                     ->query(function (Builder $query, $data) {
                         $query
-                            ->when($data['value'] == 'paid', fn ($query) => $query->where('outstanding_balance', '<=', 0)->posted())
-                            ->when($data['value'] == 'ongoing', fn ($query) => $query->where('outstanding_balance', '>', 0)->posted())
-                            ->when($data['value'] == 'pending', fn ($query) => $query->pending());
+                            ->when($data['value'] == 'paid', fn($query) => $query->where('outstanding_balance', '<=', 0)->posted())
+                            ->when($data['value'] == 'ongoing', fn($query) => $query->where('outstanding_balance', '>', 0)->posted())
+                            ->when($data['value'] == 'pending', fn($query) => $query->pending());
                     }),
             ], layout: FiltersLayout::AboveContent)
             ->actions([
                 EditAction::make('edit')
-                    ->hidden(fn ($record) => $record->posted || $record->created_at->isBefore(today()->subDay()))
+                    ->hidden(fn($record) => $record->posted || $record->created_at->isBefore(today()->subDay()))
                     ->mountUsing(function ($form, $record, $livewire) {
                         $form->fill([
                             'number_of_terms' => $record->number_of_terms,
@@ -121,18 +120,18 @@ class LoansTable extends Component implements HasForms, HasTable
                         Grid::make(3)
                             ->schema([
                                 Placeholder::make('interest_rate')
-                                    ->content(fn ($get) => str(LoanType::find($get('loan_type_id'))?->interest_rate * 100 ?? 0)->append('%')->toString()),
+                                    ->content(fn($get) => str(LoanType::find($get('loan_type_id'))?->interest_rate * 100 ?? 0)->append('%')->toString()),
                                 Placeholder::make('interest')
-                                    ->content(fn ($get) => Number::currency(LoansProvider::computeInterest(str_replace(',', '', $get('gross_amount') ?? 0), LoanType::find($get('loan_type_id')), $get('number_of_terms'), $get('transaction_date')), 'PHP')),
+                                    ->content(fn($get) => Number::currency(LoansProvider::computeInterest(str_replace(',', '', $get('gross_amount') ?? 0), LoanType::find($get('loan_type_id')), $get('number_of_terms'), $get('transaction_date')), 'PHP')),
                                 Placeholder::make('monthly_payment')
-                                    ->content(fn ($get) => Number::currency(LoansProvider::computeMonthlyPayment(str_replace(',', '', $get('gross_amount') ?? 0), LoanType::find($get('loan_type_id')), $get('number_of_terms'), $get('transaction_date')), 'PHP')),
+                                    ->content(fn($get) => Number::currency(LoansProvider::computeMonthlyPayment(str_replace(',', '', $get('gross_amount') ?? 0), LoanType::find($get('loan_type_id')), $get('number_of_terms'), $get('transaction_date')), 'PHP')),
                             ]),
                         TableRepeater::make('deductions')
                             ->schema([
-                                TextInput::make('name')->readOnly(fn ($get) => boolval($get('readonly'))),
+                                TextInput::make('name')->readOnly(fn($get) => boolval($get('readonly'))),
                                 TextInput::make('amount')
                                     ->moneymask()
-                                    ->readOnly(fn ($get) => boolval($get('readonly'))),
+                                    ->readOnly(fn($get) => boolval($get('readonly'))),
                                 Hidden::make('readonly')->default(false),
                             ])
                             ->live(true)
@@ -141,13 +140,13 @@ class LoansTable extends Component implements HasForms, HasTable
                         Grid::make(2)
                             ->schema([
                                 Placeholder::make('deductions_amount')
-                                    ->content(fn ($get) => Number::currency(collect($get('deductions'))->map(function ($d) {
+                                    ->content(fn($get) => Number::currency(collect($get('deductions'))->map(function ($d) {
                                         $d['amount'] = str_replace(',', '', filled($d['amount']) ? $d['amount'] : 0);
 
                                         return $d;
                                     })->sum('amount'), 'PHP')),
                                 Placeholder::make('net_amount')
-                                    ->content(fn ($get) => Number::currency(floatval(str_replace(',', '', $get('gross_amount') ?? 0)) - collect($get('deductions'))->map(function ($d) {
+                                    ->content(fn($get) => Number::currency(floatval(str_replace(',', '', $get('gross_amount') ?? 0)) - collect($get('deductions'))->map(function ($d) {
                                         $d['amount'] = str_replace(',', '', filled($d['amount']) ? $d['amount'] : 0);
 
                                         return $d;
@@ -173,9 +172,9 @@ class LoansTable extends Component implements HasForms, HasTable
                         ]);
                         $this->dispatch('refresh');
                         Notification::make()->title('Loan updated.')->success()->send();
-                    })->visible(auth()->user()->can('manage loans')),
+                    })->visible(Auth::user()->can('manage loans')),
                 DeleteAction::make()
-                    ->hidden(fn ($record) => $record->posted)->visible(auth()->user()->can('manage loans')),
+                    ->hidden(fn($record) => $record->posted)->visible(Auth::user()->can('manage loans')),
                 ViewLoanDetailsActionGroup::getActions(),
             ])
             ->headerActions([])

@@ -14,6 +14,8 @@ class TimeDepositsProvider
 
     const FROM_TRANSFER_CODE = '#FROMTIMEDEPOSITS';
 
+    const TERMINATION_INTEREST_RATE = 0.01;
+
     public static function getInterestRate(?float $amount): float
     {
         if ($amount < 100000) {
