@@ -11,6 +11,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
@@ -45,7 +46,7 @@ class CapitalSubscriptionBillingPayments extends ListRecords
                         ->storeFiles(false)
                         ->acceptedFileTypes(['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/octet-stream']),
                 ])
-                ->disabled(fn () => $this->capital_subscription_billing->posted)
+                ->disabled(fn() => $this->capital_subscription_billing->posted)
                 ->action(function ($data) {
                     $payments = $this->capital_subscription_billing->capital_subscription_billing_payments()->join('members', 'capital_subscription_billing_payments.member_id', 'members.id')
                         ->selectRaw('capital_subscription_billing_payments.*, members.mpc_code as member_code')
@@ -82,18 +83,18 @@ class CapitalSubscriptionBillingPayments extends ListRecords
                     $worksheet->setCellValue('A1', $title);
                     $worksheet->insertNewRowBefore(3, $capital_subscription_billing_payments->count());
                     foreach ($capital_subscription_billing_payments as $key => $payment) {
-                        $worksheet->setCellValue('A'.$key + 3, $key + 1);
-                        $worksheet->setCellValue('B'.$key + 3, $payment->member_code);
-                        $worksheet->setCellValue('C'.$key + 3, $payment->member_name);
-                        $worksheet->setCellValue('D'.$key + 3, $payment->amount_due);
-                        $worksheet->setCellValue('E'.$key + 3, $payment->amount_paid);
+                        $worksheet->setCellValue('A' . $key + 3, $key + 1);
+                        $worksheet->setCellValue('B' . $key + 3, $payment->member_code);
+                        $worksheet->setCellValue('C' . $key + 3, $payment->member_name);
+                        $worksheet->setCellValue('D' . $key + 3, $payment->amount_due);
+                        $worksheet->setCellValue('E' . $key + 3, $payment->amount_paid);
                     }
-                    $worksheet->setCellValue('A'.$key + 4, 'GRAND TOTAL');
-                    $worksheet->setCellValue('D'.$key + 4, '=SUM(D3:D'.$key + 3 .')');
-                    $worksheet->setCellValue('E'.$key + 4, '=SUM(E3:E'.$key + 3 .')');
+                    $worksheet->setCellValue('A' . $key + 4, 'GRAND TOTAL');
+                    $worksheet->setCellValue('D' . $key + 4, '=SUM(D3:D' . $key + 3 . ')');
+                    $worksheet->setCellValue('E' . $key + 4, '=SUM(E3:E' . $key + 3 . ')');
                     $worksheet->getProtection()->setSheet(true)->setInsertRows(true)->setInsertColumns(true);
-                    $worksheet->protectCells('E3:E'.($capital_subscription_billing_payments->count() + 2), auth()->user()->getAuthPassword(), true);
-                    $path = storage_path('app/livewire-tmp/'.$filename);
+                    $worksheet->protectCells('E3:E' . ($capital_subscription_billing_payments->count() + 2), auth()->user()->getAuthPassword(), true);
+                    $path = storage_path('app/livewire-tmp/' . $filename);
                     $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
                     $writer->save($path);
 
@@ -124,19 +125,25 @@ class CapitalSubscriptionBillingPayments extends ListRecords
             ->filters([
                 SelectFilter::make('member.member_type_id')
                     ->relationship('member.member_type', 'name')
-                    ->query(fn ($query, $livewire) => $query->when($livewire->tableFilters['member']['member_type_id']['value'] ?? null, fn ($q, $v) => $q->whereRelation('member', 'member_type_id', $v))),
+                    ->query(fn($query, $livewire) => $query->when($livewire->tableFilters['member']['member_type_id']['value'] ?? null, fn($q, $v) => $q->whereRelation('member', 'member_type_id', $v))),
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
             ->actions([
                 EditAction::make()
                     ->form([
                         TextInput::make('amount_paid')
-                            ->default(fn ($record) => $record->amount_paid)
+                            ->default(fn($record) => $record->amount_paid)
                             ->moneymask(),
                     ])
-                    ->visible(fn ($record) => ! $record->posted),
+                    ->visible(fn($record) => ! $record->posted),
                 DeleteAction::make()
-                    ->visible(fn ($record) => ! $record->posted),
+                    ->visible(fn($record) => ! $record->posted),
+            ])->bulkActions([
+                DeleteBulkAction::make()
+                    ->action(function ($records) {
+                        $records->toQuery()->where('posted', false)->delete();
+                        Notification::make()->title('Records deleted!')->body('Only unposted records are deleted.')->success()->send();
+                    })
             ]);
     }
 }

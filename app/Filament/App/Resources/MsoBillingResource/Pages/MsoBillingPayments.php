@@ -15,6 +15,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
@@ -42,18 +43,18 @@ class MsoBillingPayments extends ListRecords
         return [
             CreateAction::make()->label('New MSO Receivable')
                 ->createAnother(false)
-                ->disabled(fn () => $this->mso_billing->posted)
+                ->disabled(fn() => $this->mso_billing->posted)
                 ->form([
                     Select::make('member_id')
                         ->label('Member')
                         ->options(Member::pluck('full_name', 'id'))
                         ->searchable()
                         ->reactive()
-                        ->afterStateUpdated(fn ($set, $state) => $set('payee', Member::find($state)?->full_name))
+                        ->afterStateUpdated(fn($set, $state) => $set('payee', Member::find($state)?->full_name))
                         ->preload(),
                     Select::make('account_id')
                         ->label('Account')
-                        ->options(fn ($get) => match ($this->mso_billing->type) {
+                        ->options(fn($get) => match ($this->mso_billing->type) {
                             1 => Account::withCode()->whereMemberId($get('member_id'))->whereTag('regular_savings')->pluck('code', 'id'),
                             2 => Account::withCode()->whereMemberId($get('member_id'))->whereTag('imprest_savings')->pluck('code', 'id'),
                             3 => Account::withCode()->whereMemberId($get('member_id'))->whereTag('love_gift_savings')->pluck('code', 'id'),
@@ -83,7 +84,7 @@ class MsoBillingPayments extends ListRecords
                         ->storeFiles(false)
                         ->acceptedFileTypes(['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/octet-stream']),
                 ])
-                ->disabled(fn () => $this->mso_billing->posted)
+                ->disabled(fn() => $this->mso_billing->posted)
                 ->action(function ($data) {
                     $payments = $this->mso_billing->payments()->join('members', 'mso_billing_payments.member_id', 'members.id')
                         ->selectRaw('mso_billing_payments.*, members.mpc_code as member_code')
@@ -120,18 +121,18 @@ class MsoBillingPayments extends ListRecords
                     $worksheet->setCellValue('A1', $title);
                     $worksheet->insertNewRowBefore(3, $mso_billing_payments->count());
                     foreach ($mso_billing_payments as $key => $payment) {
-                        $worksheet->setCellValue('A'.$key + 3, $key + 1);
-                        $worksheet->setCellValue('B'.$key + 3, $payment->member_code);
-                        $worksheet->setCellValue('C'.$key + 3, $payment->member_name);
-                        $worksheet->setCellValue('D'.$key + 3, $payment->amount_due);
-                        $worksheet->setCellValue('E'.$key + 3, $payment->amount_paid);
+                        $worksheet->setCellValue('A' . $key + 3, $key + 1);
+                        $worksheet->setCellValue('B' . $key + 3, $payment->member_code);
+                        $worksheet->setCellValue('C' . $key + 3, $payment->member_name);
+                        $worksheet->setCellValue('D' . $key + 3, $payment->amount_due);
+                        $worksheet->setCellValue('E' . $key + 3, $payment->amount_paid);
                     }
-                    $worksheet->setCellValue('A'.$key + 4, 'GRAND TOTAL');
-                    $worksheet->setCellValue('D'.$key + 4, '=SUM(D3:D'.$key + 3 .')');
-                    $worksheet->setCellValue('E'.$key + 4, '=SUM(E3:E'.$key + 3 .')');
+                    $worksheet->setCellValue('A' . $key + 4, 'GRAND TOTAL');
+                    $worksheet->setCellValue('D' . $key + 4, '=SUM(D3:D' . $key + 3 . ')');
+                    $worksheet->setCellValue('E' . $key + 4, '=SUM(E3:E' . $key + 3 . ')');
                     $worksheet->getProtection()->setSheet(true)->setInsertRows(true)->setInsertColumns(true);
-                    $worksheet->protectCells('E3:E'.($mso_billing_payments->count() + 2), auth()->user()->getAuthPassword(), true);
-                    $path = storage_path('app/livewire-tmp/'.$filename);
+                    $worksheet->protectCells('E3:E' . ($mso_billing_payments->count() + 2), auth()->user()->getAuthPassword(), true);
+                    $path = storage_path('app/livewire-tmp/' . $filename);
                     $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
                     $writer->save($path);
 
@@ -164,19 +165,25 @@ class MsoBillingPayments extends ListRecords
             ->filters([
                 SelectFilter::make('member.member_type_id')
                     ->relationship('member.member_type', 'name')
-                    ->query(fn ($query, $livewire) => $query->when($livewire->tableFilters['member']['member_type_id']['value'] ?? null, fn ($q, $v) => $q->whereRelation('member', 'member_type_id', $v))),
+                    ->query(fn($query, $livewire) => $query->when($livewire->tableFilters['member']['member_type_id']['value'] ?? null, fn($q, $v) => $q->whereRelation('member', 'member_type_id', $v))),
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
             ->actions([
                 EditAction::make()
                     ->form([
                         TextInput::make('amount_paid')
-                            ->default(fn ($record) => $record->amount_paid)
+                            ->default(fn($record) => $record->amount_paid)
                             ->moneymask(),
                     ])
-                    ->visible(fn ($record) => ! $record->posted),
+                    ->visible(fn($record) => ! $record->posted),
                 DeleteAction::make()
-                    ->visible(fn ($record) => ! $record->posted),
+                    ->visible(fn($record) => ! $record->posted),
+            ])->bulkActions([
+                DeleteBulkAction::make()
+                    ->action(function ($records) {
+                        $records->toQuery()->where('posted', false)->delete();
+                        Notification::make()->title('Records deleted!')->body('Only unposted records are deleted.')->success()->send();
+                    })
             ]);
     }
 }
