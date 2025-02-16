@@ -20,7 +20,7 @@
                         <td class="text-center">{{ $loop->iteration }}</td>
                         <td class="text-center">{{ $payment->member->mpc_code }}</td>
                         <td class="text-center">{{ $payment->member->alt_full_name }}</td>
-                        <td class="text-center">{{ number_format($payment->amount_due, 2) }}</td>
+                        <td class="text-center">{{ number_format($payment->amount_paid, 2) }}</td>
                     </tr>
                 @empty
                 @endforelse
@@ -29,6 +29,6 @@
 
     </div>
     <div class="flex justify-end p-4">
-        <x-filament::button icon="heroicon-o-printer" @click="printOut($refs.print.outerHTML, 'Loan Application Form')">Print</x-filament::button>
+        <x-filament::button icon="heroicon-o-printer" @click="printOut($refs.print.outerHTML, 'Billing')">Print</x-filament::button>
     </div>
 </x-filament-panels::page>

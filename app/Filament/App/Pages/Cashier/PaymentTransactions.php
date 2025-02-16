@@ -284,6 +284,8 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                             ->preload(),
                                         Placeholder::make('loan_type')
                                             ->content(fn($get) => LoanAccount::find($get('loan_account_id'))?->loan?->loan_type?->name),
+                                        Placeholder::make('outstanding_balance')
+                                            ->content(fn($get) => Number::currency(LoanAccount::find($get('loan_account_id'))?->loan?->outstanding_balance ?? 0, 'PHP')),
                                         Select::make('payment_type_id')
                                             ->paymenttype()
                                             ->required(),

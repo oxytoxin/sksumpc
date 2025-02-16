@@ -5,6 +5,7 @@ namespace App\Filament\App\Resources\CapitalSubscriptionBillingResource\Pages;
 use App\Filament\App\Resources\CapitalSubscriptionBillingResource;
 use App\Models\CapitalSubscriptionBilling;
 use App\Models\CapitalSubscriptionBillingPayment;
+use Auth;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
@@ -40,7 +41,7 @@ class CapitalSubscriptionBillingPayments extends ListRecords
     {
         return [
             Action::make('Import')
-                ->visible(auth()->user()->can('manage cbu'))
+                ->visible(Auth::user()->can('manage cbu'))
                 ->form([
                     FileUpload::make('billing')
                         ->storeFiles(false)
@@ -69,7 +70,7 @@ class CapitalSubscriptionBillingPayments extends ListRecords
                 })
                 ->color('success'),
             Action::make('Export')
-                ->visible(auth()->user()->can('manage cbu'))
+                ->visible(Auth::user()->can('manage cbu'))
                 ->action(function () {
                     $title = str('SKSU MPC CBU BILLING')->append(' - as of ')->append($this->capital_subscription_billing->date->format('F Y'))->upper();
                     $filename = $title->append('.xlsx');
@@ -93,7 +94,7 @@ class CapitalSubscriptionBillingPayments extends ListRecords
                     $worksheet->setCellValue('D' . $key + 4, '=SUM(D3:D' . $key + 3 . ')');
                     $worksheet->setCellValue('E' . $key + 4, '=SUM(E3:E' . $key + 3 . ')');
                     $worksheet->getProtection()->setSheet(true)->setInsertRows(true)->setInsertColumns(true);
-                    $worksheet->protectCells('E3:E' . ($capital_subscription_billing_payments->count() + 2), auth()->user()->getAuthPassword(), true);
+                    $worksheet->protectCells('E3:E' . ($capital_subscription_billing_payments->count() + 2), Auth::user()->getAuthPassword(), true);
                     $path = storage_path('app/livewire-tmp/' . $filename);
                     $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
                     $writer->save($path);

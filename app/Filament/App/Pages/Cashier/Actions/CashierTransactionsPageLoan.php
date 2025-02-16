@@ -12,6 +12,8 @@ use App\Models\TransactionType;
 use App\Oxytoxin\DTO\Loan\LoanPaymentData;
 use App\Actions\Transactions\CreateTransaction;
 use App\Oxytoxin\DTO\Transactions\TransactionData;
+use Filament\Notifications\Notification;
+use Illuminate\Validation\ValidationException;
 
 class CashierTransactionsPageLoan
 {
@@ -20,7 +22,12 @@ class CashierTransactionsPageLoan
         $loan_account = LoanAccount::find($data->account_id);
         $loan = $loan_account?->loan;
         $member = Member::find($data->member_id);
-
+        if ($loan->outstanding_balance < $data->credit) {
+            Notification::make()->title('Loan Overpayment')->body('Payment amount exceeds outstanding balance.')->danger()->send();
+            throw ValidationException::withMessages([
+                'mountedTableActionsData.0.amount' => 'Loan Overpayment. Payment amount exceeds outstanding balance.',
+            ]);
+        }
         app(PayLoan::class)->handle($loan, new LoanPaymentData(
             payment_type_id: $data->payment_type_id,
             reference_number: $data->reference_number,
