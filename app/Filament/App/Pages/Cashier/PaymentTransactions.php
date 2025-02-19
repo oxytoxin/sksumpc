@@ -38,7 +38,7 @@ use Filament\Notifications\Notification;
 use Filament\Support\Colors\Color;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
-use Number;
+use Illuminate\Support\Number;
 
 class PaymentTransactions extends Component implements HasActions, HasForms
 {
