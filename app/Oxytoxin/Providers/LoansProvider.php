@@ -21,6 +21,7 @@ class LoansProvider
         60 => 60,
         72 => 72,
         84 => 84,
+        96 => 96,
     ];
 
     const DAYS_IN_MONTH = 30;
