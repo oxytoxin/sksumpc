@@ -41,7 +41,7 @@ class Reports extends Page implements HasForms
                         ->schema([
                             Livewire::make(MsoTransactions::class),
                         ]),
-                    Tab::make('PAYMENT TRANSACTIONS')
+                    Tab::make('OR TRANSACTIONS')
                         ->schema([
                             Livewire::make(PaymentTransactions::class),
                         ]),

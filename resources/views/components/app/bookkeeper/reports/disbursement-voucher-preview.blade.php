@@ -37,22 +37,22 @@
                 <td class="border border-black text-center">CREDIT</td>
             </tr>
             @php
-                $disbursement_voucher_items = $disbursement_voucher->disbursement_voucher_items()->with('account')->get();
+            $disbursement_voucher_items = $disbursement_voucher->disbursement_voucher_items()->with('account')->get();
             @endphp
             @foreach ($disbursement_voucher_items as $item)
-                <tr class="mt-2">
-                    <td colspan="2" class="w-1/2 border-x border-black px-2 text-left uppercase">
-                        {{ $item->account->fullname }}
-                    </td>
-                    <td colspan="2" class="w-1/6 border-x border-black text-center">{{ $item->account->number }}
-                    </td>
-                    <td class="w-1/6 border-x border-black text-right">
-                        {{ $item->debit ? number_format($item->debit, 2) : '' }}
-                    </td>
-                    <td class="w-1/6 border-x border-black text-right">
-                        {{ $item->credit ? number_format($item->credit, 2) : '' }}
-                    </td>
-                </tr>
+            <tr class="mt-2">
+                <td colspan="2" class="w-1/2 border-x border-black px-2 text-left uppercase">
+                    {{ $item->account->fullname }}
+                </td>
+                <td colspan="2" class="w-1/6 border-x border-black text-center">{{ $item->account->number }}
+                </td>
+                <td class="w-1/6 border-x border-black text-right">
+                    {{ $item->debit ? number_format($item->debit, 2) : '' }}
+                </td>
+                <td class="w-1/6 border-x border-black text-right">
+                    {{ $item->credit ? number_format($item->credit, 2) : '' }}
+                </td>
+            </tr>
             @endforeach
             <tr>
                 <td colspan="2" class="border border-black uppercase"></td>

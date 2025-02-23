@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Resources;
 
+use App\Enums\AccountIds;
 use App\Filament\App\Resources\DisbursementVoucherResource\Pages;
 use App\Models\Account;
 use App\Models\DisbursementVoucher;
@@ -19,6 +20,7 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 
@@ -109,6 +111,41 @@ class DisbursementVoucherResource extends Resource
                 DateRangeFilter::make('transaction_date')
                     ->format('m/d/Y')
                     ->displayFormat('MM/DD/YYYY'),
+                SelectFilter::make('Type')
+                    ->options([
+                        'mso' => 'MSO',
+                        'loan' => 'LOAN',
+                        'others' => 'OTHERS'
+                    ])
+                    ->query(function ($query, $state) {
+                        $query
+                            ->when($state['value'] == 'mso', function ($q, $v) {
+                                $q->whereHas('disbursement_voucher_items', function ($q) {
+                                    $q->whereHas('item_account', function ($q) {
+                                        $q->whereRelation('ancestorsAndSelf', 'id', AccountIds::MSO->value);
+                                    });
+                                })->whereDoesntHave('disbursement_voucher_items', function ($q) {
+                                    $q->whereHas('item_account', function ($q) {
+                                        $q->whereRelation('ancestorsAndSelf', 'id', AccountIds::LOAN_RECEIVABLES->value);
+                                    });
+                                });
+                            })->when($state['value'] == 'loan', function ($q, $v) {
+                                $q->whereHas('disbursement_voucher_items', function ($q) {
+                                    $q->whereHas('item_account', function ($q) {
+                                        $q->whereRelation('ancestorsAndSelf', 'id', AccountIds::LOAN_RECEIVABLES->value);
+                                    });
+                                });
+                            })
+                            ->when($state['value'] == 'others', function ($q, $v) {
+                                $q->whereDoesntHave('disbursement_voucher_items', function ($q) {
+                                    $q->whereHas('item_account', function ($q) {
+                                        $q->whereHas('ancestorsAndSelf', function ($q) {
+                                            $q->whereIn('id', [AccountIds::MSO->value, AccountIds::LOAN_RECEIVABLES->value]);
+                                        });
+                                    });
+                                });
+                            });
+                    })
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
             ->actions([

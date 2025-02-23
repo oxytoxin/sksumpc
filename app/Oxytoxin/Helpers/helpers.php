@@ -128,7 +128,7 @@ function renumber_format($number, $decimals = 2)
     if ($number < 0) {
         $result = str('(')->append(number_format(abs($number), $decimals))->append(')');
     } else {
-        $result = number_format($number, $decimals);
+        $result = number_format(round($number, $decimals), $decimals);
     }
 
     return $result;

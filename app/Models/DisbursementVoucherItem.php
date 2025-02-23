@@ -26,6 +26,11 @@ class DisbursementVoucherItem extends Model
         return $this->belongsTo(DisbursementVoucher::class);
     }
 
+    public function item_account()
+    {
+        return $this->belongsTo(Account::class, 'account_id');
+    }
+
     public function account()
     {
         return $this->belongsTo(Account::class)->tree();
