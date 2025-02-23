@@ -1,12 +1,12 @@
 @php
-    $accounts = $this->trial_balance;
-    $current_revenue_ending_balance = sum_no_children_recursive($accounts->where('account_type_id', 3), 'ending_balance_credit');
-    $current_expenses_ending_balance = sum_no_children_recursive($accounts->where('account_type_id', 5), 'ending_balance_debit');
-    $current_net_surplus = $current_revenue_ending_balance - $current_expenses_ending_balance;
+$accounts = $this->trial_balance;
+$current_revenue_ending_balance = sum_no_children_recursive($accounts->where('account_type_id', 3), 'ending_balance_credit');
+$current_expenses_ending_balance = sum_no_children_recursive($accounts->where('account_type_id', 5), 'ending_balance_debit');
+$current_net_surplus = round($current_revenue_ending_balance, 2) - round($current_expenses_ending_balance, 2);
 @endphp
 <tr class="hover:bg-green-100">
     <td class="fs-row-header !text-base">NET SURPLUS FOR DISTRIBUTION</td>
-    <td colspan="2" class="fs-row-data">{{ renumber_format($current_net_surplus) }}</td>
+    <td colspan="2" class="fs-row-data">{{ round($current_net_surplus, 2) }}</td>
     <td class="fs-row-data"></td>
 </tr>
 <tr class="hover:bg-green-100">

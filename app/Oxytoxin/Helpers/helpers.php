@@ -39,16 +39,16 @@ function sum_no_children_recursive(Collection|Model $items, string $key): float
     $sum = 0;
     if ($items instanceof Model) {
         if ($items->children_count == 0) {
-            $sum += round($items[$key], 2);
+            $sum += round($items[$key], 4);
         } else {
-            $sum += round(sum_no_children_recursive($items->children ?? collect(), $key), 2);
+            $sum += round(sum_no_children_recursive($items->children ?? collect(), $key), 4);
         }
     } else {
         foreach ($items as $item) {
             if ($item->children_count == 0) {
-                $sum += round($item[$key], 2);
+                $sum += round($item[$key], 4);
             } else {
-                $sum += round(sum_no_children_recursive($item->children ?? collect(), $key), 2);
+                $sum += round(sum_no_children_recursive($item->children ?? collect(), $key), 4);
             }
         }
     }
