@@ -32,7 +32,7 @@ class PostCapitalSubscriptionBillingPayments
                 payment_type_id: $cbuBilling->payment_type_id,
                 credit: $cbup->amount_paid,
                 member_id: $cbup->capital_subscription->member_id,
-                transaction_date: $cbuBilling->date,
+                transaction_date: $cbuBilling->or_date ?? $cbuBilling->date,
                 payee: $cbup->capital_subscription->member->full_name,
             );
             app(PayCapitalSubscription::class)->handle($cbup->capital_subscription, $data);

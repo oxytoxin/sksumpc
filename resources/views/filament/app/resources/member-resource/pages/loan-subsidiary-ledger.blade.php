@@ -45,21 +45,21 @@
                     @endphp
                     @forelse ($loan->payments as $payment)
                         @php
-                            $running_balance -= $payment->principal_payment;
+                            $running_balance = round($running_balance - $payment->principal_payment, 4);
                         @endphp
                         <tr>
                             <td class="whitespace-nowrap border border-black px-4">
                                 {{ $payment->transaction_date->format('F d, Y') }}</td>
                             <td class="border border-black px-4 text-center">{{ $payment->reference_number }}</td>
                             <td class="whitespace-nowrap border border-black px-4 text-right">
-                                {{ number_format($payment->amount, 2) }}</td>
+                                {{ number_format($payment->amount, 4) }}</td>
                             <td class="whitespace-nowrap border border-black px-4 text-right"></td>
                             <td class="whitespace-nowrap border border-black px-4 text-right">
-                                {{ number_format($payment->interest_payment, 2) }}</td>
+                                {{ number_format($payment->interest_payment, 4) }}</td>
                             <td class="whitespace-nowrap border border-black px-4 text-right">
-                                {{ number_format($payment->principal_payment, 2) }}</td>
+                                {{ number_format($payment->principal_payment, 4) }}</td>
                             <td class="whitespace-nowrap border border-black px-4 text-right">
-                                {{ number_format($running_balance, 2) }}</td>
+                                {{ number_format($running_balance, 4) }}</td>
                             <td class="border border-black px-4">{{ $payment->remarks }}</td>
                         </tr>
                     @empty

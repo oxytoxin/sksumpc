@@ -431,6 +431,7 @@ class MemberResource extends Resource
                     ->searchable()
                     ->preload(),
                 DateRangeFilter::make('membership_date')
+                    ->format('m/d/Y')
                     ->displayFormat('MM/DD/YYYY')
                     ->label('Date of Membership'),
             ])

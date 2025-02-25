@@ -59,8 +59,8 @@ class BillingTransactions extends Component implements HasForms
                         }
                     }),
                 Placeholder::make('loan_type')
-                    ->visible(fn ($get) => $get('type') == 2 && $get('billing_id'))
-                    ->content(fn ($get) => LoanBilling::find($get('billing_id'))?->loan_type->name),
+                    ->visible(fn($get) => $get('type') == 2 && $get('billing_id'))
+                    ->content(fn($get) => LoanBilling::find($get('billing_id'))?->loan_type->name),
                 TextInput::make('name')->required(),
                 TextInput::make('or_number')->required()->label('OR #'),
                 Actions::make([
@@ -78,6 +78,7 @@ class BillingTransactions extends Component implements HasForms
                             $record->update([
                                 'name' => $data['name'],
                                 'or_number' => $data['or_number'],
+                                'or_date' => config('app.transaction_date') ?? today(),
                                 'for_or' => false,
                             ]);
                             Notification::make()->title('OR created for billing!')->success()->send();
@@ -97,13 +98,13 @@ class BillingTransactions extends Component implements HasForms
                                 }
                             }
                         )
-                        ->visible(fn ($get) => $get('billing_id'))
+                        ->visible(fn($get) => $get('billing_id'))
                         ->openUrlInNewTab()
                         ->button()
                         ->outlined(),
                     Action::make('print')
-                        ->url(fn ($get) => route('filament.app.resources.loan-billings.statement-of-remittance', ['loan_billing' => $get('billing_id')]))
-                        ->visible(fn ($get) => $get('type') == 2 && $get('billing_id'))
+                        ->url(fn($get) => route('filament.app.resources.loan-billings.statement-of-remittance', ['loan_billing' => $get('billing_id')]))
+                        ->visible(fn($get) => $get('type') == 2 && $get('billing_id'))
                         ->icon('heroicon-o-printer')
                         ->button()
                         ->openUrlInNewTab()

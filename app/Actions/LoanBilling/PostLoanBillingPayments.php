@@ -32,7 +32,7 @@ class PostLoanBillingPayments
                 reference_number: $loanBilling->or_number,
                 amount: $lp->amount_paid,
                 remarks: $loanBilling->name,
-                transaction_date: $loanBilling->date,
+                transaction_date: $loanBilling->or_date ?? $loanBilling->date,
             ), $transactionType);
 
             $lp->update([
@@ -46,7 +46,7 @@ class PostLoanBillingPayments
                 payment_type_id: $loanBilling->payment_type_id,
                 debit: $lp->amount_paid,
                 member_id: $lp->member_id,
-                transaction_date: $loanBilling->date,
+                transaction_date: $loanBilling->or_date ?? $loanBilling->date,
                 payee: $lp->member->full_name,
             );
 

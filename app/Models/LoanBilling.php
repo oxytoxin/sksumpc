@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use DB;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,6 +16,7 @@ class LoanBilling extends Model
 
     protected $casts = [
         'date' => 'immutable_date',
+        'or_date' => 'immutable_date',
         'posted' => 'boolean',
         'for_or' => 'boolean',
     ];
@@ -37,6 +39,11 @@ class LoanBilling extends Model
     public function cashier()
     {
         return $this->belongsTo(User::class, 'cashier_id');
+    }
+
+    public function OrApproved(): Attribute
+    {
+        return Attribute::make(get: fn() => filled($this->or_number));
     }
 
     protected static function booted(): void

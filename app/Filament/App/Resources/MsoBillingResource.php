@@ -40,8 +40,8 @@ class MsoBillingResource extends Resource
                     ->options(MemberType::pluck('name', 'id')),
                 Select::make('member_subtype_id')
                     ->label('Member Subtype')
-                    ->visible(fn ($get) => MemberSubtype::whereMemberTypeId($get('member_type_id'))->count())
-                    ->options(fn ($get) => MemberSubtype::whereMemberTypeId($get('member_type_id'))->pluck('name', 'id')),
+                    ->visible(fn($get) => MemberSubtype::whereMemberTypeId($get('member_type_id'))->count())
+                    ->options(fn($get) => MemberSubtype::whereMemberTypeId($get('member_type_id'))->pluck('name', 'id')),
                 Select::make('type')
                     ->label('MSO Type')
                     ->reactive()
@@ -74,7 +74,11 @@ class MsoBillingResource extends Resource
                 TextColumn::make('date')->date('m/d/Y')->label('Date Generated'),
                 TextColumn::make('reference_number'),
                 TextColumn::make('or_number')
-                    ->label('OR Approved'),
+                    ->label('OR Number'),
+                TextColumn::make('or_date')->date('m/d/Y')->label('OR Date'),
+                IconColumn::make('or_approved')
+                    ->label('OR Approved')
+                    ->boolean(),
                 IconColumn::make('posted')
                     ->boolean(),
             ])
@@ -83,7 +87,7 @@ class MsoBillingResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->visible(fn ($record) => ! $record->posted)
+                    ->visible(fn($record) => ! $record->posted)
                     ->form([
                         Select::make('payment_type_id')
                             ->paymenttype()
@@ -92,7 +96,7 @@ class MsoBillingResource extends Resource
                         TextInput::make('reference_number'),
                     ]),
                 Tables\Actions\DeleteAction::make()
-                    ->visible(fn ($record) => ! $record->posted)
+                    ->visible(fn($record) => ! $record->posted)
                     ->action(function (MsoBilling $record) {
                         $record->payments()->delete();
                         $record->delete();
@@ -100,7 +104,7 @@ class MsoBillingResource extends Resource
                 Action::make('for_or')
                     ->button()
                     ->color('success')
-                    ->visible(fn ($record, $livewire) => ! $record->posted && ! $record->for_or && ! $record->or_number && $livewire->user_is_cashier)
+                    ->visible(fn($record, $livewire) => ! $record->posted && ! $record->for_or && ! $record->or_number && $livewire->user_is_cashier)
                     ->label('For OR')
                     ->requiresConfirmation()
                     ->action(function (MsoBilling $record) {
@@ -117,14 +121,14 @@ class MsoBillingResource extends Resource
                 Action::make('post_payments')
                     ->button()
                     ->color('success')
-                    ->visible(fn ($record, $livewire) => ! $record->posted && ! $record->for_or && $record->or_number && $livewire->user_is_cbu_officer)
+                    ->visible(fn($record, $livewire) => ! $record->posted && ! $record->for_or && $record->or_number && $livewire->user_is_cbu_officer)
                     ->requiresConfirmation()
                     ->action(function (MsoBilling $record) {
                         app(PostMsoBillingPayments::class)->handle($record);
                         Notification::make()->title('Payments posted!')->success()->send();
                     }),
                 Action::make('billing_receivables')
-                    ->url(fn ($record) => route('filament.app.resources.mso-billings.billing-payments', ['mso_billing' => $record]))
+                    ->url(fn($record) => route('filament.app.resources.mso-billings.billing-payments', ['mso_billing' => $record]))
                     ->button()
                     ->outlined(),
             ])

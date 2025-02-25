@@ -58,7 +58,11 @@ class CashCollectibleBillingResource extends Resource
                 TextColumn::make('date')->date('m/d/Y')->label('Date Generated'),
                 TextColumn::make('reference_number'),
                 TextColumn::make('or_number')
-                    ->label('OR Approved'),
+                    ->label('OR Number'),
+                TextColumn::make('or_date')->date('m/d/Y')->label('OR Date'),
+                IconColumn::make('or_approved')
+                    ->label('OR Approved')
+                    ->boolean(),
                 IconColumn::make('posted')
                     ->boolean(),
             ])
@@ -67,7 +71,7 @@ class CashCollectibleBillingResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->visible(fn ($record) => ! $record->posted)
+                    ->visible(fn($record) => ! $record->posted)
                     ->form([
                         Select::make('payment_type_id')
                             ->paymenttype()
@@ -76,7 +80,7 @@ class CashCollectibleBillingResource extends Resource
                         TextInput::make('reference_number'),
                     ]),
                 Tables\Actions\DeleteAction::make()
-                    ->visible(fn ($record) => ! $record->posted)
+                    ->visible(fn($record) => ! $record->posted)
                     ->action(function (CashCollectibleBilling $record) {
                         $record->cash_collectible_billing_payments()->delete();
                         $record->delete();
@@ -84,7 +88,7 @@ class CashCollectibleBillingResource extends Resource
                 Action::make('for_or')
                     ->button()
                     ->color('success')
-                    ->visible(fn ($record, $livewire) => ! $record->posted && ! $record->for_or && ! $record->or_number && $livewire->user_is_cashier)
+                    ->visible(fn($record, $livewire) => ! $record->posted && ! $record->for_or && ! $record->or_number && $livewire->user_is_cashier)
                     ->label('For OR')
                     ->requiresConfirmation()
                     ->action(function (CashCollectibleBilling $record) {
@@ -101,14 +105,14 @@ class CashCollectibleBillingResource extends Resource
                 Action::make('post_payments')
                     ->button()
                     ->color('success')
-                    ->visible(fn ($record, $livewire) => ! $record->posted && ! $record->for_or && $record->or_number && $livewire->user_is_cbu_officer)
+                    ->visible(fn($record, $livewire) => ! $record->posted && ! $record->for_or && $record->or_number && $livewire->user_is_cbu_officer)
                     ->requiresConfirmation()
                     ->action(function (CashCollectibleBilling $record) {
                         app(PostCashCollectibleBillingPayments::class)->handle(cashCollectibleBilling: $record);
                         Notification::make()->title('Payments posted!')->success()->send();
                     }),
                 Action::make('billing_receivables')
-                    ->url(fn ($record) => route('filament.app.resources.cash-collectible-billings.billing-payments', ['cash_collectible_billing' => $record]))
+                    ->url(fn($record) => route('filament.app.resources.cash-collectible-billings.billing-payments', ['cash_collectible_billing' => $record]))
                     ->button()
                     ->outlined(),
             ])

@@ -83,6 +83,7 @@ class TotalLoanReleasedReport extends Page implements HasTable
                             ->when($state['value'], fn($q, $v) => $q->whereRelation('member', 'highest_educational_attainment', $v))
                     ),
                 DateRangeFilter::make('release_date')
+                    ->format('m/d/Y')
                     ->displayFormat('MM/DD/YYYY')
                     ->label('Release Date'),
                 SelectFilter::make('loan_type_id')

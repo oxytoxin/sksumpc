@@ -56,9 +56,9 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                 TextColumn::make('number')->label('Account Number'),
                 TextColumn::make('time_deposit.tdc_number')->label('TDC Number'),
                 TextColumn::make('time_deposit.amount')->money('PHP')->label('Principal'),
-                TextColumn::make('time_deposit.interest')->money('PHP'),
-                TextColumn::make('time_deposit.transaction_date')->date('m/d/Y'),
-                TextColumn::make('time_deposit.maturity_date')->date('m/d/Y'),
+                TextColumn::make('time_deposit.interest')->money('PHP')->label('Interest'),
+                TextColumn::make('time_deposit.transaction_date')->date('m/d/Y')->label('Transaction Date'),
+                TextColumn::make('time_deposit.maturity_date')->date('m/d/Y')->label('Maturity Date'),
                 TextColumn::make('time_deposit.maturity_amount')->money('PHP')->label('Value Upon Maturity'),
             ])
             ->filters([

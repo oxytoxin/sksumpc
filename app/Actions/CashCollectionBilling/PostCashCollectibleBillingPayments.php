@@ -33,7 +33,7 @@ class PostCashCollectibleBillingPayments
                 payment_type_id: $cashCollectibleBilling->payment_type_id,
                 credit: $payment->amount_paid,
                 member_id: $payment->member_id,
-                transaction_date: $cashCollectibleBilling->date,
+                transaction_date: $cashCollectibleBilling->or_date ?? $cashCollectibleBilling->date,
                 payee: $payment->payee,
             );
 

@@ -1,5 +1,6 @@
 @php
     use function Filament\Support\format_money;
+
     if (isset($this->tableFilters['release_date']['release_date'])) {
         [$from, $to] = explode(' - ', $this->tableFilters['release_date']['release_date']);
         $date_from = date_create($from);

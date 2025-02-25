@@ -321,6 +321,32 @@
                         <p class="text-center">{{ $witness2->position }}</p>
                     </div>
                 </div>
+
+                <div class="mt-4">
+                    <p>Republic of the Philippines )</p>
+                    <p>__________________________) S. S.</p>
+                    <p>__________________________)</p>
+                </div>
+                <div class="mt-4">
+                    <p class="text-center">
+                        SUBSCRIBED AND SWORN to before me this _____day of ____________________20______
+                        at ______________________________________________________________.
+                        Parties who executed the foregoing instrument and acknowledged to me that the same
+                        is their free and voluntary act and deed.
+                    </p>
+                    <div class="mt-8 flex justify-end">
+                        <div class="w-1/5 mr-16">
+                            <p class="border-b border-black text-center uppercase"></p>
+                            <p class="text-center">Notary</p>
+                        </div>
+                    </div>
+                    <div>
+                        <p>Doc. No. ______________</p>
+                        <p>Page No. ______________</p>
+                        <p>Book No. ______________</p>
+                        <p>Series of ______________</p>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="flex justify-end space-x-2 p-4">

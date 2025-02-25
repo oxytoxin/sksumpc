@@ -34,7 +34,7 @@ class PostMsoBillingPayments
                 payment_type_id: $msoBilling->payment_type_id,
                 credit: $payment->amount_paid,
                 member_id: $member->id,
-                transaction_date: $msoBilling->date,
+                transaction_date: $msoBilling->or_date ?? $msoBilling->date,
                 payee: $member->full_name,
             );
 
