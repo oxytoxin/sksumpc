@@ -96,7 +96,7 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                         app(ClaimTimeDeposit::class)->handle(time_deposit: $record->time_deposit);
                         Notification::make()->title('Time deposit claimed.')->success()->send();
                     })
-                    ->visible(fn(TimeDepositAccount $record) => $record->time_deposit->maturity_date->isBefore(today()) && is_null($record->withdrawal_date))
+                    ->visible(fn(TimeDepositAccount $record) => $record->time_deposit->maturity_date->isBefore(config('app.transaction_date') ?? today()) && is_null($record->withdrawal_date))
                     ->icon('heroicon-o-banknotes')
                     ->button(),
                 Action::make('rollover')
@@ -104,7 +104,7 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                     ->form(fn(TimeDepositAccount $record) => [
                         TextInput::make('number_of_days')->minValue(1)->reactive()->default($record->time_deposit->number_of_days),
                         TextInput::make('interest_rate')->minValue(0.01)->reactive()->default(round($record->time_deposit->interest_rate * 100, 2))->dehydrateStateUsing(fn($state) => round($state / 100, 4)),
-                        Placeholder::make('maturity_date')->content(TimeDepositsProvider::getMaturityDate(today())->format('F d, Y')),
+                        Placeholder::make('maturity_date')->content(TimeDepositsProvider::getMaturityDate(config('app.transaction_date') ?? today())->format('F d, Y')),
                         Select::make('payment_type_id')
                             ->paymenttype()
                             ->required(),
