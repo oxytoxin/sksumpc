@@ -57,6 +57,9 @@ class CashCollectibleBillingResource extends Resource
                 TextColumn::make('billable_date'),
                 TextColumn::make('date')->date('m/d/Y')->label('Date Generated'),
                 TextColumn::make('reference_number'),
+                IconColumn::make('for_or')
+                    ->label('For OR')
+                    ->boolean(),
                 TextColumn::make('or_number')
                     ->label('OR Number'),
                 TextColumn::make('or_date')->date('m/d/Y')->label('OR Date'),
