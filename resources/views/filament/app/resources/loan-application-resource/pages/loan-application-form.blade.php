@@ -268,7 +268,7 @@
                             }
 
                             foreach ($loan_application->comakers as $comaker) {
-                                if ($comaker->address) {
+                                if ($comaker->member->address) {
                                     $addresses[] = $comaker->member->address;
                                 }
                             }
