@@ -24,7 +24,7 @@ class RolloverTimeDeposit
         $data = new TransactionData(
             account_id: $time_deposit->time_deposit_account_id,
             transactionType: TransactionType::CRJ(),
-            payment_type_id: 1,
+            payment_type_id: PaymentTypes::JEV->value,
             reference_number: $time_deposit->reference_number,
             credit: $time_deposit->interest,
             member_id: $time_deposit->member_id,
