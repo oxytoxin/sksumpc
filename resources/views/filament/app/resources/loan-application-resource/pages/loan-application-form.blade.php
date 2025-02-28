@@ -243,7 +243,7 @@
                     </div>
                     @foreach ($loan_application->comakers ?? [] as $comaker)
                         <div class="flex flex-col justify-end">
-                            <p class="border-b border-black text-center uppercase">{{ $comaker->full_name }}</p>
+                            <p class="border-b border-black text-center uppercase">{{ $comaker->member->full_name }}</p>
                             <p class="text-center">( Signature over Printed Name of Co-Borrower)</p>
                         </div>
                     @endforeach
@@ -258,7 +258,7 @@
                         <strong>
                             {{ $loan_application->member->full_name }} (Borrower),
                             @foreach ($loan_application->comakers as $comaker)
-                                {{ $comaker->full_name }} (Co-Borrower),
+                                {{ $comaker->member->full_name }} (Co-Borrower),
                             @endforeach
                         </strong>
                         @php
@@ -268,8 +268,8 @@
                             }
 
                             foreach ($loan_application->comakers as $comaker) {
-                                if ($comaker->address) {
-                                    $addresses[] = $comaker->address;
+                                if ($comaker->member->address) {
+                                    $addresses[] = $comaker->member->address;
                                 }
                             }
                         @endphp
@@ -305,7 +305,7 @@
                     </div>
                     @foreach ($loan_application->comakers as $comaker)
                         <div>
-                            <p class="border-b border-black text-center uppercase">{{ $comaker->full_name }}</p>
+                            <p class="border-b border-black text-center uppercase">{{ $comaker->member->full_name }}</p>
                             <p class="text-center">( Signature over Printed Name of Co-Borrower)</p>
                         </div>
                     @endforeach
