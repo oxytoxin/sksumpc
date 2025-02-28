@@ -1,3 +1,15 @@
+@php
+    $disbursement_voucher_items = $disbursement_voucher->disbursement_voucher_items()->with('account')->get();
+    $treasurer = App\Models\User::whereRelation('roles', 'name', 'treasurer')->first();
+    $bookkeeper = App\Models\User::whereRelation('roles', 'name', 'book-keeper')->first();
+    $above_50k = ($disbursement_voucher_items[0] ?? null)?->debit > 50000;
+    $is_loan = ($disbursement_voucher_items[0] ?? null)?->account->ancestors()->where('id', 14)->exists();
+    if ($above_50k && $is_loan) {
+        $approver = App\Models\User::whereRelation('roles', 'name', 'bod-chairperson')->first();
+    } else {
+        $approver = App\Models\User::whereRelation('roles', 'name', 'manager')->first();
+    }
+@endphp
 <div x-data>
     <table x-ref="print" class="w-full border-2 border-black font-serif">
         <thead>
@@ -36,23 +48,20 @@
                 <td class="border border-black text-center">DEBIT</td>
                 <td class="border border-black text-center">CREDIT</td>
             </tr>
-            @php
-            $disbursement_voucher_items = $disbursement_voucher->disbursement_voucher_items()->with('account')->get();
-            @endphp
             @foreach ($disbursement_voucher_items as $item)
-            <tr class="mt-2">
-                <td colspan="2" class="w-1/2 border-x border-black px-2 text-left uppercase">
-                    {{ $item->account->fullname }}
-                </td>
-                <td colspan="2" class="w-1/6 border-x border-black text-center">{{ $item->account->number }}
-                </td>
-                <td class="w-1/6 border-x border-black text-right">
-                    {{ $item->debit ? number_format($item->debit, 2) : '' }}
-                </td>
-                <td class="w-1/6 border-x border-black text-right">
-                    {{ $item->credit ? number_format($item->credit, 2) : '' }}
-                </td>
-            </tr>
+                <tr class="mt-2">
+                    <td colspan="2" class="w-1/2 border-x border-black px-2 text-left uppercase">
+                        {{ $item->account->fullname }}
+                    </td>
+                    <td colspan="2" class="w-1/6 border-x border-black text-center">{{ $item->account->number }}
+                    </td>
+                    <td class="w-1/6 border-x border-black text-right">
+                        {{ $item->debit ? number_format($item->debit, 2) : '' }}
+                    </td>
+                    <td class="w-1/6 border-x border-black text-right">
+                        {{ $item->credit ? number_format($item->credit, 2) : '' }}
+                    </td>
+                </tr>
             @endforeach
             <tr>
                 <td colspan="2" class="border border-black uppercase"></td>
@@ -89,18 +98,18 @@
                 <td class="p-0">&nbsp;</td>
             </tr>
             <tr>
-                <td class="border-b border-r border-black p-0">&nbsp;</td>
-                <td class="border-b border-r border-black p-0">&nbsp;</td>
-                <td class="border-b border-black p-0">&nbsp;</td>
-                <td class="border-b border-r border-black p-0">&nbsp;</td>
-                <td class="border-b border-black p-0">&nbsp;</td>
+                <td class="border-b border-r border-black p-0 whitespace-nowrap px-2">{{ $bookkeeper->name }}</td>
+                <td class="border-b border-r border-black p-0 whitespace-nowrap px-2">{{ $treasurer->name }}</td>
+                <td class="border-b border-black p-0 whitespace-nowrap px-2">{{ (!$above_50k || !$is_loan) ? $approver->name : '' }}</td>
+                <td class="border-b border-r border-black p-0 whitespace-nowrap px-2">{{ ($above_50k && $is_loan) ? $approver->name : '' }}</td>
+                <td class="border-b border-black p-0 whitespace-nowrap px-2">{{ $disbursement_voucher->name }}</td>
                 <td class="border-b border-black p-0">&nbsp;</td>
             </tr>
             <tr>
                 <td class="border-r border-black px-2 text-center">Bookkeeper</td>
                 <td class="border-r border-black px-2 text-center">Treasurer</td>
-                <td class="w-1/6 px-2">General Manager</td>
-                <td class="w-1/6 border-r border-black">BOD Chairman</td>
+                <td class="w-1/6 px-2 text-center">General Manager</td>
+                <td class="w-1/6 border-r text-center border-black">BOD Chairman</td>
                 <td class="whitespace-nowrap px-2">Name & Signature/Date</td>
                 <td></td>
             </tr>

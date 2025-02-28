@@ -42,7 +42,7 @@ class PaymentTransactions extends Page implements HasTable
                 if ($type == 'loan') {
                     $loan_query = LoanPayment::query()->with(['loan.loan_account'])->whereIn('payment_type_id', [
                         PaymentTypes::CASH->value,
-                        PaymentTypes::CHECK->value,
+                        // PaymentTypes::CHECK->value,
                         PaymentTypes::ADA->value,
                         PaymentTypes::DEPOSIT_SLIP->value,
                     ]);

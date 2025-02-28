@@ -22,7 +22,7 @@
             <h5 class="text-center uppercase font-semibold">{{ $date_from->format('F d, Y') }} to {{ $date_to->format('F d, Y') }}</h5>
         @endif
         <h5 wire:loading.block class="text-center mt-8 uppercase font-semibold">Refreshing data...</h5>
-        <table wire:loading.remove class="w-full overflow-auto mt-8 print:text-[8pt]">
+        <table wire:loading.remove class="w-6xl mx-auto overflow-auto mt-8 print:text-[8pt]">
             <thead>
                 <tr>
                     <th rowspan="2" class="border-2 border-black text-center">No.</th>
@@ -30,6 +30,7 @@
                     <th rowspan="2" class="border-2 border-black text-center">Gender</th>
                     <th colspan="{{ $loan_types->count() + 1 }}" class="border-2 border-black text-center">GROSS AMOUNT</th>
                     <th colspan="{{ $loan_types->count() + 1 }}" class="border-2 border-black text-center">NET AMOUNT</th>
+                    <th rowspan="2" class="border-2 border-black text-center px-4">Received</th>
                 </tr>
                 <tr>
                     <th class="whitespace-nowrap border-2 border-black px-4 text-center">GROSS TOTAL</th>
@@ -39,7 +40,7 @@
                     @foreach ($loan_types as $loan_type)
                         <th class="whitespace-nowrap border-2 border-black px-4 text-center">{{ $loan_type->code }}</th>
                     @endforeach
-                    <th class="border-2 border-black text-center">NET PROCEEDS</th>
+                    <th class="border-2 border-black text-center px-4">NET PROCEEDS</th>
 
                 </tr>
             </thead>
@@ -64,6 +65,7 @@
                             <td class="whitespace-nowrap border-2 border-black px-4 text-right">{{ $loans->where('loan_type_id', $loan_type->id)->sum('net_amount') ? number_format($loans->where('loan_type_id', $loan_type->id)->sum('net_amount'), 2) : '' }}</td>
                         @endforeach
                         <td class="whitespace-nowrap border-2 border-black px-4 text-right">{{ number_format($loans->sum('net_amount'), 2) }}</td>
+                        <td class="whitespace-nowrap border-2 border-black px-4 text-right"></td>
                     </tr>
                 @endforeach
                 <tr>
@@ -78,6 +80,7 @@
                         <th class="whitespace-nowrap border-2 border-black px-4 text-right">{{ $records->where('loan_type_id', $loan_type->id)->sum('net_amount') ? number_format($records->where('loan_type_id', $loan_type->id)->sum('net_amount'), 2) : '' }}</th>
                     @endforeach
                     <th class="whitespace-nowrap border-2 border-black px-4 text-right">{{ number_format($net_amount, 2) }}</th>
+                    <td class="whitespace-nowrap border-2 border-black px-4 text-center">&nbsp;</td>
                 </tr>
             </tbody>
         </table>

@@ -159,6 +159,7 @@ class DisbursementVoucherResource extends Resource
                     ->color('success')
                     ->outlined()
                     ->modalHeading('Disbursement Voucher Preview')
+                    ->modalWidth('5xl')
                     ->modalCancelAction(false)
                     ->modalSubmitAction(false)
                     ->modalContent(fn($record) => view('components.app.bookkeeper.reports.disbursement-voucher-preview', ['disbursement_voucher' => $record])),

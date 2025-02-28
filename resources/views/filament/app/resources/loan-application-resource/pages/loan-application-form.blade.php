@@ -279,7 +279,7 @@
                         </span>
                         <span class="border-b border-black px-4"> (P {{ renumber_format($loan_application->desired_amount, 2) }}) </span>
                         Granted to the borrower as salary loan by the SKSU MPC, EJC Montilla, Tacurong City
-                        by these presents do hereby code and assign in favor of the SKSU MPC our salaries, bonuses,
+                        by these presents do hereby code and assign in favor of the SKSU MPC our capital shares and savings together with our bonuses,
                         allowances, gratuity/separation pay retirement benefits, monetary value of accumulated leave
                         credit and any other form monetary of pecuniary benefits from our employer, Teachers and
                         Employees of SKSU and with GSIS or any other entity or institute due to us.

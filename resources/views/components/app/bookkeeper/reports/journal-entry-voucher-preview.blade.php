@@ -20,7 +20,7 @@
         <tbody class="mt-4 text-xs">
             <tr class="border-x-2 border-t-2 border-black">
                 <td class="w-1/6 border-r border-black px-2">NAME:</td>
-                <td colspan="2" class="border-t border-black px-2">{{ $journal_entry_voucher->name }}</td>
+                <td colspan="2" class="border-t font-bold border-black px-2">{{ $journal_entry_voucher->name }}</td>
                 <td class="w-1/6 border-x border-t border-black px-2"> DATE:</td>
                 <td colspan="2" class="border-t border-black px-2">{{ $journal_entry_voucher->transaction_date->format('m/d/Y') }}</td>
             </tr>
@@ -28,7 +28,7 @@
                 <td class="w-1/6 border-r border-t border-black px-2">ADDRESS:</td>
                 <td colspan="2" class="border-t border-black px-2">{{ $journal_entry_voucher->address }}</td>
                 <td class="w-1/6 border-x border-t border-black px-2"> JEV#:</td>
-                <td colspan="2" class="border-t border-black px-2">{{ $journal_entry_voucher->reference_number }}</td>
+                <td colspan="2" class="border-t font-bold border-black px-2">{{ $journal_entry_voucher->reference_number }}</td>
             </tr>
             <tr>
                 <td colspan="6">&nbsp</td>
