@@ -2,9 +2,8 @@
     $disbursement_voucher_items = $disbursement_voucher->disbursement_voucher_items()->with('account')->get();
     $treasurer = App\Models\User::whereRelation('roles', 'name', 'treasurer')->first();
     $bookkeeper = App\Models\User::whereRelation('roles', 'name', 'book-keeper')->first();
-    $above_50k = ($disbursement_voucher_items[0] ?? null)?->debit > 50000;
-    $is_loan = ($disbursement_voucher_items[0] ?? null)?->account->ancestors()->where('id', 14)->exists();
-    if ($above_50k && $is_loan) {
+    $above_50k = ($disbursement_voucher_items->where('account_id', App\Models\Account::getCashInBankGF()->id) ?? null)->sum('credit') > 50000;
+    if ($above_50k) {
         $approver = App\Models\User::whereRelation('roles', 'name', 'bod-chairperson')->first();
     } else {
         $approver = App\Models\User::whereRelation('roles', 'name', 'manager')->first();
@@ -100,8 +99,8 @@
             <tr>
                 <td class="border-b border-r border-black p-0 whitespace-nowrap px-2">{{ $bookkeeper->name }}</td>
                 <td class="border-b border-r border-black p-0 whitespace-nowrap px-2">{{ $treasurer->name }}</td>
-                <td class="border-b border-black p-0 whitespace-nowrap px-2">{{ (!$above_50k || !$is_loan) ? $approver->name : '' }}</td>
-                <td class="border-b border-r border-black p-0 whitespace-nowrap px-2">{{ ($above_50k && $is_loan) ? $approver->name : '' }}</td>
+                <td class="border-b border-black p-0 whitespace-nowrap px-2">{{ !$above_50k ? $approver->name : '' }}</td>
+                <td class="border-b border-r border-black p-0 whitespace-nowrap px-2">{{ $above_50k ? $approver->name : '' }}</td>
                 <td class="border-b border-black p-0 whitespace-nowrap px-2">{{ $disbursement_voucher->name }}</td>
                 <td class="border-b border-black p-0">&nbsp;</td>
             </tr>
