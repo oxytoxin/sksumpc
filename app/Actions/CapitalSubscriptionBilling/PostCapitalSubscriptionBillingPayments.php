@@ -24,16 +24,16 @@ class PostCapitalSubscriptionBillingPayments
         $transactionType = TransactionType::CRJ();
         $cash_in_bank_account_id = Account::getCashInBankGF()->id;
         $cash_on_hand_account_id = Account::getCashOnHand()->id;
-        $cbuBilling->capital_subscription_billing_payments()->with('capital_subscription.member.capital_subscription_account')->each(function (CapitalSubscriptionBillingPayment $cbup) use ($cbuBilling, $transactionType, $cash_in_bank_account_id, $cash_on_hand_account_id) {
+        $cbuBilling->capital_subscription_billing_payments()->each(function (CapitalSubscriptionBillingPayment $cbup) use ($cbuBilling, $transactionType, $cash_in_bank_account_id, $cash_on_hand_account_id) {
             $data = new TransactionData(
-                account_id: $cbup->capital_subscription->member->capital_subscription_account->id,
+                account_id: $cbup->member->capital_subscription_account->id,
                 transactionType: $transactionType,
                 reference_number: $cbuBilling->or_number,
                 payment_type_id: $cbuBilling->payment_type_id,
                 credit: $cbup->amount_paid,
-                member_id: $cbup->capital_subscription->member_id,
+                member_id: $cbup->member_id,
                 transaction_date: $cbuBilling->or_date ?? $cbuBilling->date,
-                payee: $cbup->capital_subscription->member->full_name,
+                payee: $cbup->member->full_name,
             );
             app(PayCapitalSubscription::class)->handle($cbup->capital_subscription, $data);
 

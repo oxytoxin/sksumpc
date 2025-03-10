@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Observers\MemberObserver;
 use App\Oxytoxin\DTO\Membership\MemberDependent;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,6 +18,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 /**
  * @mixin IdeHelperMember
  */
+#[ObservedBy(MemberObserver::class)]
 class Member extends Model implements HasMedia
 {
     use HasFactory, InteractsWithMedia;

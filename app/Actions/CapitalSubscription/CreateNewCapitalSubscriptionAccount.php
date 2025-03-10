@@ -9,12 +9,14 @@ class CreateNewCapitalSubscriptionAccount
 {
     public function handle(CapitalSubscriptionAccountData $cbuAccountData)
     {
-        Account::create([
+        Account::firstOrCreate([
+            'member_id' => $cbuAccountData->member_id,
+            'tag' => $cbuAccountData->parent->tag,
+        ], [
             'name' => $cbuAccountData->name,
             'number' => $cbuAccountData->number,
             'account_type_id' => $cbuAccountData->parent->account_type_id,
-            'member_id' => $cbuAccountData->member_id,
-            'tag' => $cbuAccountData->parent->tag,
-        ], $cbuAccountData->parent);
+            'parent_id' => $cbuAccountData->parent->id,
+        ]);
     }
 }

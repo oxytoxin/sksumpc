@@ -357,7 +357,7 @@
                         <td class="border border-black px-2 text-left">{{ renumber_format($cibi->loan_application->desired_amount, 2) }}</td>
                         <td class="border border-black px-2 text-left"></td>
                         <td class="border border-black px-2 text-left">{{ $cibi->loan_application->number_of_terms }}</td>
-                        <td class="border border-black px-2 text-left">{{ $cibi->loan_application->desired_amount }}</td>
+                        <td class="border border-black px-2 text-left">{{ renumber_format($cibi->loan_application->desired_amount, 2) }}</td>
                     </tr>
                     <tr>
                         <td colspan="3" class="border border-black px-2 text-left">Date request received: {{ $cibi->loan_application->transaction_date->format('m/d/Y') }}</td>
