@@ -49,7 +49,7 @@ class JournalEntryVoucherItemObserver
         if (in_array($account->tag, ['member_regular_cbu_paid', 'member_preferred_cbu_paid', 'member_laboratory_cbu_paid'])) {
             $amount = self::getCbuAmount($journalEntryVoucherItem);
             app(PayCapitalSubscription::class)->handle($account->member->active_capital_subscription, $transaction_data);
-            if ($amount < 0) {
+            if ($account->member->active_capital_subscription->outstanding_balance < 0) {
                 $account->member->active_capital_subscription->update([
                     'is_active' => false,
                 ]);
