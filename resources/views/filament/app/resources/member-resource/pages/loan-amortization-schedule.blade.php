@@ -35,7 +35,7 @@
                         <td class="border print:border-x print:border-y-0 border-black px-2 text-right"></td>
                         <td class="border print:border-x print:border-y-0 border-black px-2 text-right"></td>
                         <td class="border print:border-x print:border-y-0 border-black px-2 text-right"></td>
-                        <td class="border print:border-x print:border-y-0 border-black px-2 text-right">{{ number_format($loan->gross_amount, 4) }}</td>
+                        <td class="border print:border-x print:border-y-0 border-black px-2 text-right">{{ number_format($loan->gross_amount, 2) }}</td>
                         <td class="border print:border-x print:border-y-0 border-black px-2"></td>
                     </tr>
                     @php
@@ -50,10 +50,10 @@
                             <td class="border print:border-x print:border-y-0 border-black px-2">{{ $loan_amortization['term'] }}</td>
                             <td class="border print:border-x print:border-y-0 whitespace-nowrap border-black px-2">{{ $loan_amortization['date']->format('F Y') }}</td>
                             <td class="border print:border-x print:border-y-0 border-black px-2 text-center">{{ $loan_amortization['days'] }}</td>
-                            <td class="border print:border-x print:border-y-0 border-black px-2 text-right">{{ number_format($loan_amortization['amortization'], 4) }}</td>
-                            <td class="border print:border-x print:border-y-0 border-black px-2 text-right">{{ number_format($loan_amortization['interest'], 4) }}</td>
-                            <td class="border print:border-x print:border-y-0 border-black px-2 text-right">{{ number_format($loan_amortization['principal'], 4) }}</td>
-                            <td class="border print:border-x print:border-y-0 border-black px-2 text-right">{{ number_format($loan_amortization['outstanding_balance'] ?? $ob, 4) }}</td>
+                            <td class="border print:border-x print:border-y-0 border-black px-2 text-right">{{ number_format($loan_amortization['amortization'], 2) }}</td>
+                            <td class="border print:border-x print:border-y-0 border-black px-2 text-right">{{ number_format($loan_amortization['interest'], 2) }}</td>
+                            <td class="border print:border-x print:border-y-0 border-black px-2 text-right">{{ number_format($loan_amortization['principal'], 2) }}</td>
+                            <td class="border print:border-x print:border-y-0 border-black px-2 text-right">{{ number_format($loan_amortization['outstanding_balance'] ?? $ob, 2) }}</td>
                             <td class="border print:border-x print:border-y-0 border-black px-2"></td>
                         </tr>
                     @endforeach
@@ -61,9 +61,9 @@
                         <td class="border print:border-x print:border-y-0 font-bold border-black px-2"></td>
                         <td class="border print:border-x print:border-y-0 font-bold border-black px-2">TOTAL</td>
                         <td class="border print:border-x print:border-y-0 font-bold border-black px-2 text-center"></td>
-                        <td class="border print:border-x print:border-y-0 font-bold border-black px-2 text-right">{{ number_format(collect($amortizations)->sum('amortization'), 4) }}</td>
-                        <td class="border print:border-x print:border-y-0 font-bold border-black px-2 text-right">{{ number_format(collect($amortizations)->sum('interest'), 4) }}</td>
-                        <td class="border print:border-x print:border-y-0 font-bold border-black px-2 text-right">{{ number_format(collect($amortizations)->sum('principal'), 4) }}</td>
+                        <td class="border print:border-x print:border-y-0 font-bold border-black px-2 text-right">{{ number_format(collect($amortizations)->sum('amortization'), 2) }}</td>
+                        <td class="border print:border-x print:border-y-0 font-bold border-black px-2 text-right">{{ number_format(collect($amortizations)->sum('interest'), 2) }}</td>
+                        <td class="border print:border-x print:border-y-0 font-bold border-black px-2 text-right">{{ number_format(collect($amortizations)->sum('principal'), 2) }}</td>
                         <td class="border print:border-x print:border-y-0 font-bold border-black px-2 text-right"></td>
                         <td class="border print:border-x print:border-y-0 font-bold border-black px-2"></td>
                     </tr>

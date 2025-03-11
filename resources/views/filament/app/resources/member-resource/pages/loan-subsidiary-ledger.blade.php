@@ -22,7 +22,7 @@
                 <p>Terms of Payment: {{ $loan->number_of_terms }}</p>
                 <p>Interest Rate: {{ $loan->interest_rate * 100 }}%</p>
                 <p>Monthly Amortization: {{ number_format($loan->monthly_payment, 2) }}</p>
-                <p>Interest Due: {{ number_format($this->accrued_interest, 4) }}</p>
+                <p>Interest Due: {{ number_format($this->accrued_interest, 2) }}</p>
             </div>
         </div>
         <div class="mt-4">
@@ -52,14 +52,14 @@
                                 {{ $payment->transaction_date->format('F d, Y') }}</td>
                             <td class="border border-black px-4 text-center">{{ $payment->reference_number }}</td>
                             <td class="whitespace-nowrap border border-black px-4 text-right">
-                                {{ number_format($payment->amount, 4) }}</td>
+                                {{ number_format($payment->amount, 2) }}</td>
                             <td class="whitespace-nowrap border border-black px-4 text-right"></td>
                             <td class="whitespace-nowrap border border-black px-4 text-right">
-                                {{ number_format($payment->interest_payment, 4) }}</td>
+                                {{ number_format($payment->interest_payment, 2) }}</td>
                             <td class="whitespace-nowrap border border-black px-4 text-right">
-                                {{ number_format($payment->principal_payment, 4) }}</td>
+                                {{ number_format($payment->principal_payment, 2) }}</td>
                             <td class="whitespace-nowrap border border-black px-4 text-right">
-                                {{ number_format($running_balance, 4) }}</td>
+                                {{ number_format($running_balance, 2) }}</td>
                             <td class="border border-black px-4">{{ $payment->remarks }}</td>
                         </tr>
                     @empty

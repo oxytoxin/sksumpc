@@ -70,14 +70,13 @@ class Loan extends Model
 
     public function getMaturityDateAttribute()
     {
-        $maturity_date = $this->transaction_date->addMonthsNoOverflow($this->number_of_terms);
         if ($this->loan_type->code == 'SL') {
-            if ($maturity_date > CarbonImmutable::create($maturity_date->year, 5, 20))
-                return CarbonImmutable::create($maturity_date->year, 11, 20);
-            else if ($maturity_date > CarbonImmutable::create($maturity_date->year, 11, 20))
-                return CarbonImmutable::create($maturity_date->year + 1, 5, 20);
+            if ($this->release_date > CarbonImmutable::create($this->release_date->year, 11, 20))
+                return CarbonImmutable::create($this->release_date->year + 1, 5, 20);
+            else if ($this->release_date > CarbonImmutable::create($this->release_date->year, 5, 20))
+                return CarbonImmutable::create($this->release_date->year, 11, 20);
             else
-                return CarbonImmutable::create($maturity_date->year, 5, 20);
+                return CarbonImmutable::create($this->release_date->year, 5, 20);
         }
         return $this->transaction_date->addMonthsNoOverflow($this->number_of_terms);
     }
