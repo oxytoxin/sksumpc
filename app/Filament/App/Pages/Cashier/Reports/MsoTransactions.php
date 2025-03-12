@@ -6,6 +6,7 @@ use App\Enums\TransactionTypes;
 use App\Models\Member;
 use App\Models\MemberType;
 use App\Models\Transaction;
+use App\Models\User;
 use Filament\Pages\Page;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -25,6 +26,30 @@ class MsoTransactions extends Page implements HasTable
     protected static string $view = 'filament.app.pages.cashier.reports.mso-transactions';
 
     public $report_title = "REPORT ON MEMBERS' MSO TRANSACTIONS";
+
+    protected function getSignatories()
+    {
+        $bookkeeper = User::whereRelation('roles', 'name', 'book-keeper')->first();
+        $treasurer = User::whereRelation('roles', 'name', 'treasurer')->first();
+        $manager = User::whereRelation('roles', 'name', 'manager')->first();
+        $this->signatories = [
+            [
+                'action' => 'Checked by:',
+                'name' => $bookkeeper?->name ?? 'ADRIAN VOLTAIRE POLO',
+                'position' => 'Posting Clerk',
+            ],
+            [
+                'action' => 'Received by:',
+                'name' => $treasurer?->name ?? 'DESIREE G. LEGASPI',
+                'position' => 'Treasurer',
+            ],
+            [
+                'action' => 'Noted:',
+                'name' => $manager?->name ?? 'FLORA C. DAMANDAMAN',
+                'position' => 'Manager',
+            ],
+        ];
+    }
 
     public function table(Table $table): Table
     {

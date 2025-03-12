@@ -1,13 +1,13 @@
 <x-filament-panels::page>
-    <div class="p-4 print:w-full print:text-[10pt] print:leading-tight" x-ref="print">
+    <div class="p-4 font-arial text-[12pt] print:w-full print:text-[10pt] print:leading-tight" x-ref="print">
         <x-app.cashier.reports.report-heading />
         <h1 class="text-center font-bold">SKSU-MPC {{ $loan_billing->loan_type->name }} Billing Statement <br> as of {{ $loan_billing->billable_date }}</h1>
-        <table class="mt-4 w-full print:text-[8pt]">
+        <table class="mt-4 w-1/2 print:w-full mx-auto print:text-[8pt]">
             <thead>
                 <tr class="border-y border-black">
                     <th>NO.</th>
                     <th>MEMBER #</th>
-                    <th>NAME OF EMPLOYEE</th>
+                    <th class="text-left">NAME OF EMPLOYEE</th>
                     <th>AMOUNT</th>
                 </tr>
             </thead>
@@ -19,11 +19,15 @@
                     <tr>
                         <td class="text-center">{{ $loop->iteration }}</td>
                         <td class="text-center">{{ $payment->member->mpc_code }}</td>
-                        <td class="text-center">{{ $payment->member->alt_full_name }}</td>
-                        <td class="text-center">{{ number_format($payment->amount_paid, 2) }}</td>
+                        <td class="text-left">{{ $payment->member->alt_full_name }}</td>
+                        <td class="text-center">{{ renumber_format($payment->amount_paid) }}</td>
                     </tr>
                 @empty
                 @endforelse
+                <tr class="border-y border-black">
+                    <td class="text-center font-semibold" colspan=3>GRAND TOTAL</td>
+                    <td class="text-center font-semibold">{{ renumber_format($payments->sum('amount_paid')) }}</td>
+                </tr>
             </tbody>
         </table>
 

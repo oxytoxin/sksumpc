@@ -1,5 +1,4 @@
 @php
-    use function Filament\Support\format_money;
     $loans = $loan_application->member->loans()->with('loan_type')->get();
     $loan_applications = $loan_application->member->loan_applications()->doesntHave('loan')->with('loan_type')->get();
     $loan_application->load('comakers');
@@ -44,7 +43,7 @@
                     </div>
                     <div class="flex space-x-4">
                         <h4 class="font-bold">DESIRED LOAN AMOUNT:</h4>
-                        <h4 class="min-w-[8rem] border-b border-black px-4"> {{ format_money($loan_application->desired_amount, 'PHP') }}</h4>
+                        <h4 class="min-w-[8rem] border-b border-black px-4"> {{ renumber_format($loan_application->desired_amount) }}</h4>
                     </div>
                     <div class="flex space-x-4">
                         <h4 class="font-bold">PURPOSE:</h4>
@@ -54,7 +53,7 @@
                         <h4 class="font-bold">MONTHLY AMORTIZATION:</h4>
                         <h4 class="min-w-[8rem] border-b border-black px-4">
                             @if ($loan_application->loan_type->has_monthly_amortization)
-                                {{ format_money($loan_application->monthly_payment, 'PHP') }}
+                                {{ number_format($loan_application->monthly_payment) }}
                             @endif
                         </h4>
                     </div>
@@ -131,13 +130,13 @@
                         <table class="w-full print:text-[9pt]">
                             <thead>
                                 <tr>
-                                    <th class="border border-black px-2">Date</th>
-                                    <th class="border border-black px-2">Particulars</th>
-                                    <th class="border border-black px-2">Date Granted</th>
-                                    <th class="border border-black px-2">Amount Granted</th>
-                                    <th class="border border-black px-2">Monthly Amortization</th>
-                                    <th class="border border-black px-2">Balance</th>
-                                    <th class="border border-black px-2">Remarks</th>
+                                    <th class="border border-black text-left px-2">Date</th>
+                                    <th class="border border-black text-left px-2">Particulars</th>
+                                    <th class="border border-black text-left px-2">Date Granted</th>
+                                    <th class="border border-black text-left px-2">Amount Granted</th>
+                                    <th class="border border-black text-left px-2">Monthly Amortization</th>
+                                    <th class="border border-black text-left px-2">Balance</th>
+                                    <th class="border border-black text-left px-2">Remarks</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -146,10 +145,10 @@
                                         <td class="border border-black px-2">{{ $loan->transaction_date->format('m/d/Y') }}</td>
                                         <td class="border border-black px-2">{{ $loan->loan_type->name }}</td>
                                         <td class="border border-black px-2">{{ $loan->release_date?->format('m/d/Y') }}</td>
-                                        <td class="border border-black px-2">{{ format_money($loan->gross_amount, 'PHP') }}</td>
-                                        <td class="border border-black px-2">{{ format_money($loan->monthly_payment, 'PHP') }} </td>
+                                        <td class="border border-black px-2">{{ renumber_format($loan->gross_amount) }}</td>
+                                        <td class="border border-black px-2">{{ renumber_format($loan->monthly_payment) }} </td>
                                         <td class="border border-black px-2">
-                                            {{ format_money($loan->outstanding_balance, 'PHP') }}
+                                            {{ renumber_format($loan->outstanding_balance) }}
                                         </td>
                                         <td class="border border-black px-2">
                                         </td>
@@ -160,8 +159,8 @@
                                         <td class="border border-black px-2">{{ $la->transaction_date->format('m/d/Y') }}</td>
                                         <td class="border border-black px-2">{{ $la->loan_type->name }}</td>
                                         <td class="border border-black px-2"></td>
-                                        <td class="border border-black px-2">{{ format_money($la->desired_amount, 'PHP') }}</td>
-                                        <td class="border border-black px-2">{{ format_money($la->monthly_payment, 'PHP') }}</td>
+                                        <td class="border border-black px-2">{{ renumber_format($la->desired_amount) }}</td>
+                                        <td class="border border-black px-2">{{ renumber_format($la->monthly_payment) }}</td>
                                         <td class="border border-black px-2"></td>
                                         <td class="border border-black px-2">{{ $la->status_name }}</td>
                                     </tr>

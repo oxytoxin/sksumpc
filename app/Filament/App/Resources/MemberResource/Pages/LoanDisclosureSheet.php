@@ -21,13 +21,14 @@ class LoanDisclosureSheet extends Page
     protected function getSignatories()
     {
         $bookkeeper = User::whereRelation('roles', 'name', 'book-keeper')->first();
+        $loan_officer = User::whereRelation('roles', 'name', 'loan-staff')->first();
         $treasurer = User::whereRelation('roles', 'name', 'treasurer')->first();
         $manager = User::whereRelation('roles', 'name', 'manager')->first();
         $this->signatories = [
             [
                 'action' => 'Prepared by:',
-                'name' => auth()->user()->name,
-                'position' => 'Teller/Cashier',
+                'name' => $loan_officer->name ?? auth()->user()->name,
+                'position' => 'Loan Officer',
             ],
             [
                 'action' => 'Checked by:',
