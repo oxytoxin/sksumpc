@@ -200,7 +200,7 @@
                 </table>
                 <table class="w-full print:text-[8pt]">
                     <tr>
-                        <th colspan="4" class="border border-black px-2 text-left">A. PERSONAL DATA</th>
+                        <th class="border border-black px-2 text-left" colspan="4">A. PERSONAL DATA</th>
                     </tr>
                     <tr>
                         <th class="border border-black px-2 text-left">1. Basic Information</th>
@@ -303,7 +303,7 @@
                 </table>
                 <table class="w-full print:text-[8pt]">
                     <tr>
-                        <th colspan="4" class="border border-black px-2 text-left">4. Employment Verification</th>
+                        <th class="border border-black px-2 text-left" colspan="4">4. Employment Verification</th>
                     </tr>
                     <tr>
                         <th class="border border-black px-2 text-left">Particulars</th>
@@ -322,7 +322,7 @@
                 </table>
                 <table class="w-full">
                     <tr>
-                        <th colspan="4" class="border border-black px-2 text-left">5. Income Verification</th>
+                        <th class="border border-black px-2 text-left" colspan="4">5. Income Verification</th>
                     </tr>
                     <tr>
                         <th class="border border-black px-2 text-left">Particulars</th>
@@ -341,7 +341,7 @@
                 </table>
                 <table class="w-full print:text-[8pt]">
                     <tr>
-                        <th colspan="6" class="border border-black px-2 text-left">6. Nature of Loan</th>
+                        <th class="border border-black px-2 text-left" colspan="6">6. Nature of Loan</th>
                     </tr>
                     <tr>
                         <th class="border border-black px-2 text-left">Type of Loan</th>
@@ -360,8 +360,8 @@
                         <td class="border border-black px-2 text-left">{{ renumber_format($cibi->loan_application->desired_amount, 2) }}</td>
                     </tr>
                     <tr>
-                        <td colspan="3" class="border border-black px-2 text-left">Date request received: {{ $cibi->loan_application->transaction_date->format('m/d/Y') }}</td>
-                        <td colspan="3" class="border border-black px-2 text-left">Date of Report: {{ config('app.transaction_date')?->format('m/d/Y') }}</td>
+                        <td class="border border-black px-2 text-left" colspan="3">Date request received: {{ $cibi->loan_application->transaction_date->format('m/d/Y') }}</td>
+                        <td class="border border-black px-2 text-left" colspan="3">Date of Report: {{ config('app.transaction_date')?->format('m/d/Y') }}</td>
                     </tr>
                 </table>
             </div>

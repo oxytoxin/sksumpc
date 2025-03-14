@@ -1,6 +1,3 @@
-@php
-    use function Filament\Support\format_money;
-@endphp
 <x-filament-panels::page>
     <div class="print:text-[10pt]" x-ref="print">
         <div class="text-center">
@@ -25,6 +22,7 @@
                 <p>Interest Due: {{ number_format($this->accrued_interest, 2) }}</p>
             </div>
         </div>
+
         <div class="mt-4">
             <table class="w-full print:text-[8pt]">
                 <thead>
@@ -49,34 +47,42 @@
                         @endphp
                         <tr>
                             <td class="whitespace-nowrap border border-black px-4">
-                                {{ $payment->transaction_date->format('F d, Y') }}</td>
+                                {{ $payment->transaction_date->format('F d, Y') }}
+                            </td>
                             <td class="border border-black px-4 text-center">{{ $payment->reference_number }}</td>
                             <td class="whitespace-nowrap border border-black px-4 text-right">
-                                {{ number_format($payment->amount, 2) }}</td>
+                                {{ number_format($payment->amount, 2) }}
+                            </td>
                             <td class="whitespace-nowrap border border-black px-4 text-right"></td>
                             <td class="whitespace-nowrap border border-black px-4 text-right">
-                                {{ number_format($payment->interest_payment, 2) }}</td>
+                                {{ number_format($payment->interest_payment, 2) }}
+                            </td>
                             <td class="whitespace-nowrap border border-black px-4 text-right">
-                                {{ number_format($payment->principal_payment, 2) }}</td>
+                                {{ number_format($payment->principal_payment, 2) }}
+                            </td>
                             <td class="whitespace-nowrap border border-black px-4 text-right">
-                                {{ number_format($running_balance, 2) }}</td>
+                                {{ number_format($running_balance, 2) }}
+                            </td>
                             <td class="border border-black px-4">{{ $payment->remarks }}</td>
                         </tr>
                     @empty
                         <tr class="border border-black">
-                            <td colspan="8" class="text-center">No payments made.</td>
+                            <td class="text-center" colspan="8">No payments made.</td>
                         </tr>
                     @endforelse
                     <tr>
                         <td class="border border-black px-4">Total</td>
                         <td class="border border-black px-4"></td>
                         <td class="border border-black px-4 text-right">
-                            {{ number_format($loan->payments->sum('amount'), 2) }}</td>
+                            {{ number_format($loan->payments->sum('amount'), 2) }}
+                        </td>
                         <td class="border border-black px-4 text-right">{{ number_format(0, 2) }}</td>
                         <td class="border border-black px-4 text-right">
-                            {{ number_format($loan->payments->sum('interest_payment'), 2) }}</td>
+                            {{ number_format($loan->payments->sum('interest_payment'), 2) }}
+                        </td>
                         <td class="border border-black px-4 text-right">
-                            {{ number_format($loan->payments->sum('principal_payment'), 2) }}</td>
+                            {{ number_format($loan->payments->sum('principal_payment'), 2) }}
+                        </td>
                         <td class="border border-black px-4"></td>
                         <td class="border border-black px-4"></td>
                     </tr>
@@ -104,7 +110,7 @@
         </div>
     </div>
     <div class="flex justify-end gap-2">
-        <x-filament::button wire:ignore href="{{ back()->getTargetUrl() }}" outlined tag="a">Back</x-filament::button>
+        <x-filament::button href="{{ back()->getTargetUrl() }}" wire:ignore outlined tag="a">Back</x-filament::button>
         <x-filament::button icon="heroicon-o-printer" @click="printOut($refs.print.outerHTML, 'CBU Subsidiary Ledger')">Print</x-filament::button>
     </div>
 </x-filament-panels::page>
