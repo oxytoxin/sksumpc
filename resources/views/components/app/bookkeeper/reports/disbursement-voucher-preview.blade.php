@@ -2,7 +2,7 @@
     $disbursement_voucher_items = $disbursement_voucher->disbursement_voucher_items()->with('account')->get();
     $treasurer = App\Models\User::whereRelation('roles', 'name', 'treasurer')->first();
     $bookkeeper = App\Models\User::whereRelation('roles', 'name', 'book-keeper')->first();
-    $above_50k = ($disbursement_voucher_items->where('account_id', App\Models\Account::getCashInBankGF()->id) ?? null)->sum('credit') > 50000;
+    $above_50k = ($disbursement_voucher_items->whereIn('account_id', [App\Models\Account::getCashInBankGF()->id, App\Models\Account::getCashInBankMSO()->id]) ?? null)->sum('credit') > 50000;
     if ($above_50k) {
         $approver = App\Models\User::whereRelation('roles', 'name', 'bod-chairperson')->first();
     } else {
