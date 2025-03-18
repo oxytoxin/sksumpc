@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Pages;
 
+use App\Filament\App\Pages\Cashier\Reports\BillingTransactions;
 use App\Filament\App\Pages\Cashier\Reports\CashProof;
 use App\Filament\App\Pages\Cashier\Reports\DailyCollectionsReport;
 use App\Filament\App\Pages\Cashier\Reports\MsoTransactions;
@@ -52,6 +53,10 @@ class Reports extends Page implements HasForms
                     Tab::make('DAILY COLLECTIONS')
                         ->schema([
                             Livewire::make(DailyCollectionsReport::class),
+                        ]),
+                    Tab::make('BILLING')
+                        ->schema([
+                            Livewire::make(BillingTransactions::class),
                         ]),
                 ]),
         ]);
