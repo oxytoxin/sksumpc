@@ -19,10 +19,15 @@ class LoanApplicationForm extends Page
 
     protected function getSignatories()
     {
-        $this->signatories = collect($this->loan_application->approvals->items())->map(fn ($a) => [
+        $this->signatories = collect($this->loan_application->approvals->items())->map(fn($a) => [
             'action' => '',
             'name' => $a->name,
-            'position' => $a->position,
+            'designation' => $a->position,
         ])->toArray();
+    }
+
+    protected function readOnlySignatories()
+    {
+        return true;
     }
 }

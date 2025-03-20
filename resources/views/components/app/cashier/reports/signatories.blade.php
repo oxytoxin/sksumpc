@@ -6,7 +6,7 @@
                 <div class="flex justify-around">
                     <div class="flex flex-col items-center">
                         <p class="font-bold uppercase">{{ $signatory['name'] }}</p>
-                        <p>{{ $signatory['position'] }}</p>
+                        <p>{{ $signatory['designation'] }}</p>
                     </div>
                     <div class="flex flex-col items-center">
                         <p>{{ config('app.transaction_date')?->format('m/d/Y') }}</p>

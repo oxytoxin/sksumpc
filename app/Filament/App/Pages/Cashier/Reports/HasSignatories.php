@@ -2,17 +2,27 @@
 
 namespace App\Filament\App\Pages\Cashier\Reports;
 
+use App\Models\SignatureSet;
 use App\Models\User;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 
 trait HasSignatories
 {
     public $signatories = [];
+    public $signature_set;
+
+    protected function readOnlySignatories()
+    {
+        return false;
+    }
 
     protected function getHeaderActions(): array
     {
+        if ($this->readOnlySignatories())
+            return [];
         return [
             Action::make('signatories')
                 ->fillForm([
@@ -23,48 +33,38 @@ trait HasSignatories
                         TableRepeater::make('signatories')
                             ->schema([
                                 TextInput::make('action'),
-                                TextInput::make('name')->required(),
-                                TextInput::make('position')->required(),
+                                Select::make('user_id')->relationship('user', 'name')->required()->searchable()->preload(),
+                                TextInput::make('designation')->required(),
                             ])
+                            ->model($this->getSignatureSet())
+                            ->relationship('signatories')
                             ->hideLabels()
                             ->label('')
                             ->addActionLabel('Add Signatory'),
                     ];
-                })->action(fn ($data) => $this->signatories = $data['signatories']),
+                })->action(fn() => $this->getSignatories()),
         ];
     }
 
-    protected function getSignatories()
+    protected function getSignatureSet()
     {
-        $bookkeeper = User::whereRelation('roles', 'name', 'book-keeper')->first();
-        $treasurer = User::whereRelation('roles', 'name', 'treasurer')->first();
-        $manager = User::whereRelation('roles', 'name', 'manager')->first();
-        $this->signatories = [
-            [
-                'action' => 'Prepared by:',
-                'name' => auth()->user()->name,
-                'position' => 'Teller/Cashier',
-            ],
-            [
-                'action' => 'Checked by:',
-                'name' => $bookkeeper?->name ?? 'ADRIAN VOLTAIRE POLO',
-                'position' => 'Posting Clerk',
-            ],
-            [
-                'action' => 'Received by:',
-                'name' => $treasurer?->name ?? 'DESIREE G. LEGASPI',
-                'position' => 'Treasurer',
-            ],
-            [
-                'action' => 'Noted:',
-                'name' => $manager?->name ?? 'FLORA C. DAMANDAMAN',
-                'position' => 'Manager',
-            ],
-        ];
+        return SignatureSet::where('name', 'Cashier Reports')->first();
     }
 
-    public function mountHasSignatories()
+    protected function getAdditionalSignatories()
     {
-        $this->getSignatories();
+        return [];
+    }
+
+    public function getSignatories()
+    {
+        $this->signatories = $this->getSignatureSet()->signatories->map(fn($s) => [
+            'user_id' => $s->user_id,
+            'name' => $s->user->name,
+            'action' => $s->action,
+            'designation' => $s->designation
+        ])->toArray();
+        $this->signatories = [...$this->signatories, ...$this->getAdditionalSignatories()];
+        return $this->signatories;
     }
 }

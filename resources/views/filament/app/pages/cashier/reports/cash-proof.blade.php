@@ -3,7 +3,7 @@
         {{ $this->form }}
     </div>
     <div class="w-full">
-        <x-app.cashier.reports.report-layout :signatories="$signatories" title="CASH PROOF">
+        <x-app.cashier.reports.report-layout title="CASH PROOF" :signatories="$this->getSignatories()">
             <div>
                 <h3 class="font-bold">CASH ACKNOWLEGEMENT RECEIPTS</h3>
                 <div class="px-4">

@@ -1,4 +1,4 @@
-<x-app.cashier.reports.report-layout :signatories="$signatories" :title="$report_title">
+<x-app.cashier.reports.report-layout :signatories="$this->getSignatories()" :title="$report_title">
     <table class="w-full text-xs">
         <thead>
             <tr>
@@ -52,11 +52,11 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="10" class="border border-black text-center">No transactions today.</td>
+                    <td class="border border-black text-center" colspan="10">No transactions today.</td>
                 </tr>
             @endforelse
             <tr>
-                <th colspan="7" class="border border-black text-center">GRAND TOTAL</th>
+                <th class="border border-black text-center" colspan="7">GRAND TOTAL</th>
                 <td class="border border-black text-center font-bold">
                     {{ renumber_format($total_credit, 2) }}
                 </td>

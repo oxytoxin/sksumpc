@@ -16,9 +16,4 @@ class CbuAmortizationSchedule extends Page
     protected static string $resource = MemberResource::class;
 
     protected static string $view = 'filament.app.resources.member-resource.pages.cbu-amortization-schedule';
-
-    public function mount()
-    {
-        $this->getSignatories();
-    }
 }

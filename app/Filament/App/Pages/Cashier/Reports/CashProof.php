@@ -76,7 +76,6 @@ class CashProof extends Page
     public function mount()
     {
         $this->form->fill();
-        $this->getSignatories();
         data_set($this, 'data.transaction_date', (config('app.transaction_date')?->format('Y/m/d') ?? today()->format('Y/m/d')) . ' - ' . (config('app.transaction_date')?->format('Y/m/d') ?? today()->format('Y/m/d')));
     }
 }

@@ -29,14 +29,14 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td class="border print:border-x print:border-y-0 border-black px-2"></td>
-                        <td class="border print:border-x print:border-y-0 border-black px-2"></td>
-                        <td class="border print:border-x print:border-y-0 border-black px-2"></td>
-                        <td class="border print:border-x print:border-y-0 border-black px-2 text-right"></td>
-                        <td class="border print:border-x print:border-y-0 border-black px-2 text-right"></td>
-                        <td class="border print:border-x print:border-y-0 border-black px-2 text-right"></td>
-                        <td class="border print:border-x print:border-y-0 border-black px-2 text-right">{{ number_format($loan->gross_amount, 2) }}</td>
-                        <td class="border print:border-x print:border-y-0 border-black px-2"></td>
+                        <td class="border border-black px-2 print:border-x print:border-y-0"></td>
+                        <td class="border border-black px-2 print:border-x print:border-y-0"></td>
+                        <td class="border border-black px-2 print:border-x print:border-y-0"></td>
+                        <td class="border border-black px-2 text-right print:border-x print:border-y-0"></td>
+                        <td class="border border-black px-2 text-right print:border-x print:border-y-0"></td>
+                        <td class="border border-black px-2 text-right print:border-x print:border-y-0"></td>
+                        <td class="border border-black px-2 text-right print:border-x print:border-y-0">{{ number_format($loan->gross_amount, 2) }}</td>
+                        <td class="border border-black px-2 print:border-x print:border-y-0"></td>
                     </tr>
                     @php
                         $ob = $loan->gross_amount;
@@ -47,32 +47,32 @@
                             $ob -= $loan_amortization['principal'];
                         @endphp
                         <tr>
-                            <td class="border print:border-x print:border-y-0 border-black px-2">{{ $loan_amortization['term'] }}</td>
-                            <td class="border print:border-x print:border-y-0 whitespace-nowrap border-black px-2">{{ $loan_amortization['date']->format('F Y') }}</td>
-                            <td class="border print:border-x print:border-y-0 border-black px-2 text-center">{{ $loan_amortization['days'] }}</td>
-                            <td class="border print:border-x print:border-y-0 border-black px-2 text-right">{{ number_format($loan_amortization['amortization'], 2) }}</td>
-                            <td class="border print:border-x print:border-y-0 border-black px-2 text-right">{{ number_format($loan_amortization['interest'], 2) }}</td>
-                            <td class="border print:border-x print:border-y-0 border-black px-2 text-right">{{ number_format($loan_amortization['principal'], 2) }}</td>
-                            <td class="border print:border-x print:border-y-0 border-black px-2 text-right">{{ number_format($loan_amortization['outstanding_balance'] ?? $ob, 2) }}</td>
-                            <td class="border print:border-x print:border-y-0 border-black px-2"></td>
+                            <td class="border border-black px-2 print:border-x print:border-y-0">{{ $loan_amortization['term'] }}</td>
+                            <td class="whitespace-nowrap border border-black px-2 print:border-x print:border-y-0">{{ $loan_amortization['date']->format('F Y') }}</td>
+                            <td class="border border-black px-2 text-center print:border-x print:border-y-0">{{ $loan_amortization['days'] }}</td>
+                            <td class="border border-black px-2 text-right print:border-x print:border-y-0">{{ number_format($loan_amortization['amortization'], 2) }}</td>
+                            <td class="border border-black px-2 text-right print:border-x print:border-y-0">{{ number_format($loan_amortization['interest'], 2) }}</td>
+                            <td class="border border-black px-2 text-right print:border-x print:border-y-0">{{ number_format($loan_amortization['principal'], 2) }}</td>
+                            <td class="border border-black px-2 text-right print:border-x print:border-y-0">{{ number_format($loan_amortization['outstanding_balance'] ?? $ob, 2) }}</td>
+                            <td class="border border-black px-2 print:border-x print:border-y-0"></td>
                         </tr>
                     @endforeach
                     <tr>
-                        <td class="border print:border-x print:border-y-0 font-bold border-black px-2"></td>
-                        <td class="border print:border-x print:border-y-0 font-bold border-black px-2">TOTAL</td>
-                        <td class="border print:border-x print:border-y-0 font-bold border-black px-2 text-center"></td>
-                        <td class="border print:border-x print:border-y-0 font-bold border-black px-2 text-right">{{ number_format(collect($amortizations)->sum('amortization'), 2) }}</td>
-                        <td class="border print:border-x print:border-y-0 font-bold border-black px-2 text-right">{{ number_format(collect($amortizations)->sum('interest'), 2) }}</td>
-                        <td class="border print:border-x print:border-y-0 font-bold border-black px-2 text-right">{{ number_format(collect($amortizations)->sum('principal'), 2) }}</td>
-                        <td class="border print:border-x print:border-y-0 font-bold border-black px-2 text-right"></td>
-                        <td class="border print:border-x print:border-y-0 font-bold border-black px-2"></td>
+                        <td class="border border-black px-2 font-bold print:border-x print:border-y-0"></td>
+                        <td class="border border-black px-2 font-bold print:border-x print:border-y-0">TOTAL</td>
+                        <td class="border border-black px-2 text-center font-bold print:border-x print:border-y-0"></td>
+                        <td class="border border-black px-2 text-right font-bold print:border-x print:border-y-0">{{ number_format(collect($amortizations)->sum('amortization'), 2) }}</td>
+                        <td class="border border-black px-2 text-right font-bold print:border-x print:border-y-0">{{ number_format(collect($amortizations)->sum('interest'), 2) }}</td>
+                        <td class="border border-black px-2 text-right font-bold print:border-x print:border-y-0">{{ number_format(collect($amortizations)->sum('principal'), 2) }}</td>
+                        <td class="border border-black px-2 text-right font-bold print:border-x print:border-y-0"></td>
+                        <td class="border border-black px-2 font-bold print:border-x print:border-y-0"></td>
                     </tr>
                 </tbody>
             </table>
-            <x-app.cashier.reports.signatories :signatories="$signatories" />
+            <x-app.cashier.reports.signatories :signatories="$this->getSignatories()" />
         </div>
         <div class="flex justify-end space-x-2">
-            <x-filament::button wire:ignore href="{{ back()->getTargetUrl() }}" outlined tag="a">Back</x-filament::button>
+            <x-filament::button href="{{ back()->getTargetUrl() }}" wire:ignore outlined tag="a">Back</x-filament::button>
             <x-filament::button icon="heroicon-o-printer" @click="printOut($refs.print.outerHTML, 'Loan Amortization Schedule')">Print</x-filament::button>
         </div>
     </div>

@@ -5,6 +5,7 @@ namespace App\Filament\App\Resources\MemberResource\Pages;
 use App\Filament\App\Pages\Cashier\Reports\HasSignatories;
 use App\Filament\App\Resources\MemberResource;
 use App\Models\Loan;
+use App\Models\SignatureSet;
 use App\Models\User;
 use Filament\Resources\Pages\Page;
 
@@ -18,30 +19,19 @@ class LoanAmortizationSchedule extends Page
 
     public Loan $loan;
 
-    public function mount()
+    protected function getSignatureSet()
     {
-        $this->getSignatories();
+        return SignatureSet::where('name', 'Loan Amortization Reports')->first();
     }
-
-    protected function getSignatories()
+    protected function getAdditionalSignatories()
     {
-        $manager = User::whereRelation('roles', 'name', 'manager')->first();
-        $this->signatories = [
+        return [
             [
-                'action' => 'Prepared by:',
-                'name' => auth()->user()->name,
-                'position' => 'Teller/Cashier',
-            ],
-            [
-                'action' => 'Noted:',
-                'name' => $manager?->name ?? 'FLORA C. DAMANDAMAN',
-                'position' => 'Manager',
-            ],
-            [
-                'action' => 'Conforme:',
+                'user_id' => $this->loan->member->user_id,
                 'name' => $this->loan->member->full_name,
-                'position' => "Member's Name",
-            ],
+                'action' => 'Conforme:',
+                'designation' => "Member's Name"
+            ]
         ];
     }
 }

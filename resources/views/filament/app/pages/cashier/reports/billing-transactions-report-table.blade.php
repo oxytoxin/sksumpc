@@ -1,4 +1,4 @@
-<x-app.cashier.reports.report-layout :signatories="$signatories" :title="$report_title">
+<x-app.cashier.reports.report-layout :signatories="$this->getSignatories()" :title="$report_title">
     <table class="w-full text-xs">
         <thead>
             <tr>

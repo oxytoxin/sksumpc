@@ -3,7 +3,7 @@
         {{ $this->form }}
     </div>
     <div class="w-full">
-        <x-app.cashier.reports.report-layout title="DAILY COLLECTIONS REPORT">
+        <x-app.cashier.reports.report-layout title="DAILY COLLECTIONS REPORT" :signatories="$this->getSignatories()">
             <div class="flex items-start gap-16">
                 <div class="w-1/2">
                     <div class="space-y-4">
@@ -37,7 +37,7 @@
                         <hr class="border border-black">
                         <div class="flex justify-between">
                             <h3 class="font-bold uppercase">TOTAL COLLECTIONS</h3>
-                            <strong>{{ number_format(collect($this->daily_collections)->flatten()->sum('total_amount'),2) }}</strong>
+                            <strong>{{ number_format(collect($this->daily_collections)->flatten()->sum('total_amount'), 2) }}</strong>
                         </div>
                     </div>
                 </div>

@@ -18,14 +18,14 @@
         <table class="w-full overflow-auto print:text-[10pt]">
             <thead>
                 <tr>
-                    <th rowspan="2" class="border-2 border-black text-center">No.</th>
-                    <th rowspan="2" class="border-2 border-black text-center">Full Name</th>
-                    <th rowspan="2" class="border-2 border-black text-center">OR Number</th>
+                    <th class="border-2 border-black text-center" rowspan="2">No.</th>
+                    <th class="border-2 border-black text-center" rowspan="2">Full Name</th>
+                    <th class="border-2 border-black text-center" rowspan="2">OR Number</th>
                     @foreach ($loan_types as $loan_type)
-                        <th colspan="3" class="whitespace-nowrap border-2 border-black px-4 text-center">
+                        <th class="whitespace-nowrap border-2 border-black px-4 text-center" colspan="3">
                             {{ $loan_type->code }}</th>
                     @endforeach
-                    <th rowspan="2" class="border-2 border-black text-center">TOTAL</th>
+                    <th class="border-2 border-black text-center" rowspan="2">TOTAL</th>
                 </tr>
                 <tr>
                     @foreach ($loan_types as $loan_type)
@@ -59,7 +59,7 @@
                 @endforeach
             </tbody>
         </table>
-        <x-app.cashier.reports.signatories :signatories="$signatories" />
+        <x-app.cashier.reports.signatories :signatories="$this->getSignatories()" />
     </div>
     <div class="flex justify-end p-4">
         <x-filament::button icon="heroicon-o-printer" @click="printOut($refs.print.outerHTML, 'CBU Subsidiary Ledger')">Print</x-filament::button>

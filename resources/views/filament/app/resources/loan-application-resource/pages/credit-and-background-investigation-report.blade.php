@@ -182,7 +182,7 @@
             </div>
         </x-app.cashier.reports.report-layout>
     @else
-        <x-app.cashier.reports.report-layout :signatories="$signatories">
+        <x-app.cashier.reports.report-layout :signatories="$this->getSignatories()">
             <div class="print:text-[8pt]">
                 <div class="text-center font-bold uppercase">
                     <p class="text-right text-sm font-normal">Confidential CIR 1</p>

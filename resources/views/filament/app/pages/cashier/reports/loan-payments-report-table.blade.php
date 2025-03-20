@@ -1,4 +1,4 @@
-<x-app.cashier.reports.report-layout :signatories="$signatories" :title="$report_title">
+<x-app.cashier.reports.report-layout :signatories="$this->getSignatories()" :title="$report_title">
     <table class="w-full">
         <thead>
             <tr>
@@ -50,15 +50,15 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="5" class="border border-black text-center">No transactions today.</td>
+                    <td class="border border-black text-center" colspan="5">No transactions today.</td>
                 </tr>
             @endforelse
             <tr>
-                <th colspan="5" class="border border-black text-center">GRAND TOTAL</th>
-                <td class="border border-black font-bold text-center">{{ renumber_format($amount, 2) }}</td>
-                <td class="border border-black font-bold text-center">{{ renumber_format($principal_payment, 2) }}</td>
-                <td class="border border-black font-bold text-center">{{ renumber_format($interest_payment, 2) }}</td>
-                <td class="border border-black font-bold text-center">{{ renumber_format($surcharge_payment, 2) }}</td>
+                <th class="border border-black text-center" colspan="5">GRAND TOTAL</th>
+                <td class="border border-black text-center font-bold">{{ renumber_format($amount, 2) }}</td>
+                <td class="border border-black text-center font-bold">{{ renumber_format($principal_payment, 2) }}</td>
+                <td class="border border-black text-center font-bold">{{ renumber_format($interest_payment, 2) }}</td>
+                <td class="border border-black text-center font-bold">{{ renumber_format($surcharge_payment, 2) }}</td>
                 <td class="border border-black text-center"></td>
             </tr>
         </tbody>

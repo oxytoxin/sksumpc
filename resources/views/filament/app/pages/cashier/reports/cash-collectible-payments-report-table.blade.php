@@ -1,4 +1,4 @@
-<x-app.cashier.reports.report-layout :signatories="$signatories" :title="$report_title">
+<x-app.cashier.reports.report-layout :signatories="$this->getSignatories()" :title="$report_title">
     <table class="w-full">
         <thead>
             <tr>
@@ -31,7 +31,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="5" class="border border-black text-center">No transactions today.</td>
+                    <td class="border border-black text-center" colspan="5">No transactions today.</td>
                 </tr>
             @endforelse
         </tbody>

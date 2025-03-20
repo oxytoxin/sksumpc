@@ -6,6 +6,7 @@ use App\Filament\App\Pages\Cashier\Reports\HasSignatories;
 use App\Filament\App\Resources\MemberResource;
 use App\Models\Saving;
 use App\Models\SavingsAccount;
+use App\Models\SignatureSet;
 use App\Models\User;
 use Filament\Resources\Pages\Page;
 use Filament\Tables\Actions\Action;
@@ -31,28 +32,18 @@ class SavingsSubsidiaryLedger extends Page implements HasTable
         return 'Savings Subsidiary Ledger';
     }
 
-    protected function getSignatories()
+
+    protected function getSignatureSet()
     {
-        $manager = User::whereRelation('roles', 'name', 'manager')->first();
-        $this->signatories = [
-            [
-                'action' => 'Prepared by:',
-                'name' => auth()->user()->name,
-                'position' => 'Teller/Cashier',
-            ],
-            [
-                'action' => 'Noted:',
-                'name' => $manager?->name ?? 'FLORA C. DAMANDAMAN',
-                'position' => 'Manager',
-            ],
-        ];
+        return SignatureSet::where('name', 'SL Reports')->first();
     }
+
 
     public function table(Table $table): Table
     {
         return $table
             ->query(Saving::whereBelongsTo($this->savings_account, 'savings_account'))
-            ->content(fn () => view('filament.app.views.savings-sl', ['savings_account' => $this->savings_account, 'signatories' => $this->signatories]))
+            ->content(fn() => view('filament.app.views.savings-sl', ['savings_account' => $this->savings_account, 'signatories' => $this->signatories]))
             ->filters([
                 DateRangeFilter::make('transaction_date')
                     ->format('m/d/Y')

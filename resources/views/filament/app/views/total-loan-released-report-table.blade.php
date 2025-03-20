@@ -17,20 +17,20 @@
         <x-app.cashier.reports.report-heading />
         <h4 class="mt-4 text-center text-3xl font-bold print:text-[14pt]">TOTAL LOAN RELEASED</h4>
         @if ($one_day)
-            <h5 class="text-center uppercase font-semibold">{{ $date_from->format('F d, Y') }}</h5>
+            <h5 class="text-center font-semibold uppercase">{{ $date_from->format('F d, Y') }}</h5>
         @else
-            <h5 class="text-center uppercase font-semibold">{{ $date_from->format('F d, Y') }} to {{ $date_to->format('F d, Y') }}</h5>
+            <h5 class="text-center font-semibold uppercase">{{ $date_from->format('F d, Y') }} to {{ $date_to->format('F d, Y') }}</h5>
         @endif
-        <h5 wire:loading.block class="text-center mt-8 uppercase font-semibold">Refreshing data...</h5>
-        <table wire:loading.remove class="w-6xl mx-auto overflow-auto mt-8 print:text-[8pt]">
+        <h5 class="mt-8 text-center font-semibold uppercase" wire:loading.block>Refreshing data...</h5>
+        <table class="w-6xl mx-auto mt-8 overflow-auto print:text-[8pt]" wire:loading.remove>
             <thead>
                 <tr>
-                    <th rowspan="2" class="border-2 border-black text-center">No.</th>
-                    <th rowspan="2" class="border-2 border-black text-center">Name of Borrower</th>
-                    <th rowspan="2" class="border-2 border-black text-center">Gender</th>
-                    <th colspan="{{ $loan_types->count() + 1 }}" class="border-2 border-black text-center">GROSS AMOUNT</th>
-                    <th colspan="{{ $loan_types->count() + 1 }}" class="border-2 border-black text-center">NET AMOUNT</th>
-                    <th rowspan="2" class="border-2 border-black text-center px-4">Received</th>
+                    <th class="border-2 border-black text-center" rowspan="2">No.</th>
+                    <th class="border-2 border-black text-center" rowspan="2">Name of Borrower</th>
+                    <th class="border-2 border-black text-center" rowspan="2">Gender</th>
+                    <th class="border-2 border-black text-center" colspan="{{ $loan_types->count() + 1 }}">GROSS AMOUNT</th>
+                    <th class="border-2 border-black text-center" colspan="{{ $loan_types->count() + 1 }}">NET AMOUNT</th>
+                    <th class="border-2 border-black px-4 text-center" rowspan="2">Received</th>
                 </tr>
                 <tr>
                     <th class="whitespace-nowrap border-2 border-black px-4 text-center">GROSS TOTAL</th>
@@ -40,7 +40,7 @@
                     @foreach ($loan_types as $loan_type)
                         <th class="whitespace-nowrap border-2 border-black px-4 text-center">{{ $loan_type->code }}</th>
                     @endforeach
-                    <th class="border-2 border-black text-center px-4">NET PROCEEDS</th>
+                    <th class="border-2 border-black px-4 text-center">NET PROCEEDS</th>
 
                 </tr>
             </thead>
@@ -84,7 +84,7 @@
                 </tr>
             </tbody>
         </table>
-        <x-app.cashier.reports.signatories :signatories="$signatories" />
+        <x-app.cashier.reports.signatories :signatories="$this->getSignatories()" />
     </div>
     <div class="flex justify-end p-4">
         <x-filament::button icon="heroicon-o-printer" @click="printOut($refs.print.outerHTML, 'TOTAL LOAN RELEASED')">Print</x-filament::button>

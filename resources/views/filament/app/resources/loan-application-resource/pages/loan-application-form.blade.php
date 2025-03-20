@@ -15,7 +15,7 @@
 @endphp
 
 <x-filament-panels::page>
-    <div x-data class="mx-auto">
+    <div class="mx-auto" x-data>
         <div class="p-4 print:w-full print:text-[8pt] print:leading-tight" x-ref="print">
             <div>
                 <x-app.cashier.reports.report-heading />
@@ -104,7 +104,7 @@
                             @foreach ($signatories as $approver)
                                 <div class="mt-4 flex w-1/3 flex-col items-center">
                                     <p class="font-bold">{{ $approver['name'] }}</p>
-                                    <p class="print:text-[7pt]">{{ $approver['position'] }}</p>
+                                    <p class="print:text-[7pt]">{{ $approver['designation'] }}</p>
                                 </div>
                             @endforeach
                         </div>
@@ -130,13 +130,13 @@
                         <table class="w-full print:text-[9pt]">
                             <thead>
                                 <tr>
-                                    <th class="border border-black text-left px-2">Date</th>
-                                    <th class="border border-black text-left px-2">Particulars</th>
-                                    <th class="border border-black text-left px-2">Date Granted</th>
-                                    <th class="border border-black text-left px-2">Amount Granted</th>
-                                    <th class="border border-black text-left px-2">Monthly Amortization</th>
-                                    <th class="border border-black text-left px-2">Balance</th>
-                                    <th class="border border-black text-left px-2">Remarks</th>
+                                    <th class="border border-black px-2 text-left">Date</th>
+                                    <th class="border border-black px-2 text-left">Particulars</th>
+                                    <th class="border border-black px-2 text-left">Date Granted</th>
+                                    <th class="border border-black px-2 text-left">Amount Granted</th>
+                                    <th class="border border-black px-2 text-left">Monthly Amortization</th>
+                                    <th class="border border-black px-2 text-left">Balance</th>
+                                    <th class="border border-black px-2 text-left">Remarks</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -166,7 +166,7 @@
                                     </tr>
                                 @endforeach
                                 <tr>
-                                    <td colspan="8" class="border border-black px-2 text-center">Nothing follows.</td>
+                                    <td class="border border-black px-2 text-center" colspan="8">Nothing follows.</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -334,7 +334,7 @@
                         is their free and voluntary act and deed.
                     </p>
                     <div class="mt-8 flex justify-end">
-                        <div class="w-1/5 mr-16">
+                        <div class="mr-16 w-1/5">
                             <p class="border-b border-black text-center uppercase"></p>
                             <p class="text-center">Notary</p>
                         </div>
@@ -349,7 +349,7 @@
             </div>
         </div>
         <div class="flex justify-end space-x-2 p-4">
-            <x-filament::button outlined tag="a" href="{{ route('filament.app.resources.loan-applications.index') }}">Back to Loan Applications</x-filament::button>
+            <x-filament::button href="{{ route('filament.app.resources.loan-applications.index') }}" outlined tag="a">Back to Loan Applications</x-filament::button>
             <x-filament::button icon="heroicon-o-printer" @click="printOut($refs.print.outerHTML, 'Loan Application Form')">Print</x-filament::button>
         </div>
     </div>

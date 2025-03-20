@@ -6,6 +6,7 @@ use App\Filament\App\Pages\Cashier\Reports\HasSignatories;
 use App\Filament\App\Resources\CapitalSubscriptionResource;
 use App\Models\Member;
 use App\Models\MemberType;
+use App\Models\SignatureSet;
 use App\Models\User;
 use Carbon\Carbon;
 use Filament\Forms\Components\Select;
@@ -58,31 +59,18 @@ class TopTenHighestCbuReport extends Page implements HasForms
     #[Computed]
     public function contributors()
     {
-        return Member::whereHas('capital_subscription_payments', fn ($query) => $query->whereDate('capital_subscription_payments.transaction_date', '<=', date_create(Carbon::create(month: $this->data['month'], year: $this->data['year'])->endOfMonth())))
-            ->when($this->data['member_type_id'] ?? false, fn ($query, $member_type_id) => $query->where('member_type_id', $member_type_id))
+        return Member::whereHas('capital_subscription_payments', fn($query) => $query->whereDate('capital_subscription_payments.transaction_date', '<=', date_create(Carbon::create(month: $this->data['month'], year: $this->data['year'])->endOfMonth())))
+            ->when($this->data['member_type_id'] ?? false, fn($query, $member_type_id) => $query->where('member_type_id', $member_type_id))
             ->withSum([
-                'capital_subscription_payments' => fn ($query) => $query->whereDate('capital_subscription_payments.transaction_date', '<=', date_create(Carbon::create(month: $this->data['month'], year: $this->data['year'])->endOfMonth())),
+                'capital_subscription_payments' => fn($query) => $query->whereDate('capital_subscription_payments.transaction_date', '<=', date_create(Carbon::create(month: $this->data['month'], year: $this->data['year'])->endOfMonth())),
             ], 'amount')
             ->orderBy('capital_subscription_payments_sum_amount', 'desc')
             ->limit(10)
             ->get();
     }
 
-    protected function getSignatories()
+    protected function getSignatureSet()
     {
-        $manager = User::whereRelation('roles', 'name', 'manager')->first();
-        $this->signatories = [
-            [
-                'action' => 'Prepared by:',
-                'name' => auth()->user()->name,
-                'position' => 'Clerk',
-            ],
-            null,
-            [
-                'action' => 'Noted:',
-                'name' => $manager?->name ?? 'FLORA C. DAMANDAMAN',
-                'position' => 'Manager',
-            ],
-        ];
+        return SignatureSet::where('name', 'CBU Reports')->first();
     }
 }

@@ -8,6 +8,7 @@ use App\Models\LoanType;
 use App\Models\Member;
 use App\Models\MemberSubtype;
 use App\Models\MemberType;
+use App\Models\SignatureSet;
 use App\Models\User;
 use Auth;
 use Filament\Forms\Components\Select;
@@ -33,6 +34,12 @@ class TotalLoanReleasedReport extends Page implements HasTable
     public static function shouldRegisterNavigation(): bool
     {
         return Auth::user()->can('manage loans');
+    }
+
+
+    protected function getSignatureSet()
+    {
+        return SignatureSet::where('name', 'Loan Officer Reports')->first();
     }
 
     public function table(Table $table): Table
@@ -94,22 +101,5 @@ class TotalLoanReleasedReport extends Page implements HasTable
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
             ->paginated(false);
-    }
-
-    protected function getSignatories()
-    {
-        $manager = User::whereRelation('roles', 'name', 'manager')->first();
-        $this->signatories = [
-            [
-                'action' => 'Prepared by:',
-                'name' => auth()->user()->name,
-                'position' => 'Loan Officer',
-            ],
-            [
-                'action' => 'Noted:',
-                'name' => $manager?->name ?? 'FLORA C. DAMANDAMAN',
-                'position' => 'Manager',
-            ],
-        ];
     }
 }

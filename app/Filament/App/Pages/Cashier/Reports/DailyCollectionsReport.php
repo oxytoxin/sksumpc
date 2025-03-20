@@ -19,6 +19,8 @@ use App\Enums\OthersTransactionExcludedAccounts;
 
 class DailyCollectionsReport extends Page
 {
+    use HasSignatories;
+
     protected static bool $shouldRegisterNavigation = false;
 
     protected static string $view = 'filament.app.pages.cashier.reports.daily-collections-report';

@@ -22,7 +22,7 @@ class UserRoleSeeder extends Seeder
         $user = User::create([
             'name' => 'FLORA C. DAMANDAMAN',
             'email' => 'sksumpcadmin@gmail.com',
-            'password' => Hash::make('password'),
+            'password' => 'password',
         ]);
 
         $permission = Permission::create([
@@ -39,7 +39,7 @@ class UserRoleSeeder extends Seeder
         $user = User::create([
             'name' => 'CRISTY A. MANTOS',
             'email' => 'carochi2024@gmail.com',
-            'password' => Hash::make('CATaro2024'),
+            'password' => 'CATaro2024',
         ]);
         $permission = Permission::create([
             'name' => 'manage payments',
@@ -54,7 +54,7 @@ class UserRoleSeeder extends Seeder
         $user = User::create([
             'name' => 'ADRIAN VOLTAIRE POLO',
             'email' => 'MPCCBU@gmail.com',
-            'password' => Hash::make('1234567'),
+            'password' => '1234567',
         ]);
         $permission = Permission::create([
             'name' => 'manage members',
@@ -73,7 +73,7 @@ class UserRoleSeeder extends Seeder
         $user = User::create([
             'name' => 'SKSUMPC MSO Staff',
             'email' => 'CJLsexy@gmail.com@gmail.com',
-            'password' => Hash::make('072820'),
+            'password' => '072820',
         ]);
         $permission = Permission::create([
             'name' => 'manage mso',
@@ -91,7 +91,7 @@ class UserRoleSeeder extends Seeder
         $user = User::create([
             'name' => 'SKSUMPC Loan Staff',
             'email' => 'sksumpcloan@gmail.com',
-            'password' => Hash::make('EDA070784'),
+            'password' => 'EDA070784',
         ]);
         $role->givePermissionTo($permission);
         $user->assignRole($role);
@@ -103,7 +103,7 @@ class UserRoleSeeder extends Seeder
         $user = User::create([
             'name' => 'JOANA MONA R. PRIMACIO ',
             'email' => 'sksumpcbookkeeper@gmail.com',
-            'password' => Hash::make('gwapaako'),
+            'password' => 'gwapaako',
         ]);
         $permission = Permission::create([
             'name' => 'manage bookkeeping',
@@ -118,7 +118,7 @@ class UserRoleSeeder extends Seeder
         $user = User::create([
             'name' => 'DESIREE G. LEGASPI',
             'email' => 'sksumpctreasurer@gmail.com',
-            'password' => Hash::make('password'),
+            'password' => 'password',
         ]);
         $permission = Permission::create([
             'name' => 'manage treasury',
@@ -144,9 +144,8 @@ class UserRoleSeeder extends Seeder
         $user = User::create([
             'name' => 'SKSU BILLING CLERK',
             'email' => 'sksumpcclerk@gmail.com',
-            'password' => Hash::make('password'),
+            'password' => 'password',
         ]);
         $user->assignRole($role);
-
     }
 }

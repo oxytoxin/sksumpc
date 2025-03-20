@@ -5,6 +5,7 @@ namespace App\Filament\App\Resources\LoanApplicationResource\Pages;
 use App\Filament\App\Pages\Cashier\Reports\HasSignatories;
 use App\Filament\App\Resources\LoanApplicationResource;
 use App\Models\CreditAndBackgroundInvestigation;
+use App\Models\SignatureSet;
 use App\Models\User;
 use Filament\Resources\Pages\Page;
 use Livewire\Attributes\Computed;
@@ -31,32 +32,27 @@ class CreditAndBackgroundInvestigationReport extends Page
         return $this->cibi->loan_application->member;
     }
 
-    protected function getSignatories()
+    protected function getSignatureSet()
+    {
+        return SignatureSet::where('name', 'CIBI Reports')->first();
+    }
+
+    protected function getAdditionalSignatories()
     {
         if ($this->cibi->loan_application->desired_amount > 50000) {
-            $signatory = User::whereRelation('roles', 'name', 'bod-chairperson')->first();
-            $position = 'BOD-Chairperson';
+            $user = User::whereRelation('roles', 'name', 'bod-chairperson')->first();
+            $designation = 'BOD-Chairperson';
         } else {
-            $signatory = User::whereRelation('roles', 'name', 'manager')->first();
-            $position = 'Manager';
+            $user = User::whereRelation('roles', 'name', 'manager')->first();
+            $designation = 'Manager';
         }
-
-        $this->signatories = [
+        return [
             [
-                'action' => 'Prepared by:',
-                'name' => 'JAYSON C. LANDAYAO',
-                'position' => 'Credit Investigator',
-            ],
-            [
-                'action' => 'Checked by:',
-                'name' => 'JACQUILINE B. CANDIDO',
-                'position' => 'Credit Committee Chairperson',
-            ],
-            [
+                'user_id' => $user->id,
+                'name' => $user->name,
                 'action' => 'Noted by:',
-                'name' => $signatory->name ?? 'FLORA C. DAMANDAMAN',
-                'position' => $position,
-            ],
+                'designation' => $designation
+            ]
         ];
     }
 }

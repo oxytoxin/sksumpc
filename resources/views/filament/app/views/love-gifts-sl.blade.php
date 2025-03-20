@@ -43,7 +43,7 @@
                 @endforeach
             </tbody>
         </table>
-        <x-app.cashier.reports.signatories :signatories="$signatories" />
+        <x-app.cashier.reports.signatories :signatories="$this->getSignatories()" />
     </div>
     <div class="flex justify-end p-4">
         <x-filament::button icon="heroicon-o-printer" @click="printOut($refs.print.outerHTML, 'Love Gifts Subsidiary Ledger')">Print</x-filament::button>

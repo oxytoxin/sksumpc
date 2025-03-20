@@ -1,6 +1,6 @@
 <div class="mb-4 flex justify-center">
     <div class="relative flex w-full items-center justify-center space-x-8">
-        <img src="{{ asset('images/logo.jpg') }}" alt="logo" class="absolute left-8 top-2 h-24 print:h-16">
+        <img class="h-24 print:h-16" src="{{ asset('images/logo.jpg') }}" alt="logo">
         <div class="flex flex-col items-center print:text-[9pt] print:leading-6">
             <strong class="print:text-[11pt]">SULTAN KUDARAT STATE UNIVERSITY - MULTI-PURPOSE COOPERATIVE</strong>
             <strong class="print:text-[11pt]">(SKSU-MPC)</strong>
