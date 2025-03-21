@@ -13,6 +13,7 @@ class LoanPaymentData extends Data
         public bool $buy_out = false,
         public ?string $remarks = null,
         public $transaction_date = null,
+        public $from_billing_type = null,
     ) {
         $this->transaction_date = $transaction_date ?? today();
     }

@@ -4,6 +4,7 @@ namespace App\Actions\MsoBilling;
 
 use App\Actions\MSO\DepositToMsoAccount;
 use App\Actions\Transactions\CreateTransaction;
+use App\Enums\FromBillingTypes;
 use App\Enums\MsoType;
 use App\Enums\PaymentTypes;
 use App\Models\Account;
@@ -36,6 +37,7 @@ class PostMsoBillingPayments
                 member_id: $member->id,
                 transaction_date: $msoBilling->or_date ?? $msoBilling->date,
                 payee: $member->full_name,
+                from_billing_type: FromBillingTypes::MSO_BILLING->value
             );
 
             if ($msoBilling->type == 1) {

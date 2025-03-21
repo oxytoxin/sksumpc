@@ -20,6 +20,7 @@ class TransactionData extends Data
         public ?string $tag = null,
         public $transaction_date = null,
         public $payee = null,
+        public $from_billing_type = null,
     ) {
         $this->transaction_date ??= (config('app.transaction_date') ?? today());
         if (! $this->payee) {

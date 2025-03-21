@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Filament\Notifications\Notification;
 use App\Oxytoxin\DTO\Loan\LoanPaymentData;
 use App\Actions\Transactions\CreateTransaction;
+use App\Enums\FromBillingTypes;
 use App\Oxytoxin\DTO\Transactions\TransactionData;
 
 class PostLoanBillingPayments
@@ -33,6 +34,7 @@ class PostLoanBillingPayments
                 amount: $lp->amount_paid,
                 remarks: $loanBilling->name,
                 transaction_date: $loanBilling->or_date ?? $loanBilling->date,
+                from_billing_type: FromBillingTypes::LOAN_BILLING->value
             ), $transactionType);
 
             $lp->update([
@@ -48,6 +50,7 @@ class PostLoanBillingPayments
                 member_id: $lp->member_id,
                 transaction_date: $loanBilling->or_date ?? $loanBilling->date,
                 payee: $lp->member->full_name,
+                from_billing_type: FromBillingTypes::LOAN_BILLING->value
             );
 
             if ($data->payment_type_id == PaymentTypes::ADA->value) {

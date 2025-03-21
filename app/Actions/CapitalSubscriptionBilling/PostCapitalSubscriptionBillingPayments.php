@@ -12,6 +12,7 @@ use App\Actions\Transactions\CreateTransaction;
 use App\Models\CapitalSubscriptionBillingPayment;
 use App\Oxytoxin\DTO\Transactions\TransactionData;
 use App\Actions\CapitalSubscription\PayCapitalSubscription;
+use App\Enums\FromBillingTypes;
 
 class PostCapitalSubscriptionBillingPayments
 {
@@ -34,6 +35,7 @@ class PostCapitalSubscriptionBillingPayments
                 member_id: $cbup->member_id,
                 transaction_date: $cbuBilling->or_date ?? $cbuBilling->date,
                 payee: $cbup->member->full_name,
+                from_billing_type: FromBillingTypes::CAPITAL_SUBSCRIPTION_BILLING->value
             );
             app(PayCapitalSubscription::class)->handle($cbup->capital_subscription, $data);
 

@@ -21,6 +21,7 @@ class CreateTransaction
             'tag' => $transactionData->tag,
             'payee' => $transactionData->payee,
             'transaction_date' => $transactionData->transaction_date,
+            'from_billing_type' => $transactionData->from_billing_type,
         ]);
     }
 }

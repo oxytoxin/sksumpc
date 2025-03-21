@@ -39,6 +39,7 @@ class PayLoan
                 member_id: $loan->member_id,
                 remarks: 'Member Loan Payment Principal',
                 transaction_date: $loanPaymentData->transaction_date,
+                from_billing_type: $loanPaymentData->from_billing_type
             ));
         if ($interest_payment > 0)
             app(CreateTransaction::class)->handle(new TransactionData(
@@ -49,7 +50,8 @@ class PayLoan
                 credit: $interest_payment,
                 member_id: $loan->member_id,
                 remarks: 'Member Loan Payment Interest',
-                transaction_date: $loanPaymentData->transaction_date
+                transaction_date: $loanPaymentData->transaction_date,
+                from_billing_type: $loanPaymentData->from_billing_type
             ));
 
         $loan->payments()->update([

@@ -11,6 +11,7 @@ use Filament\Notifications\Notification;
 use App\Models\CashCollectibleBillingPayment;
 use App\Actions\Transactions\CreateTransaction;
 use App\Actions\CashCollections\PayCashCollectible;
+use App\Enums\FromBillingTypes;
 use App\Oxytoxin\DTO\CashCollectibles\CashCollectiblePaymentData;
 use App\Oxytoxin\DTO\Transactions\TransactionData;
 
@@ -35,6 +36,7 @@ class PostCashCollectibleBillingPayments
                 member_id: $payment->member_id,
                 transaction_date: $cashCollectibleBilling->or_date ?? $cashCollectibleBilling->date,
                 payee: $payment->payee,
+                from_billing_type: FromBillingTypes::CASH_COLLECTIBLE_BILLING->value
             );
 
             app(CreateTransaction::class)->handle($data);
