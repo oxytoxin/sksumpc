@@ -11,8 +11,10 @@ use App\Models\MemberType;
 use App\Models\SignatureSet;
 use App\Models\User;
 use Auth;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Pages\Page;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Enums\FiltersLayout;
@@ -98,6 +100,13 @@ class TotalLoanReleasedReport extends Page implements HasTable
                     ->label('Loan Types')
                     ->preload()
                     ->relationship('loan_type', 'name'),
+            ])
+            ->headerActions([
+                Action::make('export')
+                    ->livewireClickHandlerEnabled(false)
+                    ->alpineClickHandler("tableToExcel('loan_report', 'Total Loan Released Report')")
+                    ->icon('heroicon-o-folder-arrow-down')
+                    ->action(null),
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
             ->paginated(false);

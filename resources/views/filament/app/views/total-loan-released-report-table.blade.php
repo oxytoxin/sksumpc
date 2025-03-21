@@ -88,7 +88,6 @@
     </div>
     <div class="flex justify-end gap-4 p-4">
         <x-filament::button icon="heroicon-o-printer" @click="printOut($refs.print.outerHTML, 'TOTAL LOAN RELEASED')">Print</x-filament::button>
-        <x-filament::button icon="heroicon-o-folder-arrow-down" @click="tableToExcel('loan_report', 'Total Loan Released Report')">Export</x-filament::button>
     </div>
 
 </div>
