@@ -22,7 +22,7 @@
             <h5 class="text-center font-semibold uppercase">{{ $date_from->format('F d, Y') }} to {{ $date_to->format('F d, Y') }}</h5>
         @endif
         <h5 class="mt-8 text-center font-semibold uppercase" wire:loading.block>Refreshing data...</h5>
-        <table class="w-6xl mx-auto mt-8 overflow-auto print:text-[8pt]" wire:loading.remove>
+        <table class="w-6xl mx-auto mt-8 overflow-auto print:text-[8pt]" id="loan_report" wire:loading.remove>
             <thead>
                 <tr>
                     <th class="border-2 border-black text-center" rowspan="2">No.</th>
@@ -86,7 +86,9 @@
         </table>
         <x-app.cashier.reports.signatories :signatories="$this->getSignatories()" />
     </div>
-    <div class="flex justify-end p-4">
+    <div class="flex justify-end gap-4 p-4">
         <x-filament::button icon="heroicon-o-printer" @click="printOut($refs.print.outerHTML, 'TOTAL LOAN RELEASED')">Print</x-filament::button>
+        <x-filament::button icon="heroicon-o-folder-arrow-down" @click="tableToExcel('loan_report', 'Total Loan Released Report')">Export</x-filament::button>
     </div>
+
 </div>
