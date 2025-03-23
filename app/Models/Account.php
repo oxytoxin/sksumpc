@@ -75,6 +75,11 @@ class Account extends Model
         return Account::whereAccountableType(LoanType::class)->whereAccountableId($loanType->id)->whereTag('loan_receivables')->first();
     }
 
+    public static function getFamilyInsurance()
+    {
+        return Account::firstWhere('tag', 'family_insurance');
+    }
+
     public static function getServiceFeeLoans()
     {
         return Account::firstWhere('tag', 'service_fee_loans');

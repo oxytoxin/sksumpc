@@ -180,7 +180,6 @@ class LoanApplicationResource extends Resource
                     ->modalWidth(MaxWidth::ScreenExtraLarge)
                     ->fillForm(function ($record) {
                         $disclosure_sheet_items = LoansProvider::getDisclosureSheetItems($record->loan_type, $record->desired_amount, $record->member);
-
                         return [
                             'gross_amount' => $record->desired_amount,
                             'number_of_terms' => $record->number_of_terms,

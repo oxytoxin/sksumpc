@@ -124,6 +124,15 @@ class LoansProvider
             'code' => 'service_fee',
         ];
 
+        $items[] = [
+            'member_id' => null,
+            'account_id' => Account::getFamilyInsurance()->id,
+            'credit' => 190,
+            'debit' => null,
+            'readonly' => true,
+            'code' => 'service_fee',
+        ];
+
         if ($loanType->id != 2) {
             $items[] = [
                 'member_id' => $member->id,
