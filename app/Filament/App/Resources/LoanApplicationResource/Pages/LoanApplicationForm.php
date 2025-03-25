@@ -24,6 +24,8 @@ class LoanApplicationForm extends Page
             'name' => $a->name,
             'designation' => $a->position,
         ])->toArray();
+
+        return $this->signatories;
     }
 
     protected function readOnlySignatories()

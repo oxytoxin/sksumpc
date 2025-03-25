@@ -101,7 +101,7 @@
                     </div>
                     <div class="mt-2">
                         <div class="flex flex-wrap justify-around gap-y-4">
-                            @foreach ($signatories as $approver)
+                            @foreach ($this->getSignatories() as $approver)
                                 <div class="mt-4 flex w-1/3 flex-col items-center">
                                     <p class="font-bold">{{ $approver['name'] }}</p>
                                     <p class="print:text-[7pt]">{{ $approver['designation'] }}</p>
