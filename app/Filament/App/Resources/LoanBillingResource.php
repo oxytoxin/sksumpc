@@ -85,7 +85,7 @@ class LoanBillingResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->visible(fn($record, $livewire) => ! $record->posted && ! $record->or_number && $livewire->user_is_loan_officer)
+                    ->visible(fn($record, $livewire) => ! $record->posted && $livewire->user_is_loan_officer)
                     ->form([
                         Select::make('payment_type_id')
                             ->paymenttype()
