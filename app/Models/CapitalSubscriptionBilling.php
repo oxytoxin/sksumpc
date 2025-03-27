@@ -63,8 +63,8 @@ class CapitalSubscriptionBilling extends Model
                         'capital_subscription_billing_id' => $capitalSubscriptionBilling->id,
                     ], [
                         'capital_subscription_id' => $cbu->id,
-                        'amount_due' => $cbu->monthly_payment,
-                        'amount_paid' => $cbu->monthly_payment,
+                        'amount_due' => $amount_due,
+                        'amount_paid' => $amount_due,
                     ]);
                 });
             $capitalSubscriptionBilling->cashier_id = auth()->id();
