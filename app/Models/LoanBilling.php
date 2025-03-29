@@ -52,7 +52,7 @@ class LoanBilling extends Model
             DB::beginTransaction();
             $loanBilling->reference_number = $loanBilling->loan_type->code . '-' . (config('app.transaction_date') ?? today())->format('Y-m-') . str_pad($loanBilling->id, 6, '0', STR_PAD_LEFT);
             Loan::wherePosted(true)
-                ->where('outstanding_balance', '>', 0)
+                ->where('outstanding_balance', '>', 1)
                 ->whereLoanTypeId($loanBilling->loan_type_id)
                 ->when($loanBilling->member_type_id, fn($query, $value) => $query->whereRelation('member', 'member_type_id', $value))
                 ->when($loanBilling->member_subtype_id, fn($query, $value) => $query->whereRelation('member', 'member_subtype_id', $value))
