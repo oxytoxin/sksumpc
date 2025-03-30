@@ -32,30 +32,34 @@ class GenerateImprestsInterestForMember
         });
 
         $total_interest = $member->imprests_unaccrued()->sum('interest');
-        app(DepositToMsoAccount::class)->handle(MsoType::IMPREST, new TransactionData(
-            account_id: $member->imprest_account->id,
-            transactionType: TransactionType::CDJ(),
-            payment_type_id: 1,
-            reference_number: '#INTERESTACCRUED-'.$member->imprest_account->number,
-            credit: $total_interest,
-            member_id: $member->id,
-            remarks: 'Imprest Interest',
-            payee: $member->full_name,
-            transaction_date: today(),
-        ));
-        app(CreateTransaction::class)->handle(new TransactionData(
-            account_id: Account::getSavingsInterestExpense()->id,
-            transactionType: TransactionType::CDJ(),
-            payment_type_id: 1,
-            reference_number: '#INTERESTACCRUED-'.$member->imprest_account->number,
-            debit: $total_interest,
-            member_id: $member->id,
-            remarks: 'Imprest Interest',
-            transaction_date: today(),
-        ));
         $member->imprests_unaccrued()->update([
             'accrued' => true,
         ]);
+        if ($total_interest > 0) {
+            app(DepositToMsoAccount::class)->handle(MsoType::IMPREST, new TransactionData(
+                account_id: $member->imprest_account->id,
+                transactionType: TransactionType::CDJ(),
+                payment_type_id: 1,
+                reference_number: '#INTERESTACCRUED-' . $member->imprest_account->number,
+                credit: $total_interest,
+                member_id: $member->id,
+                remarks: 'Imprest Interest',
+                payee: $member->full_name,
+                transaction_date: today(),
+            ));
+            app(CreateTransaction::class)->handle(new TransactionData(
+                account_id: Account::getSavingsInterestExpense()->id,
+                transactionType: TransactionType::CDJ(),
+                payment_type_id: 1,
+                reference_number: '#INTERESTACCRUED-' . $member->imprest_account->number,
+                debit: $total_interest,
+                member_id: $member->id,
+                remarks: 'Imprest Interest',
+                transaction_date: today(),
+            ));
+        }
+
+
         DB::commit();
     }
 }

@@ -33,30 +33,33 @@ class GenerateSavingsInterestForMember
             });
 
             $total_interest = $account->savings_unaccrued()->sum('interest');
-            app(DepositToMsoAccount::class)->handle(MsoType::SAVINGS, new TransactionData(
-                account_id: $account->id,
-                transactionType: TransactionType::CDJ(),
-                payment_type_id: 1,
-                reference_number: '#INTERESTACCRUED-'.$account->number,
-                credit: $total_interest,
-                member_id: $member->id,
-                remarks: 'Savings Interest',
-                payee: $member->full_name,
-                transaction_date: today(),
-            ));
-            app(CreateTransaction::class)->handle(new TransactionData(
-                account_id: Account::getSavingsInterestExpense()->id,
-                transactionType: TransactionType::CDJ(),
-                payment_type_id: 1,
-                reference_number: '#INTERESTACCRUED-'.$account->number,
-                debit: $total_interest,
-                member_id: $member->id,
-                remarks: 'Savings Interest',
-                transaction_date: today(),
-            ));
             $account->savings_unaccrued()->update([
                 'accrued' => true,
             ]);
+            if ($total_interest > 0) {
+                $account->refresh();
+                app(DepositToMsoAccount::class)->handle(MsoType::SAVINGS, new TransactionData(
+                    account_id: $account->id,
+                    transactionType: TransactionType::CDJ(),
+                    payment_type_id: 1,
+                    reference_number: '#INTERESTACCRUED-' . $account->number,
+                    credit: $total_interest,
+                    member_id: $member->id,
+                    remarks: 'Savings Interest',
+                    payee: $member->full_name,
+                    transaction_date: today(),
+                ));
+                app(CreateTransaction::class)->handle(new TransactionData(
+                    account_id: Account::getSavingsInterestExpense()->id,
+                    transactionType: TransactionType::CDJ(),
+                    payment_type_id: 1,
+                    reference_number: '#INTERESTACCRUED-' . $account->number,
+                    debit: $total_interest,
+                    member_id: $member->id,
+                    remarks: 'Savings Interest',
+                    transaction_date: today(),
+                ));
+            }
         }
         DB::commit();
     }
