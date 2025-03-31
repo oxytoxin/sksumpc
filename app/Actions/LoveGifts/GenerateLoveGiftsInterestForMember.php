@@ -32,30 +32,32 @@ class GenerateLoveGiftsInterestForMember
         });
 
         $total_interest = $member->love_gifts_unaccrued()->sum('interest');
-        app(DepositToMsoAccount::class)->handle(MsoType::LOVE_GIFT, new TransactionData(
-            account_id: $member->imprest_account->id,
-            transactionType: TransactionType::CDJ(),
-            payment_type_id: 1,
-            reference_number: '#INTERESTACCRUED-' . $member->love_gift_account->number,
-            credit: $total_interest,
-            member_id: $member->id,
-            remarks: 'Love Gift Interest',
-            payee: $member->full_name,
-            transaction_date: today(),
-        ));
-        app(CreateTransaction::class)->handle(new TransactionData(
-            account_id: Account::getSavingsInterestExpense()->id,
-            transactionType: TransactionType::CDJ(),
-            payment_type_id: 1,
-            reference_number: '#INTERESTACCRUED-' . $member->love_gift_account->number,
-            debit: $total_interest,
-            member_id: $member->id,
-            remarks: 'Love Gift Interest',
-            transaction_date: today(),
-        ));
         $member->love_gifts_unaccrued()->update([
             'accrued' => true,
         ]);
+        if ($total_interest > 0) {
+            app(DepositToMsoAccount::class)->handle(MsoType::LOVE_GIFT, new TransactionData(
+                account_id: $member->imprest_account->id,
+                transactionType: TransactionType::CDJ(),
+                payment_type_id: 1,
+                reference_number: '#INTERESTACCRUED-' . $member->love_gift_account->number,
+                credit: $total_interest,
+                member_id: $member->id,
+                remarks: 'Love Gift Interest',
+                payee: $member->full_name,
+                transaction_date: today(),
+            ));
+            app(CreateTransaction::class)->handle(new TransactionData(
+                account_id: Account::getSavingsInterestExpense()->id,
+                transactionType: TransactionType::CDJ(),
+                payment_type_id: 1,
+                reference_number: '#INTERESTACCRUED-' . $member->love_gift_account->number,
+                debit: $total_interest,
+                member_id: $member->id,
+                remarks: 'Love Gift Interest',
+                transaction_date: today(),
+            ));
+        }
         DB::commit();
     }
 }

@@ -2,18 +2,18 @@
 
 namespace App\Console\Commands;
 
-use App\Actions\Imprests\GenerateImprestsInterestForMember;
+use App\Actions\LoveGifts\GenerateLoveGiftsInterestForMember;
 use App\Models\Member;
 use Illuminate\Console\Command;
 
-class DepositQuarterlyInterestForImprests extends Command
+class DepositQuarterlyInterestForLoveGifts extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'app:generate-interest-for-imprests';
+    protected $signature = 'app:generate-interest-for-love-gifts';
 
     /**
      * The console command description.
@@ -28,7 +28,7 @@ class DepositQuarterlyInterestForImprests extends Command
     public function handle()
     {
         Member::each(function ($member) {
-            app(GenerateImprestsInterestForMember::class)->handle($member);
+            app(GenerateLoveGiftsInterestForMember::class)->handle($member);
         });
     }
 }
