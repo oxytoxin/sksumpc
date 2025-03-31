@@ -13,7 +13,7 @@ class DepositQuarterlyInterestForImprests extends Command
      *
      * @var string
      */
-    protected $signature = 'app:deposit-quarterly-interest-for-imprests';
+    protected $signature = 'a app:generate-interest-for-imprests';
 
     /**
      * The console command description.
