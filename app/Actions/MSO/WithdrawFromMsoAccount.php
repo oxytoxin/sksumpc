@@ -34,7 +34,7 @@ class WithdrawFromMsoAccount
             MsoType::IMPREST => $member->imprests()->sum('amount'),
             MsoType::LOVE_GIFT => $member->love_gifts()->sum('amount'),
         };
-        if ($balance - $data->debit < 0) {
+        if ((round($balance, 2) - round($data->debit, 2)) < 0) {
             Notification::make()->title('Invalid Amount')->body('Amount exceeds account balance.')->danger()->send();
             throw ValidationException::withMessages([
                 'mountedTableActionsData.0.amount' => 'Invalid Amount. Amount exceeds account balance.',
