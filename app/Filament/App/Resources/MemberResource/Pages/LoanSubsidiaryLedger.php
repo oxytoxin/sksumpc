@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Resources\MemberResource\Pages;
 
+use App\Enums\LoanTypes;
 use App\Filament\App\Resources\MemberResource;
 use App\Models\Loan;
 use App\Oxytoxin\Providers\LoansProvider;
@@ -27,6 +28,9 @@ class LoanSubsidiaryLedger extends Page
     #[Computed]
     public function AccruedInterest(): float
     {
+        if ($this->loan->loan_type_id == LoanTypes::SPECIAL_LOAN->value) {
+            return 0;
+        }
         $start = $this->loan->last_payment?->transaction_date ?? $this->loan->transaction_date;
         $end = config('app.transaction_date') ?? today();
         $total_days = LoansProvider::getAccruableDays($start, $end);

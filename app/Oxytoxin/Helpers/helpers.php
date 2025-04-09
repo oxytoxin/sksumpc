@@ -8,7 +8,7 @@ function format_percentage($new, $old): string
 {
     if ($old != 0) {
         $percentage = ($new - $old) / $old * 100;
-        if (round($percentage, 4) == 0) {
+        if (round($percentage, 2) == 0) {
             return '-';
         }
 
@@ -39,16 +39,16 @@ function sum_no_children_recursive(Collection|Model $items, string $key): float
     $sum = 0;
     if ($items instanceof Model) {
         if ($items->children_count == 0) {
-            $sum += round($items[$key], 4);
+            $sum += round($items[$key], 2);
         } else {
-            $sum += round(sum_no_children_recursive($items->children ?? collect(), $key), 4);
+            $sum += round(sum_no_children_recursive($items->children ?? collect(), $key), 2);
         }
     } else {
         foreach ($items as $item) {
             if ($item->children_count == 0) {
                 $sum += round($item[$key], 4);
             } else {
-                $sum += round(sum_no_children_recursive($item->children ?? collect(), $key), 4);
+                $sum += round(sum_no_children_recursive($item->children ?? collect(), $key), 2);
             }
         }
     }

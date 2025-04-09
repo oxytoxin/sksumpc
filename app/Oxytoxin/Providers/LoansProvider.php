@@ -2,6 +2,7 @@
 
 namespace App\Oxytoxin\Providers;
 
+use App\Enums\LoanTypes;
 use App\Models\Account;
 use App\Models\Loan;
 use App\Models\LoanType;
@@ -47,7 +48,8 @@ class LoansProvider
     public static function computeAccruedInterest(Loan $loan, $outstanding_balance, $days)
     {
         bcscale(10);
-
+        if ($loan->loan_type_id == LoanTypes::SPECIAL_LOAN->value)
+            return 0;
         return bcmul($loan->interest_rate, bcmul($outstanding_balance, bcdiv($days, LoansProvider::DAYS_IN_MONTH)));
     }
 

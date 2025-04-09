@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Actions\Loans\RunLoanProcessesAfterPosting;
 use App\Actions\Loans\UpdateLoanDeductionsData;
+use App\Enums\LoanTypes;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -61,6 +62,13 @@ class Loan extends Model
     public function member(): BelongsTo
     {
         return $this->belongsTo(Member::class);
+    }
+
+    public function getMonthlyPaymentAttribute()
+    {
+        if ($this->loan_type_id == LoanTypes::SPECIAL_LOAN->value)
+            return 0;
+        return collect($this->deductions)->map(fn($d) => $d['name'] . ': ' . Number::currency($d['amount'], 'PHP'))->toArray();
     }
 
     public function getDeductionsListAttribute()

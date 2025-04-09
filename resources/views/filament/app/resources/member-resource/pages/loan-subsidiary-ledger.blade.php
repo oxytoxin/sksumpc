@@ -18,8 +18,8 @@
                 <p>Type of Loan: {{ $loan->loan_type->name }}</p>
                 <p>Terms of Payment: {{ $loan->number_of_terms }}</p>
                 <p>Interest Rate: {{ $loan->interest_rate * 100 }}%</p>
-                <p>Monthly Amortization: {{ number_format($loan->monthly_payment, 2) }}</p>
-                <p>Interest Due: {{ number_format($this->accrued_interest, 2) }}</p>
+                <p>Monthly Amortization: {{ renumber_format($loan->monthly_payment, 2) }}</p>
+                <p>Interest Due: {{ renumber_format($this->accrued_interest, 2) }}</p>
             </div>
         </div>
 

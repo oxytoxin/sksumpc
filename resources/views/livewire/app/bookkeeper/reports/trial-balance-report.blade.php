@@ -1,7 +1,7 @@
-<div wire:init="loadData" class="flex max-h-[32rem] flex-col">
+<div class="flex max-h-[32rem] flex-col" wire:init="loadData">
     <div class="flex items-center justify-center">
         <h1 class="my-2 text-center text-xl font-bold">TRIAL BALANCE REPORT</h1>
-        <x-heroicon-o-arrow-path wire:loading class="h-6 w-6 animate-spin" />
+        <x-heroicon-o-arrow-path class="h-6 w-6 animate-spin" wire:loading />
     </div>
     <div class="flex-1 overflow-auto">
         <table class="w-full border-separate border-spacing-0 border border-black">

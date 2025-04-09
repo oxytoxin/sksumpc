@@ -1,10 +1,11 @@
 <div class="flex max-h-[32rem] flex-col">
+    <button @click="tableToExcel('report', 'trial-balance.xls')">download</button>
     <div class="flex items-center justify-center">
         <h1 class="my-2 text-center text-xl font-bold">TRIAL BALANCE REPORT</h1>
-        <x-heroicon-o-arrow-path wire:loading class="h-6 w-6 animate-spin" />
+        <x-heroicon-o-arrow-path class="h-6 w-6 animate-spin" wire:loading />
     </div>
     <div class="flex-1 overflow-auto">
-        <table class="w-full border-separate border-spacing-0 border border-black">
+        <table class="w-full border-separate border-spacing-0 border border-black" id="report">
             <thead class="sticky top-0 z-[5] bg-white">
                 <tr>
                     <th class="sticky left-0 whitespace-nowrap border border-black bg-white px-2" rowspan="3">TRIAL BALANCE
