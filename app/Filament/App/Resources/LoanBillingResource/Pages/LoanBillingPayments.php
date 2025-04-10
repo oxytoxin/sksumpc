@@ -58,12 +58,12 @@ class LoanBillingPayments extends ListRecords
                         $rowData = $rows->firstWhere('MEMBER ID', $payment->member_code);
                         if ($rowData) {
                             $payment->update([
-                                'amount_paid' => $rowData['AMOUNT PAID'],
+                                'amount_paid' => $rowData['AMOUNT DUE'],
                             ]);
                         }
                     });
                     DB::commit();
-                    Notification::make()->title('Amount paid values updated!')->success()->send();
+                    Notification::make()->title('Amount due values updated!')->success()->send();
                 })
                 ->color('success'),
             Action::make('Export')
@@ -73,6 +73,7 @@ class LoanBillingPayments extends ListRecords
                     $filename = $title->append('.xlsx');
                     $loan_billing_payments = LoanBillingPayment::whereBelongsTo($this->loan_billing, 'loan_billing')
                         ->join('members', 'loan_billing_payments.member_id', 'members.id')
+                        ->with('loan.loan_account')
                         ->selectRaw('loan_billing_payments.*, members.alt_full_name as member_name, members.mpc_code as member_code')
                         ->orderBy('member_name')
                         ->get();
@@ -83,15 +84,16 @@ class LoanBillingPayments extends ListRecords
                     foreach ($loan_billing_payments as $key => $payment) {
                         $worksheet->setCellValue('A' . $key + 3, $key + 1);
                         $worksheet->setCellValue('B' . $key + 3, $payment->member_code);
-                        $worksheet->setCellValue('C' . $key + 3, $payment->member_name);
-                        $worksheet->setCellValue('D' . $key + 3, $payment->amount_due);
-                        $worksheet->setCellValue('E' . $key + 3, $payment->amount_paid);
+                        $worksheet->setCellValue('C' . $key + 3, $payment->loan->loan_account->number);
+                        $worksheet->setCellValue('D' . $key + 3, $payment->member_name);
+                        $worksheet->setCellValue('E' . $key + 3, $payment->amount_due);
+                        $worksheet->setCellValue('F' . $key + 3, $payment->amount_paid);
                     }
                     $worksheet->setCellValue('A' . $key + 4, 'GRAND TOTAL');
-                    $worksheet->setCellValue('D' . $key + 4, '=SUM(D3:D' . $key + 3 . ')');
                     $worksheet->setCellValue('E' . $key + 4, '=SUM(E3:E' . $key + 3 . ')');
+                    $worksheet->setCellValue('F' . $key + 4, '=SUM(F3:F' . $key + 3 . ')');
                     $worksheet->getProtection()->setSheet(true)->setInsertRows(true)->setInsertColumns(true);
-                    $worksheet->protectCells('E3:E' . ($loan_billing_payments->count() + 2), auth()->user()->getAuthPassword(), true);
+                    $worksheet->protectCells('F3:F' . ($loan_billing_payments->count() + 2), auth()->user()->getAuthPassword(), true);
                     $path = storage_path('app/livewire-tmp/' . $filename);
                     $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
                     $writer->save($path);
@@ -116,6 +118,8 @@ class LoanBillingPayments extends ListRecords
             )
             ->columns([
                 TextColumn::make('member_name')->label('Member'),
+                TextColumn::make('loan.loan_account.number'),
+                TextColumn::make('loan.outstanding_balance')->label('Outstanding Balance'),
                 TextColumn::make('amount_due')->money('PHP')->summarize(Sum::make()->money('PHP')->label('')),
                 TextColumn::make('amount_paid')->money('PHP')->summarize(Sum::make()->money('PHP')->label('')),
             ])

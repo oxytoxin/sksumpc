@@ -37,8 +37,10 @@ class NewAccountTransactions extends Page
                     })
                     ->reactive(),
                 TextInput::make('name')
+                    ->label('Account Name')
                     ->required(),
                 TextInput::make('number')
+                    ->label('Account Number')
                     ->unique('accounts', 'number')
                     ->required(),
                 Actions::make([

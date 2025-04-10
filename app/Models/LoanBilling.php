@@ -62,7 +62,7 @@ class LoanBilling extends Model
                         'loan_billing_id' => $loanBilling->id,
                     ], [
                         'loan_id' => $loan->id,
-                        'amount_due' => $loan->monthly_payment,
+                        'amount_due' => $loan->outstanding_balance,
                         'amount_paid' => $loan->monthly_payment,
                     ]);
                 });

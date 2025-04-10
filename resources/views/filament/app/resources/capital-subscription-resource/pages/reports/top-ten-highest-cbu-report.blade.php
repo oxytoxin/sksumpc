@@ -13,7 +13,7 @@
                         <th class="border border-black px-4">NO.</th>
                         <th class="border border-black px-4 text-left">NAME</th>
                         <th class="border border-black px-4 text-right">AMOUNT</th>
-                        <th class="border border-black px-4">NO.</th>
+                        <th class="border border-black px-4">RANK</th>
                     </tr>
                 </thead>
                 <tbody>

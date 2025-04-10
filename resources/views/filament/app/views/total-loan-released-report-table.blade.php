@@ -26,6 +26,7 @@
             <thead>
                 <tr>
                     <th class="border-2 border-black text-center" rowspan="2">No.</th>
+                    <th class="border-2 border-black text-center" rowspan="2">Priority Number</th>
                     <th class="border-2 border-black text-center" rowspan="2">Name of Borrower</th>
                     <th class="border-2 border-black text-center" rowspan="2">Gender</th>
                     <th class="border-2 border-black text-center" colspan="{{ $loan_types->count() + 1 }}">GROSS AMOUNT</th>
@@ -55,6 +56,7 @@
                 @foreach ($member_loans as $member_id => $loans)
                     <tr>
                         <th class="whitespace-nowrap border-2 border-black px-4 text-center">{{ $loop->iteration }}</th>
+                        <th class="whitespace-nowrap border-2 border-black px-4 text-center">{{ $loans->sortByDesc('transaction_date')->first()->priority_number }}</th>
                         <td class="whitespace-nowrap border-2 border-black px-4 text-left">{{ $members[$member_id]->alt_full_name }}</td>
                         <td class="whitespace-nowrap border-2 border-black px-4 text-left">{{ $members[$member_id]->gender?->name }}</td>
                         <td class="whitespace-nowrap border-2 border-black px-4 text-right">{{ number_format($loans->sum('gross_amount'), 2) }}</td>
