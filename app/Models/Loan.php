@@ -64,11 +64,11 @@ class Loan extends Model
         return $this->belongsTo(Member::class);
     }
 
-    public function getMonthlyPaymentAttribute()
+    public function getMonthlyPaymentAttribute($value)
     {
         if ($this->loan_type_id == LoanTypes::SPECIAL_LOAN->value)
             return 0;
-        return collect($this->deductions)->map(fn($d) => $d['name'] . ': ' . Number::currency($d['amount'], 'PHP'))->toArray();
+        return $value;
     }
 
     public function getDeductionsListAttribute()
