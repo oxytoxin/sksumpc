@@ -77,23 +77,27 @@ class LoanBillingPayments extends ListRecords
                         ->selectRaw('loan_billing_payments.*, members.alt_full_name as member_name, members.mpc_code as member_code')
                         ->orderBy('member_name')
                         ->get();
-                    $spreadsheet = IOFactory::load(storage_path('templates/billing_template.xlsx'));
+                    $spreadsheet = IOFactory::load(storage_path('templates/loan_billing_template.xlsx'));
                     $worksheet = $spreadsheet->getActiveSheet();
                     $worksheet->setCellValue('A1', $title);
                     $worksheet->insertNewRowBefore(3, $loan_billing_payments->count());
                     foreach ($loan_billing_payments as $key => $payment) {
                         $worksheet->setCellValue('A' . $key + 3, $key + 1);
                         $worksheet->setCellValue('B' . $key + 3, $payment->member_code);
-                        $worksheet->setCellValue('C' . $key + 3, $payment->loan->loan_account->number);
-                        $worksheet->setCellValue('D' . $key + 3, $payment->member_name);
-                        $worksheet->setCellValue('E' . $key + 3, $payment->amount_due);
-                        $worksheet->setCellValue('F' . $key + 3, $payment->amount_paid);
+                        $worksheet->setCellValue('C' . $key + 3, $payment->loan->release_date?->format('m/d/Y'));
+                        $worksheet->setCellValue('D' . $key + 3, $payment->loan->number_of_terms);
+                        $worksheet->setCellValue('E' . $key + 3, $payment->loan->loan_account->number);
+                        $worksheet->setCellValue('F' . $key + 3, $payment->member_name);
+                        $worksheet->setCellValue('G' . $key + 3, $payment->loan->gross_amount);
+                        $worksheet->setCellValue('H' . $key + 3, $payment->amount_due);
+                        $worksheet->setCellValue('I' . $key + 3, $payment->amount_paid);
                     }
                     $worksheet->setCellValue('A' . $key + 4, 'GRAND TOTAL');
-                    $worksheet->setCellValue('E' . $key + 4, '=SUM(E3:E' . $key + 3 . ')');
-                    $worksheet->setCellValue('F' . $key + 4, '=SUM(F3:F' . $key + 3 . ')');
+                    $worksheet->setCellValue('G' . $key + 4, '=SUM(G3:G' . $key + 3 . ')');
+                    $worksheet->setCellValue('H' . $key + 4, '=SUM(H3:H' . $key + 3 . ')');
+                    $worksheet->setCellValue('I' . $key + 4, '=SUM(I3:I' . $key + 3 . ')');
                     $worksheet->getProtection()->setSheet(true)->setInsertRows(true)->setInsertColumns(true);
-                    $worksheet->protectCells('F3:F' . ($loan_billing_payments->count() + 2), auth()->user()->getAuthPassword(), true);
+                    $worksheet->protectCells('I3:I' . ($loan_billing_payments->count() + 2), auth()->user()->getAuthPassword(), true);
                     $path = storage_path('app/livewire-tmp/' . $filename);
                     $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
                     $writer->save($path);
