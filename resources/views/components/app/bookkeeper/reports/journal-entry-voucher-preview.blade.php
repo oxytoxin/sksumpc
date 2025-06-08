@@ -88,7 +88,7 @@
             <tr>
                 <td colspan="2" class="border-r border-black px-2 pt-8 text-center font-bold">JOANA MONA R. PRIMACIO
                 </td>
-                <td colspan="2" class="border-r border-black px-2 pt-8 text-center font-bold">LOVINA P. COGOLLO</td>
+                <td colspan="2" class="border-r border-black px-2 pt-8 text-center font-bold">MANOLO B. MERCADO</td>
                 <td colspan="2" class="pt-8 text-center font-bold">FLORA C. DAMANDAMAN</td>
             </tr>
             <tr>
