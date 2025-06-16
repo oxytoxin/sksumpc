@@ -57,13 +57,14 @@ class LoanBilling extends Model
                 ->when($loanBilling->member_type_id, fn($query, $value) => $query->whereRelation('member', 'member_type_id', $value))
                 ->when($loanBilling->member_subtype_id, fn($query, $value) => $query->whereRelation('member', 'member_subtype_id', $value))
                 ->each(function ($loan) use ($loanBilling) {
+                    $amount_paid = min($loan->outstanding_balance, $loan->monthly_payment);
                     LoanBillingPayment::firstOrCreate([
                         'member_id' => $loan->member_id,
                         'loan_billing_id' => $loanBilling->id,
                     ], [
                         'loan_id' => $loan->id,
                         'amount_due' => $loan->outstanding_balance,
-                        'amount_paid' => $loan->monthly_payment,
+                        'amount_paid' => $amount_paid,
                     ]);
                 });
             $loanBilling->cashier_id = auth()->id();

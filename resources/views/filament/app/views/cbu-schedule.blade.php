@@ -1,8 +1,11 @@
 <div x-data>
     <div class="p-4 print:w-full print:text-[10pt] print:leading-tight" x-ref="print">
+        <div class="print:hidden">
+            {{ $this->form }}
+        </div>
         <x-app.cashier.reports.report-heading />
         <h4 class="mt-4 text-center text-xl font-bold uppercase print:text-[12pt]">{{ $this->gender }} {{ $this->member_type }} CBU SUMMARY SCHEDULE AS OF
-            {{ today()->format('F d, Y') }}</h4>
+            {{ Carbon\CarbonImmutable::make($this->transaction_date)->format('F d, Y') }}</h4>
         <h5 class="text-center font-bold uppercase">
             {{ App\Models\MemberType::find($this->tableFilters['member_type_id']['value'])?->name }}</h5>
         <table class="mt-4 w-full print:text-[8pt]">
