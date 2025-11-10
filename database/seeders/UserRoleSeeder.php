@@ -3,10 +3,11 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\SignatureSet;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 
 class UserRoleSeeder extends Seeder
 {
@@ -147,5 +148,142 @@ class UserRoleSeeder extends Seeder
             'password' => 'password',
         ]);
         $user->assignRole($role);
+
+
+
+        $bookkeeper = User::whereRelation('roles', 'name', 'book-keeper')->first();
+        $treasurer = User::whereRelation('roles', 'name', 'treasurer')->first();
+        $manager = User::whereRelation('roles', 'name', 'manager')->first();
+        $cashier = User::whereRelation('roles', 'name', 'cashier')->first();
+        $loan_officer = User::whereRelation('roles', 'name', 'loan-staff')->first();
+        $cbu_staff = User::whereRelation('roles', 'name', 'cbu-staff')->first();
+        $clerk = User::whereRelation('roles', 'name', 'clerk')->first();
+        $crecom_chairperson = User::whereRelation('roles', 'name', 'crecom-chairperson')->first();
+        $set = SignatureSet::create([
+            'name' => 'Cashier Reports'
+        ]);
+        $set->signatories()->create([
+            'action' => 'Prepared by:',
+            'user_id' => $cashier->id,
+            'designation' => 'Teller/Cashier',
+        ]);
+        $set->signatories()->create([
+            'action' => 'Checked by:',
+            'user_id' => $bookkeeper->id,
+            'designation' => 'Posting Clerk',
+        ]);
+        $set->signatories()->create([
+            'action' => 'Received by:',
+            'user_id' => $treasurer->id,
+            'designation' => 'Treasurer',
+        ]);
+        $set->signatories()->create([
+            'action' => 'Noted:',
+            'user_id' => $manager->id,
+            'designation' => 'Manager',
+        ]);
+
+        $set = SignatureSet::create([
+            'name' => 'Loan Disclosure Sheet Reports'
+        ]);
+        $set->signatories()->create([
+            'action' => 'Prepared by:',
+            'user_id' => $loan_officer->id,
+            'designation' => 'Loan Officer',
+        ]);
+        $set->signatories()->create([
+            'action' => 'Checked by:',
+            'user_id' => $bookkeeper->id,
+            'designation' => 'Posting Clerk',
+        ]);
+        $set->signatories()->create([
+            'action' => 'Received by:',
+            'user_id' => $treasurer->id,
+            'designation' => 'Treasurer',
+        ]);
+        $set->signatories()->create([
+            'action' => 'Noted:',
+            'user_id' => $manager->id,
+            'designation' => 'Manager',
+        ]);
+
+        $set = SignatureSet::create([
+            'name' => 'Loan Officer Reports'
+        ]);
+        $set->signatories()->create([
+            'action' => 'Prepared by:',
+            'user_id' => $loan_officer->id,
+            'designation' => 'Loan Officer',
+        ]);
+        $set->signatories()->create([
+            'action' => 'Noted:',
+            'user_id' => $manager->id,
+            'designation' => 'Manager',
+        ]);
+        $set = SignatureSet::create([
+            'name' => 'CBU Reports'
+        ]);
+        $set->signatories()->create([
+            'action' => 'Prepared by:',
+            'user_id' => $clerk->id,
+            'designation' => 'Clerk',
+        ]);
+        $set->signatories()->create([
+            'action' => 'Noted:',
+            'user_id' => $manager->id,
+            'designation' => 'Manager',
+        ]);
+
+        // Credit Committee Investigator
+        $role = Role::create([
+            'name' => 'credit-investigator',
+        ]);
+        $permission = Permission::create([
+            'name' => 'investigate cibi',
+        ]);
+        $cibi_investigator = User::firstWhere('name', 'Jayson Landayao');
+        $role->givePermissionTo($permission);
+        $cibi_investigator->assignRole($role);
+
+        $set = SignatureSet::create([
+            'name' => 'CIBI Reports'
+        ]);
+        $set->signatories()->create([
+            'action' => 'Prepared by:',
+            'user_id' => $cibi_investigator->id,
+            'designation' => 'Credit Investigator',
+        ]);
+        $set->signatories()->create([
+            'action' => 'Checked by:',
+            'user_id' => $crecom_chairperson->id,
+            'designation' => 'Credit Committee Chairperson',
+        ]);
+
+        $set = SignatureSet::create([
+            'name' => 'SL Reports'
+        ]);
+        $set->signatories()->create([
+            'action' => 'Prepared by:',
+            'user_id' => $cashier->id,
+            'designation' => 'Teller/Cashier',
+        ]);
+        $set->signatories()->create([
+            'action' => 'Noted:',
+            'user_id' => $manager->id,
+            'designation' => 'Manager',
+        ]);
+        $set = SignatureSet::create([
+            'name' => 'Loan Amortization Reports'
+        ]);
+        $set->signatories()->create([
+            'action' => 'Prepared by:',
+            'user_id' => $cashier->id,
+            'designation' => 'Teller/Cashier',
+        ]);
+        $set->signatories()->create([
+            'action' => 'Noted:',
+            'user_id' => $manager->id,
+            'designation' => 'Manager',
+        ]);
     }
 }

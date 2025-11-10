@@ -15,11 +15,12 @@ use DB;
 
 class GenerateImprestsInterestForMember
 {
-    public function handle(Member $member)
+    public function handle(Member $member, $date = null)
     {
+        $date = $date ?? today();
         $interestCalculator = app(InterestCalculator::class);
         DB::beginTransaction();
-        $member->imprests_no_interest()->each(function ($i) use ($interestCalculator) {
+        $member->imprests_no_interest()->each(function ($i) use ($interestCalculator, $date) {
             $i->update([
                 'interest' => $interestCalculator->calculate(
                     amount: $i->balance,
@@ -27,7 +28,7 @@ class GenerateImprestsInterestForMember
                     days: $i->days_till_next_transaction,
                     minimum_amount: ImprestsProvider::MINIMUM_AMOUNT_FOR_INTEREST
                 ),
-                'interest_date' => today(),
+                'interest_date' => $date,
             ]);
         });
 
@@ -45,7 +46,7 @@ class GenerateImprestsInterestForMember
                 member_id: $member->id,
                 remarks: 'Imprest Interest',
                 payee: $member->full_name,
-                transaction_date: today(),
+                transaction_date: $date,
             ));
             app(CreateTransaction::class)->handle(new TransactionData(
                 account_id: Account::getSavingsInterestExpense()->id,
@@ -55,7 +56,7 @@ class GenerateImprestsInterestForMember
                 debit: $total_interest,
                 member_id: $member->id,
                 remarks: 'Imprest Interest',
-                transaction_date: today(),
+                transaction_date: $date,
             ));
         }
 

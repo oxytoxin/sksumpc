@@ -15,12 +15,13 @@ use DB;
 
 class GenerateSavingsInterestForMember
 {
-    public function handle(Member $member)
+    public function handle(Member $member, $date = null)
     {
+        $date = $date ?? today();
         $interestCalculator = app(InterestCalculator::class);
         DB::beginTransaction();
         foreach ($member->savings_accounts as $account) {
-            $account->savings_no_interest()->each(function ($s) use ($interestCalculator) {
+            $account->savings_no_interest()->each(function ($s) use ($interestCalculator, $date) {
                 $s->update([
                     'interest' => $interestCalculator->calculate(
                         amount: $s->balance,
@@ -28,7 +29,7 @@ class GenerateSavingsInterestForMember
                         days: $s->days_till_next_transaction,
                         minimum_amount: SavingsProvider::MINIMUM_AMOUNT_FOR_INTEREST
                     ),
-                    'interest_date' => today(),
+                    'interest_date' => $date,
                 ]);
             });
 
@@ -47,7 +48,7 @@ class GenerateSavingsInterestForMember
                     member_id: $member->id,
                     remarks: 'Savings Interest',
                     payee: $member->full_name,
-                    transaction_date: today(),
+                    transaction_date: $date,
                 ));
                 app(CreateTransaction::class)->handle(new TransactionData(
                     account_id: Account::getSavingsInterestExpense()->id,
@@ -57,7 +58,7 @@ class GenerateSavingsInterestForMember
                     debit: $total_interest,
                     member_id: $member->id,
                     remarks: 'Savings Interest',
-                    transaction_date: today(),
+                    transaction_date: $date,
                 ));
             }
         }

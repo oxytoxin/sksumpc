@@ -82,8 +82,8 @@ class JournalEntryVoucherItemObserver
                     app(PayLegacyLoan::class)
                         ->handle(
                             loanAccount: $loan_account,
-                            principal: $journalEntryVoucherItem->details['principal'],
-                            interest: $journalEntryVoucherItem->details['interest'],
+                            principal: $journalEntryVoucherItem->details['principal'] ?? 0,
+                            interest: $journalEntryVoucherItem->details['interest'] ?? 0,
                             payment_type_id: PaymentTypes::JEV->value,
                             reference_number: $journalEntryVoucherItem->journal_entry_voucher->reference_number,
                             transaction_date: $transaction_date,

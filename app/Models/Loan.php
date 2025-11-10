@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Number;
 use NumberFormatter;
-use PDO;
 
 /**
  * @mixin IdeHelperLoan
@@ -46,7 +45,7 @@ class Loan extends Model
 
     public function netAmountInWords(): Attribute
     {
-        return Attribute::make(get: fn() => (new NumberFormatter('en', NumberFormatter::SPELLOUT))->format($this->net_amount));
+        return Attribute::make(get: fn () => (new NumberFormatter('en', NumberFormatter::SPELLOUT))->format($this->net_amount));
     }
 
     public function disbursement_voucher()
@@ -66,26 +65,30 @@ class Loan extends Model
 
     public function getMonthlyPaymentAttribute($value)
     {
-        if ($this->loan_type_id == LoanTypes::SPECIAL_LOAN->value)
+        if ($this->loan_type_id == LoanTypes::SPECIAL_LOAN->value) {
             return 0;
+        }
+
         return $value;
     }
 
     public function getDeductionsListAttribute()
     {
-        return collect($this->deductions)->map(fn($d) => $d['name'] . ': ' . Number::currency($d['amount'], 'PHP'))->toArray();
+        return collect($this->deductions)->map(fn ($d) => $d['name'].': '.Number::currency($d['amount'], 'PHP'))->toArray();
     }
 
     public function getMaturityDateAttribute()
     {
         if ($this->loan_type->code == 'SL') {
-            if ($this->release_date > CarbonImmutable::create($this->release_date->year, 11, 20))
+            if ($this->release_date > CarbonImmutable::create($this->release_date->year, 11, 20)) {
                 return CarbonImmutable::create($this->release_date->year + 1, 5, 20);
-            else if ($this->release_date > CarbonImmutable::create($this->release_date->year, 5, 20))
+            } elseif ($this->release_date > CarbonImmutable::create($this->release_date->year, 5, 20)) {
                 return CarbonImmutable::create($this->release_date->year, 11, 20);
-            else
+            } else {
                 return CarbonImmutable::create($this->release_date->year, 5, 20);
+            }
         }
+
         return $this->transaction_date->addMonthsNoOverflow($this->number_of_terms);
     }
 

@@ -231,7 +231,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|CapitalSubscription whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CapitalSubscription whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CapitalSubscription whereInitialAmountPaid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CapitalSubscription whereIsCommon($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CapitalSubscription whereIsActive($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CapitalSubscription whereMemberId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CapitalSubscription whereMonthlyPayment($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CapitalSubscription whereNumberOfShares($value)
@@ -251,32 +251,10 @@ namespace App\Models{
 /**
  * App\Models\CapitalSubscriptionAmortization
  *
- * @property int $id
- * @property int $capital_subscription_id
- * @property string|null $billable_date
- * @property \Carbon\CarbonImmutable $due_date
- * @property int $term
- * @property string|null $amount
- * @property string|null $amount_paid
- * @property string|null $arrears
- * @property string|null $remarks
- * @property \Carbon\CarbonImmutable|null $created_at
- * @property \Carbon\CarbonImmutable|null $updated_at
- * @property-read \App\Models\CapitalSubscription $capital_subscription
+ * @property-read \App\Models\CapitalSubscription|null $capital_subscription
  * @method static \Illuminate\Database\Eloquent\Builder|CapitalSubscriptionAmortization newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CapitalSubscriptionAmortization newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CapitalSubscriptionAmortization query()
- * @method static \Illuminate\Database\Eloquent\Builder|CapitalSubscriptionAmortization whereAmount($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CapitalSubscriptionAmortization whereAmountPaid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CapitalSubscriptionAmortization whereArrears($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CapitalSubscriptionAmortization whereBillableDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CapitalSubscriptionAmortization whereCapitalSubscriptionId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CapitalSubscriptionAmortization whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CapitalSubscriptionAmortization whereDueDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CapitalSubscriptionAmortization whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CapitalSubscriptionAmortization whereRemarks($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CapitalSubscriptionAmortization whereTerm($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CapitalSubscriptionAmortization whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -296,11 +274,13 @@ namespace App\Models{
  * @property string|null $reference_number
  * @property string|null $name
  * @property string|null $or_number
+ * @property \Carbon\CarbonImmutable|null $or_date
  * @property int|null $cashier_id
  * @property bool $posted
  * @property bool $for_or
  * @property \Carbon\CarbonImmutable|null $created_at
  * @property \Carbon\CarbonImmutable|null $updated_at
+ * @property-read mixed $or_approved
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CapitalSubscriptionBillingPayment> $capital_subscription_billing_payments
  * @property-read int|null $capital_subscription_billing_payments_count
  * @property-read \App\Models\User|null $cashier
@@ -317,6 +297,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|CapitalSubscriptionBilling whereMemberSubtypeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CapitalSubscriptionBilling whereMemberTypeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CapitalSubscriptionBilling whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CapitalSubscriptionBilling whereOrDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CapitalSubscriptionBilling whereOrNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CapitalSubscriptionBilling wherePaymentTypeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CapitalSubscriptionBilling wherePosted($value)
@@ -555,11 +536,13 @@ namespace App\Models{
  * @property string|null $reference_number
  * @property string|null $name
  * @property string|null $or_number
+ * @property \Carbon\CarbonImmutable|null $or_date
  * @property int|null $cashier_id
  * @property bool $posted
  * @property bool $for_or
  * @property \Carbon\CarbonImmutable|null $created_at
  * @property \Carbon\CarbonImmutable|null $updated_at
+ * @property-read mixed $or_approved
  * @property-read \App\Models\CashCollectibleAccount $cash_collectible_account
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CashCollectibleBillingPayment> $cash_collectible_billing_payments
  * @property-read int|null $cash_collectible_billing_payments_count
@@ -576,6 +559,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|CashCollectibleBilling whereForOr($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashCollectibleBilling whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashCollectibleBilling whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CashCollectibleBilling whereOrDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashCollectibleBilling whereOrNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashCollectibleBilling wherePaymentTypeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CashCollectibleBilling wherePosted($value)
@@ -791,6 +775,7 @@ namespace App\Models{
  * @property int $voucher_type_id
  * @property string $name
  * @property string|null $address
+ * @property string|null $check_number
  * @property string $reference_number
  * @property string $voucher_number
  * @property string $description
@@ -807,6 +792,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|DisbursementVoucher query()
  * @method static \Illuminate\Database\Eloquent\Builder|DisbursementVoucher whereAddress($value)
  * @method static \Illuminate\Database\Eloquent\Builder|DisbursementVoucher whereBookkeeperId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|DisbursementVoucher whereCheckNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|DisbursementVoucher whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|DisbursementVoucher whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|DisbursementVoucher whereId($value)
@@ -838,6 +824,7 @@ namespace App\Models{
  * @property \Carbon\CarbonImmutable|null $updated_at
  * @property-read \App\Models\Account $account
  * @property-read \App\Models\DisbursementVoucher $disbursement_voucher
+ * @property-read \App\Models\Account $item_account
  * @method static \Illuminate\Database\Eloquent\Builder|DisbursementVoucherItem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|DisbursementVoucherItem newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|DisbursementVoucherItem query()
@@ -1131,8 +1118,7 @@ namespace App\Models{
  * @property string $cbu_amount
  * @property string $imprest_amount
  * @property string $insurance_amount
- * @property string $loan_buyout_interest
- * @property string $loan_buyout_principal
+ * @property string $loan_buyout
  * @property string $deductions_amount
  * @property string $monthly_payment
  * @property string $outstanding_balance
@@ -1141,20 +1127,15 @@ namespace App\Models{
  * @property bool $posted
  * @property \Carbon\CarbonImmutable|null $created_at
  * @property \Carbon\CarbonImmutable|null $updated_at
- * @property-read \App\Models\LoanAmortization|null $active_loan_amortization
  * @property-read \App\Models\DisbursementVoucher|null $disbursement_voucher
  * @property-read mixed $deductions_list
  * @property-read mixed $maturity_date
  * @property-read \App\Models\LoanPayment|null $last_payment
  * @property-read \App\Models\LoanAccount $loan_account
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\LoanAmortization> $loan_amortizations
- * @property-read int|null $loan_amortizations_count
  * @property-read \App\Models\LoanApplication $loan_application
  * @property-read \App\Models\LoanType $loan_type
  * @property-read \App\Models\Member $member
  * @property-read mixed $net_amount_in_words
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\LoanAmortization> $paid_loan_amortizations
- * @property-read int|null $paid_loan_amortizations_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\LoanPayment> $payments
  * @property-read int|null $payments_count
  * @method static \Illuminate\Database\Eloquent\Builder|Loan newModelQuery()
@@ -1177,9 +1158,8 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Loan whereInterestRate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Loan whereLoanAccountId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Loan whereLoanApplicationId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Loan whereLoanBuyout($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Loan whereLoanBuyoutId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Loan whereLoanBuyoutInterest($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Loan whereLoanBuyoutPrincipal($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Loan whereLoanTypeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Loan whereMemberId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Loan whereMonthlyPayment($value)
@@ -1285,46 +1265,6 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * App\Models\LoanAmortization
- *
- * @property int $id
- * @property int $loan_id
- * @property \Carbon\CarbonImmutable $date
- * @property string|null $billable_date
- * @property int $term
- * @property int $days
- * @property string $amortization
- * @property string $interest
- * @property string $principal
- * @property string $previous_balance
- * @property string|null $outstanding_balance
- * @property \Carbon\CarbonImmutable|null $created_at
- * @property \Carbon\CarbonImmutable|null $updated_at
- * @property-read \App\Models\Loan $loan
- * @method static \Illuminate\Database\Eloquent\Builder|LoanAmortization newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|LoanAmortization newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|LoanAmortization query()
- * @method static \Illuminate\Database\Eloquent\Builder|LoanAmortization whereAmortization($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LoanAmortization whereBillableDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LoanAmortization whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LoanAmortization whereDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LoanAmortization whereDays($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LoanAmortization whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LoanAmortization whereInterest($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LoanAmortization whereLoanId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LoanAmortization whereOutstandingBalance($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LoanAmortization wherePreviousBalance($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LoanAmortization wherePrincipal($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LoanAmortization whereTerm($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LoanAmortization whereUpdatedAt($value)
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperLoanAmortization {}
-}
-
-namespace App\Models{
-/**
  * App\Models\LoanApplication
  *
  * @property int $id
@@ -1349,7 +1289,7 @@ namespace App\Models{
  * @property string|null $remarks
  * @property \Carbon\CarbonImmutable|null $created_at
  * @property \Carbon\CarbonImmutable|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Member> $comakers
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\LoanApplicationComaker> $comakers
  * @property-read int|null $comakers_count
  * @property-read mixed $desired_amount_in_words
  * @property-read \App\Models\DisapprovalReason|null $disapproval_reason
@@ -1391,6 +1331,31 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\LoanApplicationComaker
+ *
+ * @property int $id
+ * @property int $loan_application_id
+ * @property int $member_id
+ * @property \Carbon\CarbonImmutable|null $created_at
+ * @property \Carbon\CarbonImmutable|null $updated_at
+ * @property-read \App\Models\LoanApplication $loan_application
+ * @property-read \App\Models\Member $member
+ * @method static \Illuminate\Database\Eloquent\Builder|LoanApplicationComaker newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|LoanApplicationComaker newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|LoanApplicationComaker query()
+ * @method static \Illuminate\Database\Eloquent\Builder|LoanApplicationComaker whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LoanApplicationComaker whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LoanApplicationComaker whereLoanApplicationId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LoanApplicationComaker whereMemberId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LoanApplicationComaker whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperLoanApplicationComaker {}
+}
+
+namespace App\Models{
+/**
  * App\Models\LoanBilling
  *
  * @property int $id
@@ -1402,12 +1367,14 @@ namespace App\Models{
  * @property string|null $reference_number
  * @property string|null $name
  * @property string|null $or_number
+ * @property \Carbon\CarbonImmutable|null $or_date
  * @property int $loan_type_id
  * @property int|null $cashier_id
  * @property bool $posted
  * @property bool $for_or
  * @property \Carbon\CarbonImmutable|null $created_at
  * @property \Carbon\CarbonImmutable|null $updated_at
+ * @property-read mixed $or_approved
  * @property-read \App\Models\User|null $cashier
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\LoanBillingPayment> $loan_billing_payments
  * @property-read int|null $loan_billing_payments_count
@@ -1426,6 +1393,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|LoanBilling whereMemberSubtypeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LoanBilling whereMemberTypeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LoanBilling whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LoanBilling whereOrDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LoanBilling whereOrNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LoanBilling wherePaymentTypeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LoanBilling wherePosted($value)
@@ -1482,6 +1450,7 @@ namespace App\Models{
  * @property string $amount
  * @property string $interest_payment
  * @property string $principal_payment
+ * @property string $unpaid_interest
  * @property string $surcharge_payment
  * @property int $payment_type_id
  * @property string $reference_number
@@ -1510,6 +1479,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|LoanPayment whereRemarks($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LoanPayment whereSurchargePayment($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LoanPayment whereTransactionDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LoanPayment whereUnpaidInterest($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LoanPayment whereUpdatedAt($value)
  * @mixin \Eloquent
  */
@@ -1582,6 +1552,7 @@ namespace App\Models{
  * @property \Carbon\CarbonImmutable|null $updated_at
  * @property-read \App\Models\User|null $cashier
  * @property-read \App\Models\Member $member
+ * @property-read \App\Models\RevolvingFund|null $revolving_fund
  * @method static \Illuminate\Database\Eloquent\Builder|LoveGift newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|LoveGift newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|LoveGift query()
@@ -1737,15 +1708,16 @@ namespace App\Models{
  * @property \Carbon\CarbonImmutable|null $updated_at
  * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, \App\Models\Account> $accounts
  * @property-read int|null $accounts_count
+ * @property-read \App\Models\CapitalSubscription|null $active_capital_subscription
  * @property-read \App\Models\Barangay|null $barangay
  * @property-read \App\Models\Account|null $capital_subscription_account
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CapitalSubscriptionPayment> $capital_subscription_payments
  * @property-read int|null $capital_subscription_payments_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CapitalSubscription> $capital_subscriptions
  * @property-read int|null $capital_subscriptions_count
- * @property-read \App\Models\CapitalSubscription|null $active_capital_subscription
  * @property-read \App\Models\CivilStatus|null $civil_status
  * @property-read \App\Models\Division|null $division
+ * @property-read \App\Models\Account|null $existing_capital_subscription_account
  * @property-read \App\Models\Gender|null $gender
  * @property-read mixed $age
  * @property-read mixed $members
@@ -2023,11 +1995,13 @@ namespace App\Models{
  * @property string|null $reference_number
  * @property string|null $name
  * @property string|null $or_number
+ * @property \Carbon\CarbonImmutable|null $or_date
  * @property int|null $cashier_id
  * @property bool $posted
  * @property bool $for_or
  * @property \Carbon\CarbonImmutable|null $created_at
  * @property \Carbon\CarbonImmutable|null $updated_at
+ * @property-read mixed $or_approved
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\MsoBillingPayment> $payments
  * @property-read int|null $payments_count
  * @method static \Illuminate\Database\Eloquent\Builder|MsoBilling newModelQuery()
@@ -2040,6 +2014,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|MsoBilling whereForOr($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MsoBilling whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MsoBilling whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MsoBilling whereOrDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MsoBilling whereOrNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MsoBilling wherePaymentTypeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MsoBilling wherePosted($value)
@@ -2230,15 +2205,16 @@ namespace App\Models{
  * @property \Carbon\CarbonImmutable|null $updated_at
  * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, \App\Models\Account> $accounts
  * @property-read int|null $accounts_count
+ * @property-read \App\Models\CapitalSubscription|null $active_capital_subscription
  * @property-read \App\Models\Barangay|null $barangay
  * @property-read \App\Models\Account|null $capital_subscription_account
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CapitalSubscriptionPayment> $capital_subscription_payments
  * @property-read int|null $capital_subscription_payments_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CapitalSubscription> $capital_subscriptions
  * @property-read int|null $capital_subscriptions_count
- * @property-read \App\Models\CapitalSubscription|null $active_capital_subscription
  * @property-read \App\Models\CivilStatus|null $civil_status
  * @property-read \App\Models\Division|null $division
+ * @property-read \App\Models\Account|null $existing_capital_subscription_account
  * @property-read \App\Models\Gender|null $gender
  * @property-read mixed $age
  * @property-read mixed $members
@@ -2468,15 +2444,18 @@ namespace App\Models{
  * @property int $cashier_id
  * @property string|null $withdrawable_type
  * @property int|null $withdrawable_id
+ * @property \Carbon\CarbonImmutable|null $deleted_at
  * @property \Carbon\CarbonImmutable|null $created_at
  * @property \Carbon\CarbonImmutable|null $updated_at
  * @property-read \App\Models\User $cashier
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $withdrawable
  * @method static \Illuminate\Database\Eloquent\Builder|RevolvingFund newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|RevolvingFund newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|RevolvingFund onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|RevolvingFund query()
  * @method static \Illuminate\Database\Eloquent\Builder|RevolvingFund whereCashierId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RevolvingFund whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RevolvingFund whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RevolvingFund whereDeposit($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RevolvingFund whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RevolvingFund whereReferenceNumber($value)
@@ -2485,6 +2464,8 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|RevolvingFund whereWithdrawableId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RevolvingFund whereWithdrawableType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RevolvingFund whereWithdrawal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RevolvingFund withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|RevolvingFund withoutTrashed()
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -2635,6 +2616,57 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\SignatureSet
+ *
+ * @property int $id
+ * @property string $name
+ * @property \Carbon\CarbonImmutable|null $created_at
+ * @property \Carbon\CarbonImmutable|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SignatureSetSignatory> $signatories
+ * @property-read int|null $signatories_count
+ * @method static \Illuminate\Database\Eloquent\Builder|SignatureSet newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SignatureSet newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SignatureSet query()
+ * @method static \Illuminate\Database\Eloquent\Builder|SignatureSet whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SignatureSet whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SignatureSet whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SignatureSet whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperSignatureSet {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\SignatureSetSignatory
+ *
+ * @property int $id
+ * @property int $signature_set_id
+ * @property string $action
+ * @property int $user_id
+ * @property string $designation
+ * @property \Carbon\CarbonImmutable|null $created_at
+ * @property \Carbon\CarbonImmutable|null $updated_at
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|SignatureSetSignatory newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SignatureSetSignatory newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SignatureSetSignatory query()
+ * @method static \Illuminate\Database\Eloquent\Builder|SignatureSetSignatory whereAction($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SignatureSetSignatory whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SignatureSetSignatory whereDesignation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SignatureSetSignatory whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SignatureSetSignatory whereSignatureSetId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SignatureSetSignatory whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SignatureSetSignatory whereUserId($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperSignatureSetSignatory {}
+}
+
+namespace App\Models{
+/**
  * App\Models\SystemConfiguration
  *
  * @property int $id
@@ -2678,9 +2710,11 @@ namespace App\Models{
  * @property int|null $cashier_id
  * @property \Carbon\CarbonImmutable|null $created_at
  * @property \Carbon\CarbonImmutable|null $updated_at
+ * @property-read mixed $accrued_interest
  * @property-read mixed $amount_in_words
  * @property-read \App\Models\User|null $cashier
  * @property-read mixed $days_in_words
+ * @property-read mixed $interest_earned
  * @property-read mixed $interest_rate_in_words
  * @property-read \App\Models\Member $member
  * @property-read \App\Models\TimeDepositAccount|null $time_deposit_account
@@ -2733,8 +2767,11 @@ namespace App\Models{
  * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\TimeDepositAccount[] $children
  * @property-read int|null $children_count
  * @property-read \App\Models\Member|null $member
+ * @property-read \App\Models\TimeDeposit|null $original_time_deposit
  * @property-read \App\Models\TimeDepositAccount|null $parent
  * @property-read \App\Models\TimeDeposit|null $time_deposit
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\TimeDeposit> $time_deposits
+ * @property-read int|null $time_deposits_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Transaction> $transactions
  * @property-read int|null $transactions_count
  * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection|\App\Models\TimeDepositAccount[] $ancestors The model's recursive parents.
@@ -2811,6 +2848,7 @@ namespace App\Models{
  * @property string|null $debit
  * @property \Carbon\CarbonImmutable $transaction_date
  * @property string|null $tag
+ * @property int|null $from_billing_type
  * @property \Carbon\CarbonImmutable|null $created_at
  * @property \Carbon\CarbonImmutable|null $updated_at
  * @property-read \App\Models\Account $account
@@ -2823,6 +2861,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Transaction whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Transaction whereCredit($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Transaction whereDebit($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Transaction whereFromBillingType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Transaction whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Transaction whereMemberId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Transaction wherePayee($value)
@@ -2833,6 +2872,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Transaction whereTransactionDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Transaction whereTransactionTypeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Transaction whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Transaction withoutCashEquivalents()
  * @method static \Illuminate\Database\Eloquent\Builder|Transaction withoutMso()
  * @mixin \Eloquent
  */
@@ -2845,7 +2885,7 @@ namespace App\Models{
  * App\Models\TransactionDateHistory
  *
  * @property int $id
- * @property string $date
+ * @property \Carbon\CarbonImmutable $date
  * @property int $is_current
  * @property \Carbon\CarbonImmutable|null $created_at
  * @property \Carbon\CarbonImmutable|null $updated_at

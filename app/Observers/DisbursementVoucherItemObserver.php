@@ -85,8 +85,8 @@ class DisbursementVoucherItemObserver
                     app(PayLegacyLoan::class)
                         ->handle(
                             loanAccount: $loan_account,
-                            principal: $disbursementVoucherItem->details['principal'],
-                            interest: $disbursementVoucherItem->details['interest'],
+                            principal: $disbursementVoucherItem->details['principal'] ?? 0,
+                            interest: $disbursementVoucherItem->details['interest'] ?? 0,
                             payment_type_id: PaymentTypes::CDJ->value,
                             reference_number: $disbursementVoucherItem->disbursement_voucher->reference_number,
                             transaction_date: $transaction_date,

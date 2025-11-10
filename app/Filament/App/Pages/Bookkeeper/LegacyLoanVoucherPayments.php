@@ -105,11 +105,11 @@ class LegacyLoanVoucherPayments extends Page
                             TextInput::make('interest')
                                 ->moneymask()
                                 ->disabled(fn ($get) => Account::find($get('account_id'))?->tag != 'member_loans_receivable')
-                                ->afterStateUpdated(fn ($set, $get) => $set('credit', floatval($get('interest') + floatval($get('principal'))))),
+                                ->afterStateUpdated(fn ($set, $get) => $set('credit', floatval($get('interest')) + floatval($get('principal')))),
                             TextInput::make('principal')
                                 ->moneymask()
                                 ->disabled(fn ($get) => Account::find($get('account_id'))?->tag != 'member_loans_receivable')
-                                ->afterStateUpdated(fn ($set, $get) => $set('credit', floatval($get('interest') + floatval($get('principal'))))),
+                                ->afterStateUpdated(fn ($set, $get) => $set('credit', floatval($get('interest')) + floatval($get('principal')))),
                         ];
                     }),
                 Actions::make([
@@ -141,7 +141,7 @@ class LegacyLoanVoucherPayments extends Page
                                 $voucher = JournalEntryVoucher::create($data);
                                 foreach ($items as $item) {
                                     unset($item['member_id']);
-                                    if (isset($item['interest']) && isset($item['principal'])) {
+                                    if (isset($item['interest']) || isset($item['principal'])) {
                                         $item['details'] = [
                                             'interest' => $item['interest'],
                                             'principal' => $item['principal'],

@@ -78,8 +78,8 @@ class LegacyLoanPayments extends Page
                             app(PayLegacyLoan::class)
                                 ->handle(
                                     loanAccount: LoanAccount::find($data['loan_account_id']),
-                                    principal: $data['principal'],
-                                    interest: $data['interest'],
+                                    principal: $data['principal'] ?? 0,
+                                    interest: $data['interest'] ?? 0,
                                     payment_type_id: $data['payment_type_id'],
                                     reference_number: $data['reference_number'],
                                     transaction_date: $data['transaction_date'],

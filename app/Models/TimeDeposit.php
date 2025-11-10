@@ -60,14 +60,14 @@ class TimeDeposit extends Model
         $interest = TimeDepositsProvider::getMaturityAmount(
             amount: $this->amount,
             interest_rate: TimeDepositsProvider::TERMINATION_INTEREST_RATE,
-            number_of_days: $this->transaction_date->diffInDays(config('app.transaction_date') ?? today())
+            number_of_days: $this->transaction_date?->diffInDays(config('app.transaction_date') ?? today())
         ) - $this->amount;
         return Attribute::make(get: fn() => round($interest, 2));
     }
 
     public function interestEarned(): Attribute
     {
-        $days = $this->transaction_date->diffInDays(config('app.transaction_date') ?? today());
+        $days = $this->transaction_date?->diffInDays(config('app.transaction_date') ?? today());
         $interest = TimeDepositsProvider::getMaturityAmount($this->amount, $this->interest_rate, $days) - $this->amount;
         return Attribute::make(get: fn() => round($interest, 2));
     }
