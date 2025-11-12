@@ -19,9 +19,9 @@ class MembersReport extends Page
     #[Computed]
     public function members()
     {
-        return Member::query()
-            ->when(filled($this->filters['tableFilters']['member_type']['member_type'] ?? null), fn ($q) => $q->whereMemberTypeId($this->filters['tableFilters']['member_type']['member_type']))
-            ->when(filled($this->filters['tableFilters']['member_type']['member_subtype'] ?? null), fn ($q) => $q->whereMemberSubtypeId($this->filters['tableFilters']['member_type']['member_subtype']))
+        $members = Member::query()
+            ->when(filled($this->filters['tableFilters']['member_type']['value'] ?? null), fn ($q) => $q->whereMemberTypeId($this->filters['tableFilters']['member_type']['value']))
+            ->when(filled($this->filters['tableFilters']['member_subtype']['value'] ?? null), fn ($q) => $q->whereMemberSubtypeId($this->filters['tableFilters']['member_subtype']['value']))
             ->when(filled($this->filters['tableFilters']['patronage_status']['value'] ?? null), fn ($q) => $q->wherePatronageStatusId($this->filters['tableFilters']['patronage_status']['value']))
             ->when(filled($this->filters['tableFilters']['gender']['value'] ?? null), fn ($q) => $q->whereGenderId($this->filters['tableFilters']['gender']['value']))
             ->when(filled($this->filters['tableFilters']['division']['value'] ?? null), fn ($q) => $q->whereDivisionId($this->filters['tableFilters']['division']['value']))
@@ -42,11 +42,11 @@ class MembersReport extends Page
             ->leftJoin('divisions', 'divisions.id', '=', 'members.division_id')
             ->selectRaw('members.*, member_types.name as member_type_name, genders.name as gender_name, divisions.name as division_name')
             ->get();
+        return $members;
     }
 
     public function mount()
     {
-        //        dd(request()->query('query'));
         $this->filters = request()->query('query');
     }
 }
