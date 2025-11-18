@@ -1,8 +1,5 @@
 <div x-data>
     <div class="p-4 print:w-full print:text-[10pt] print:leading-tight" x-ref="print">
-        <div class="print:hidden">
-            {{ $this->form }}
-        </div>
         <x-app.cashier.reports.report-heading />
         <h4 class="mt-4 text-center text-xl font-bold uppercase print:text-[12pt]">{{ $this->gender }} {{ $this->member_type }} CBU SUMMARY SCHEDULE AS OF
             {{ Carbon\CarbonImmutable::make($this->transaction_date)->format('F d, Y') }}</h4>
@@ -38,11 +35,11 @@
                         <td class="whitespace-nowrap border border-black px-4 text-left">{{ $record->alt_full_name }}
                         </td>
                         <td class="whitespace-nowrap border border-black px-4 text-center">
-                            {{ round($record->capital_subscriptions_sum_number_of_shares, 0) }}</td>
+                            {{ renumber_format($record->capital_subscriptions_sum_number_of_shares, 0) }}</td>
                         <td class="whitespace-nowrap border border-black px-4 text-right">
                             {{ renumber_format($record->capital_subscriptions_sum_amount_subscribed, 2) }}</td>
                         <td class="whitespace-nowrap border border-black px-4 text-center">
-                            {{ round($this->number_of_shares_paid($record), 0) }}</td>
+                            {{ renumber_format($this->number_of_shares_paid($record), 0) }}</td>
                         <td class="whitespace-nowrap border border-black px-4 text-right">
                             {{ renumber_format($record->capital_subscription_payments_sum_amount, 2) }}</td>
                         <td class="whitespace-nowrap border border-black px-4 text-right">
@@ -66,9 +63,9 @@
                 @endforeach
                 <tr wire:loading.remove>
                     <td colspan="2" class="whitespace-nowrap border border-black px-4 text-left font-bold">TOTAL</td>
-                    <td class="whitespace-nowrap border border-black px-4 text-center font-bold">{{ round($totals['capital_subscriptions_sum_number_of_shares'], 0) }}</td>
+                    <td class="whitespace-nowrap border border-black px-4 text-center font-bold">{{ renumber_format($totals['capital_subscriptions_sum_number_of_shares'], 0) }}</td>
                     <td class="whitespace-nowrap border border-black px-4 text-right font-bold">{{ renumber_format($totals['capital_subscriptions_sum_amount_subscribed'], 2) }}</td>
-                    <td class="whitespace-nowrap border border-black px-4 text-center font-bold">{{ round($totals['number_of_shares_paid'], 0) }}</td>
+                    <td class="whitespace-nowrap border border-black px-4 text-center font-bold">{{ renumber_format($totals['number_of_shares_paid'], 0) }}</td>
                     <td class="whitespace-nowrap border border-black px-4 text-right font-bold">{{ renumber_format($totals['capital_subscription_payments_sum_amount'], 2) }}</td>
                     <td class="whitespace-nowrap border border-black px-4 text-right font-bold">
                         {{ renumber_format($totals['capital_subscriptions_sum_receivable'], 2) }}
