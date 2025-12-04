@@ -43,19 +43,29 @@ class LoanBilling extends Model
 
     public function OrApproved(): Attribute
     {
-        return Attribute::make(get: fn() => filled($this->or_number));
+        return Attribute::make(get: fn () => filled($this->or_number));
+    }
+
+    public function CanForOr(): Attribute
+    {
+        return Attribute::make(get: fn ($value) => ! $this->for_or && ! $this->or_number && ! $this->posted);
+    }
+
+    public function CanPostPayments(): Attribute
+    {
+        return Attribute::make(get: fn () => ! $this->posted && ! $this->for_or && $this->or_number);
     }
 
     protected static function booted(): void
     {
         static::created(function (LoanBilling $loanBilling) {
             DB::beginTransaction();
-            $loanBilling->reference_number = $loanBilling->loan_type->code . '-' . (config('app.transaction_date') ?? today())->format('Y-m-') . str_pad($loanBilling->id, 6, '0', STR_PAD_LEFT);
+            $loanBilling->reference_number = $loanBilling->loan_type->code.'-'.(config('app.transaction_date') ?? today())->format('Y-m-').str_pad($loanBilling->id, 6, '0', STR_PAD_LEFT);
             Loan::wherePosted(true)
                 ->where('outstanding_balance', '>', 1)
                 ->whereLoanTypeId($loanBilling->loan_type_id)
-                ->when($loanBilling->member_type_id, fn($query, $value) => $query->whereRelation('member', 'member_type_id', $value))
-                ->when($loanBilling->member_subtype_id, fn($query, $value) => $query->whereRelation('member', 'member_subtype_id', $value))
+                ->when($loanBilling->member_type_id, fn ($query, $value) => $query->whereRelation('member', 'member_type_id', $value))
+                ->when($loanBilling->member_subtype_id, fn ($query, $value) => $query->whereRelation('member', 'member_subtype_id', $value))
                 ->each(function ($loan) use ($loanBilling) {
                     $amount_paid = min($loan->outstanding_balance, $loan->monthly_payment);
                     LoanBillingPayment::firstOrCreate([

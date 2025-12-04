@@ -23,7 +23,7 @@ class CapitalSubscriptionBilling extends Model
 
     public function OrApproved(): Attribute
     {
-        return Attribute::make(get: fn() => filled($this->or_number));
+        return Attribute::make(get: fn () => filled($this->or_number));
     }
 
     public function capital_subscription_billing_payments()
@@ -43,7 +43,7 @@ class CapitalSubscriptionBilling extends Model
 
     public function generateReferenceNumber(self $capitalSubscriptionBilling)
     {
-        return 'CBUBILLING' . '-' . (config('app.transaction_date') ?? today())->format('Y-m-') . str_pad($capitalSubscriptionBilling->id, 6, '0', STR_PAD_LEFT);
+        return 'CBUBILLING'.'-'.(config('app.transaction_date') ?? today())->format('Y-m-').str_pad($capitalSubscriptionBilling->id, 6, '0', STR_PAD_LEFT);
     }
 
     protected static function booted(): void
@@ -54,8 +54,8 @@ class CapitalSubscriptionBilling extends Model
             CapitalSubscription::query()
                 ->where('is_active', true)
                 ->withCount('payments')
-                ->when($capitalSubscriptionBilling->member_type_id, fn($query, $value) => $query->whereRelation('member', 'member_type_id', $value))
-                ->when($capitalSubscriptionBilling->member_subtype_id, fn($query, $value) => $query->whereRelation('member', 'member_subtype_id', $value))
+                ->when($capitalSubscriptionBilling->member_type_id, fn ($query, $value) => $query->whereRelation('member', 'member_type_id', $value))
+                ->when($capitalSubscriptionBilling->member_subtype_id, fn ($query, $value) => $query->whereRelation('member', 'member_subtype_id', $value))
                 ->each(function ($cbu) use ($capitalSubscriptionBilling) {
                     $amount_due = $cbu->payments_count > 0 ? $cbu->monthly_payment : $cbu->initial_amount_paid;
                     CapitalSubscriptionBillingPayment::firstOrCreate([

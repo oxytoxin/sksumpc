@@ -3,7 +3,6 @@
 namespace App\Filament\App\Pages\Cashier\Reports;
 
 use App\Models\SignatureSet;
-use App\Models\User;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
@@ -12,6 +11,7 @@ use Filament\Forms\Components\TextInput;
 trait HasSignatories
 {
     public $signatories = [];
+
     public $signature_set;
 
     protected function readOnlySignatories()
@@ -21,8 +21,10 @@ trait HasSignatories
 
     protected function getHeaderActions(): array
     {
-        if ($this->readOnlySignatories())
+        if ($this->readOnlySignatories()) {
             return [];
+        }
+
         return [
             Action::make('signatories')
                 ->fillForm([
@@ -42,7 +44,7 @@ trait HasSignatories
                             ->label('')
                             ->addActionLabel('Add Signatory'),
                     ];
-                })->action(fn() => $this->getSignatories()),
+                })->action(fn () => $this->getSignatories()),
         ];
     }
 
@@ -58,13 +60,14 @@ trait HasSignatories
 
     public function getSignatories()
     {
-        $this->signatories = $this->getSignatureSet()->signatories->map(fn($s) => [
+        $this->signatories = $this->getSignatureSet()->signatories->map(fn ($s) => [
             'user_id' => $s->user_id,
             'name' => $s->user->name,
             'action' => $s->action,
-            'designation' => $s->designation
+            'designation' => $s->designation,
         ])->toArray();
         $this->signatories = [...$this->signatories, ...$this->getAdditionalSignatories()];
+
         return $this->signatories;
     }
 }

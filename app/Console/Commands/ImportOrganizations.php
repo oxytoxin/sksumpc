@@ -2,13 +2,12 @@
 
 namespace App\Console\Commands;
 
-use App\Models\User;
 use App\Models\Member;
 use App\Models\Organization;
+use App\Models\User;
 use Illuminate\Console\Command;
 use Spatie\Permission\Models\Role;
 use Spatie\SimpleExcel\SimpleExcelReader;
-use App\Actions\Memberships\CreateMemberInitialAccounts;
 
 class ImportOrganizations extends Command
 {
@@ -35,7 +34,7 @@ class ImportOrganizations extends Command
             ->fromSheetName('ORG LIST')
             ->getRows();
         $role = Role::firstWhere('name', 'member');
-        $members = Member::get()->mapWithKeys(fn($m) => [$m->mpc_code => $m->id]);
+        $members = Member::get()->mapWithKeys(fn ($m) => [$m->mpc_code => $m->id]);
         $rows->each(function ($row) use ($members, $role) {
             if (filled($row['mpc_code'])) {
                 $organization = Organization::create([
@@ -43,12 +42,12 @@ class ImportOrganizations extends Command
                     'member_type_id' => 4,
                     'first_name' => trim(strtoupper($row['name'])),
                     'is_organization' => true,
-                    'member_ids' => collect(explode(',', $row['member_ids']))->filter()->map(fn($mi) => $members[$mi])->toArray(),
+                    'member_ids' => collect(explode(',', $row['member_ids']))->filter()->map(fn ($mi) => $members[$mi])->toArray(),
                 ]);
                 $organization->refresh();
                 $user = User::create([
                     'member_id' => $organization->id,
-                    'name' => $organization->full_name ?? ($organization->first_name . ' ' . $organization->last_name),
+                    'name' => $organization->full_name ?? ($organization->first_name.' '.$organization->last_name),
                     'email' => str($organization->mpc_code)->lower()->append('@gmail.com'),
                     'password' => 'password',
                 ]);

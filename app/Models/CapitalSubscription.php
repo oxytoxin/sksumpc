@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Oxytoxin\Providers\ShareCapitalProvider;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -71,7 +70,7 @@ class CapitalSubscription extends Model
     public function amountSharesSubscribed(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->number_of_shares * $this->par_value
+            get: fn () => $this->number_of_shares * $this->par_value
         );
     }
 }

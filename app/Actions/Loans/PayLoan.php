@@ -29,7 +29,7 @@ class PayLoan
         $loan_receivables_account = $loan->loan_account;
         $loan_interests_account = Account::whereAccountableType(LoanType::class)->whereAccountableId($loan->loan_type_id)->whereTag('loan_interests')->first();
 
-        if ($principal_payment > 0)
+        if ($principal_payment > 0) {
             app(CreateTransaction::class)->handle(new TransactionData(
                 account_id: $loan_receivables_account->id,
                 transactionType: $transactionType,
@@ -41,7 +41,8 @@ class PayLoan
                 transaction_date: $loanPaymentData->transaction_date,
                 from_billing_type: $loanPaymentData->from_billing_type
             ));
-        if ($interest_payment > 0)
+        }
+        if ($interest_payment > 0) {
             app(CreateTransaction::class)->handle(new TransactionData(
                 account_id: $loan_interests_account->id,
                 transactionType: $transactionType,
@@ -53,9 +54,10 @@ class PayLoan
                 transaction_date: $loanPaymentData->transaction_date,
                 from_billing_type: $loanPaymentData->from_billing_type
             ));
+        }
 
         $loan->payments()->update([
-            'unpaid_interest' => 0
+            'unpaid_interest' => 0,
         ]);
 
         return LoanPayment::create([

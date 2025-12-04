@@ -6,7 +6,6 @@ use App\Filament\App\Pages\Cashier\Reports\HasSignatories;
 use App\Filament\App\Resources\MemberResource;
 use App\Models\Loan;
 use App\Models\SignatureSet;
-use App\Models\User;
 use Filament\Resources\Pages\Page;
 
 class LoanAmortizationSchedule extends Page
@@ -23,6 +22,7 @@ class LoanAmortizationSchedule extends Page
     {
         return SignatureSet::where('name', 'Loan Amortization Reports')->first();
     }
+
     protected function getAdditionalSignatories()
     {
         return [
@@ -30,8 +30,8 @@ class LoanAmortizationSchedule extends Page
                 'user_id' => $this->loan->member->user_id,
                 'name' => $this->loan->member->full_name,
                 'action' => 'Conforme:',
-                'designation' => "Member's Name"
-            ]
+                'designation' => "Member's Name",
+            ],
         ];
     }
 }

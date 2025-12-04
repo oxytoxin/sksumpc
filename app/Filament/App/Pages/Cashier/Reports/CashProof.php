@@ -43,13 +43,13 @@ class CashProof extends Page
                 PaymentTypes::CHECK->value,
                 PaymentTypes::ADA->value,
                 PaymentTypes::DEPOSIT_SLIP->value,
-            ])->when($this->data['transaction_date'] ?? today()->format('m/d/Y - m/d/Y'), fn($q, $v) => $q->whereBetween('transaction_date', explode(' - ', $v)))->sum('deposit');
+            ])->when($this->data['transaction_date'] ?? today()->format('m/d/Y - m/d/Y'), fn ($q, $v) => $q->whereBetween('transaction_date', explode(' - ', $v)))->sum('deposit');
         $total_imprest_deposit = Imprest::query()->whereIn('payment_type_id', [
             PaymentTypes::CASH->value,
             PaymentTypes::CHECK->value,
             PaymentTypes::ADA->value,
             PaymentTypes::DEPOSIT_SLIP->value,
-        ])->when($this->data['transaction_date'] ?? today()->format('m/d/Y - m/d/Y'), fn($q, $v) => $q->whereBetween('transaction_date', explode(' - ', $v)))->sum('deposit');
+        ])->when($this->data['transaction_date'] ?? today()->format('m/d/Y - m/d/Y'), fn ($q, $v) => $q->whereBetween('transaction_date', explode(' - ', $v)))->sum('deposit');
 
         return $total_savings_deposit + $total_imprest_deposit;
     }
@@ -62,13 +62,13 @@ class CashProof extends Page
             PaymentTypes::CHECK->value,
             PaymentTypes::ADA->value,
             PaymentTypes::DEPOSIT_SLIP->value,
-        ])->when($this->data['transaction_date'] ?? today()->format('Y/m/d - Y/m/d'), fn($q, $v) => $q->whereBetween('transaction_date', explode(' - ', $v)))->sum('withdrawal');
+        ])->when($this->data['transaction_date'] ?? today()->format('Y/m/d - Y/m/d'), fn ($q, $v) => $q->whereBetween('transaction_date', explode(' - ', $v)))->sum('withdrawal');
         $total_imprest_withdrawal = Imprest::query()->whereIn('payment_type_id', [
             PaymentTypes::CASH->value,
             PaymentTypes::CHECK->value,
             PaymentTypes::ADA->value,
             PaymentTypes::DEPOSIT_SLIP->value,
-        ])->when($this->data['transaction_date'] ?? today()->format('Y/m/d - Y/m/d'), fn($q, $v) => $q->whereBetween('transaction_date', explode(' - ', $v)))->sum('withdrawal');
+        ])->when($this->data['transaction_date'] ?? today()->format('Y/m/d - Y/m/d'), fn ($q, $v) => $q->whereBetween('transaction_date', explode(' - ', $v)))->sum('withdrawal');
 
         return $total_savings_withdrawal + $total_imprest_withdrawal;
     }
@@ -76,6 +76,6 @@ class CashProof extends Page
     public function mount()
     {
         $this->form->fill();
-        data_set($this, 'data.transaction_date', (config('app.transaction_date')?->format('Y/m/d') ?? today()->format('Y/m/d')) . ' - ' . (config('app.transaction_date')?->format('Y/m/d') ?? today()->format('Y/m/d')));
+        data_set($this, 'data.transaction_date', (config('app.transaction_date')?->format('Y/m/d') ?? today()->format('Y/m/d')).' - '.(config('app.transaction_date')?->format('Y/m/d') ?? today()->format('Y/m/d')));
     }
 }

@@ -12,9 +12,8 @@ enum CashEquivalentsTag: string
     case PETTY_CASH_FUND = 'petty_cash_fund';
     case REVOLVING_FUND = 'revolving_fund';
 
-
     public static function get()
     {
-        return collect(self::cases())->map(fn($c) => $c->value)->toArray();
+        return collect(self::cases())->map(fn ($c) => $c->value)->toArray();
     }
 }

@@ -42,17 +42,17 @@ class TimeDeposit extends Model
 
     public function amountInWords(): Attribute
     {
-        return Attribute::make(get: fn() => (new NumberFormatter('en', NumberFormatter::SPELLOUT))->format($this->amount));
+        return Attribute::make(get: fn () => (new NumberFormatter('en', NumberFormatter::SPELLOUT))->format($this->amount));
     }
 
     public function daysInWords(): Attribute
     {
-        return Attribute::make(get: fn() => (new NumberFormatter('en', NumberFormatter::SPELLOUT))->format($this->number_of_days));
+        return Attribute::make(get: fn () => (new NumberFormatter('en', NumberFormatter::SPELLOUT))->format($this->number_of_days));
     }
 
     public function interestRateInWords(): Attribute
     {
-        return Attribute::make(get: fn() => (new NumberFormatter('en', NumberFormatter::SPELLOUT))->format(round($this->interest_rate * 100, 2)));
+        return Attribute::make(get: fn () => (new NumberFormatter('en', NumberFormatter::SPELLOUT))->format(round($this->interest_rate * 100, 2)));
     }
 
     public function accruedInterest(): Attribute
@@ -62,14 +62,16 @@ class TimeDeposit extends Model
             interest_rate: TimeDepositsProvider::TERMINATION_INTEREST_RATE,
             number_of_days: $this->transaction_date?->diffInDays(config('app.transaction_date') ?? today())
         ) - $this->amount;
-        return Attribute::make(get: fn() => round($interest, 2));
+
+        return Attribute::make(get: fn () => round($interest, 2));
     }
 
     public function interestEarned(): Attribute
     {
         $days = $this->transaction_date?->diffInDays(config('app.transaction_date') ?? today());
         $interest = TimeDepositsProvider::getMaturityAmount($this->amount, $this->interest_rate, $days) - $this->amount;
-        return Attribute::make(get: fn() => round($interest, 2));
+
+        return Attribute::make(get: fn () => round($interest, 2));
     }
 
     protected static function booted()

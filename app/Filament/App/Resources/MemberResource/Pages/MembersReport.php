@@ -42,6 +42,7 @@ class MembersReport extends Page
             ->leftJoin('divisions', 'divisions.id', '=', 'members.division_id')
             ->selectRaw('members.*, member_types.name as member_type_name, genders.name as gender_name, divisions.name as division_name')
             ->get();
+
         return $members;
     }
 

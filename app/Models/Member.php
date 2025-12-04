@@ -26,9 +26,9 @@ class Member extends Model implements HasMedia
     protected $casts = [
         'dob' => 'immutable_date',
         'membership_date' => 'immutable_date',
-        'dependents' => DataCollection::class . ':' . MemberDependent::class,
+        'dependents' => DataCollection::class.':'.MemberDependent::class,
         'other_income_sources' => 'array',
-        'annual_income' => 'decimal:4',
+        'annual_income' => 'decimal:2',
         'member_ids' => 'array',
     ];
 
@@ -131,7 +131,6 @@ class Member extends Model implements HasMedia
             'member_laboratory_cbu_paid',
         ]);
     }
-
 
     public function getAgeAttribute()
     {

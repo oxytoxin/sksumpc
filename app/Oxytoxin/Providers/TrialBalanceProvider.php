@@ -13,10 +13,10 @@ class TrialBalanceProvider
     public static function getYearlyTrialBalance(int $year)
     {
         if (env('APP_ENV') === 'production') {
-            Cache::forget('trial_balance_' . $year);
+            Cache::forget('trial_balance_'.$year);
         }
 
-        return Cache::remember('trial_balance_' . $year, 3600, function () use ($year) {
+        return Cache::remember('trial_balance_'.$year, 3600, function () use ($year) {
             return self::getYearlyAccountSummary($year);
         });
     }
@@ -27,34 +27,34 @@ class TrialBalanceProvider
             $balance_forwarded_date = $from->subMonthNoOverflow();
             $ending_date = $balance_forwarded_date->endOfMonth();
             $query
-                ->withCount(['children' => fn($q) => $q->whereNull('member_id')])
-                ->withSum(['recursiveCrjTransactions as 0_month_crj_debit' => fn($query) => $query->whereMonth('transaction_date', $balance_forwarded_date->month)->whereYear('transaction_date', $balance_forwarded_date->year)], 'debit')
-                ->withSum(['recursiveCrjTransactions as 0_month_crj_credit' => fn($query) => $query->whereMonth('transaction_date', $balance_forwarded_date->month)->whereYear('transaction_date', $balance_forwarded_date->year)], 'credit')
-                ->withSum(['recursiveCdjTransactions as 0_month_cdj_debit' => fn($query) => $query->whereMonth('transaction_date', $balance_forwarded_date->month)->whereYear('transaction_date', $balance_forwarded_date->year)], 'debit')
-                ->withSum(['recursiveCdjTransactions as 0_month_cdj_credit' => fn($query) => $query->whereMonth('transaction_date', $balance_forwarded_date->month)->whereYear('transaction_date', $balance_forwarded_date->year)], 'credit')
-                ->withSum(['recursiveJevTransactions as 0_month_jev_debit' => fn($query) => $query->whereMonth('transaction_date', $balance_forwarded_date->month)->whereYear('transaction_date', $balance_forwarded_date->year)], 'debit')
-                ->withSum(['recursiveJevTransactions as 0_month_jev_credit' => fn($query) => $query->whereMonth('transaction_date', $balance_forwarded_date->month)->whereYear('transaction_date', $balance_forwarded_date->year)], 'credit')
-                ->withSum(['recursiveCrjTransactions as 0_ending_crj_debit' => fn($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'debit')
-                ->withSum(['recursiveCrjTransactions as 0_ending_crj_credit' => fn($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'credit')
-                ->withSum(['recursiveCdjTransactions as 0_ending_cdj_debit' => fn($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'debit')
-                ->withSum(['recursiveCdjTransactions as 0_ending_cdj_credit' => fn($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'credit')
-                ->withSum(['recursiveJevTransactions as 0_ending_jev_debit' => fn($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'debit')
-                ->withSum(['recursiveJevTransactions as 0_ending_jev_credit' => fn($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'credit');
+                ->withCount(['children' => fn ($q) => $q->whereNull('member_id')])
+                ->withSum(['recursiveCrjTransactions as 0_month_crj_debit' => fn ($query) => $query->whereMonth('transaction_date', $balance_forwarded_date->month)->whereYear('transaction_date', $balance_forwarded_date->year)], 'debit')
+                ->withSum(['recursiveCrjTransactions as 0_month_crj_credit' => fn ($query) => $query->whereMonth('transaction_date', $balance_forwarded_date->month)->whereYear('transaction_date', $balance_forwarded_date->year)], 'credit')
+                ->withSum(['recursiveCdjTransactions as 0_month_cdj_debit' => fn ($query) => $query->whereMonth('transaction_date', $balance_forwarded_date->month)->whereYear('transaction_date', $balance_forwarded_date->year)], 'debit')
+                ->withSum(['recursiveCdjTransactions as 0_month_cdj_credit' => fn ($query) => $query->whereMonth('transaction_date', $balance_forwarded_date->month)->whereYear('transaction_date', $balance_forwarded_date->year)], 'credit')
+                ->withSum(['recursiveJevTransactions as 0_month_jev_debit' => fn ($query) => $query->whereMonth('transaction_date', $balance_forwarded_date->month)->whereYear('transaction_date', $balance_forwarded_date->year)], 'debit')
+                ->withSum(['recursiveJevTransactions as 0_month_jev_credit' => fn ($query) => $query->whereMonth('transaction_date', $balance_forwarded_date->month)->whereYear('transaction_date', $balance_forwarded_date->year)], 'credit')
+                ->withSum(['recursiveCrjTransactions as 0_ending_crj_debit' => fn ($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'debit')
+                ->withSum(['recursiveCrjTransactions as 0_ending_crj_credit' => fn ($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'credit')
+                ->withSum(['recursiveCdjTransactions as 0_ending_cdj_debit' => fn ($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'debit')
+                ->withSum(['recursiveCdjTransactions as 0_ending_cdj_credit' => fn ($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'credit')
+                ->withSum(['recursiveJevTransactions as 0_ending_jev_debit' => fn ($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'debit')
+                ->withSum(['recursiveJevTransactions as 0_ending_jev_credit' => fn ($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'credit');
             foreach ([$from, $to] as $key => $date) {
                 $k = $key + 1;
                 $query
-                    ->withSum(["recursiveCrjTransactions as {$k}_month_crj_debit" => fn($query) => $query->whereDate('transaction_date', '<=', $date->endOfDay())->whereDate('transaction_date', '>=', $date->startOfMonth())], 'debit')
-                    ->withSum(["recursiveCrjTransactions as {$k}_month_crj_credit" => fn($query) => $query->whereDate('transaction_date', '<=', $date->endOfDay())->whereDate('transaction_date', '>=', $date->startOfMonth())], 'credit')
-                    ->withSum(["recursiveCdjTransactions as {$k}_month_cdj_debit" => fn($query) => $query->whereDate('transaction_date', '<=', $date->endOfDay())->whereDate('transaction_date', '>=', $date->startOfMonth())], 'debit')
-                    ->withSum(["recursiveCdjTransactions as {$k}_month_cdj_credit" => fn($query) => $query->whereDate('transaction_date', '<=', $date->endOfDay())->whereDate('transaction_date', '>=', $date->startOfMonth())], 'credit')
-                    ->withSum(["recursiveJevTransactions as {$k}_month_jev_debit" => fn($query) => $query->whereDate('transaction_date', '<=', $date->endOfDay())->whereDate('transaction_date', '>=', $date->startOfMonth())], 'debit')
-                    ->withSum(["recursiveJevTransactions as {$k}_month_jev_credit" => fn($query) => $query->whereDate('transaction_date', '<=', $date->endOfDay())->whereDate('transaction_date', '>=', $date->startOfMonth())], 'credit')
-                    ->withSum(["recursiveCrjTransactions as {$k}_ending_crj_debit" => fn($query) => $query->whereDate('transaction_date', '<=', $date->endOfDay())], 'debit')
-                    ->withSum(["recursiveCrjTransactions as {$k}_ending_crj_credit" => fn($query) => $query->whereDate('transaction_date', '<=', $date->endOfDay())], 'credit')
-                    ->withSum(["recursiveCdjTransactions as {$k}_ending_cdj_debit" => fn($query) => $query->whereDate('transaction_date', '<=', $date->endOfDay())], 'debit')
-                    ->withSum(["recursiveCdjTransactions as {$k}_ending_cdj_credit" => fn($query) => $query->whereDate('transaction_date', '<=', $date->endOfDay())], 'credit')
-                    ->withSum(["recursiveJevTransactions as {$k}_ending_jev_debit" => fn($query) => $query->whereDate('transaction_date', '<=', $date->endOfDay())], 'debit')
-                    ->withSum(["recursiveJevTransactions as {$k}_ending_jev_credit" => fn($query) => $query->whereDate('transaction_date', '<=', $date->endOfDay())], 'credit');
+                    ->withSum(["recursiveCrjTransactions as {$k}_month_crj_debit" => fn ($query) => $query->whereDate('transaction_date', '<=', $date->endOfDay())->whereDate('transaction_date', '>=', $date->startOfMonth())], 'debit')
+                    ->withSum(["recursiveCrjTransactions as {$k}_month_crj_credit" => fn ($query) => $query->whereDate('transaction_date', '<=', $date->endOfDay())->whereDate('transaction_date', '>=', $date->startOfMonth())], 'credit')
+                    ->withSum(["recursiveCdjTransactions as {$k}_month_cdj_debit" => fn ($query) => $query->whereDate('transaction_date', '<=', $date->endOfDay())->whereDate('transaction_date', '>=', $date->startOfMonth())], 'debit')
+                    ->withSum(["recursiveCdjTransactions as {$k}_month_cdj_credit" => fn ($query) => $query->whereDate('transaction_date', '<=', $date->endOfDay())->whereDate('transaction_date', '>=', $date->startOfMonth())], 'credit')
+                    ->withSum(["recursiveJevTransactions as {$k}_month_jev_debit" => fn ($query) => $query->whereDate('transaction_date', '<=', $date->endOfDay())->whereDate('transaction_date', '>=', $date->startOfMonth())], 'debit')
+                    ->withSum(["recursiveJevTransactions as {$k}_month_jev_credit" => fn ($query) => $query->whereDate('transaction_date', '<=', $date->endOfDay())->whereDate('transaction_date', '>=', $date->startOfMonth())], 'credit')
+                    ->withSum(["recursiveCrjTransactions as {$k}_ending_crj_debit" => fn ($query) => $query->whereDate('transaction_date', '<=', $date->endOfDay())], 'debit')
+                    ->withSum(["recursiveCrjTransactions as {$k}_ending_crj_credit" => fn ($query) => $query->whereDate('transaction_date', '<=', $date->endOfDay())], 'credit')
+                    ->withSum(["recursiveCdjTransactions as {$k}_ending_cdj_debit" => fn ($query) => $query->whereDate('transaction_date', '<=', $date->endOfDay())], 'debit')
+                    ->withSum(["recursiveCdjTransactions as {$k}_ending_cdj_credit" => fn ($query) => $query->whereDate('transaction_date', '<=', $date->endOfDay())], 'credit')
+                    ->withSum(["recursiveJevTransactions as {$k}_ending_jev_debit" => fn ($query) => $query->whereDate('transaction_date', '<=', $date->endOfDay())], 'debit')
+                    ->withSum(["recursiveJevTransactions as {$k}_ending_jev_credit" => fn ($query) => $query->whereDate('transaction_date', '<=', $date->endOfDay())], 'credit');
             }
             $query
                 ->whereNull('accounts.member_id');
@@ -120,19 +120,19 @@ class TrialBalanceProvider
         return Account::withQueryConstraint(function ($query) use ($date) {
             $ending_date = $date->endOfMonth();
             $query
-                ->withCount(['children' => fn($q) => $q->whereNull('member_id')])
-                ->withSum(['recursiveCrjTransactions as month_crj_debit' => fn($query) => $query->whereMonth('transaction_date', $date->month)->whereYear('transaction_date', $date->year)], 'debit')
-                ->withSum(['recursiveCrjTransactions as month_crj_credit' => fn($query) => $query->whereMonth('transaction_date', $date->month)->whereYear('transaction_date', $date->year)], 'credit')
-                ->withSum(['recursiveCdjTransactions as month_cdj_debit' => fn($query) => $query->whereMonth('transaction_date', $date->month)->whereYear('transaction_date', $date->year)], 'debit')
-                ->withSum(['recursiveCdjTransactions as month_cdj_credit' => fn($query) => $query->whereMonth('transaction_date', $date->month)->whereYear('transaction_date', $date->year)], 'credit')
-                ->withSum(['recursiveJevTransactions as month_jev_debit' => fn($query) => $query->whereMonth('transaction_date', $date->month)->whereYear('transaction_date', $date->year)], 'debit')
-                ->withSum(['recursiveJevTransactions as month_jev_credit' => fn($query) => $query->whereMonth('transaction_date', $date->month)->whereYear('transaction_date', $date->year)], 'credit')
-                ->withSum(['recursiveCrjTransactions as ending_crj_debit' => fn($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'debit')
-                ->withSum(['recursiveCrjTransactions as ending_crj_credit' => fn($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'credit')
-                ->withSum(['recursiveCdjTransactions as ending_cdj_debit' => fn($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'debit')
-                ->withSum(['recursiveCdjTransactions as ending_cdj_credit' => fn($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'credit')
-                ->withSum(['recursiveJevTransactions as ending_jev_debit' => fn($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'debit')
-                ->withSum(['recursiveJevTransactions as ending_jev_credit' => fn($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'credit')
+                ->withCount(['children' => fn ($q) => $q->whereNull('member_id')])
+                ->withSum(['recursiveCrjTransactions as month_crj_debit' => fn ($query) => $query->whereMonth('transaction_date', $date->month)->whereYear('transaction_date', $date->year)], 'debit')
+                ->withSum(['recursiveCrjTransactions as month_crj_credit' => fn ($query) => $query->whereMonth('transaction_date', $date->month)->whereYear('transaction_date', $date->year)], 'credit')
+                ->withSum(['recursiveCdjTransactions as month_cdj_debit' => fn ($query) => $query->whereMonth('transaction_date', $date->month)->whereYear('transaction_date', $date->year)], 'debit')
+                ->withSum(['recursiveCdjTransactions as month_cdj_credit' => fn ($query) => $query->whereMonth('transaction_date', $date->month)->whereYear('transaction_date', $date->year)], 'credit')
+                ->withSum(['recursiveJevTransactions as month_jev_debit' => fn ($query) => $query->whereMonth('transaction_date', $date->month)->whereYear('transaction_date', $date->year)], 'debit')
+                ->withSum(['recursiveJevTransactions as month_jev_credit' => fn ($query) => $query->whereMonth('transaction_date', $date->month)->whereYear('transaction_date', $date->year)], 'credit')
+                ->withSum(['recursiveCrjTransactions as ending_crj_debit' => fn ($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'debit')
+                ->withSum(['recursiveCrjTransactions as ending_crj_credit' => fn ($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'credit')
+                ->withSum(['recursiveCdjTransactions as ending_cdj_debit' => fn ($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'debit')
+                ->withSum(['recursiveCdjTransactions as ending_cdj_credit' => fn ($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'credit')
+                ->withSum(['recursiveJevTransactions as ending_jev_debit' => fn ($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'debit')
+                ->withSum(['recursiveJevTransactions as ending_jev_credit' => fn ($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'credit')
                 ->whereNull('accounts.member_id');
         }, function () {
             $addSelectStatement = 'laravel_cte.*,';
@@ -194,34 +194,34 @@ class TrialBalanceProvider
             $balance_forwarded_date = CarbonImmutable::create(year: $year)->subYearNoOverflow()->endOfYear();
             $ending_date = $balance_forwarded_date->endOfMonth();
             $query
-                ->withCount(['children' => fn($q) => $q->whereNull('member_id')])
-                ->withSum(['recursiveCrjTransactions as 0_month_crj_debit' => fn($query) => $query->whereMonth('transaction_date', $balance_forwarded_date->month)->whereYear('transaction_date', $balance_forwarded_date->year)], 'debit')
-                ->withSum(['recursiveCrjTransactions as 0_month_crj_credit' => fn($query) => $query->whereMonth('transaction_date', $balance_forwarded_date->month)->whereYear('transaction_date', $balance_forwarded_date->year)], 'credit')
-                ->withSum(['recursiveCdjTransactions as 0_month_cdj_debit' => fn($query) => $query->whereMonth('transaction_date', $balance_forwarded_date->month)->whereYear('transaction_date', $balance_forwarded_date->year)], 'debit')
-                ->withSum(['recursiveCdjTransactions as 0_month_cdj_credit' => fn($query) => $query->whereMonth('transaction_date', $balance_forwarded_date->month)->whereYear('transaction_date', $balance_forwarded_date->year)], 'credit')
-                ->withSum(['recursiveJevTransactions as 0_month_jev_debit' => fn($query) => $query->whereMonth('transaction_date', $balance_forwarded_date->month)->whereYear('transaction_date', $balance_forwarded_date->year)], 'debit')
-                ->withSum(['recursiveJevTransactions as 0_month_jev_credit' => fn($query) => $query->whereMonth('transaction_date', $balance_forwarded_date->month)->whereYear('transaction_date', $balance_forwarded_date->year)], 'credit')
-                ->withSum(['recursiveCrjTransactions as 0_ending_crj_debit' => fn($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'debit')
-                ->withSum(['recursiveCrjTransactions as 0_ending_crj_credit' => fn($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'credit')
-                ->withSum(['recursiveCdjTransactions as 0_ending_cdj_debit' => fn($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'debit')
-                ->withSum(['recursiveCdjTransactions as 0_ending_cdj_credit' => fn($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'credit')
-                ->withSum(['recursiveJevTransactions as 0_ending_jev_debit' => fn($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'debit')
-                ->withSum(['recursiveJevTransactions as 0_ending_jev_credit' => fn($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'credit');
+                ->withCount(['children' => fn ($q) => $q->whereNull('member_id')])
+                ->withSum(['recursiveCrjTransactions as 0_month_crj_debit' => fn ($query) => $query->whereMonth('transaction_date', $balance_forwarded_date->month)->whereYear('transaction_date', $balance_forwarded_date->year)], 'debit')
+                ->withSum(['recursiveCrjTransactions as 0_month_crj_credit' => fn ($query) => $query->whereMonth('transaction_date', $balance_forwarded_date->month)->whereYear('transaction_date', $balance_forwarded_date->year)], 'credit')
+                ->withSum(['recursiveCdjTransactions as 0_month_cdj_debit' => fn ($query) => $query->whereMonth('transaction_date', $balance_forwarded_date->month)->whereYear('transaction_date', $balance_forwarded_date->year)], 'debit')
+                ->withSum(['recursiveCdjTransactions as 0_month_cdj_credit' => fn ($query) => $query->whereMonth('transaction_date', $balance_forwarded_date->month)->whereYear('transaction_date', $balance_forwarded_date->year)], 'credit')
+                ->withSum(['recursiveJevTransactions as 0_month_jev_debit' => fn ($query) => $query->whereMonth('transaction_date', $balance_forwarded_date->month)->whereYear('transaction_date', $balance_forwarded_date->year)], 'debit')
+                ->withSum(['recursiveJevTransactions as 0_month_jev_credit' => fn ($query) => $query->whereMonth('transaction_date', $balance_forwarded_date->month)->whereYear('transaction_date', $balance_forwarded_date->year)], 'credit')
+                ->withSum(['recursiveCrjTransactions as 0_ending_crj_debit' => fn ($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'debit')
+                ->withSum(['recursiveCrjTransactions as 0_ending_crj_credit' => fn ($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'credit')
+                ->withSum(['recursiveCdjTransactions as 0_ending_cdj_debit' => fn ($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'debit')
+                ->withSum(['recursiveCdjTransactions as 0_ending_cdj_credit' => fn ($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'credit')
+                ->withSum(['recursiveJevTransactions as 0_ending_jev_debit' => fn ($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'debit')
+                ->withSum(['recursiveJevTransactions as 0_ending_jev_credit' => fn ($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'credit');
             for ($m = 1; $m <= 12; $m++) {
                 $ending_date = Carbon::create(month: $m, year: $year)->endOfMonth();
                 $query
-                    ->withSum(["recursiveCrjTransactions as {$m}_month_crj_debit" => fn($query) => $query->whereMonth('transaction_date', $m)->whereYear('transaction_date', $year)], 'debit')
-                    ->withSum(["recursiveCrjTransactions as {$m}_month_crj_credit" => fn($query) => $query->whereMonth('transaction_date', $m)->whereYear('transaction_date', $year)], 'credit')
-                    ->withSum(["recursiveCdjTransactions as {$m}_month_cdj_debit" => fn($query) => $query->whereMonth('transaction_date', $m)->whereYear('transaction_date', $year)], 'debit')
-                    ->withSum(["recursiveCdjTransactions as {$m}_month_cdj_credit" => fn($query) => $query->whereMonth('transaction_date', $m)->whereYear('transaction_date', $year)], 'credit')
-                    ->withSum(["recursiveJevTransactions as {$m}_month_jev_debit" => fn($query) => $query->whereMonth('transaction_date', $m)->whereYear('transaction_date', $year)], 'debit')
-                    ->withSum(["recursiveJevTransactions as {$m}_month_jev_credit" => fn($query) => $query->whereMonth('transaction_date', $m)->whereYear('transaction_date', $year)], 'credit')
-                    ->withSum(["recursiveCrjTransactions as {$m}_ending_crj_debit" => fn($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'debit')
-                    ->withSum(["recursiveCrjTransactions as {$m}_ending_crj_credit" => fn($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'credit')
-                    ->withSum(["recursiveCdjTransactions as {$m}_ending_cdj_debit" => fn($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'debit')
-                    ->withSum(["recursiveCdjTransactions as {$m}_ending_cdj_credit" => fn($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'credit')
-                    ->withSum(["recursiveJevTransactions as {$m}_ending_jev_debit" => fn($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'debit')
-                    ->withSum(["recursiveJevTransactions as {$m}_ending_jev_credit" => fn($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'credit');
+                    ->withSum(["recursiveCrjTransactions as {$m}_month_crj_debit" => fn ($query) => $query->whereMonth('transaction_date', $m)->whereYear('transaction_date', $year)], 'debit')
+                    ->withSum(["recursiveCrjTransactions as {$m}_month_crj_credit" => fn ($query) => $query->whereMonth('transaction_date', $m)->whereYear('transaction_date', $year)], 'credit')
+                    ->withSum(["recursiveCdjTransactions as {$m}_month_cdj_debit" => fn ($query) => $query->whereMonth('transaction_date', $m)->whereYear('transaction_date', $year)], 'debit')
+                    ->withSum(["recursiveCdjTransactions as {$m}_month_cdj_credit" => fn ($query) => $query->whereMonth('transaction_date', $m)->whereYear('transaction_date', $year)], 'credit')
+                    ->withSum(["recursiveJevTransactions as {$m}_month_jev_debit" => fn ($query) => $query->whereMonth('transaction_date', $m)->whereYear('transaction_date', $year)], 'debit')
+                    ->withSum(["recursiveJevTransactions as {$m}_month_jev_credit" => fn ($query) => $query->whereMonth('transaction_date', $m)->whereYear('transaction_date', $year)], 'credit')
+                    ->withSum(["recursiveCrjTransactions as {$m}_ending_crj_debit" => fn ($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'debit')
+                    ->withSum(["recursiveCrjTransactions as {$m}_ending_crj_credit" => fn ($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'credit')
+                    ->withSum(["recursiveCdjTransactions as {$m}_ending_cdj_debit" => fn ($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'debit')
+                    ->withSum(["recursiveCdjTransactions as {$m}_ending_cdj_credit" => fn ($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'credit')
+                    ->withSum(["recursiveJevTransactions as {$m}_ending_jev_debit" => fn ($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'debit')
+                    ->withSum(["recursiveJevTransactions as {$m}_ending_jev_credit" => fn ($query) => $query->whereDate('transaction_date', '<=', $ending_date)], 'credit');
             }
             $query
                 ->whereNull('accounts.member_id');

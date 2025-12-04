@@ -8,7 +8,6 @@ use App\Models\Account;
 use App\Models\TimeDeposit;
 use App\Models\TransactionType;
 use App\Oxytoxin\DTO\Transactions\TransactionData;
-use App\Oxytoxin\Providers\SavingsProvider;
 use App\Oxytoxin\Providers\TimeDepositsProvider;
 use DB;
 
@@ -45,7 +44,6 @@ class TerminateTimeDeposit
 
             app(CreateTransaction::class)->handle($data);
         }
-
 
         DB::commit();
     }

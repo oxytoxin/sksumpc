@@ -60,6 +60,7 @@ class ImportExistingLoan
         $accounts = Account::withCode()->find(collect($loan_disclosure_sheet_items)->pluck('account_id'));
         $items = collect($loan_disclosure_sheet_items)->map(function ($item) use ($accounts) {
             $item['name'] = $accounts->find($item['account_id'])->code;
+
             return $item;
         })->toArray();
         $loanData = new LoanData(
@@ -91,7 +92,7 @@ class ImportExistingLoan
 
         $principal_payment = $loan->gross_amount - $balance_forwarded;
         $transactionType = TransactionType::JEV();
-        if ($principal_payment)
+        if ($principal_payment) {
             app(CreateTransaction::class)->handle(new TransactionData(
                 account_id: $loan->loan_account->id,
                 transactionType: $transactionType,
@@ -102,6 +103,7 @@ class ImportExistingLoan
                 remarks: 'Member Loan Receivable Before Balance Forwarded',
                 transaction_date: $last_transaction_date,
             ));
+        }
         app(CreateTransaction::class)->handle(new TransactionData(
             account_id: $loan->loan_account->id,
             transactionType: $transactionType,

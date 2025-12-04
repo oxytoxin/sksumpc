@@ -7,7 +7,6 @@ use App\Filament\App\Resources\MemberResource;
 use App\Models\LoveGift;
 use App\Models\Member;
 use App\Models\SignatureSet;
-use App\Models\User;
 use Filament\Resources\Pages\Page;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -32,18 +31,16 @@ class LoveGiftsSubsidiaryLedger extends Page implements HasTable
         return 'Love Gifts Subsidiary Ledger';
     }
 
-
     protected function getSignatureSet()
     {
         return SignatureSet::where('name', 'SL Reports')->first();
     }
 
-
     public function table(Table $table): Table
     {
         return $table
             ->query(LoveGift::query()->where('member_id', $this->member->id))
-            ->content(fn() => view('filament.app.views.love-gifts-sl', ['member' => $this->member, 'signatories' => $this->signatories]))
+            ->content(fn () => view('filament.app.views.love-gifts-sl', ['member' => $this->member, 'signatories' => $this->signatories]))
             ->filters([
                 DateRangeFilter::make('transaction_date')
                     ->format('m/d/Y')

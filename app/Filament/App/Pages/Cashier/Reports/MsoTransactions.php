@@ -4,9 +4,7 @@ namespace App\Filament\App\Pages\Cashier\Reports;
 
 use App\Enums\TransactionTypes;
 use App\Models\Member;
-use App\Models\MemberType;
 use App\Models\Transaction;
-use App\Models\User;
 use Filament\Pages\Page;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -34,7 +32,7 @@ class MsoTransactions extends Page implements HasTable
                 Transaction::query()
                     ->where('transaction_type_id', TransactionTypes::CRJ->value)
             )
-            ->content(fn() => view('filament.app.pages.cashier.reports.mso-transactions-report-table', [
+            ->content(fn () => view('filament.app.pages.cashier.reports.mso-transactions-report-table', [
                 'signatories' => $this->signatories,
                 'report_title' => $this->report_title,
             ]))
@@ -56,9 +54,9 @@ class MsoTransactions extends Page implements HasTable
                     ])
                     ->default(1)
                     ->query(
-                        fn($query, $state) => $query
-                            ->when($state['value'] == 1, fn($q) => $q->whereRelation('member', 'terminated_at', null))
-                            ->when($state['value'] == 2, fn($q) => $q->whereRelation('member', 'terminated_at', '!=',  null))
+                        fn ($query, $state) => $query
+                            ->when($state['value'] == 1, fn ($q) => $q->whereRelation('member', 'terminated_at', null))
+                            ->when($state['value'] == 2, fn ($q) => $q->whereRelation('member', 'terminated_at', '!=', null))
                     ),
                 SelectFilter::make('civil_status')
                     ->relationship('member.civil_status', 'name'),
@@ -72,8 +70,8 @@ class MsoTransactions extends Page implements HasTable
                     ->searchable()
                     ->preload()
                     ->query(
-                        fn($query, $state) => $query
-                            ->when($state['value'], fn($q, $v) => $q->whereRelation('member', 'highest_educational_attainment', $v))
+                        fn ($query, $state) => $query
+                            ->when($state['value'], fn ($q, $v) => $q->whereRelation('member', 'highest_educational_attainment', $v))
                     ),
                 DateRangeFilter::make('transaction_date')
                     ->format('m/d/Y')
@@ -115,6 +113,6 @@ class MsoTransactions extends Page implements HasTable
 
     public function mount()
     {
-        data_set($this, 'tableFilters.transaction_date.transaction_date', (config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')) . ' - ' . (config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')));
+        data_set($this, 'tableFilters.transaction_date.transaction_date', (config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')).' - '.(config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')));
     }
 }

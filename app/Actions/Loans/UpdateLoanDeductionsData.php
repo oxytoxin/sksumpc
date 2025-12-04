@@ -16,6 +16,7 @@ class UpdateLoanDeductionsData
         $loan->insurance_amount = collect($loan->disclosure_sheet_items)->firstWhere('code', 'insurance_amount')['credit'] ?? 0;
         $loan->loan_buyout = collect($loan->disclosure_sheet_items)->firstWhere('code', 'loan_buyout')['credit'] ?? 0;
         $loan->loan_buyout_id = collect($loan->disclosure_sheet_items)->firstWhere('code', 'loan_buyout')['loan_id'] ?? null;
+
         return $loan;
     }
 }

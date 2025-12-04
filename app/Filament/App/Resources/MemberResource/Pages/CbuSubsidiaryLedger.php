@@ -7,7 +7,6 @@ use App\Filament\App\Resources\MemberResource;
 use App\Models\CapitalSubscriptionPayment;
 use App\Models\Member;
 use App\Models\SignatureSet;
-use App\Models\User;
 use Filament\Resources\Pages\Page;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -41,7 +40,7 @@ class CbuSubsidiaryLedger extends Page implements HasTable
     {
         return $table
             ->query(CapitalSubscriptionPayment::query()->whereRelation('capital_subscription', 'member_id', $this->member->id))
-            ->content(fn() => view('filament.app.views.cbu-sl', ['member' => $this->member, 'signatories' => $this->signatories]))
+            ->content(fn () => view('filament.app.views.cbu-sl', ['member' => $this->member, 'signatories' => $this->signatories]))
             ->filters([
                 Filter::dateRange('transaction_date'),
             ])

@@ -35,6 +35,7 @@ class LoanSubsidiaryLedger extends Page
         $end = config('app.transaction_date') ?? today();
         $total_days = LoansProvider::getAccruableDays($start, $end);
         $interest_due = LoansProvider::computeAccruedInterest($this->loan, $this->loan->outstanding_balance, $total_days);
+
         return max($interest_due, 0) + $this->loan->payments()->sum('unpaid_interest');
     }
 

@@ -34,7 +34,7 @@ class ImportBalanceForwarded2024 extends Command
         DB::beginTransaction();
         $rows = SimpleExcelReader::create(storage_path('csv/deployment/FINANCIAL STATEMENT.xlsx'))->getRows();
         $transactionType = TransactionType::JEV();
-        $accounts = Account::whereNull('member_id')->get()->mapWithKeys(fn($a) => [$a->number => $a]);
+        $accounts = Account::whereNull('member_id')->get()->mapWithKeys(fn ($a) => [$a->number => $a]);
         $rows->each(function ($row) use ($transactionType, $accounts) {
             if (filled($row['ACCOUNT CODE'])) {
                 app(CreateTransaction::class)->handle(new TransactionData(

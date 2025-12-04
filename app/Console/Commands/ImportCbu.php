@@ -2,17 +2,17 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Member;
-use Illuminate\Console\Command;
-use Spatie\SimpleExcel\SimpleExcelReader;
-use App\Oxytoxin\DTO\Transactions\TransactionData;
-use App\Actions\CapitalSubscription\PayCapitalSubscription;
 use App\Actions\CapitalSubscription\CreateNewCapitalSubscription;
+use App\Actions\CapitalSubscription\CreateNewCapitalSubscriptionAccount;
+use App\Actions\CapitalSubscription\PayCapitalSubscription;
+use App\Models\Member;
+use App\Models\TransactionType;
 use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionData;
 use App\Oxytoxin\DTO\MSO\Accounts\CapitalSubscriptionAccountData;
-use App\Actions\CapitalSubscription\CreateNewCapitalSubscriptionAccount;
-use App\Models\TransactionType;
+use App\Oxytoxin\DTO\Transactions\TransactionData;
 use DB;
+use Illuminate\Console\Command;
+use Spatie\SimpleExcel\SimpleExcelReader;
 
 class ImportCbu extends Command
 {
@@ -24,7 +24,7 @@ class ImportCbu extends Command
     protected $signature = 'app:import-cbu';
 
     /**
-     * The console command description. 
+     * The console command description.
      *
      * @var string
      */
@@ -37,7 +37,7 @@ class ImportCbu extends Command
     {
         DB::beginTransaction();
 
-        $members = Member::get()->mapWithKeys(fn($m) => [$m->mpc_code => $m]);
+        $members = Member::get()->mapWithKeys(fn ($m) => [$m->mpc_code => $m]);
         $transactionType = TransactionType::JEV();
         $source = SimpleExcelReader::create(storage_path('csv/deployment/CBU FORWARDED AS OF DECEMBER 2024.xlsx'));
         $rows = $source

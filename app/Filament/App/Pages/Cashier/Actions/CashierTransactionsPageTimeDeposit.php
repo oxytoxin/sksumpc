@@ -2,16 +2,16 @@
 
 namespace App\Filament\App\Pages\Cashier\Actions;
 
-use App\Models\Member;
-use App\Models\Account;
+use App\Actions\TimeDeposits\CreateTimeDeposit;
+use App\Actions\Transactions\CreateTransaction;
 use App\Enums\PaymentTypes;
+use App\Models\Account;
+use App\Models\Member;
 use App\Models\PaymentType;
 use App\Models\TransactionType;
 use App\Oxytoxin\DTO\MSO\TimeDepositData;
-use App\Actions\TimeDeposits\CreateTimeDeposit;
-use App\Actions\Transactions\CreateTransaction;
-use App\Oxytoxin\Providers\TimeDepositsProvider;
 use App\Oxytoxin\DTO\Transactions\TransactionData;
+use App\Oxytoxin\Providers\TimeDepositsProvider;
 
 class CashierTransactionsPageTimeDeposit
 {

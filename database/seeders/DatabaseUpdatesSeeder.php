@@ -14,7 +14,7 @@ class DatabaseUpdatesSeeder extends Seeder
     {
         TransactionDateHistory::create([
             'date' => '12/31/2024',
-            'is_current' => true
+            'is_current' => true,
         ]);
     }
 }

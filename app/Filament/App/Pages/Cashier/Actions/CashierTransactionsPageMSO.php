@@ -2,18 +2,18 @@
 
 namespace App\Filament\App\Pages\Cashier\Actions;
 
-use App\Enums\MsoType;
-use App\Models\Member;
-use App\Models\Account;
-use App\Enums\PaymentTypes;
-use App\Models\PaymentType;
 use App\Actions\MSO\DepositToMsoAccount;
 use App\Actions\MSO\WithdrawFromMsoAccount;
-use App\Oxytoxin\Providers\SavingsProvider;
+use App\Actions\Transactions\CreateTransaction;
+use App\Enums\MsoType;
+use App\Enums\PaymentTypes;
+use App\Models\Account;
+use App\Models\Member;
+use App\Models\PaymentType;
+use App\Oxytoxin\DTO\Transactions\TransactionData;
 use App\Oxytoxin\Providers\ImprestsProvider;
 use App\Oxytoxin\Providers\LoveGiftProvider;
-use App\Actions\Transactions\CreateTransaction;
-use App\Oxytoxin\DTO\Transactions\TransactionData;
+use App\Oxytoxin\Providers\SavingsProvider;
 
 class CashierTransactionsPageMSO
 {
@@ -67,7 +67,7 @@ class CashierTransactionsPageMSO
         } else {
             $account_id = $cash_on_hand_account_id;
         }
-        if (!$is_deposit) {
+        if (! $is_deposit) {
             $account_id = Account::getRevolvingFund()->id;
         }
         app(CreateTransaction::class)->handle(new TransactionData(

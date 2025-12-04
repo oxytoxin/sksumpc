@@ -198,6 +198,45 @@ class CreditAndBackgroundInvestigationForm extends Page
         $this->form->fill();
         if ($this->cibi->details) {
             $this->data = $this->cibi->details;
+        } else {
+
         }
+        $comaker_members = $this->loan_application->load('comakers.member')->comakers->pluck('member');
+        $loan_members = collect([$this->loan_application->member])->merge($comaker_members);
+        $income_verification = collect($this->data['income_verification'] ?? [])->map(function ($item) use ($loan_members) {
+            if ($item['particulars'] == 'Annual Income') {
+                return $this->fillRepeaterComakers($item['particulars'], $loan_members->pluck('annual_income')->toArray());
+            }
+            return $item;
+        });
+        $employment_verification = collect($this->data['employment_verification'] ?? [])->map(function ($item) use ($loan_members) {
+            if ($item['particulars'] == 'Employer') {
+                return $this->fillRepeaterComakers($item['particulars'], $loan_members->pluck('present_employer')->toArray());
+            }
+            return $item;
+        });
+        $this->data['income_verification'] = $income_verification->toArray();
+        $this->data['employment_verification'] = $employment_verification->toArray();
+
+    }
+
+    private function fillRepeaterComakers(string $array_key, array $values)
+    {
+        $keys = ['borrower', 'coborrower_1', 'coborrower_2'];
+
+        $result = [
+            'particulars' => $array_key,
+            'borrower' => null,
+            'coborrower_1' => null,
+            'coborrower_2' => null,
+        ];
+
+        foreach ($values as $i => $value) {
+            if (isset($keys[$i])) {
+                $result[$keys[$i]] = $value;
+            }
+        }
+
+        return $result;
     }
 }

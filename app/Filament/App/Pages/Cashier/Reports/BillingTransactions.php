@@ -3,23 +3,15 @@
 namespace App\Filament\App\Pages\Cashier\Reports;
 
 use App\Enums\FromBillingTypes;
-use App\Models\User;
-use App\Models\Member;
-use App\Models\Account;
-use App\Models\LoanType;
-use Filament\Pages\Page;
-use Filament\Tables\Table;
-use App\Enums\PaymentTypes;
-use App\Models\LoanPayment;
-use App\Models\Transaction;
 use App\Enums\TransactionTypes;
-use Filament\Tables\Filters\Filter;
-use Filament\Forms\Components\Select;
+use App\Models\Member;
+use App\Models\Transaction;
+use Filament\Pages\Page;
+use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\SelectFilter;
-use App\Enums\OthersTransactionExcludedAccounts;
-use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Table;
 use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 
 class BillingTransactions extends Page implements HasTable
@@ -60,9 +52,9 @@ class BillingTransactions extends Page implements HasTable
                     ])
                     ->default(1)
                     ->query(
-                        fn($query, $state) => $query
-                            ->when($state['value'] == 1, fn($q) => $q->whereRelation('member', 'terminated_at', null))
-                            ->when($state['value'] == 2, fn($q) => $q->whereRelation('member', 'terminated_at', '!=',  null))
+                        fn ($query, $state) => $query
+                            ->when($state['value'] == 1, fn ($q) => $q->whereRelation('member', 'terminated_at', null))
+                            ->when($state['value'] == 2, fn ($q) => $q->whereRelation('member', 'terminated_at', '!=', null))
                     ),
                 SelectFilter::make('civil_status')
                     ->relationship('member.civil_status', 'name'),
@@ -76,8 +68,8 @@ class BillingTransactions extends Page implements HasTable
                     ->searchable()
                     ->preload()
                     ->query(
-                        fn($query, $state) => $query
-                            ->when($state['value'], fn($q, $v) => $q->whereRelation('member', 'highest_educational_attainment', $v))
+                        fn ($query, $state) => $query
+                            ->when($state['value'], fn ($q, $v) => $q->whereRelation('member', 'highest_educational_attainment', $v))
                     ),
                 DateRangeFilter::make('transaction_date')
                     ->format('m/d/Y')
@@ -91,6 +83,6 @@ class BillingTransactions extends Page implements HasTable
 
     public function mount()
     {
-        data_set($this, 'tableFilters.transaction_date.transaction_date', (config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')) . ' - ' . (config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')));
+        data_set($this, 'tableFilters.transaction_date.transaction_date', (config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')).' - '.(config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')));
     }
 }

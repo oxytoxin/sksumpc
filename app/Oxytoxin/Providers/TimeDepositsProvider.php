@@ -42,6 +42,7 @@ class TimeDepositsProvider
     public static function getMaturityDate($date_from, $number_of_days = null): CarbonImmutable
     {
         $number_of_days ??= static::NUMBER_OF_DAYS;
+
         return CarbonImmutable::create($date_from)->addDays(floatval($number_of_days ?? 0));
     }
 }

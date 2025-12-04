@@ -1,16 +1,15 @@
 <?php
 
-use App\Enums\MsoType;
-use App\Models\TransactionType;
 use App\Actions\MSO\DepositToMsoAccount;
 use App\Actions\MSO\WithdrawFromMsoAccount;
+use App\Enums\MsoType;
+use App\Models\TransactionType;
 use App\Oxytoxin\DTO\Transactions\TransactionData;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 use function Pest\Laravel\assertDatabaseHas;
 
 // uses(DatabaseTransactions::class);
-
 
 it('can deposit to imprest', function () {
     $imprest = app(DepositToMsoAccount::class)->handle(MsoType::IMPREST, new TransactionData(

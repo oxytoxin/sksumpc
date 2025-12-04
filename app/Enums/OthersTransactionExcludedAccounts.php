@@ -23,6 +23,6 @@ enum OthersTransactionExcludedAccounts: int
 
     public static function get()
     {
-        return collect(self::cases())->map(fn($c) => $c->value)->toArray();
+        return collect(self::cases())->map(fn ($c) => $c->value)->toArray();
     }
 }

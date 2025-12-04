@@ -6,7 +6,6 @@ use App\Actions\RevolvingFund\ReplenishRevolvingFund;
 use App\Models\RevolvingFund;
 use Auth;
 use Filament\Actions\Action;
-use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -16,9 +15,9 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 
-class RevolvingFundManagement extends Page implements HasTable, HasForms
+class RevolvingFundManagement extends Page implements HasForms, HasTable
 {
-    use InteractsWithTable, InteractsWithForms;
+    use InteractsWithForms, InteractsWithTable;
 
     protected static string $view = 'filament.app.pages.revolving-fund-management';
 

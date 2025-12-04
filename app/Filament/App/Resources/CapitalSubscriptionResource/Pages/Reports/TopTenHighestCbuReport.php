@@ -7,7 +7,6 @@ use App\Filament\App\Resources\CapitalSubscriptionResource;
 use App\Models\Member;
 use App\Models\MemberType;
 use App\Models\SignatureSet;
-use App\Models\User;
 use Carbon\Carbon;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -59,10 +58,10 @@ class TopTenHighestCbuReport extends Page implements HasForms
     #[Computed]
     public function contributors()
     {
-        return Member::whereHas('capital_subscription_payments', fn($query) => $query->whereDate('capital_subscription_payments.transaction_date', '<=', date_create(Carbon::create(month: $this->data['month'], year: $this->data['year'])->endOfMonth())))
-            ->when($this->data['member_type_id'] ?? false, fn($query, $member_type_id) => $query->where('member_type_id', $member_type_id))
+        return Member::whereHas('capital_subscription_payments', fn ($query) => $query->whereDate('capital_subscription_payments.transaction_date', '<=', date_create(Carbon::create(month: $this->data['month'], year: $this->data['year'])->endOfMonth())))
+            ->when($this->data['member_type_id'] ?? false, fn ($query, $member_type_id) => $query->where('member_type_id', $member_type_id))
             ->withSum([
-                'capital_subscription_payments' => fn($query) => $query->whereDate('capital_subscription_payments.transaction_date', '<=', date_create(Carbon::create(month: $this->data['month'], year: $this->data['year'])->endOfMonth())),
+                'capital_subscription_payments' => fn ($query) => $query->whereDate('capital_subscription_payments.transaction_date', '<=', date_create(Carbon::create(month: $this->data['month'], year: $this->data['year'])->endOfMonth())),
             ], 'amount')
             ->orderBy('capital_subscription_payments_sum_amount', 'desc')
             ->limit(10)

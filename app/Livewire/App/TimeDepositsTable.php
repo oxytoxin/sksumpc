@@ -2,28 +2,17 @@
 
 namespace App\Livewire\App;
 
-use App\Actions\MSO\DepositToMsoAccount;
 use App\Actions\TimeDeposits\ClaimTimeDeposit;
 use App\Actions\TimeDeposits\RolloverTimeDeposit;
 use App\Actions\TimeDeposits\TerminateTimeDeposit;
-use App\Enums\MsoType;
-use App\Models\Loan;
-use App\Models\Member;
-use App\Models\SavingsAccount;
-use App\Models\TimeDeposit;
 use App\Models\TimeDepositAccount;
-use App\Models\TransactionType;
-use App\Oxytoxin\DTO\Transactions\TransactionData;
 use App\Oxytoxin\Providers\TimeDepositsProvider;
 use Auth;
-use DB;
-use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\MaxWidth;
@@ -71,22 +60,22 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                     ->default('ongoing')
                     ->query(function (Builder $query, $data) {
                         $query
-                            ->when($data['value'] == 'matured', fn($query) => $query->whereRelation('time_deposit', 'withdrawal_date', '!=', null))
-                            ->when($data['value'] == 'ongoing', fn($query) => $query->whereRelation('time_deposit', 'withdrawal_date', null))
-                            ->when($data['value'] == 'terminated', fn($query) => $query->whereHas('time_deposit', fn($query) => $query->whereRaw('withdrawal_date <= maturity_date')));
+                            ->when($data['value'] == 'matured', fn ($query) => $query->whereRelation('time_deposit', 'withdrawal_date', '!=', null))
+                            ->when($data['value'] == 'ongoing', fn ($query) => $query->whereRelation('time_deposit', 'withdrawal_date', null))
+                            ->when($data['value'] == 'terminated', fn ($query) => $query->whereHas('time_deposit', fn ($query) => $query->whereRaw('withdrawal_date <= maturity_date')));
                     }),
             ], layout: FiltersLayout::AboveContent)
             ->actions([
                 Action::make('Terminate')
                     ->form([
-                        Placeholder::make('note')->content(fn($record) => 'Pretermination will accrue only 1% interest. Interest accrued: ' . Number::currency($record->time_deposit->accrued_interest, 'PHP')),
+                        Placeholder::make('note')->content(fn ($record) => 'Pretermination will accrue only 1% interest. Interest accrued: '.Number::currency($record->time_deposit->accrued_interest, 'PHP')),
                     ])->visible(Auth::user()->can('manage mso'))
                     ->action(function (TimeDepositAccount $record, $data) {
                         app(TerminateTimeDeposit::class)->handle(time_deposit: $record->time_deposit);
                         Notification::make()->title('Time deposit claimed.')->success()->send();
                     })
                     ->color(Color::Red)
-                    ->visible(fn(TimeDepositAccount $record) => (config('app.transaction_date') ?? today())->isBefore($record->time_deposit->maturity_date) && is_null($record->time_deposit->withdrawal_date))
+                    ->visible(fn (TimeDepositAccount $record) => (config('app.transaction_date') ?? today())->isBefore($record->time_deposit->maturity_date) && is_null($record->time_deposit->withdrawal_date))
                     ->icon('heroicon-o-banknotes')
                     ->button(),
                 Action::make('claim')
@@ -96,21 +85,21 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                         app(ClaimTimeDeposit::class)->handle(time_deposit: $record->time_deposit);
                         Notification::make()->title('Time deposit claimed.')->success()->send();
                     })
-                    ->visible(fn(TimeDepositAccount $record) => $record->time_deposit->maturity_date->isBefore(config('app.transaction_date') ?? today()) && is_null($record->withdrawal_date))
+                    ->visible(fn (TimeDepositAccount $record) => $record->time_deposit->maturity_date->isBefore(config('app.transaction_date') ?? today()) && is_null($record->withdrawal_date))
                     ->icon('heroicon-o-banknotes')
                     ->button(),
                 Action::make('rollover')
                     ->visible(Auth::user()->can('manage mso'))
-                    ->form(fn(TimeDepositAccount $record) => [
+                    ->form(fn (TimeDepositAccount $record) => [
                         TextInput::make('number_of_days')->minValue(1)->reactive()->default($record->time_deposit->number_of_days),
-                        TextInput::make('interest_rate')->minValue(0.01)->reactive()->default(round($record->time_deposit->interest_rate * 100, 2))->dehydrateStateUsing(fn($state) => round($state / 100, 4)),
+                        TextInput::make('interest_rate')->minValue(0.01)->reactive()->default(round($record->time_deposit->interest_rate * 100, 2))->dehydrateStateUsing(fn ($state) => round($state / 100, 4)),
                         Placeholder::make('maturity_date')->content(TimeDepositsProvider::getMaturityDate(config('app.transaction_date') ?? today())->format('F d, Y')),
                         Select::make('payment_type_id')
                             ->paymenttype()
                             ->required(),
                         TextInput::make('reference_number')->default($record->time_deposit->reference_number),
-                        Placeholder::make('amount')->content(fn() => Number::currency($record->time_deposit->maturity_amount, 'PHP')),
-                        Placeholder::make('maturity_amount')->content(fn($record) => Number::currency(TimeDepositsProvider::getMaturityAmount($record->time_deposit->maturity_amount), 'PHP')),
+                        Placeholder::make('amount')->content(fn () => Number::currency($record->time_deposit->maturity_amount, 'PHP')),
+                        Placeholder::make('maturity_amount')->content(fn ($record) => Number::currency(TimeDepositsProvider::getMaturityAmount($record->time_deposit->maturity_amount), 'PHP')),
                     ])
                     ->action(function ($record, $data) {
                         app(RolloverTimeDeposit::class)->handle(
@@ -122,7 +111,7 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                         );
                         Notification::make()->title('Time deposit roll-overed.')->success()->send();
                     })
-                    ->visible(fn(TimeDepositAccount $record) => $record->time_deposit->maturity_date->isBefore(today()) && is_null($record->time_deposit->withdrawal_date))
+                    ->visible(fn (TimeDepositAccount $record) => $record->time_deposit->maturity_date->isBefore(today()) && is_null($record->time_deposit->withdrawal_date))
                     ->icon('heroicon-o-banknotes')
                     ->button(),
                 ActionGroup::make([
@@ -130,10 +119,10 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                         ->modalWidth(MaxWidth::SixExtraLarge)
                         ->modalSubmitAction(false)
                         ->modalCancelAction(false)->visible(Auth::user()->can('manage mso'))
-                        ->modalContent(fn($record) => view('filament.app.views.time-deposit-certificate', ['time_deposit' => $record->time_deposit])),
+                        ->modalContent(fn ($record) => view('filament.app.views.time-deposit-certificate', ['time_deposit' => $record->time_deposit])),
                     Action::make('sl')
                         ->label('Subsidiary Ledger')
-                        ->url(fn($record) => route('filament.app.resources.members.time-deposit-subsidiary-ledger', ['time_deposit_account' => $record])),
+                        ->url(fn ($record) => route('filament.app.resources.members.time-deposit-subsidiary-ledger', ['time_deposit_account' => $record])),
                 ])
                     ->button()
                     ->outlined()

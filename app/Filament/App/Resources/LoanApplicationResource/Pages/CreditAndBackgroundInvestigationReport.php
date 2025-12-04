@@ -46,13 +46,14 @@ class CreditAndBackgroundInvestigationReport extends Page
             $user = User::whereRelation('roles', 'name', 'manager')->first();
             $designation = 'Manager';
         }
+
         return [
             [
                 'user_id' => $user->id,
                 'name' => $user->name,
                 'action' => 'Noted by:',
-                'designation' => $designation
-            ]
+                'designation' => $designation,
+            ],
         ];
     }
 }

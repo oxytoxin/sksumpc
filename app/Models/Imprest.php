@@ -50,7 +50,7 @@ class Imprest extends Model
         static::addGlobalScope(function (Builder $q) {
             return $q->addSelect(DB::raw("
                 *, 
-                DATEDIFF(COALESCE(LEAD(transaction_date) OVER (ORDER BY transaction_date), '" . today()->format('Y-m-d') . "'), transaction_date) as days_till_next_transaction,
+                DATEDIFF(COALESCE(LEAD(transaction_date) OVER (ORDER BY transaction_date), '".today()->format('Y-m-d')."'), transaction_date) as days_till_next_transaction,
                 DATEDIFF(transaction_date, COALESCE(LAG(transaction_date) OVER (ORDER BY transaction_date), transaction_date)) as days_since_last_transaction
             "));
         });
@@ -69,7 +69,7 @@ class Imprest extends Model
             };
 
             if ($prefix) {
-                $imprest->reference_number = str($prefix)->append(today()->format('Y') . '-')->append(str_pad($imprest->id, 6, '0', STR_PAD_LEFT));
+                $imprest->reference_number = str($prefix)->append(today()->format('Y').'-')->append(str_pad($imprest->id, 6, '0', STR_PAD_LEFT));
             }
 
             $imprest->save();

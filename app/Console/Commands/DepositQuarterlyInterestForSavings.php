@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use App\Actions\Savings\GenerateSavingsInterestForMember;
 use App\Models\Member;
-use DB;
 use Illuminate\Console\Command;
 
 class DepositQuarterlyInterestForSavings extends Command

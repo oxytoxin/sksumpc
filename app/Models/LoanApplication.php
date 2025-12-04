@@ -35,7 +35,7 @@ class LoanApplication extends Model
         'payment_start_date' => 'immutable_date',
         'surcharge_start_date' => 'immutable_date',
         'status' => 'integer',
-        'approvals' => DataCollection::class . ':' . LoanApproval::class,
+        'approvals' => DataCollection::class.':'.LoanApproval::class,
     ];
 
     public function getStatusNameAttribute()
@@ -51,7 +51,7 @@ class LoanApplication extends Model
 
     public function desiredAmountInWords(): Attribute
     {
-        return Attribute::make(get: fn() => (new NumberFormatter('en', NumberFormatter::SPELLOUT))->format($this->desired_amount));
+        return Attribute::make(get: fn () => (new NumberFormatter('en', NumberFormatter::SPELLOUT))->format($this->desired_amount));
     }
 
     public function disapproval_reason()
@@ -114,7 +114,7 @@ class LoanApplication extends Model
         });
 
         static::created(function (LoanApplication $loanApplication) {
-            $loanApplication->reference_number = $loanApplication->loan_type->code . '-' . (config('app.transaction_date') ?? today())->format('Y-') . str_pad($loanApplication->id, 6, '0', STR_PAD_LEFT);
+            $loanApplication->reference_number = $loanApplication->loan_type->code.'-'.(config('app.transaction_date') ?? today())->format('Y-').str_pad($loanApplication->id, 6, '0', STR_PAD_LEFT);
             $loanApplication->save();
         });
     }

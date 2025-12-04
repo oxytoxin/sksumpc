@@ -4,17 +4,13 @@ namespace App\Filament\App\Pages;
 
 use App\Enums\MemberTypes;
 use App\Models\Account;
-use App\Models\CapitalSubscriptionPayment;
-use App\Models\MemberType;
 use Auth;
-use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Form;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
 use Livewire\Attributes\Computed;
-use Malzariey\FilamentDaterangepickerFilter\Fields\DateRangePicker;
 
 class CbuScheduleSummary extends Page
 {
@@ -47,8 +43,8 @@ class CbuScheduleSummary extends Page
             MemberTypes::LABORATORY => Account::whereTag('member_laboratory_cbu_paid'),
         };
         $account = $query
-            ->withSum(['recursiveTransactions as debit' => fn($q) => $q->where('transaction_date', '<=', $transaction_date)], 'debit')
-            ->withSum(['recursiveTransactions as credit' => fn($q) => $q->where('transaction_date', '<=', $transaction_date)], 'credit')
+            ->withSum(['recursiveTransactions as debit' => fn ($q) => $q->where('transaction_date', '<=', $transaction_date)], 'debit')
+            ->withSum(['recursiveTransactions as credit' => fn ($q) => $q->where('transaction_date', '<=', $transaction_date)], 'credit')
             ->first();
 
         return [
@@ -88,7 +84,7 @@ class CbuScheduleSummary extends Page
             DatePicker::make('transaction_date')
                 ->native(false)
                 ->live()
-                ->default(config('app.transaction_date'))
+                ->default(config('app.transaction_date')),
 
         ])->columns(4);
     }

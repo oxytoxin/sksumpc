@@ -16,7 +16,7 @@ class ManageJournalEntryVouchers extends ManageRecords
     public function mount(): void
     {
         parent::mount();
-        data_set($this, 'tableFilters.transaction_date.transaction_date', (config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')) . ' - ' . (config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')));
+        data_set($this, 'tableFilters.transaction_date.transaction_date', (config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')).' - '.(config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')));
     }
 
     protected function getHeaderActions(): array
@@ -28,7 +28,7 @@ class ManageJournalEntryVouchers extends ManageRecords
                     $transactionType = TransactionType::CDJ();
                     $data['voucher_type_id'] = 6;
                     $items = $data['journal_entry_voucher_items'];
-                    unset($data['journal_entry_voucher_items'], $data['compute_net'],);
+                    unset($data['journal_entry_voucher_items'], $data['compute_net']);
                     $data['transaction_date'] = config('app.transaction_date') ?? today();
                     $jev = JournalEntryVoucher::create($data);
                     foreach ($items as $item) {

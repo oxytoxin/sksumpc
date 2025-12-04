@@ -5,23 +5,13 @@ namespace App\Console\Commands;
 use App\Actions\CapitalSubscription\CreateNewCapitalSubscriptionAccount;
 use App\Actions\Imprests\CreateNewImprestsAccount;
 use App\Actions\LoveGifts\CreateNewLoveGiftsAccount;
-use App\Actions\MSO\DepositToMsoAccount;
 use App\Actions\Savings\CreateNewSavingsAccount;
-use App\Actions\TimeDeposits\CreateTimeDeposit;
-use App\Enums\MsoType;
 use App\Models\Member;
-use App\Models\TransactionType;
 use App\Oxytoxin\DTO\MSO\Accounts\CapitalSubscriptionAccountData;
 use App\Oxytoxin\DTO\MSO\Accounts\ImprestAccountData;
 use App\Oxytoxin\DTO\MSO\Accounts\LoveGiftAccountData;
 use App\Oxytoxin\DTO\MSO\Accounts\SavingsAccountData;
-use App\Oxytoxin\DTO\MSO\TimeDepositData;
-use App\Oxytoxin\DTO\Transactions\TransactionData;
-use App\Oxytoxin\Providers\TimeDepositsProvider;
 use Illuminate\Console\Command;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\LazyCollection;
-use Spatie\SimpleExcel\SimpleExcelReader;
 
 class ImportMemberAccounts extends Command
 {
@@ -47,25 +37,25 @@ class ImportMemberAccounts extends Command
         Member::doesntHave('existing_capital_subscription_account')->each(function ($member) {
             app(CreateNewCapitalSubscriptionAccount::class)->handle(new CapitalSubscriptionAccountData(
                 member_id: $member->id,
-                name: $member->full_name ?? ($member->first_name . ' ' . $member->last_name)
+                name: $member->full_name ?? ($member->first_name.' '.$member->last_name)
             ));
         });
         Member::doesntHave('savings_accounts')->each(function ($member) {
             app(CreateNewSavingsAccount::class)->handle(new SavingsAccountData(
                 member_id: $member->id,
-                name: $member->full_name ?? ($member->first_name . ' ' . $member->last_name)
+                name: $member->full_name ?? ($member->first_name.' '.$member->last_name)
             ));
         });
         Member::doesntHave('imprest_account')->each(function ($member) {
             app(CreateNewImprestsAccount::class)->handle(new ImprestAccountData(
                 member_id: $member->id,
-                name: $member->full_name ?? ($member->first_name . ' ' . $member->last_name)
+                name: $member->full_name ?? ($member->first_name.' '.$member->last_name)
             ));
         });
         Member::doesntHave('love_gift_account')->each(function ($member) {
             app(CreateNewLoveGiftsAccount::class)->handle(new LoveGiftAccountData(
                 member_id: $member->id,
-                name: $member->full_name ?? ($member->first_name . ' ' . $member->last_name)
+                name: $member->full_name ?? ($member->first_name.' '.$member->last_name)
             ));
         });
     }

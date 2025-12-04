@@ -2,12 +2,12 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Member;
-use Illuminate\Console\Command;
 use App\Actions\Loans\ImportExistingLoan;
 use App\Models\LoanType;
+use App\Models\Member;
 use Carbon\Carbon;
 use DB;
+use Illuminate\Console\Command;
 use Spatie\SimpleExcel\SimpleExcelReader;
 
 class ImportLoans extends Command
@@ -33,8 +33,8 @@ class ImportLoans extends Command
     {
         DB::beginTransaction();
         $source = SimpleExcelReader::create(storage_path('csv/deployment/LOANS- ALL AS OF DECEMBER 2024 - FINAL.xlsx'));
-        $loanTypes = LoanType::get()->mapWithKeys(fn($l) => [$l->code => $l]);
-        $members = Member::get()->mapWithKeys(fn($m) => [$m->mpc_code => $m]);
+        $loanTypes = LoanType::get()->mapWithKeys(fn ($l) => [$l->code => $l]);
+        $members = Member::get()->mapWithKeys(fn ($m) => [$m->mpc_code => $m]);
         $sheets = ['RL', 'CL', 'PL', 'EL', 'SL', 'KL', 'FNPL', 'ACL', 'LBP-RL', 'LBP-ATM'];
         foreach ($sheets as $key => $sheet) {
             $this->importLoanByType($source->fromSheetName($sheet)->getRows(), $members, $loanTypes[$sheet]);

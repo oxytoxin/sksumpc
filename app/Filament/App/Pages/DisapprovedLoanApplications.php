@@ -21,11 +21,6 @@ class DisapprovedLoanApplications extends Page implements HasTable
 
     protected static ?int $navigationSort = 4;
 
-    public function mount(): void
-    {
-        data_set($this, 'tableFilters.transaction_date.transaction_date', (config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')).' - '.(config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')));
-    }
-
     public static function shouldRegisterNavigation(): bool
     {
         return auth()->user()->can('manage loans');
@@ -35,6 +30,7 @@ class DisapprovedLoanApplications extends Page implements HasTable
     {
         return $table
             ->query(LoanApplication::whereStatus(LoanApplication::STATUS_DISAPPROVED))
+            ->defaultSort('transaction_date', 'desc')
             ->columns([
                 TextColumn::make('member.full_name')->searchable(),
                 TextColumn::make('priority_number')->searchable(),

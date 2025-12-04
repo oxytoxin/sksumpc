@@ -75,7 +75,7 @@ class JournalEntryVoucherResource extends Resource
                             ->preload(),
                         Select::make('account_id')
                             ->options(
-                                fn($get) => Account::withCode()->whereDoesntHave('children', fn($q) => $q->whereNull('member_id'))->where('member_id', $get('member_id') ?? null)->pluck('code', 'id')
+                                fn ($get) => Account::withCode()->whereDoesntHave('children', fn ($q) => $q->whereNull('member_id'))->where('member_id', $get('member_id') ?? null)->pluck('code', 'id')
                             )
                             ->searchable()
                             ->required()
@@ -115,7 +115,7 @@ class JournalEntryVoucherResource extends Resource
                     ->modalHeading('JEV Preview')
                     ->modalCancelAction(false)
                     ->modalSubmitAction(false)
-                    ->modalContent(fn($record) => view('components.app.bookkeeper.reports.journal-entry-voucher-preview', ['journal_entry_voucher' => $record])),
+                    ->modalContent(fn ($record) => view('components.app.bookkeeper.reports.journal-entry-voucher-preview', ['journal_entry_voucher' => $record])),
             ])
             ->bulkActions([]);
     }

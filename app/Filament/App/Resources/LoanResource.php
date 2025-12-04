@@ -40,7 +40,7 @@ class LoanResource extends Resource
 
     protected static ?string $navigationGroup = 'Loan';
 
-    protected static ?string $navigationLabel = 'Loans Posting';
+    protected static ?string $label = 'Loans For Voucher';
 
     public static function shouldRegisterNavigation(): bool
     {
@@ -86,11 +86,11 @@ class LoanResource extends Resource
             ->actions([
                 Action::make('dv')
                     ->label('DV')
-                    ->action(fn(Loan $record) => app(ApproveLoanPosting::class)->handle($record))
-                    ->hidden(fn($record) => $record->posted)
+                    ->action(fn (Loan $record) => app(ApproveLoanPosting::class)->handle($record))
+                    ->hidden(fn ($record) => $record->posted)
                     ->modalWidth(MaxWidth::ScreenExtraLarge)
                     ->button()
-                    ->fillForm(fn($record) => [
+                    ->fillForm(fn ($record) => [
                         'name' => $record->member->full_name,
                         'reference_number' => $record->reference_number,
                         'disbursement_voucher_items' => $record->disclosure_sheet_items,
@@ -111,7 +111,7 @@ class LoanResource extends Resource
                             ->afterStateUpdated(function ($get, $set, $state) {
                                 $items = collect($state);
                                 $net_amount = $items->firstWhere('code', 'net_amount');
-                                $items = $items->filter(fn($i) => $i['code'] != 'net_amount');
+                                $items = $items->filter(fn ($i) => $i['code'] != 'net_amount');
                                 $net_amount['credit'] = $items->sum('debit') - $items->sum('credit');
                                 $items->push($net_amount);
                                 $set('disbursement_voucher_items', $items->toArray());
@@ -125,7 +125,7 @@ class LoanResource extends Resource
                                     ->preload(),
                                 Select::make('account_id')
                                     ->options(
-                                        fn($get) => Account::withCode()->pluck('code', 'id')
+                                        fn ($get) => Account::withCode()->pluck('code', 'id')
                                     )
                                     ->searchable()
                                     ->required()
@@ -166,7 +166,7 @@ class LoanResource extends Resource
                 ViewLoanDetailsActionGroup::getActions(),
                 Action::make('print')
                     ->icon('heroicon-o-printer')
-                    ->url(fn($record) => route('filament.app.resources.loan-applications.application-form', ['loan_application' => $record->loan_application]), true),
+                    ->url(fn ($record) => route('filament.app.resources.loan-applications.application-form', ['loan_application' => $record->loan_application]), true),
             ])
             ->bulkActions([])
             ->emptyStateActions([]);

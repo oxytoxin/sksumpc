@@ -2,21 +2,21 @@
 
 namespace App\Console\Commands;
 
-use DB;
+use App\Actions\Imprests\CreateNewImprestsAccount;
+use App\Actions\MSO\DepositToMsoAccount;
+use App\Actions\Savings\CreateNewSavingsAccount;
+use App\Actions\TimeDeposits\CreateTimeDeposit;
 use App\Enums\MsoType;
 use App\Models\Member;
 use App\Models\TransactionType;
-use Illuminate\Console\Command;
-use App\Actions\MSO\DepositToMsoAccount;
-use App\Oxytoxin\DTO\MSO\TimeDepositData;
-use Spatie\SimpleExcel\SimpleExcelReader;
-use App\Actions\TimeDeposits\CreateTimeDeposit;
-use App\Actions\Savings\CreateNewSavingsAccount;
-use App\Oxytoxin\Providers\TimeDepositsProvider;
-use App\Actions\Imprests\CreateNewImprestsAccount;
-use App\Oxytoxin\DTO\Transactions\TransactionData;
 use App\Oxytoxin\DTO\MSO\Accounts\ImprestAccountData;
 use App\Oxytoxin\DTO\MSO\Accounts\SavingsAccountData;
+use App\Oxytoxin\DTO\MSO\TimeDepositData;
+use App\Oxytoxin\DTO\Transactions\TransactionData;
+use App\Oxytoxin\Providers\TimeDepositsProvider;
+use DB;
+use Illuminate\Console\Command;
+use Spatie\SimpleExcel\SimpleExcelReader;
 
 class ImportMso extends Command
 {
@@ -40,7 +40,7 @@ class ImportMso extends Command
     public function handle()
     {
         DB::beginTransaction();
-        $members = Member::get()->mapWithKeys(fn($m) => [$m->mpc_code => $m]);
+        $members = Member::get()->mapWithKeys(fn ($m) => [$m->mpc_code => $m]);
         $transactionType = TransactionType::JEV();
         $source = SimpleExcelReader::create(storage_path('csv/deployment/MSO DATA FORWARDED AS OF DECEMBER 2024 - FINAL.xlsx'));
 
@@ -90,18 +90,20 @@ class ImportMso extends Command
         $rows->each(function ($row) use ($members, $transactionType, $msoType) {
             if (filled($row['mpc_code'])) {
                 $member = $members[$row['mpc_code']];
-                if ($msoType == MsoType::SAVINGS)
+                if ($msoType == MsoType::SAVINGS) {
                     $account = app(CreateNewSavingsAccount::class)->handle(new SavingsAccountData(
                         member_id: $member->id,
                         name: $row['name'],
                         number: $row['account_number'],
                     ));
-                if ($msoType == MsoType::IMPREST)
+                }
+                if ($msoType == MsoType::IMPREST) {
                     $account = app(CreateNewImprestsAccount::class)->handle(new ImprestAccountData(
                         member_id: $member->id,
                         name: $row['name'],
                         number: $row['account_number']
                     ));
+                }
                 app(DepositToMsoAccount::class)->handle($msoType, new TransactionData(
                     account_id: $account->id,
                     transactionType: $transactionType,

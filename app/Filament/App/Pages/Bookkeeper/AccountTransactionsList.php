@@ -4,7 +4,6 @@ namespace App\Filament\App\Pages\Bookkeeper;
 
 use App\Filament\App\Pages\Cashier\RequiresBookkeeperTransactionDate;
 use App\Models\Account;
-use App\Models\BalanceForwardedSummary;
 use App\Models\Transaction;
 use Auth;
 use Filament\Forms\Components\Select;
@@ -29,6 +28,7 @@ class AccountTransactionsList extends Page implements HasForms, HasTable
     protected static ?string $navigationGroup = 'Bookkeeping';
 
     public $account;
+
     public $date;
 
     public static function shouldRegisterNavigation(): bool
@@ -41,7 +41,7 @@ class AccountTransactionsList extends Page implements HasForms, HasTable
     public function mount()
     {
         $this->form->fill();
-        $this->date = (config('app.transaction_date')->format('Y/m/d') ?? today()->format('Y/m/d')) . ' - ' . config('app.transaction_date')->format('Y/m/d') ?? today()->format('Y/m/d');
+        $this->date = (config('app.transaction_date')->format('Y/m/d') ?? today()->format('Y/m/d')).' - '.config('app.transaction_date')->format('Y/m/d') ?? today()->format('Y/m/d');
     }
 
     public function form(Form $form): Form
@@ -50,7 +50,7 @@ class AccountTransactionsList extends Page implements HasForms, HasTable
             ->schema([
                 Select::make('account')
                     ->searchable()
-                    ->options(Account::withCode()->whereDoesntHave('children', fn($q) => $q->whereNull('member_id'))->pluck('code', 'id'))
+                    ->options(Account::withCode()->whereDoesntHave('children', fn ($q) => $q->whereNull('member_id'))->pluck('code', 'id'))
                     ->default(2)
                     ->selectablePlaceholder(false)
                     ->reactive()
@@ -73,9 +73,10 @@ class AccountTransactionsList extends Page implements HasForms, HasTable
     {
         [$date_before, $date_after] = explode(' - ', $this->date);
         $account = Account::query()
-            ->withSum(['recursiveTransactions as total_debit' => fn($query) => $query->where('transaction_date', '<', $date_before)], 'debit')
-            ->withSum(['recursiveTransactions as total_credit' => fn($query) => $query->where('transaction_date', '<', $date_before)], 'credit')
+            ->withSum(['recursiveTransactions as total_debit' => fn ($query) => $query->where('transaction_date', '<', $date_before)], 'debit')
+            ->withSum(['recursiveTransactions as total_credit' => fn ($query) => $query->where('transaction_date', '<', $date_before)], 'credit')
             ->find($this->account);
+
         return $account;
     }
 
@@ -85,12 +86,11 @@ class AccountTransactionsList extends Page implements HasForms, HasTable
         return Account::withCode()->with('account_type')->find($this->account);
     }
 
-
     public function table(Table $table): Table
     {
         return $table->query(
             Transaction::query()
-                ->whereHas('account', fn($query) => $query->whereRelation('ancestorsAndSelf', 'id', $this->account))
+                ->whereHas('account', fn ($query) => $query->whereRelation('ancestorsAndSelf', 'id', $this->account))
                 ->whereBetween('transaction_date', explode(' - ', $this->date))
         )
             ->columns([

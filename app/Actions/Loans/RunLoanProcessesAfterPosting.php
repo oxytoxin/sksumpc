@@ -4,7 +4,6 @@ namespace App\Actions\Loans;
 
 use App\Models\Loan;
 use App\Models\LoanApplication;
-use App\Oxytoxin\Providers\LoansProvider;
 use Illuminate\Support\Facades\DB;
 
 class RunLoanProcessesAfterPosting

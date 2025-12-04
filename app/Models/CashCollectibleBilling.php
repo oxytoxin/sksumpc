@@ -22,12 +22,12 @@ class CashCollectibleBilling extends Model
 
     public function OrApproved(): Attribute
     {
-        return Attribute::make(get: fn() => filled($this->or_number));
+        return Attribute::make(get: fn () => filled($this->or_number));
     }
 
     public function generateReferenceNumber(self $cashCollectionBilling)
     {
-        return 'STAKEHOLDERSBILLING' . '-' . (config('app.transaction_date') ?? today())->format('Y-m-') . str_pad($cashCollectionBilling->id, 6, '0', STR_PAD_LEFT);
+        return 'STAKEHOLDERSBILLING'.'-'.(config('app.transaction_date') ?? today())->format('Y-m-').str_pad($cashCollectionBilling->id, 6, '0', STR_PAD_LEFT);
     }
 
     public function cash_collectible_account()

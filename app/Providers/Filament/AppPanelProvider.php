@@ -29,7 +29,7 @@ class AppPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         FilamentAsset::register([
-            Js::make('app', __DIR__ . '/../../../resources/js/app.js'),
+            Js::make('app', __DIR__.'/../../../resources/js/app.js'),
         ]);
 
         try {
@@ -43,15 +43,15 @@ class AppPanelProvider extends PanelProvider
         config(['app.transaction_date' => $transaction_date ?? null]);
         FilamentView::registerRenderHook(
             PanelsRenderHook::TOPBAR_START,
-            fn() => Blade::render('<strong>Transaction Date: ' . $transaction_date?->format('m/d/Y') . '</strong>')
+            fn () => Blade::render('<strong>Transaction Date: '.$transaction_date?->format('m/d/Y').'</strong>')
         );
         FilamentView::registerRenderHook(
             PanelsRenderHook::CONTENT_START,
-            fn() => Blade::render("@livewire('bookkeeper-transaction-date-checker')")
+            fn () => Blade::render("@livewire('bookkeeper-transaction-date-checker')")
         );
         FilamentView::registerRenderHook(
             PanelsRenderHook::CONTENT_START,
-            fn() => Blade::render("@livewire('cashier-revolving-fund-replenishment-checker')")
+            fn () => Blade::render("@livewire('cashier-revolving-fund-replenishment-checker')")
         );
 
         return $panel
@@ -106,7 +106,7 @@ class AppPanelProvider extends PanelProvider
             ->darkMode(false)
             ->renderHook(
                 'panels::body.end',
-                fn(): string => Blade::render("
+                fn (): string => Blade::render("
                 <div x-data='{
                 init(){
                     Livewire.hook(`commit`, ({ succeed }) => {

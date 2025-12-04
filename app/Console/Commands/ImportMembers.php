@@ -2,20 +2,13 @@
 
 namespace App\Console\Commands;
 
-use App\Actions\CapitalSubscription\CreateNewCapitalSubscription;
-use App\Actions\CapitalSubscription\CreateNewCapitalSubscriptionAccount;
-use App\Actions\CapitalSubscription\PayCapitalSubscription;
 use App\Actions\Memberships\CreateMemberInitialAccounts;
 use App\Models\CivilStatus;
 use App\Models\Division;
 use App\Models\Gender;
 use App\Models\Member;
 use App\Models\Religion;
-use App\Models\TransactionType;
 use App\Models\User;
-use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionData;
-use App\Oxytoxin\DTO\MSO\Accounts\CapitalSubscriptionAccountData;
-use App\Oxytoxin\DTO\Transactions\TransactionData;
 use DateTimeImmutable;
 use DB;
 use Illuminate\Console\Command;
@@ -48,10 +41,10 @@ class ImportMembers extends Command
         DB::table('members')->truncate();
         $rows = SimpleExcelReader::create(storage_path('csv/deployment/MEMBERS PROFILING AS OF DECEMBER 2024 - FINAL.xlsx'))
             ->getRows();
-        $divisions = Division::get()->mapWithKeys(fn($g) => [$g->name => $g->id]);
-        $religions = Religion::get()->mapWithKeys(fn($g) => [$g->name => $g->id]);
-        $genders = Gender::get()->mapWithKeys(fn($g) => [$g->name => $g->id]);
-        $civil_statuses = CivilStatus::get()->mapWithKeys(fn($g) => [$g->name => $g->id]);
+        $divisions = Division::get()->mapWithKeys(fn ($g) => [$g->name => $g->id]);
+        $religions = Religion::get()->mapWithKeys(fn ($g) => [$g->name => $g->id]);
+        $genders = Gender::get()->mapWithKeys(fn ($g) => [$g->name => $g->id]);
+        $civil_statuses = CivilStatus::get()->mapWithKeys(fn ($g) => [$g->name => $g->id]);
         $role = Role::firstWhere('name', 'member');
         $rows->each(function (array $row) use ($divisions, $religions, $genders, $civil_statuses, $role) {
             try {
@@ -69,7 +62,7 @@ class ImportMembers extends Command
                         }
                     }
                     $member_address = implode(', ', $address);
-                    $row = collect($row)->map(fn($d) => filled($d) ? trim($d instanceof DateTimeImmutable ? strtoupper($d->format('m/d/Y')) : strtoupper($d)) : null)->toArray();
+                    $row = collect($row)->map(fn ($d) => filled($d) ? trim($d instanceof DateTimeImmutable ? strtoupper($d->format('m/d/Y')) : strtoupper($d)) : null)->toArray();
                     $member = Member::create([
                         'mpc_code' => trim(strtoupper($row['mpc_code'])),
                         'first_name' => trim(strtoupper($row['fname'])),
@@ -104,7 +97,7 @@ class ImportMembers extends Command
                     $member->refresh();
                     $user = User::create([
                         'member_id' => $member->id,
-                        'name' => $member->full_name ?? ($member->first_name . ' ' . $member->last_name),
+                        'name' => $member->full_name ?? ($member->first_name.' '.$member->last_name),
                         'email' => str($member->mpc_code)->lower()->append('@gmail.com'),
                         'password' => 'password',
                     ]);

@@ -6,19 +6,13 @@ use App\Filament\App\Pages\Cashier\Reports\HasSignatories;
 use App\Models\Loan;
 use App\Models\LoanType;
 use App\Models\Member;
-use App\Models\MemberSubtype;
-use App\Models\MemberType;
 use App\Models\SignatureSet;
-use App\Models\User;
 use Auth;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Select;
 use Filament\Pages\Page;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Enums\FiltersLayout;
-use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
@@ -38,7 +32,6 @@ class TotalLoanReleasedReport extends Page implements HasTable
         return Auth::user()->can('manage loans');
     }
 
-
     protected function getSignatureSet()
     {
         return SignatureSet::where('name', 'Loan Officer Reports')->first();
@@ -48,10 +41,10 @@ class TotalLoanReleasedReport extends Page implements HasTable
     {
         return $table
             ->query(Loan::query()->wherePosted(true))
-            ->content(fn() => view('filament.app.views.total-loan-released-report-table', [
+            ->content(fn () => view('filament.app.views.total-loan-released-report-table', [
                 'signatories' => $this->signatories,
                 'loan_types' => LoanType::query()
-                    ->when($this->tableFilters['loan_type_id']['values'], fn($query, $value) => $query->whereIn('id', $value))
+                    ->when($this->tableFilters['loan_type_id']['values'], fn ($query, $value) => $query->whereIn('id', $value))
                     ->get(),
             ]))
             ->filters([
@@ -72,9 +65,9 @@ class TotalLoanReleasedReport extends Page implements HasTable
                     ])
                     ->default(1)
                     ->query(
-                        fn($query, $state) => $query
-                            ->when($state['value'] == 1, fn($q) => $q->whereRelation('member', 'terminated_at', null))
-                            ->when($state['value'] == 2, fn($q) => $q->whereRelation('member', 'terminated_at', '!=',  null))
+                        fn ($query, $state) => $query
+                            ->when($state['value'] == 1, fn ($q) => $q->whereRelation('member', 'terminated_at', null))
+                            ->when($state['value'] == 2, fn ($q) => $q->whereRelation('member', 'terminated_at', '!=', null))
                     ),
                 SelectFilter::make('civil_status')
                     ->relationship('member.civil_status', 'name'),
@@ -88,8 +81,8 @@ class TotalLoanReleasedReport extends Page implements HasTable
                     ->searchable()
                     ->preload()
                     ->query(
-                        fn($query, $state) => $query
-                            ->when($state['value'], fn($q, $v) => $q->whereRelation('member', 'highest_educational_attainment', $v))
+                        fn ($query, $state) => $query
+                            ->when($state['value'], fn ($q, $v) => $q->whereRelation('member', 'highest_educational_attainment', $v))
                     ),
                 DateRangeFilter::make('release_date')
                     ->format('m/d/Y')

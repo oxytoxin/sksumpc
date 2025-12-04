@@ -110,7 +110,7 @@ class AccountBalanceReport extends Page implements HasForms
         return Transaction::query()
             ->where(function ($query) {
                 $query->whereIn('account_id', [OthersTransactionExcludedAccounts::RICE->value])->orWhere(
-                    fn($query) => $query->whereRelation('account', function ($query) {
+                    fn ($query) => $query->whereRelation('account', function ($query) {
                         return $query->whereRelation(
                             'parent',
                             'tag',
@@ -149,11 +149,11 @@ class AccountBalanceReport extends Page implements HasForms
         return Transaction::whereDoesntHave('account', function ($query) {
             return $query->whereHas(
                 'rootAncestor',
-                fn($q) => $q->whereIn('id', OthersTransactionExcludedAccounts::get())
+                fn ($q) => $q->whereIn('id', OthersTransactionExcludedAccounts::get())
             );
         })
             ->withoutMso()
-            ->where('transaction_type_id',  TransactionTypes::CRJ->value)
+            ->where('transaction_type_id', TransactionTypes::CRJ->value)
             ->selectRaw(
                 'sum(debit) as credit, sum(credit) as debit, MONTHNAME(transaction_date) as month_name, MONTH(transaction_date) as month, YEAR(transaction_date) as year'
             )

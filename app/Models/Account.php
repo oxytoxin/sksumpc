@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use DB;
 use App\Enums\TransactionTypes;
-use Illuminate\Database\Eloquent\Model;
 use App\Oxytoxin\Traits\CreatesChildren;
+use DB;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 
 /**
@@ -89,7 +89,6 @@ class Account extends Model
     {
         return Account::firstWhere('tag', 'insurance_loans');
     }
-
 
     public static function getCbuDeposit($member_type_id)
     {

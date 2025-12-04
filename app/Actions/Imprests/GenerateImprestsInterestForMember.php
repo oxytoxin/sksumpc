@@ -41,7 +41,7 @@ class GenerateImprestsInterestForMember
                 account_id: $member->imprest_account->id,
                 transactionType: TransactionType::CDJ(),
                 payment_type_id: 1,
-                reference_number: '#INTERESTACCRUED-' . $member->imprest_account->number,
+                reference_number: '#INTERESTACCRUED-'.$member->imprest_account->number,
                 credit: $total_interest,
                 member_id: $member->id,
                 remarks: 'Imprest Interest',
@@ -52,14 +52,13 @@ class GenerateImprestsInterestForMember
                 account_id: Account::getSavingsInterestExpense()->id,
                 transactionType: TransactionType::CDJ(),
                 payment_type_id: 1,
-                reference_number: '#INTERESTACCRUED-' . $member->imprest_account->number,
+                reference_number: '#INTERESTACCRUED-'.$member->imprest_account->number,
                 debit: $total_interest,
                 member_id: $member->id,
                 remarks: 'Imprest Interest',
                 transaction_date: $date,
             ));
         }
-
 
         DB::commit();
     }

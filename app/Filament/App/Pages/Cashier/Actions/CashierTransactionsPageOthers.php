@@ -2,10 +2,10 @@
 
 namespace App\Filament\App\Pages\Cashier\Actions;
 
-use App\Models\Account;
-use App\Enums\PaymentTypes;
-use App\Models\PaymentType;
 use App\Actions\Transactions\CreateTransaction;
+use App\Enums\PaymentTypes;
+use App\Models\Account;
+use App\Models\PaymentType;
 use App\Oxytoxin\DTO\Transactions\TransactionData;
 
 class CashierTransactionsPageOthers

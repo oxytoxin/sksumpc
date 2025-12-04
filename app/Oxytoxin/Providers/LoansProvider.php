@@ -36,20 +36,23 @@ class LoansProvider
         } else {
             $days += max(LoansProvider::DAYS_IN_MONTH - $start->day, 0);
             $start = $start->addMonthNoOverflow();
-            while (!($start->month == $end->month && $start->year == $end->year)) {
+            while (! ($start->month == $end->month && $start->year == $end->year)) {
                 $days += LoansProvider::DAYS_IN_MONTH;
                 $start = $start->addMonthNoOverflow();
             }
             $days += min($end->day, LoansProvider::DAYS_IN_MONTH);
         }
+
         return $days;
     }
 
     public static function computeAccruedInterest(Loan $loan, $outstanding_balance, $days)
     {
         bcscale(10);
-        if ($loan->loan_type_id == LoanTypes::SPECIAL_LOAN->value)
+        if ($loan->loan_type_id == LoanTypes::SPECIAL_LOAN->value) {
             return 0;
+        }
+
         return bcmul($loan->interest_rate, bcmul($outstanding_balance, bcdiv($days, LoansProvider::DAYS_IN_MONTH)));
     }
 
@@ -185,6 +188,7 @@ class LoansProvider
             'readonly' => true,
             'code' => 'net_amount',
         ];
+
         return $items;
     }
 
@@ -255,7 +259,7 @@ class LoansProvider
                 $date = $start->addMonthsNoOverflow($i - 1);
             } else {
                 if ($i == 1) {
-                    $days = LoansProvider::DAYS_IN_MONTH +  max(LoansProvider::DAYS_IN_MONTH - $start->day, 0);
+                    $days = LoansProvider::DAYS_IN_MONTH + max(LoansProvider::DAYS_IN_MONTH - $start->day, 0);
                 } else {
                     $days = LoansProvider::DAYS_IN_MONTH;
                 }

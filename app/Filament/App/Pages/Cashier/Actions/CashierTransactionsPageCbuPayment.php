@@ -2,13 +2,13 @@
 
 namespace App\Filament\App\Pages\Cashier\Actions;
 
-use App\Models\Member;
-use App\Models\Account;
-use App\Enums\PaymentTypes;
-use App\Models\PaymentType;
-use App\Actions\Transactions\CreateTransaction;
-use App\Oxytoxin\DTO\Transactions\TransactionData;
 use App\Actions\CapitalSubscription\PayCapitalSubscription;
+use App\Actions\Transactions\CreateTransaction;
+use App\Enums\PaymentTypes;
+use App\Models\Account;
+use App\Models\Member;
+use App\Models\PaymentType;
+use App\Oxytoxin\DTO\Transactions\TransactionData;
 use Filament\Notifications\Notification;
 use Illuminate\Validation\ValidationException;
 
@@ -17,7 +17,7 @@ class CashierTransactionsPageCbuPayment
     public static function handle(TransactionData $data): array
     {
         $member = Member::find($data->member_id);
-        if (!$member->active_capital_subscription) {
+        if (! $member->active_capital_subscription) {
             Notification::make()
                 ->title('Error')
                 ->body('Member has no active capital subscription.')
@@ -25,9 +25,9 @@ class CashierTransactionsPageCbuPayment
                 ->send();
             throw ValidationException::withMessages(['member_id' => 'Member has no active capital subscription.']);
         }
-        
+
         app(PayCapitalSubscription::class)->handle($member->active_capital_subscription, $data);
-       
+
         $data->debit = $data->credit;
         $data->credit = null;
         $cash_in_bank_account_id = Account::getCashInBankGF()->id;

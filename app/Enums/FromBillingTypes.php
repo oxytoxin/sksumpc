@@ -11,10 +11,11 @@ enum FromBillingTypes: int
 
     public static function get()
     {
-        return collect(self::cases())->map(fn($c) => $c->value)->toArray();
+        return collect(self::cases())->map(fn ($c) => $c->value)->toArray();
     }
+
     public static function options()
     {
-        return collect(self::cases())->mapWithKeys(fn($c) => [$c->value => str($c->name)->replace('_', ' ')->toString()])->toArray();
+        return collect(self::cases())->mapWithKeys(fn ($c) => [$c->value => str($c->name)->replace('_', ' ')->toString()])->toArray();
     }
 }

@@ -53,9 +53,9 @@ class LoanApplicationTableProvider extends ServiceProvider
                         LoanApplication::STATUS_POSTED => 'Posted',
                     ]);
             }
+
             $filters[] = DateRangeFilter::make('transaction_date')
                 ->format('m/d/Y')
-                ->defaultToday()
                 ->displayFormat('MM/DD/YYYY');
 
             if (! $type || $type == LoanApplication::STATUS_DISAPPROVED) {

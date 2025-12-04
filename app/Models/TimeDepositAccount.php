@@ -19,7 +19,6 @@ class TimeDepositAccount extends Account
         });
     }
 
-
     public function time_deposits()
     {
         return $this->hasMany(TimeDeposit::class)->orderBy('transaction_date');

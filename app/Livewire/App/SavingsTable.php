@@ -7,7 +7,6 @@ use App\Models\SavingsAccount;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables;
-use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -29,7 +28,7 @@ class SavingsTable extends Component implements HasForms, HasTable
     {
         return $table
             ->query(Saving::whereMemberId($this->member_id))
-            ->recordclasses(fn($record) => $record->amount > 0 ? 'bg-green-200' : 'bg-red-200')
+            ->recordclasses(fn ($record) => $record->amount > 0 ? 'bg-green-200' : 'bg-red-200')
             ->columns([
                 TextColumn::make('savings_account.number'),
                 TextColumn::make('transaction_date')->date('F d, Y'),
@@ -52,8 +51,8 @@ class SavingsTable extends Component implements HasForms, HasTable
                 ViewAction::make('subsidiary_ledger')
                     ->icon('heroicon-o-clipboard-document-list')
                     ->label('Subsidiary Ledger')
-                    ->visible(fn($livewire) => filled($livewire->tableFilters['savings_account_id']['value']))
-                    ->url(fn($livewire) => route('filament.app.resources.members.savings-subsidiary-ledger', ['savings_account' => $livewire->tableFilters['savings_account_id']['value']])),
+                    ->visible(fn ($livewire) => filled($livewire->tableFilters['savings_account_id']['value']))
+                    ->url(fn ($livewire) => route('filament.app.resources.members.savings-subsidiary-ledger', ['savings_account' => $livewire->tableFilters['savings_account_id']['value']])),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

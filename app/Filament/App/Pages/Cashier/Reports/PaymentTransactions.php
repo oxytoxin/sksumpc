@@ -2,24 +2,22 @@
 
 namespace App\Filament\App\Pages\Cashier\Reports;
 
-use App\Models\Account;
-use App\Models\LoanType;
-use Filament\Pages\Page;
-use App\Models\MemberType;
-use Filament\Tables\Table;
+use App\Enums\OthersTransactionExcludedAccounts;
 use App\Enums\PaymentTypes;
+use App\Enums\TransactionTypes;
+use App\Models\Account;
 use App\Models\LoanPayment;
+use App\Models\LoanType;
+use App\Models\Member;
 use App\Models\Transaction;
-use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\Select;
+use Filament\Pages\Page;
+use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
-use App\Enums\OthersTransactionExcludedAccounts;
-use App\Enums\TransactionTypes;
-use App\Models\Member;
-use App\Models\User;
-use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Table;
 use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 
 class PaymentTransactions extends Page implements HasTable
@@ -63,7 +61,7 @@ class PaymentTransactions extends Page implements HasTable
                     return Transaction::query()
                         ->where(function ($query) {
                             $query->whereIn('account_id', [OthersTransactionExcludedAccounts::MEMBERSHIP_FEES->value])
-                                ->orWhere(fn($query) => $query->whereRelation('account', function ($query) {
+                                ->orWhere(fn ($query) => $query->whereRelation('account', function ($query) {
                                     return $query->whereRelation('parent', 'tag', 'member_laboratory_cbu_paid');
                                 }));
                         })
@@ -73,7 +71,7 @@ class PaymentTransactions extends Page implements HasTable
                 return Transaction::whereDoesntHave('account', function ($query) {
                     return $query->whereHas(
                         'ancestorsAndSelf',
-                        fn($q) => $q->whereIn('id', OthersTransactionExcludedAccounts::get())
+                        fn ($q) => $q->whereIn('id', OthersTransactionExcludedAccounts::get())
                     );
                 })
 
@@ -111,9 +109,9 @@ class PaymentTransactions extends Page implements HasTable
                     ])
                     ->default(1)
                     ->query(
-                        fn($query, $state) => $query
-                            ->when($state['value'] == 1, fn($q) => $q->whereRelation('member', 'terminated_at', null))
-                            ->when($state['value'] == 2, fn($q) => $q->whereRelation('member', 'terminated_at', '!=',  null))
+                        fn ($query, $state) => $query
+                            ->when($state['value'] == 1, fn ($q) => $q->whereRelation('member', 'terminated_at', null))
+                            ->when($state['value'] == 2, fn ($q) => $q->whereRelation('member', 'terminated_at', '!=', null))
                     ),
                 SelectFilter::make('civil_status')
                     ->relationship('member.civil_status', 'name'),
@@ -127,8 +125,8 @@ class PaymentTransactions extends Page implements HasTable
                     ->searchable()
                     ->preload()
                     ->query(
-                        fn($query, $state) => $query
-                            ->when($state['value'], fn($q, $v) => $q->whereRelation('member', 'highest_educational_attainment', $v))
+                        fn ($query, $state) => $query
+                            ->when($state['value'], fn ($q, $v) => $q->whereRelation('member', 'highest_educational_attainment', $v))
                     ),
                 DateRangeFilter::make('transaction_date')
                     ->format('m/d/Y')
@@ -151,16 +149,16 @@ class PaymentTransactions extends Page implements HasTable
                                 $set('loan_type_id', null);
                             }),
                         Select::make('account_id')
-                            ->visible(fn($get) => $get('transaction_type') == 'others')
-                            ->options(Account::withCode()->whereDoesntHave('children', fn($q) => $q->whereNull('member_id'))->where('member_id', null)->pluck('code', 'id'))
+                            ->visible(fn ($get) => $get('transaction_type') == 'others')
+                            ->options(Account::withCode()->whereDoesntHave('children', fn ($q) => $q->whereNull('member_id'))->where('member_id', null)->pluck('code', 'id'))
                             ->searchable()
                             ->label('Account'),
                         Select::make('loan_type_id')
-                            ->visible(fn($get) => $get('transaction_type') == 'loan')
+                            ->visible(fn ($get) => $get('transaction_type') == 'loan')
                             ->options(LoanType::pluck('name', 'id'))
                             ->label('Loan Type'),
                     ])
-                    ->query(fn($query, $state) => $query->when($state['account_id'], fn($query, $value) => $query->where('account_id', $value))),
+                    ->query(fn ($query, $state) => $query->when($state['account_id'], fn ($query, $value) => $query->where('account_id', $value))),
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
             ->paginated(false);
@@ -168,7 +166,7 @@ class PaymentTransactions extends Page implements HasTable
 
     public function mount()
     {
-        data_set($this, 'tableFilters.transaction_date.transaction_date', (config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')) . ' - ' . (config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')));
+        data_set($this, 'tableFilters.transaction_date.transaction_date', (config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')).' - '.(config('app.transaction_date')?->format('m/d/Y') ?? today()->format('m/d/Y')));
         data_set($this, 'tableFilters.transaction_type', ['transaction_type' => null, 'account_id' => null, 'loan_type_id' => null]);
     }
 }

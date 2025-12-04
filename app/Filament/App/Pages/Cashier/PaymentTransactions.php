@@ -37,8 +37,8 @@ use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Support\Colors\Color;
 use Illuminate\Support\Facades\DB;
-use Livewire\Component;
 use Illuminate\Support\Number;
+use Livewire\Component;
 
 class PaymentTransactions extends Component implements HasActions, HasForms
 {
@@ -59,21 +59,21 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                     ->label('Member')
                     ->options(Member::pluck('full_name', 'id'))
                     ->searchable()
-                    ->afterStateUpdated(fn($set) => $set('transactions', []))
+                    ->afterStateUpdated(fn ($set) => $set('transactions', []))
                     ->reactive(),
                 Placeholder::make('member_type')
-                    ->content(fn($get) => Member::find($get('member_id'))?->member_type->name),
+                    ->content(fn ($get) => Member::find($get('member_id'))?->member_type->name),
                 Builder::make('transactions')
                     ->required()
                     ->collapsible()
                     ->addBetweenAction(
-                        fn(Action $action) => $action->visible(false),
+                        fn (Action $action) => $action->visible(false),
                     )
                     ->blocks([
                         Block::make('cbu')
                             ->label('CBU')
                             ->columns(2)
-                            ->visible(fn($get) => $get('../member_id'))
+                            ->visible(fn ($get) => $get('../member_id'))
                             ->schema([
                                 Section::make('')
                                     ->extraAttributes(['data-transaction' => 'cbu'])
@@ -98,11 +98,11 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                         Select::make('payment_type_id')
                                             ->paymenttype()
                                             ->required(),
-                                        TextInput::make('payee')->required()->default(fn($get) => Member::find($get('../../../member_id'))?->full_name),
+                                        TextInput::make('payee')->required()->default(fn ($get) => Member::find($get('../../../member_id'))?->full_name),
                                         Select::make('account_id')
                                             ->options(
-                                                fn($get) => Account::withCode()->whereDoesntHave('children', fn($q) => $q->whereNull('member_id'))
-                                                    ->whereDoesntHave('ancestorsAndSelf', fn($q) => $q->whereIn('id', OtherPaymentTransactionExcludedAccounts::get()))
+                                                fn ($get) => Account::withCode()->whereDoesntHave('children', fn ($q) => $q->whereNull('member_id'))
+                                                    ->whereDoesntHave('ancestorsAndSelf', fn ($q) => $q->whereIn('id', OtherPaymentTransactionExcludedAccounts::get()))
                                                     ->where('member_id', $get('member_accounts') ? $get('../../../member_id') : null)
                                                     ->pluck('code', 'id')
                                             )
@@ -117,25 +117,25 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                     ]),
                             ]),
                         Block::make('savings')
-                            ->visible(fn($get) => $get('../member_id'))
+                            ->visible(fn ($get) => $get('../member_id'))
                             ->columns(2)
-                            ->schema(fn() => [
+                            ->schema(fn () => [
                                 Section::make('')
                                     ->extraAttributes(['data-transaction' => 'savings'])
                                     ->schema([
                                         Select::make('savings_account_id')
-                                            ->options(fn($get) => SavingsAccount::whereMemberId($get('../../../member_id'))->pluck('number', 'id'))
+                                            ->options(fn ($get) => SavingsAccount::whereMemberId($get('../../../member_id'))->pluck('number', 'id'))
                                             ->label('Account')
                                             ->required()
                                             ->suffixAction(
-                                                fn($get) => Action::make('NewAccount')
+                                                fn ($get) => Action::make('NewAccount')
                                                     ->label('New Account')
                                                     ->modalHeading('New Savings Account')
                                                     ->form([
                                                         TextInput::make('name')
                                                             ->required(),
                                                     ])
-                                                    ->visible(fn($get) => $get('../../../member_id'))
+                                                    ->visible(fn ($get) => $get('../../../member_id'))
                                                     ->action(function ($data, $get) {
                                                         app(CreateNewSavingsAccount::class)->handle(new SavingsAccountData(
                                                             member_id: $get('../../../member_id'),
@@ -164,7 +164,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                             ]),
                         Block::make('imprest')
                             ->columns(2)
-                            ->visible(fn($get) => $get('../member_id'))
+                            ->visible(fn ($get) => $get('../member_id'))
                             ->schema([
                                 Section::make('')
                                     ->extraAttributes(['data-transaction' => 'imprest'])
@@ -187,7 +187,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                             ]),
                         Block::make('love_gift')
                             ->columns(2)
-                            ->visible(fn($get) => $get('../member_id'))
+                            ->visible(fn ($get) => $get('../member_id'))
                             ->schema([
                                 Section::make('')
                                     ->extraAttributes(['data-transaction' => 'love-gifts'])
@@ -210,7 +210,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                             ]),
                         Block::make('time_deposit')
                             ->columns(2)
-                            ->visible(fn($get) => $get('../member_id'))
+                            ->visible(fn ($get) => $get('../member_id'))
                             ->schema([
                                 Section::make('')
                                     ->extraAttributes(['data-transaction' => 'time-deposit'])
@@ -233,8 +233,8 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                             ->default(TimeDepositsProvider::NUMBER_OF_DAYS)
                                             ->reactive()
                                             ->minValue(1),
-                                        Placeholder::make('maturity_date')->content(fn($get) => TimeDepositsProvider::getMaturityDate($this->transaction_date, $get('number_of_days'))->format('F d, Y')),
-                                        Placeholder::make('maturity_amount')->content(fn($get) => Number::currency(TimeDepositsProvider::getMaturityAmount(floatval($get('amount')), floatval($get('interest_rate')) / 100, $get('number_of_days')), 'PHP')),
+                                        Placeholder::make('maturity_date')->content(fn ($get) => TimeDepositsProvider::getMaturityDate($this->transaction_date, $get('number_of_days'))->format('F d, Y')),
+                                        Placeholder::make('maturity_amount')->content(fn ($get) => Number::currency(TimeDepositsProvider::getMaturityAmount(floatval($get('amount')), floatval($get('interest_rate')) / 100, $get('number_of_days')), 'PHP')),
                                     ]),
                             ]),
                         Block::make('cash_collection')
@@ -259,7 +259,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                             ]),
                         Block::make('loan')
                             ->columns(2)
-                            ->visible(fn($get) => $get('../member_id'))
+                            ->visible(fn ($get) => $get('../member_id'))
                             ->schema([
                                 Section::make('')
                                     ->extraAttributes(['data-transaction' => 'loan'])
@@ -267,7 +267,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                         Select::make('loan_account_id')
                                             ->label('Loan Account')
                                             ->options(
-                                                fn($get) => Account::query()
+                                                fn ($get) => Account::query()
                                                     ->join('loans', 'accounts.id', '=', 'loans.loan_account_id')
                                                     ->whereNotNull('accounts.member_id')
                                                     ->whereTag('member_loans_receivable')
@@ -279,13 +279,13 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                             )
                                             ->searchable()
                                             ->live()
-                                            ->afterStateUpdated(fn($set, $state) => $set('amount', LoanAccount::find($state)?->loan?->monthly_payment))
+                                            ->afterStateUpdated(fn ($set, $state) => $set('amount', LoanAccount::find($state)?->loan?->monthly_payment))
                                             ->required()
                                             ->preload(),
                                         Placeholder::make('loan_type')
-                                            ->content(fn($get) => LoanAccount::find($get('loan_account_id'))?->loan?->loan_type?->name),
+                                            ->content(fn ($get) => LoanAccount::find($get('loan_account_id'))?->loan?->loan_type?->name),
                                         Placeholder::make('outstanding_balance')
-                                            ->content(fn($get) => LoanAccount::find($get('loan_account_id'))?->loan?->outstanding_balance),
+                                            ->content(fn ($get) => LoanAccount::find($get('loan_account_id'))?->loan?->outstanding_balance),
                                         Select::make('payment_type_id')
                                             ->paymenttype()
                                             ->required(),
@@ -298,7 +298,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                     ]),
                 Placeholder::make('transaction-selector')
                     ->label(false)
-                    ->content(fn($get) => view('filament.app.pages.cashier.transaction-selector', ['member' => $get('member_id')])),
+                    ->content(fn ($get) => view('filament.app.pages.cashier.transaction-selector', ['member' => $get('member_id')])),
                 Actions::make([
                     Action::make('submit')
                         ->action(function () {
@@ -319,7 +319,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                     payee: $formData['payee'] ?? $member?->full_name ?? 'SKSU-MPC',
                                 );
                                 if ($data->payment_type_id == PaymentTypes::DEPOSIT_SLIP->value) {
-                                    $data->reference_number = str('SLIP')->append((config('app.transaction_date') ?? today())->format('Y') . '-')->append(str_pad(random_int(1, 100000), 6, '0', STR_PAD_LEFT));
+                                    $data->reference_number = str('SLIP')->append((config('app.transaction_date') ?? today())->format('Y').'-')->append(str_pad(random_int(1, 100000), 6, '0', STR_PAD_LEFT));
                                 }
 
                                 if ($transaction['type'] == 'cbu') {

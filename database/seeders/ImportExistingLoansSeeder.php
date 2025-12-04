@@ -36,7 +36,7 @@ class ImportExistingLoansSeeder extends Seeder
 
     protected function importLoansFromFile(string $filename, LoanType $loanType)
     {
-        $reader = SimpleExcelReader::create(storage_path('csv/loans/' . $filename), 'xlsx');
+        $reader = SimpleExcelReader::create(storage_path('csv/loans/'.$filename), 'xlsx');
         $members_code = $reader->getRows()->pluck('MEMBERS ID');
         $members = Member::whereIn('mpc_code', $members_code->all())->get();
         $reader->getRows()->each(function ($data) use ($members, $loanType) {

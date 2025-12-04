@@ -44,7 +44,7 @@ class LoanBillingPayments extends ListRecords
                         ->storeFiles(false)
                         ->acceptedFileTypes(['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/octet-stream']),
                 ])
-                ->disabled(fn() => $this->loan_billing->posted)
+                ->disabled(fn () => $this->loan_billing->posted)
                 ->action(function ($data) {
                     $payments = $this->loan_billing->loan_billing_payments()->join('members', 'loan_billing_payments.member_id', 'members.id')
                         ->selectRaw('loan_billing_payments.*, members.mpc_code as member_code')
@@ -82,23 +82,23 @@ class LoanBillingPayments extends ListRecords
                     $worksheet->setCellValue('A1', $title);
                     $worksheet->insertNewRowBefore(3, $loan_billing_payments->count());
                     foreach ($loan_billing_payments as $key => $payment) {
-                        $worksheet->setCellValue('A' . $key + 3, $key + 1);
-                        $worksheet->setCellValue('B' . $key + 3, $payment->member_code);
-                        $worksheet->setCellValue('C' . $key + 3, $payment->loan->release_date?->format('m/d/Y'));
-                        $worksheet->setCellValue('D' . $key + 3, $payment->loan->number_of_terms);
-                        $worksheet->setCellValue('E' . $key + 3, $payment->loan->loan_account->number);
-                        $worksheet->setCellValue('F' . $key + 3, $payment->member_name);
-                        $worksheet->setCellValue('G' . $key + 3, $payment->loan->gross_amount);
-                        $worksheet->setCellValue('H' . $key + 3, $payment->amount_due);
-                        $worksheet->setCellValue('I' . $key + 3, $payment->amount_paid);
+                        $worksheet->setCellValue('A'.$key + 3, $key + 1);
+                        $worksheet->setCellValue('B'.$key + 3, $payment->member_code);
+                        $worksheet->setCellValue('C'.$key + 3, $payment->loan->loan_account->number);
+                        $worksheet->setCellValue('D'.$key + 3, $payment->member_name);
+                        $worksheet->setCellValue('E'.$key + 3, $payment->loan->release_date?->format('m/d/Y'));
+                        $worksheet->setCellValue('F'.$key + 3, $payment->loan->gross_amount);
+                        $worksheet->setCellValue('G'.$key + 3, $payment->loan->number_of_terms);
+                        $worksheet->setCellValue('H'.$key + 3, $payment->amount_due);
+                        $worksheet->setCellValue('I'.$key + 3, $payment->amount_paid);
                     }
-                    $worksheet->setCellValue('A' . $key + 4, 'GRAND TOTAL');
-                    $worksheet->setCellValue('G' . $key + 4, '=SUM(G3:G' . $key + 3 . ')');
-                    $worksheet->setCellValue('H' . $key + 4, '=SUM(H3:H' . $key + 3 . ')');
-                    $worksheet->setCellValue('I' . $key + 4, '=SUM(I3:I' . $key + 3 . ')');
+                    $worksheet->setCellValue('A'.$key + 4, 'GRAND TOTAL');
+                    $worksheet->setCellValue('F'.$key + 4, '=SUM(F3:F'.$key + 3 .')');
+                    $worksheet->setCellValue('H'.$key + 4, '=SUM(H3:H'.$key + 3 .')');
+                    $worksheet->setCellValue('I'.$key + 4, '=SUM(I3:I'.$key + 3 .')');
                     $worksheet->getProtection()->setSheet(true)->setInsertRows(true)->setInsertColumns(true);
-                    $worksheet->protectCells('I3:I' . ($loan_billing_payments->count() + 2), auth()->user()->getAuthPassword(), true);
-                    $path = storage_path('app/livewire-tmp/' . $filename);
+                    $worksheet->protectCells('I3:I'.($loan_billing_payments->count() + 2), auth()->user()->getAuthPassword(), true);
+                    $path = storage_path('app/livewire-tmp/'.$filename);
                     $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
                     $writer->save($path);
 
@@ -130,26 +130,26 @@ class LoanBillingPayments extends ListRecords
             ->filters([
                 SelectFilter::make('member.member_type_id')
                     ->relationship('member.member_type', 'name')
-                    ->query(fn($query, $livewire) => $query->when($livewire->tableFilters['member']['member_type_id']['value'] ?? null, fn($q, $v) => $q->whereRelation('member', 'member_type_id', $v))),
+                    ->query(fn ($query, $livewire) => $query->when($livewire->tableFilters['member']['member_type_id']['value'] ?? null, fn ($q, $v) => $q->whereRelation('member', 'member_type_id', $v))),
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
             ->actions([
                 EditAction::make()
                     ->form([
                         TextInput::make('amount_paid')
-                            ->default(fn($record) => $record->amount_paid)
+                            ->default(fn ($record) => $record->amount_paid)
                             ->moneymask(),
                     ])
-                    ->visible(fn($record) => ! $record->posted && auth()->user()->can('manage loans')),
+                    ->visible(fn ($record) => ! $record->posted && auth()->user()->can('manage loans')),
                 DeleteAction::make()
-                    ->visible(fn($record) => ! $record->posted && auth()->user()->can('manage loans')),
+                    ->visible(fn ($record) => ! $record->posted && auth()->user()->can('manage loans')),
             ])
             ->bulkActions([
                 DeleteBulkAction::make()
                     ->action(function ($records) {
                         $records->toQuery()->where('posted', false)->delete();
                         Notification::make()->title('Records deleted!')->body('Only unposted records are deleted.')->success()->send();
-                    })
+                    }),
             ]);
     }
 }

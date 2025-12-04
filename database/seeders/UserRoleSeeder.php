@@ -2,12 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use App\Models\SignatureSet;
+use App\Models\User;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
-use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class UserRoleSeeder extends Seeder
 {
@@ -149,8 +148,6 @@ class UserRoleSeeder extends Seeder
         ]);
         $user->assignRole($role);
 
-
-
         $bookkeeper = User::whereRelation('roles', 'name', 'book-keeper')->first();
         $treasurer = User::whereRelation('roles', 'name', 'treasurer')->first();
         $manager = User::whereRelation('roles', 'name', 'manager')->first();
@@ -160,7 +157,7 @@ class UserRoleSeeder extends Seeder
         $clerk = User::whereRelation('roles', 'name', 'clerk')->first();
         $crecom_chairperson = User::whereRelation('roles', 'name', 'crecom-chairperson')->first();
         $set = SignatureSet::create([
-            'name' => 'Cashier Reports'
+            'name' => 'Cashier Reports',
         ]);
         $set->signatories()->create([
             'action' => 'Prepared by:',
@@ -184,7 +181,7 @@ class UserRoleSeeder extends Seeder
         ]);
 
         $set = SignatureSet::create([
-            'name' => 'Loan Disclosure Sheet Reports'
+            'name' => 'Loan Disclosure Sheet Reports',
         ]);
         $set->signatories()->create([
             'action' => 'Prepared by:',
@@ -208,7 +205,7 @@ class UserRoleSeeder extends Seeder
         ]);
 
         $set = SignatureSet::create([
-            'name' => 'Loan Officer Reports'
+            'name' => 'Loan Officer Reports',
         ]);
         $set->signatories()->create([
             'action' => 'Prepared by:',
@@ -221,7 +218,7 @@ class UserRoleSeeder extends Seeder
             'designation' => 'Manager',
         ]);
         $set = SignatureSet::create([
-            'name' => 'CBU Reports'
+            'name' => 'CBU Reports',
         ]);
         $set->signatories()->create([
             'action' => 'Prepared by:',
@@ -246,7 +243,7 @@ class UserRoleSeeder extends Seeder
         $cibi_investigator->assignRole($role);
 
         $set = SignatureSet::create([
-            'name' => 'CIBI Reports'
+            'name' => 'CIBI Reports',
         ]);
         $set->signatories()->create([
             'action' => 'Prepared by:',
@@ -260,7 +257,7 @@ class UserRoleSeeder extends Seeder
         ]);
 
         $set = SignatureSet::create([
-            'name' => 'SL Reports'
+            'name' => 'SL Reports',
         ]);
         $set->signatories()->create([
             'action' => 'Prepared by:',
@@ -273,7 +270,7 @@ class UserRoleSeeder extends Seeder
             'designation' => 'Manager',
         ]);
         $set = SignatureSet::create([
-            'name' => 'Loan Amortization Reports'
+            'name' => 'Loan Amortization Reports',
         ]);
         $set->signatories()->create([
             'action' => 'Prepared by:',

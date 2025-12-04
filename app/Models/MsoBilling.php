@@ -22,12 +22,12 @@ class MsoBilling extends Model
 
     public function OrApproved(): Attribute
     {
-        return Attribute::make(get: fn() => filled($this->or_number));
+        return Attribute::make(get: fn () => filled($this->or_number));
     }
 
     public function generateReferenceNumber(self $msoBilling)
     {
-        return 'MSOBILLING' . '-' . (config('app.transaction_date') ?? today())->format('Y-m-') . str_pad($msoBilling->id, 6, '0', STR_PAD_LEFT);
+        return 'MSOBILLING'.'-'.(config('app.transaction_date') ?? today())->format('Y-m-').str_pad($msoBilling->id, 6, '0', STR_PAD_LEFT);
     }
 
     protected static function booted(): void
