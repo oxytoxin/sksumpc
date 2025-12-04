@@ -258,11 +258,10 @@ class LoanApplicationResource extends Resource
                             loan_application_id: $record->id,
                             loan_type_id: $loanType->id,
                             reference_number: $record->reference_number,
-                            interest_rate: $loanType->interest_rate,
-                            disclosure_sheet_items: $items,
                             priority_number: $data['priority_number'],
                             gross_amount: $data['gross_amount'],
                             number_of_terms: $data['number_of_terms'],
+                            interest_rate: $loanType->interest_rate,
                             interest: LoansProvider::computeInterest(
                                 amount: $data['gross_amount'],
                                 loanType: $loanType,
@@ -275,6 +274,7 @@ class LoanApplicationResource extends Resource
                             ),
                             release_date: config('app.transaction_date'),
                             transaction_date: config('app.transaction_date'),
+                            disclosure_sheet_items: $items,
                         );
                         app(CreateNewLoan::class)->handle($record, $loanData);
                         Notification::make()->title('New loan created.')->success()->send();
@@ -307,6 +307,7 @@ class LoanApplicationResource extends Resource
             'index' => Pages\ManageLoanApplications::route('/'),
             'view' => Pages\ViewLoanApplication::route('/{record}'),
             'application-form' => Pages\LoanApplicationForm::route('/{loan_application}/application-form'),
+            'coborrowers_undertaking' => Pages\CoborrowerUndertaking::route('/{loan_application}/coborrowers-undertaking'),
             'credit-and-background-investigation-form' => CreditAndBackgroundInvestigationForm::route('/cibi-form/{loan_application}'),
             'credit-and-background-investigation-report' => CreditAndBackgroundInvestigationReport::route('/cibi-report/{cibi}'),
         ];

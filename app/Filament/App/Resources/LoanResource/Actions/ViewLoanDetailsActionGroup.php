@@ -16,6 +16,10 @@ class ViewLoanDetailsActionGroup
                 ->icon('heroicon-o-document')
                 ->label('View Application')
                 ->url(fn ($record) => route('filament.app.resources.loan-applications.view', ['record' => $record instanceof LoanApplication ? $record : $record->loan_application])),
+            Action::make('coborrowers_undertaking')
+                ->icon('heroicon-o-document')
+                ->label("View Coborrower's Undertaking")
+                ->url(fn ($record) => route('filament.app.resources.loan-applications.coborrowers_undertaking', ['loan_application' => $record instanceof LoanApplication ? $record : $record->loan_application])),
             Action::make('payments')
                 ->icon('heroicon-o-currency-dollar')
                 ->visible(fn ($record) => $record instanceof Loan ? $record : $record->loan)
