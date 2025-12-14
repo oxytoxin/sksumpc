@@ -107,7 +107,7 @@
     </td>
     <td colspan="2"
         class="whitespace-nowrap border border-black px-2 text-right font-bold text-xs uppercase hover:bg-green-300">
-        {{ renumber_format($total['debit_ending_balance'] - $total['credit_ending_balance']) }}
+        {{ renumber_format(round($total['debit_ending_balance'], 2) - round($total['credit_ending_balance'], 2)) }}
     </td>
 </tr>
 </tfoot>

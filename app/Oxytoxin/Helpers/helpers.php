@@ -126,7 +126,7 @@
             return '';
         }
         if ($number < 0) {
-            $result = str('(')->append(number_format(abs($number), $decimals))->append(')');
+            $result = str('(')->append(number_format(round(abs($number), $decimals), $decimals))->append(')');
         } else {
             $result = number_format(round($number, $decimals), $decimals);
         }

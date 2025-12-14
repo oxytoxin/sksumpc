@@ -15,7 +15,7 @@
             Transaction::find(31011)->update(['credit' => 1610.0463]);
             Transaction::find(31524)->update(['credit' => 2006.989]);
             // error due to negative interest payment in loan, need to follow the actual amount in cash on hand/bank
-            Transaction::find(37000)->update(['credit' => 1412.2000]);
+            Transaction::find(30700)->update(['credit' => 1412.2000]);
 
         }
 

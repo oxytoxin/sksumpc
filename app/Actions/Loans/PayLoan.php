@@ -20,13 +20,13 @@
             $end = $loanPaymentData->transaction_date;
             $total_days = LoansProvider::getAccruableDays($start, $end);
             $unpaid_interest = $loan->payments()->sum('unpaid_interest');
-            $interest_due = LoansProvider::computeAccruedInterest($loan, $loan->outstanding_balance, $total_days) + $unpaid_interest;
+            $interest_due = round(LoansProvider::computeAccruedInterest($loan, $loan->outstanding_balance, $total_days) + $unpaid_interest, 2);
             $interest_payment = min($loanPaymentData->amount, $interest_due);
             $interest_payment = min($interest_payment, 0);
             if ($interest_payment < $interest_due) {
                 $remaining_unpaid_interest = round($interest_due - $interest_payment, 2);
             }
-            $principal_payment = $loanPaymentData->amount - $interest_payment;
+            $principal_payment = round($loanPaymentData->amount - $interest_payment, 2);
             $loan_receivables_account = $loan->loan_account;
             $loan_interests_account = Account::whereAccountableType(LoanType::class)->whereAccountableId($loan->loan_type_id)->whereTag('loan_interests')->first();
 
