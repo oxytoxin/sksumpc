@@ -14,7 +14,7 @@ class LoanAmortizationSchedule extends Page
 
     protected static string $resource = MemberResource::class;
 
-    protected static string $view = 'filament.app.resources.member-resource.pages.loan-amortization-schedule';
+    protected string $view = 'filament.app.resources.member-resource.pages.loan-amortization-schedule';
 
     public Loan $loan;
 

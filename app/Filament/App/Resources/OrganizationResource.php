@@ -2,13 +2,19 @@
 
 namespace App\Filament\App\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\App\Resources\OrganizationResource\Pages\ListOrganizations;
+use App\Filament\App\Resources\OrganizationResource\Pages\CreateOrganization;
+use App\Filament\App\Resources\OrganizationResource\Pages\EditOrganization;
 use App\Filament\App\Resources\OrganizationResource\Pages;
 use App\Models\Member;
 use App\Models\Organization;
 use Auth;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -18,7 +24,7 @@ class OrganizationResource extends Resource
 {
     protected static ?string $model = Organization::class;
 
-    protected static ?string $navigationGroup = 'Cashier';
+    protected static string | \UnitEnum | null $navigationGroup = 'Cashier';
 
     protected static ?int $navigationSort = 3;
 
@@ -27,10 +33,10 @@ class OrganizationResource extends Resource
         return Auth::user()->can('manage payments');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('first_name')
                     ->label('Name'),
                 Select::make('member_ids')
@@ -52,12 +58,12 @@ class OrganizationResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -72,9 +78,9 @@ class OrganizationResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListOrganizations::route('/'),
-            'create' => Pages\CreateOrganization::route('/create'),
-            'edit' => Pages\EditOrganization::route('/{record}/edit'),
+            'index' => ListOrganizations::route('/'),
+            'create' => CreateOrganization::route('/create'),
+            'edit' => EditOrganization::route('/{record}/edit'),
         ];
     }
 }

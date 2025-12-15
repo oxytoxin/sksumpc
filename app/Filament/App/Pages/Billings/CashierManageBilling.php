@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Auth;
 
 class CashierManageBilling extends ManageBillings
 {
-    protected static ?string $navigationGroup = 'Cashier';
+    protected static string | \UnitEnum | null $navigationGroup = 'Cashier';
 
     protected static ?int $navigationSort = 3;
 

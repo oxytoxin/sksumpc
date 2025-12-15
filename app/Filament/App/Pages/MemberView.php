@@ -2,6 +2,13 @@
 
 namespace App\Filament\App\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Actions;
+use Filament\Actions\Action;
+use Filament\Schemas\Components\Livewire;
 use App\Filament\App\Resources\MemberResource;
 use App\Infolists\Components\DependentsEntry;
 use App\Livewire\App\CbuTable;
@@ -10,17 +17,10 @@ use App\Livewire\App\MsoTable;
 use App\Models\Member;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Infolists\Components\Actions;
-use Filament\Infolists\Components\Actions\Action;
-use Filament\Infolists\Components\Livewire;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
-use Filament\Infolists\Components\Tabs;
-use Filament\Infolists\Components\Tabs\Tab;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
-use Filament\Infolists\Infolist;
 use Filament\Pages\Page;
 
 class MemberView extends Page implements HasForms, HasInfolists
@@ -29,9 +29,9 @@ class MemberView extends Page implements HasForms, HasInfolists
 
     protected static string $resource = MemberResource::class;
 
-    protected static string $view = 'filament.app.resources.member-resource.pages.member-view';
+    protected string $view = 'filament.app.resources.member-resource.pages.member-view';
 
-    protected static ?string $navigationIcon = 'icon-dashboard';
+    protected static string | \BackedEnum | null $navigationIcon = 'icon-dashboard';
 
     public Member $member;
 
@@ -45,11 +45,11 @@ class MemberView extends Page implements HasForms, HasInfolists
         $this->member = auth()->user()->member;
     }
 
-    public function memberInfolist(Infolist $infolist)
+    public function memberInfolist(Schema $schema)
     {
-        return $infolist
+        return $schema
             ->record($this->member)
-            ->schema([
+            ->components([
                 Tabs::make()
                     ->tabs([
                         Tab::make('Profile')

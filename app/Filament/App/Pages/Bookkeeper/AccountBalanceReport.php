@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Pages\Bookkeeper;
 
+use Filament\Schemas\Schema;
 use App\Enums\MsoTransactionTag;
 use App\Enums\OthersTransactionExcludedAccounts;
 use App\Enums\PaymentTypes;
@@ -12,7 +13,6 @@ use App\Models\Transaction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
 use Filament\Pages\Page;
 use Livewire\Attributes\Computed;
 
@@ -20,7 +20,7 @@ class AccountBalanceReport extends Page implements HasForms
 {
     use InteractsWithForms;
 
-    protected static string $view = 'filament.app.pages.bookkeeper.account-balance-report';
+    protected string $view = 'filament.app.pages.bookkeeper.account-balance-report';
 
     public $year;
 
@@ -34,10 +34,10 @@ class AccountBalanceReport extends Page implements HasForms
         $this->year = config('app.transaction_date')?->year ?? today()->year;
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Select::make('year')
                     ->label('Year')
                     ->reactive()

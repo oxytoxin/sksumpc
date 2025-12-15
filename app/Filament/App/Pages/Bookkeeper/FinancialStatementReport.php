@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Pages\Bookkeeper;
 
+use Filament\Schemas\Schema;
 use App\Filament\App\Pages\Cashier\RequiresBookkeeperTransactionDate;
 use App\Models\AccountType;
 use App\Models\LoanType;
@@ -16,7 +17,6 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
 use Filament\Pages\Page;
 use Livewire\Attributes\Computed;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -25,11 +25,11 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
 {
     use InteractsWithActions, InteractsWithForms, RequiresBookkeeperTransactionDate;
 
-    protected static string $view = 'filament.app.pages.bookkeeper.financial-statement-report';
+    protected string $view = 'filament.app.pages.bookkeeper.financial-statement-report';
 
     protected static ?int $navigationSort = 2;
 
-    protected static ?string $navigationGroup = 'Bookkeeping';
+    protected static string | \UnitEnum | null $navigationGroup = 'Bookkeeping';
 
     public static function shouldRegisterNavigation(): bool
     {
@@ -42,9 +42,9 @@ class FinancialStatementReport extends Page implements HasActions, HasForms
 
     public $load_data = true;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->components([
             Select::make('mode')
                 ->options([
                     'single' => 'Single Month',

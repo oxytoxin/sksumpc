@@ -2,13 +2,13 @@
 
 namespace App\Filament\App\Resources\MemberResource\Pages;
 
+use Filament\Actions\Action;
 use App\Filament\App\Pages\Cashier\Reports\HasSignatories;
 use App\Filament\App\Resources\MemberResource;
 use App\Models\Saving;
 use App\Models\SavingsAccount;
 use App\Models\SignatureSet;
 use Filament\Resources\Pages\Page;
-use Filament\Tables\Actions\Action;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Enums\FiltersLayout;
@@ -22,7 +22,7 @@ class SavingsSubsidiaryLedger extends Page implements HasTable
 
     protected static string $resource = MemberResource::class;
 
-    protected static string $view = 'filament.app.resources.member-resource.pages.savings-subsidiary-ledger';
+    protected string $view = 'filament.app.resources.member-resource.pages.savings-subsidiary-ledger';
 
     public SavingsAccount $savings_account;
 

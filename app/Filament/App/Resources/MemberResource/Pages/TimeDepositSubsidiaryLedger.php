@@ -11,7 +11,7 @@ class TimeDepositSubsidiaryLedger extends Page
 {
     protected static string $resource = MemberResource::class;
 
-    protected static string $view = 'filament.app.resources.member-resource.pages.time-deposit-subsidiary-ledger';
+    protected string $view = 'filament.app.resources.member-resource.pages.time-deposit-subsidiary-ledger';
 
     public TimeDepositAccount $time_deposit_account;
 

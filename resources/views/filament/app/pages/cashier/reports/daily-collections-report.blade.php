@@ -1,7 +1,4 @@
 <x-filament-panels::page>
-    <div>
-        {{ $this->form }}
-    </div>
     <div class="w-full">
         <x-app.cashier.reports.report-layout title="DAILY COLLECTIONS REPORT" :signatories="$this->getSignatories()">
             <div class="flex items-start gap-16">

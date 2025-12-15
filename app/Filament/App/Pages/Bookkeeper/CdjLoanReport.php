@@ -2,12 +2,12 @@
 
 namespace App\Filament\App\Pages\Bookkeeper;
 
+use Filament\Schemas\Schema;
 use App\Models\Loan;
 use App\Models\LoanType;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
 use Filament\Pages\Page;
 use Livewire\Attributes\Computed;
 
@@ -15,9 +15,9 @@ class CdjLoanReport extends Page implements HasForms
 {
     use InteractsWithForms;
 
-    protected static ?string $navigationGroup = 'Bookkeeping';
+    protected static string | \UnitEnum | null $navigationGroup = 'Bookkeeping';
 
-    protected static string $view = 'filament.app.pages.bookkeeper.cdj-loan-report';
+    protected string $view = 'filament.app.pages.bookkeeper.cdj-loan-report';
 
     protected static ?string $title = 'CDJ SL - Loans Receivables';
 
@@ -30,9 +30,9 @@ class CdjLoanReport extends Page implements HasForms
         return false;
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->components([
             Select::make('month')
                 ->options(oxy_get_month_range())
                 ->selectablePlaceholder(false)

@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Auth;
 
 class LoanOfficerManageBilling extends ManageBillings
 {
-    protected static ?string $navigationGroup = 'Loan';
+    protected static string | \UnitEnum | null $navigationGroup = 'Loan';
 
     protected static ?int $navigationSort = 5;
 

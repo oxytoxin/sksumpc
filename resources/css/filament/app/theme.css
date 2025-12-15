@@ -1,26 +1,44 @@
 @import "../../../../vendor/filament/filament/resources/css/theme.css";
-@import "../../../../vendor/awcodes/filament-table-repeater/resources/css/plugin.css";
 
-@config './tailwind.config.js';
+/*@config './tailwind.config.js';*/
+@source "../../../../app/Filament/App/**/*.php";
+@source "../../../../app/Livewire/App/**/*.php";
+@source "../../../../resources/**/*.blade.php";
+@source "../../../../resources/views/filament/app/resources/loan-application-resource/pages/loan-application-form.blade.php";
+@source "../../../../vendor/filament/**/*.blade.php";
+
+@theme {
+    --font-arial: Arial, Helvetica, serif;
+    --font-sans: 'Figtree', sans-serif;
+    --color-primary: #3F9FEB;
+}
 
 button[wire\:click="resetTableFiltersForm"] {
     display: none;
+}
+
+.fi-topbar-start > a {
+    @apply hidden;
 }
 
 .fi-sidebar-header {
     @apply h-24 flex justify-center ring-0 !shadow-none;
 }
 
-.fi-sidebar {
-    @apply !bg-white !shadow-xl;
+.fi-sidebar-header-logo-ctn {
+    @apply flex justify-center;
+}
+
+.fi-topbar {
+    @apply bg-primary text-white pl-84;
 }
 
 .fi-main {
-    @apply !p-4 relative;
+    @apply !p-4 relative mt-4;
 }
 
 .fi-page {
-    @apply outline outline-2 outline-gray-500 bg-white p-4;
+    @apply outline-2 outline-gray-500 bg-white p-4;
 }
 
 .fi-topbar > nav {
@@ -51,36 +69,33 @@ button[wire\:click="resetTableFiltersForm"] {
     @apply gap-1;
 }
 
-.fi-fo-builder-block-picker > .fi-dropdown-panel {
-    @apply !bg-primary-300 font-bold;
-}
 
 [data-transaction="cbu"] {
-    @apply !bg-blue-100;
+    @apply bg-blue-100;
 }
 
-[data-transaction="savings"] {
-    @apply !bg-green-100;
+[data-transaction="savings"] .fi-sc {
+    @apply bg-green-100 rounded-xl;
 }
 
-[data-transaction="time-deposit"] {
-    @apply !bg-yellow-100;
+[data-transaction="time-deposit"] .fi-sc {
+    @apply bg-yellow-100 rounded-xl;
 }
 
-[data-transaction="imprest"] {
-    @apply !bg-orange-100;
+[data-transaction="imprest"] .fi-sc {
+    @apply bg-orange-100 rounded-xl;
 }
 
-[data-transaction="loan"] {
-    @apply !bg-amber-900 bg-opacity-30;
+[data-transaction="loan"] .fi-sc {
+    @apply bg-amber-900/30 rounded-xl;
 }
 
-[data-transaction="love-gift"] {
-    @apply !bg-pink-100;
+[data-transaction="love-gift"] .fi-sc {
+    @apply bg-pink-100 rounded-xl;
 }
 
-[data-transaction="cash-collection"] {
-    @apply !bg-violet-100;
+[data-transaction="cash-collection"] .fi-sc {
+    @apply bg-violet-100 rounded-xl;
 }
 
 .fs-row-data {

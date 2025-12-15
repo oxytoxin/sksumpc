@@ -2,10 +2,16 @@
 
 namespace App\Filament\App\Resources\BalanceForwardedSummaryResource\RelationManagers;
 
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\CreateAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
 use App\Models\Account;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Enums\FiltersLayout;
@@ -16,10 +22,10 @@ class BalanceForwardedEntriesRelationManager extends RelationManager
 {
     protected static string $relationship = 'balance_forwarded_entries';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Select::make('account_id')
                     ->label('Account')
                     ->columnSpanFull()
@@ -42,15 +48,15 @@ class BalanceForwardedEntriesRelationManager extends RelationManager
         return $table
             ->modifyQueryUsing(fn ($query) => $query->join('accounts', 'balance_forwarded_entries.account_id', 'accounts.id')->select(['accounts.*', 'balance_forwarded_entries.*', 'accounts.id as account_id']))
             ->columns([
-                Tables\Columns\TextColumn::make('account.parent.name')->label('Parent Account'),
-                Tables\Columns\TextColumn::make('account.name')->label('Account Name'),
-                Tables\Columns\TextColumn::make('account.number')->label('Account Number'),
-                Tables\Columns\TextColumn::make('debit')->numeric(2),
-                Tables\Columns\TextColumn::make('credit')->numeric(2),
+                TextColumn::make('account.parent.name')->label('Parent Account'),
+                TextColumn::make('account.name')->label('Account Name'),
+                TextColumn::make('account.number')->label('Account Number'),
+                TextColumn::make('debit')->numeric(2),
+                TextColumn::make('credit')->numeric(2),
             ])
             ->filters([
                 Filter::make('number')
-                    ->form([
+                    ->schema([
                         Select::make('parent_account')
                             ->searchable()
                             ->preload()
@@ -69,15 +75,15 @@ class BalanceForwardedEntriesRelationManager extends RelationManager
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                CreateAction::make(),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+            ->recordActions([
+                EditAction::make(),
+                DeleteAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }

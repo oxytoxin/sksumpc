@@ -10,9 +10,9 @@ use Filament\Pages\Page;
 
 class Dashboard extends Page
 {
-    protected static ?string $navigationIcon = 'icon-dashboard';
+    protected static string | \BackedEnum | null $navigationIcon = 'icon-dashboard';
 
-    protected static string $view = 'filament.app.pages.dashboard-page';
+    protected string $view = 'filament.app.pages.dashboard-page';
 
     protected static ?int $navigationSort = 1;
 

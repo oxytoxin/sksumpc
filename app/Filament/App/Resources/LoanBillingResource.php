@@ -2,6 +2,13 @@
 
 namespace App\Filament\App\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\Action;
+use App\Filament\App\Resources\LoanBillingResource\Pages\ManageLoanBillings;
+use App\Filament\App\Resources\LoanBillingResource\Pages\LoanBillingPayments;
+use App\Filament\App\Resources\LoanBillingResource\Pages\PrintLoanBilling;
 use App\Actions\LoanBilling\PostLoanBillingPayments;
 use App\Filament\App\Resources\LoanBillingResource\Pages;
 use App\Models\LoanBilling;
@@ -10,11 +17,9 @@ use App\Models\MemberType;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
@@ -25,7 +30,7 @@ class LoanBillingResource extends Resource
 {
     protected static ?string $model = LoanBilling::class;
 
-    protected static ?string $navigationGroup = 'Loan';
+    protected static string | \UnitEnum | null $navigationGroup = 'Loan';
 
     protected static ?int $navigationSort = 5;
 
@@ -34,10 +39,10 @@ class LoanBillingResource extends Resource
         return false;
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Select::make('member_type_id')
                     ->label('Member Type')
                     ->reactive()
@@ -96,17 +101,17 @@ class LoanBillingResource extends Resource
                     ),
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
-            ->actions([
-                Tables\Actions\EditAction::make()
+            ->recordActions([
+                EditAction::make()
                     ->visible(fn ($record, $livewire) => ! $record->posted && $livewire->user_is_loan_officer)
-                    ->form([
+                    ->schema([
                         Select::make('payment_type_id')
                             ->paymenttype()
                             ->default(null)
                             ->selectablePlaceholder(true),
                         TextInput::make('reference_number'),
                     ]),
-                Tables\Actions\DeleteAction::make()
+                DeleteAction::make()
                     ->visible(fn ($record, $livewire) => ! $record->posted && ! $record->or_number && $livewire->user_is_loan_officer)
                     ->action(function (LoanBilling $record) {
                         $record->loan_billing_payments()->delete();
@@ -148,15 +153,15 @@ class LoanBillingResource extends Resource
                     ->button()
                     ->outlined(),
             ])
-            ->bulkActions([]);
+            ->toolbarActions([]);
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageLoanBillings::route('/'),
-            'billing-payments' => Pages\LoanBillingPayments::route('/{loan_billing}/receivables'),
-            'statement-of-remittance' => Pages\PrintLoanBilling::route('/{loan_billing}/statement-of-remittance'),
+            'index' => ManageLoanBillings::route('/'),
+            'billing-payments' => LoanBillingPayments::route('/{loan_billing}/receivables'),
+            'statement-of-remittance' => PrintLoanBilling::route('/{loan_billing}/statement-of-remittance'),
         ];
     }
 }

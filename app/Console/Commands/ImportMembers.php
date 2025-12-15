@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use Throwable;
 use App\Actions\Memberships\CreateMemberInitialAccounts;
 use App\Models\CivilStatus;
 use App\Models\Division;
@@ -104,7 +105,7 @@ class ImportMembers extends Command
                     $user->assignRole($role);
                     // app(CreateMemberInitialAccounts::class)->handle($member);
                 }
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 dump($row['mpc_code'], $e->getMessage());
             }
         });

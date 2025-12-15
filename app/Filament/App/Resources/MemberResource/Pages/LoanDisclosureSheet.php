@@ -14,7 +14,7 @@ class LoanDisclosureSheet extends Page
 
     protected static string $resource = MemberResource::class;
 
-    protected static string $view = 'filament.app.resources.member-resource.pages.loan-disclosure-sheet';
+    protected string $view = 'filament.app.resources.member-resource.pages.loan-disclosure-sheet';
 
     public Loan $loan;
 

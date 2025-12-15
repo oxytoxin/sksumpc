@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Resources\DisapprovalReasonResource\Pages;
 
+use Filament\Actions\CreateAction;
 use App\Filament\App\Resources\DisapprovalReasonResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
@@ -13,7 +14,7 @@ class ManageDisapprovalReasons extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 }

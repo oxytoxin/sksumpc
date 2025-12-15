@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Resources\MsoBillingResource\Pages;
 
+use Filament\Actions\CreateAction;
 use App\Filament\App\Resources\MsoBillingResource;
 use App\Models\Member;
 use App\Models\MsoBilling;
@@ -35,7 +36,7 @@ class ManageMsoBillings extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()
+            CreateAction::make()
                 ->label('New MSO Billing')
                 ->action(function ($data) {
                     $amount = $data['amount'] ?? 0;

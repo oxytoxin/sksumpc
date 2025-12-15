@@ -23,11 +23,11 @@ class CbuSchedule extends Page implements HasForms, HasTable
 {
     use InteractsWithForms, InteractsWithTable, RequiresBookkeeperTransactionDate;
 
-    protected static string $view = 'filament.app.pages.share-capital';
+    protected string $view = 'filament.app.pages.share-capital';
 
     protected static ?int $navigationSort = 3;
 
-    protected static ?string $navigationGroup = 'Share Capital';
+    protected static string | \UnitEnum | null $navigationGroup = 'Share Capital';
 
     protected static ?string $navigationLabel = 'CBU Schedule';
 
@@ -104,14 +104,14 @@ class CbuSchedule extends Page implements HasForms, HasTable
                     ->relationship('gender', 'name')
                     ->label('Gender'),
                 Filter::make('form')
-                    ->form([
+                    ->schema([
                         DatePicker::make('transaction_date')
                             ->default(config('app.transaction_date') ?? today())
                             ->native(false),
                     ]),
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
-            ->actions([
+            ->recordActions([
                 //
             ]);
     }

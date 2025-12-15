@@ -2,10 +2,10 @@
 
 namespace App\Filament\App\Pages\Cashier\Reports;
 
+use Filament\Schemas\Schema;
 use App\Enums\PaymentTypes;
 use App\Models\Imprest;
 use App\Models\Saving;
-use Filament\Forms\Form;
 use Filament\Pages\Page;
 use Livewire\Attributes\Computed;
 use Malzariey\FilamentDaterangepickerFilter\Fields\DateRangePicker;
@@ -16,14 +16,14 @@ class CashProof extends Page
 
     protected static bool $shouldRegisterNavigation = false;
 
-    protected static string $view = 'filament.app.pages.cashier.reports.cash-proof';
+    protected string $view = 'filament.app.pages.cashier.reports.cash-proof';
 
     public $data = [];
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 DateRangePicker::make('transaction_date')
                     ->format('Y/m/d')
                     ->default(config('app.transaction_date'))

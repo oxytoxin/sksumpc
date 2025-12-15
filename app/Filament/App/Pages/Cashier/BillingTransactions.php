@@ -2,32 +2,35 @@
 
 namespace App\Filament\App\Pages\Cashier;
 
+use Filament\Actions\Contracts\HasActions;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Actions;
+use Filament\Actions\Action;
 use App\Models\CapitalSubscriptionBilling;
 use App\Models\CashCollectibleBilling;
 use App\Models\LoanBilling;
 use App\Models\MsoBilling;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Livewire\Component;
 
-class BillingTransactions extends Component implements HasForms
+class BillingTransactions extends Component implements HasForms, HasActions
 {
+    use InteractsWithActions;
     use InteractsWithForms, RequiresBookkeeperTransactionDate;
 
     public $data = [];
 
-    public function form(Form $form)
+    public function form(Schema $schema)
     {
-        return $form
+        return $schema
             ->statePath('data')
-            ->schema([
+            ->components([
                 Select::make('type')
                     ->options([
                         1 => 'Capital Subscription',

@@ -6,13 +6,13 @@ use Filament\Pages\Page;
 
 class ShareCapitalReports extends Page
 {
-    protected static ?string $navigationGroup = 'Share Capital';
+    protected static string | \UnitEnum | null $navigationGroup = 'Share Capital';
 
     protected static ?string $navigationLabel = 'Reports';
 
     protected static ?int $navigationSort = 10;
 
-    protected static string $view = 'filament.app.pages.share-capital-reports';
+    protected string $view = 'filament.app.pages.share-capital-reports';
 
     public static function shouldRegisterNavigation(): bool
     {

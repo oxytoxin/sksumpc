@@ -2,10 +2,10 @@
 
 namespace App\Filament\App\Resources\LoanResource\Actions;
 
+use Filament\Actions\ActionGroup;
+use Filament\Actions\Action;
 use App\Models\Loan;
 use App\Models\LoanApplication;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\ActionGroup;
 
 class ViewLoanDetailsActionGroup
 {

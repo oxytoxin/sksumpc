@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Resources\CapitalSubscriptionBillingResource\Pages;
 
+use Filament\Actions\CreateAction;
 use App\Actions\CapitalSubscriptionBilling\CreateIndividualBilling;
 use App\Filament\App\Pages\Cashier\RequiresBookkeeperTransactionDate;
 use App\Filament\App\Resources\CapitalSubscriptionBillingResource;
@@ -35,12 +36,12 @@ class ManageCapitalSubscriptionBillings extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make('group')
+            CreateAction::make('group')
                 ->label('New Group Billing')
                 ->createAnother(false),
-            Actions\CreateAction::make('individual')
+            CreateAction::make('individual')
                 ->label('New Individual Billing')
-                ->form([
+                ->schema([
                     Select::make('payment_type_id')
                         ->paymenttype()
                         ->default(null)

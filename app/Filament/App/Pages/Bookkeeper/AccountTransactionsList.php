@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Pages\Bookkeeper;
 
+use Filament\Schemas\Schema;
 use App\Filament\App\Pages\Cashier\RequiresBookkeeperTransactionDate;
 use App\Models\Account;
 use App\Models\Transaction;
@@ -9,7 +10,6 @@ use Auth;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
 use Filament\Pages\Page;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -25,7 +25,7 @@ class AccountTransactionsList extends Page implements HasForms, HasTable
 
     protected static ?int $navigationSort = 3;
 
-    protected static ?string $navigationGroup = 'Bookkeeping';
+    protected static string | \UnitEnum | null $navigationGroup = 'Bookkeeping';
 
     public $account;
 
@@ -36,7 +36,7 @@ class AccountTransactionsList extends Page implements HasForms, HasTable
         return Auth::user()->can('manage bookkeeping');
     }
 
-    protected static string $view = 'filament.app.pages.bookkeeper.account-transactions-list';
+    protected string $view = 'filament.app.pages.bookkeeper.account-transactions-list';
 
     public function mount()
     {
@@ -44,10 +44,10 @@ class AccountTransactionsList extends Page implements HasForms, HasTable
         $this->date = (config('app.transaction_date')->format('Y/m/d') ?? today()->format('Y/m/d')).' - '.config('app.transaction_date')->format('Y/m/d') ?? today()->format('Y/m/d');
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Select::make('account')
                     ->searchable()
                     ->options(Account::withCode()->whereDoesntHave('children', fn ($q) => $q->whereNull('member_id'))->pluck('code', 'id'))

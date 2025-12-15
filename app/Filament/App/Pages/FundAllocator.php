@@ -6,9 +6,9 @@ use Filament\Pages\Page;
 
 class FundAllocator extends Page
 {
-    protected static ?string $navigationIcon = 'icon-fund-allocator';
+    protected static string | \BackedEnum | null $navigationIcon = 'icon-fund-allocator';
 
-    protected static string $view = 'filament.app.pages.fund-allocator';
+    protected string $view = 'filament.app.pages.fund-allocator';
 
     protected static ?int $navigationSort = 5;
 

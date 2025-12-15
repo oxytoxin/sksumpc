@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Resources\OfficersListResource\Pages;
 
+use Filament\Actions\DeleteAction;
 use App\Filament\App\Resources\OfficersListResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
@@ -14,7 +15,7 @@ class EditOfficersList extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            DeleteAction::make(),
         ];
     }
 

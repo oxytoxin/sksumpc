@@ -10,7 +10,7 @@ class PrintLoanBilling extends Page
 {
     protected static string $resource = LoanBillingResource::class;
 
-    protected static string $view = 'filament.app.resources.loan-billing-resource.pages.print-loan-billing';
+    protected string $view = 'filament.app.resources.loan-billing-resource.pages.print-loan-billing';
 
     public LoanBilling $loan_billing;
 }

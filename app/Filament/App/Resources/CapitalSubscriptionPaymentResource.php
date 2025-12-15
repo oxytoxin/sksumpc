@@ -2,9 +2,10 @@
 
 namespace App\Filament\App\Resources;
 
+use Filament\Schemas\Schema;
+use App\Filament\App\Resources\CapitalSubscriptionPaymentResource\Pages\ListCapitalSubscriptionPayments;
 use App\Filament\App\Resources\CapitalSubscriptionPaymentResource\Pages;
 use App\Models\CapitalSubscriptionPayment;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
@@ -16,21 +17,21 @@ class CapitalSubscriptionPaymentResource extends Resource
 
     protected static ?string $modelLabel = 'Share Capital Payments';
 
-    protected static ?string $navigationIcon = 'icon-share-capital';
+    protected static string | \BackedEnum | null $navigationIcon = 'icon-share-capital';
 
     protected static ?int $navigationSort = 1;
 
-    protected static ?string $navigationGroup = 'Transactions History';
+    protected static string | \UnitEnum | null $navigationGroup = 'Transactions History';
 
     public static function shouldRegisterNavigation(): bool
     {
         return false;
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 //
             ]);
     }
@@ -49,8 +50,8 @@ class CapitalSubscriptionPaymentResource extends Resource
                 Filter::dateRange('transaction_date'),
             ])
             ->defaultSort('transaction_date', 'desc')
-            ->actions([])
-            ->bulkActions([]);
+            ->recordActions([])
+            ->toolbarActions([]);
     }
 
     public static function getRelations(): array
@@ -63,7 +64,7 @@ class CapitalSubscriptionPaymentResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListCapitalSubscriptionPayments::route('/'),
+            'index' => ListCapitalSubscriptionPayments::route('/'),
         ];
     }
 }

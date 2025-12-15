@@ -16,11 +16,11 @@ class Mmigs extends Page implements HasTable
 {
     use InteractsWithTable;
 
-    protected static string $view = 'filament.app.pages.mmigs';
+    protected string $view = 'filament.app.pages.mmigs';
 
     protected static ?int $navigationSort = 15;
 
-    protected static ?string $navigationGroup = 'Share Capital';
+    protected static string | \UnitEnum | null $navigationGroup = 'Share Capital';
 
     protected static ?string $navigationLabel = 'MMIGS';
 

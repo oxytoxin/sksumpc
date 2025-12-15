@@ -14,7 +14,7 @@
     {
         protected static string $resource = MemberResource::class;
 
-        protected static string $view = 'filament.app.resources.member-resource.pages.loan-subsidiary-ledger';
+        protected string $view = 'filament.app.resources.member-resource.pages.loan-subsidiary-ledger';
 
         public Loan $loan;
 

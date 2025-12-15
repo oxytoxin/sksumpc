@@ -20,7 +20,7 @@ class ManageLoanApplications extends ManageRecords
     {
         return [
             CreateAction::make()
-                ->mutateFormDataUsing(function ($data) {
+                ->mutateDataUsing(function ($data) {
                     $data['transaction_date'] = config('app.transaction_date') ?? today();
                     $data['monthly_payment'] = LoansProvider::computeMonthlyPayment($data['desired_amount'], LoanType::find($data['loan_type_id']), $data['number_of_terms'], config('app.transaction_date') ?? today());
 

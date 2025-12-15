@@ -6,9 +6,9 @@ use Filament\Pages\Page;
 
 class Disbursement extends Page
 {
-    protected static ?string $navigationIcon = 'icon-disbursement';
+    protected static string | \BackedEnum | null $navigationIcon = 'icon-disbursement';
 
-    protected static string $view = 'filament.app.pages.disbursement';
+    protected string $view = 'filament.app.pages.disbursement';
 
     protected static ?int $navigationSort = 9;
 

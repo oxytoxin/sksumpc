@@ -2,10 +2,14 @@
 
 namespace App\Filament\App\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\BulkActionGroup;
+use App\Filament\App\Resources\DisapprovalReasonResource\Pages\ManageDisapprovalReasons;
 use App\Filament\App\Resources\DisapprovalReasonResource\Pages;
 use App\Models\DisapprovalReason;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -15,7 +19,7 @@ class DisapprovalReasonResource extends Resource
 {
     protected static ?string $model = DisapprovalReason::class;
 
-    protected static ?string $navigationGroup = 'Management';
+    protected static string | \UnitEnum | null $navigationGroup = 'Management';
 
     protected static ?int $navigationSort = 16;
 
@@ -24,10 +28,10 @@ class DisapprovalReasonResource extends Resource
         return auth()->user()->can('manage all');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')->required(),
             ]);
     }
@@ -41,19 +45,19 @@ class DisapprovalReasonResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+            ->recordActions([
+                EditAction::make(),
+                DeleteAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([]),
+            ->toolbarActions([
+                BulkActionGroup::make([]),
             ]);
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageDisapprovalReasons::route('/'),
+            'index' => ManageDisapprovalReasons::route('/'),
         ];
     }
 }

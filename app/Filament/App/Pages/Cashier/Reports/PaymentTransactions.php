@@ -28,7 +28,7 @@ class PaymentTransactions extends Page implements HasTable
 
     protected static ?string $title = 'PAYMENT TRANSACTIONS';
 
-    protected static string $view = 'filament.app.pages.cashier.reports.payment-transactions';
+    protected string $view = 'filament.app.pages.cashier.reports.payment-transactions';
 
     public $report_title = 'PAYMENT TRANSACTIONS';
 
@@ -134,7 +134,7 @@ class PaymentTransactions extends Page implements HasTable
                 Filter::make('transaction_type')
                     ->columns(2)
                     ->columnSpan(2)
-                    ->form([
+                    ->schema([
                         Select::make('transaction_type')
                             ->label('Transaction Type')
                             ->options([

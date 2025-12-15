@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Pages;
 
+use Filament\Actions\Action;
 use App\Filament\App\Pages\Cashier\Reports\HasSignatories;
 use App\Models\Loan;
 use App\Models\LoanType;
@@ -9,7 +10,6 @@ use App\Models\Member;
 use App\Models\SignatureSet;
 use Auth;
 use Filament\Pages\Page;
-use Filament\Tables\Actions\Action;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Enums\FiltersLayout;
@@ -21,9 +21,9 @@ class TotalLoanReleasedReport extends Page implements HasTable
 {
     use HasSignatories, InteractsWithTable;
 
-    protected static string $view = 'filament.app.pages.total-loan-released-report';
+    protected string $view = 'filament.app.pages.total-loan-released-report';
 
-    protected static ?string $navigationGroup = 'Loan';
+    protected static string | \UnitEnum | null $navigationGroup = 'Loan';
 
     protected static ?int $navigationSort = 6;
 

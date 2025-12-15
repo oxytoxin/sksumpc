@@ -2,11 +2,14 @@
 
 namespace App\Livewire\App;
 
+use Filament\Actions\Contracts\HasActions;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\ViewAction;
+use Filament\Actions\BulkActionGroup;
 use App\Models\Imprest;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -14,8 +17,9 @@ use Filament\Tables\Table;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
-class ImprestsTable extends Component implements HasForms, HasTable
+class ImprestsTable extends Component implements HasForms, HasTable, HasActions
 {
+    use InteractsWithActions;
     use InteractsWithForms;
     use InteractsWithTable;
 
@@ -44,9 +48,9 @@ class ImprestsTable extends Component implements HasForms, HasTable
                     ->label('Subsidiary Ledger')
                     ->url(route('filament.app.resources.members.imprest-subsidiary-ledger', ['member' => $this->member_id])),
             ])
-            ->actions([])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([]),
+            ->recordActions([])
+            ->toolbarActions([
+                BulkActionGroup::make([]),
             ]);
     }
 

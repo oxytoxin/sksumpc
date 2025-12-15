@@ -2,12 +2,16 @@
 
 namespace App\Filament\App\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\App\Resources\CashCollectibleSubscriptionResource\Pages\ManageCashCollectibleSubscriptions;
 use App\Filament\App\Resources\CashCollectibleSubscriptionResource\Pages;
 use App\Models\CashCollectibleSubscription;
 use App\Models\Member;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -19,17 +23,17 @@ class CashCollectibleSubscriptionResource extends Resource
 {
     protected static ?string $model = CashCollectibleSubscription::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function shouldRegisterNavigation(): bool
     {
         return false;
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Select::make('account_id')
                     ->relationship('cash_collectible_account', 'name')
                     ->required(),
@@ -71,12 +75,12 @@ class CashCollectibleSubscriptionResource extends Resource
                     ->relationship('cash_collectible_account', 'name'),
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -91,7 +95,7 @@ class CashCollectibleSubscriptionResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageCashCollectibleSubscriptions::route('/'),
+            'index' => ManageCashCollectibleSubscriptions::route('/'),
         ];
     }
 }

@@ -2,6 +2,12 @@
 
 namespace App\Livewire\App;
 
+use Filament\Actions\Contracts\HasActions;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\CreateAction;
+use Filament\Actions\BulkActionGroup;
 use App\Models\CashBeginning;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Hidden;
@@ -9,9 +15,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -19,8 +22,9 @@ use Filament\Tables\Table;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
-class CashBeginningsTable extends Component implements HasForms, HasTable
+class CashBeginningsTable extends Component implements HasForms, HasTable, HasActions
 {
+    use InteractsWithActions;
     use InteractsWithForms;
     use InteractsWithTable;
 
@@ -38,9 +42,9 @@ class CashBeginningsTable extends Component implements HasForms, HasTable
             ->filters([
                 //
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make()
-                    ->form([
+                    ->schema([
                         DatePicker::make('transaction_date')
                             ->default(today())
                             ->native(false)
@@ -52,7 +56,7 @@ class CashBeginningsTable extends Component implements HasForms, HasTable
             ])
             ->headerActions([
                 CreateAction::make()
-                    ->form([
+                    ->schema([
                         DatePicker::make('transaction_date')
                             ->default(today())
                             ->native(false)
@@ -63,8 +67,8 @@ class CashBeginningsTable extends Component implements HasForms, HasTable
                     ])
                     ->createAnother(false),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+            ->toolbarActions([
+                BulkActionGroup::make([
                     //
                 ]),
             ]);

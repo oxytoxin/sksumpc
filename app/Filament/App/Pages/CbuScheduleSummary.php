@@ -2,25 +2,25 @@
 
 namespace App\Filament\App\Pages;
 
+use Filament\Schemas\Schema;
 use App\Enums\MemberTypes;
 use App\Models\Account;
 use Auth;
 use Carbon\CarbonImmutable;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Form;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
 use Livewire\Attributes\Computed;
 
 class CbuScheduleSummary extends Page
 {
-    protected static ?string $navigationGroup = 'Share Capital';
+    protected static string | \UnitEnum | null $navigationGroup = 'Share Capital';
 
     protected static ?string $navigationLabel = 'CBU Schedule Summary';
 
     protected static ?int $navigationSort = 3;
 
-    protected static string $view = 'filament.app.pages.cbu-schedule-summary';
+    protected string $view = 'filament.app.pages.cbu-schedule-summary';
 
     public $transaction_date;
 
@@ -78,9 +78,9 @@ class CbuScheduleSummary extends Page
         $this->form->fill();
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->components([
             DatePicker::make('transaction_date')
                 ->native(false)
                 ->live()

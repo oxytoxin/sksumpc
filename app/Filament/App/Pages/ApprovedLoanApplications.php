@@ -15,9 +15,9 @@ class ApprovedLoanApplications extends Page implements HasTable
 {
     use HasViewLoanDetailsActionGroup, InteractsWithTable;
 
-    protected static string $view = 'filament.app.pages.approved-loan-applications';
+    protected string $view = 'filament.app.pages.approved-loan-applications';
 
-    protected static ?string $navigationGroup = 'Loan';
+    protected static string | \UnitEnum | null $navigationGroup = 'Loan';
 
     protected static ?int $navigationSort = 4;
 

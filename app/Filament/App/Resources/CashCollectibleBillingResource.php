@@ -2,6 +2,14 @@
 
 namespace App\Filament\App\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\App\Resources\CashCollectibleBillingResource\Pages\ManageCashCollectibleBillings;
+use App\Filament\App\Resources\CashCollectibleBillingResource\Pages\CashCollectibleBillingPayments;
 use App\Actions\CashCollectionBilling\PostCashCollectibleBillingPayments;
 use App\Filament\App\Resources\CashCollectibleBillingResource\Pages;
 use App\Models\CashCollectibleAccount;
@@ -9,11 +17,9 @@ use App\Models\CashCollectibleBilling;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -22,16 +28,16 @@ class CashCollectibleBillingResource extends Resource
 {
     protected static ?string $model = CashCollectibleBilling::class;
 
-    protected static ?string $navigationGroup = 'Share Capital';
+    protected static string | \UnitEnum | null $navigationGroup = 'Share Capital';
 
     protected static ?string $navigationLabel = 'Stakeholders';
 
     protected static ?int $navigationSort = 6;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Select::make('account_id')
                     ->options(CashCollectibleAccount::pluck('name', 'id'))
                     ->label('Cash Collectible Account')
@@ -72,17 +78,17 @@ class CashCollectibleBillingResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make()
+            ->recordActions([
+                EditAction::make()
                     ->visible(fn ($record) => ! $record->posted)
-                    ->form([
+                    ->schema([
                         Select::make('payment_type_id')
                             ->paymenttype()
                             ->default(null)
                             ->selectablePlaceholder(true),
                         TextInput::make('reference_number'),
                     ]),
-                Tables\Actions\DeleteAction::make()
+                DeleteAction::make()
                     ->visible(fn ($record) => ! $record->posted)
                     ->action(function (CashCollectibleBilling $record) {
                         $record->cash_collectible_billing_payments()->delete();
@@ -119,9 +125,9 @@ class CashCollectibleBillingResource extends Resource
                     ->button()
                     ->outlined(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -136,8 +142,8 @@ class CashCollectibleBillingResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageCashCollectibleBillings::route('/'),
-            'billing-payments' => Pages\CashCollectibleBillingPayments::route('/{cash_collectible_billing}/receivables'),
+            'index' => ManageCashCollectibleBillings::route('/'),
+            'billing-payments' => CashCollectibleBillingPayments::route('/{cash_collectible_billing}/receivables'),
         ];
     }
 }

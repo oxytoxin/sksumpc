@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Resources\DisbursementVoucherResource\Pages;
 
+use Filament\Actions\CreateAction;
 use App\Filament\App\Resources\DisbursementVoucherResource;
 use App\Models\DisbursementVoucher;
 use DB;
@@ -21,7 +22,7 @@ class ManageDisbursementVouchers extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()
+            CreateAction::make()
                 ->action(function ($data) {
                     DB::beginTransaction();
                     $data['voucher_type_id'] = 6;

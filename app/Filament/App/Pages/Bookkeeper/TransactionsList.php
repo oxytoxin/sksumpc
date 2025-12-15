@@ -26,14 +26,14 @@ class TransactionsList extends Page implements HasForms, HasTable
 
     protected static ?int $navigationSort = 3;
 
-    protected static ?string $navigationGroup = 'Bookkeeping';
+    protected static string | \UnitEnum | null $navigationGroup = 'Bookkeeping';
 
     public static function shouldRegisterNavigation(): bool
     {
         return Auth::user()->can('manage bookkeeping');
     }
 
-    protected static string $view = 'filament.app.pages.bookkeeper.transactions-list';
+    protected string $view = 'filament.app.pages.bookkeeper.transactions-list';
 
     public ?int $transaction_type;
 

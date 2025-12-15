@@ -2,8 +2,8 @@
 
 namespace App\Livewire\App\Loans\Traits;
 
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\ActionGroup;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\Action;
 
 trait HasViewLoanDetailsActionGroup
 {

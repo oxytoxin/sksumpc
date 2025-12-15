@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Resources\CashCollectibleResource\Pages;
 
+use Filament\Actions\CreateAction;
 use App\Filament\App\Resources\CashCollectibleResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
@@ -13,7 +14,7 @@ class ListCashCollectibles extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 }

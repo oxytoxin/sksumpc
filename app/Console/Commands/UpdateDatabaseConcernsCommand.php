@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use DB;
 use App\Models\DisbursementVoucherItem;
 use App\Models\TransactionDateHistory;
 use Illuminate\Console\Command;
@@ -27,7 +28,7 @@ class UpdateDatabaseConcernsCommand extends Command
      */
     public function handle()
     {
-        \DB::beginTransaction();
+        DB::beginTransaction();
 
         DisbursementVoucherItem::each(function ($item) {
             $item->update([
@@ -40,6 +41,6 @@ class UpdateDatabaseConcernsCommand extends Command
             'is_current' => true,
         ]);
 
-        \DB::commit();
+        DB::commit();
     }
 }

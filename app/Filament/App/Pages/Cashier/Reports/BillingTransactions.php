@@ -20,7 +20,7 @@ class BillingTransactions extends Page implements HasTable
 
     protected static bool $shouldRegisterNavigation = false;
 
-    protected static string $view = 'filament.app.pages.cashier.reports.billing-transactions';
+    protected string $view = 'filament.app.pages.cashier.reports.billing-transactions';
 
     protected static ?string $title = 'BILLING TRANSACTIONS';
 

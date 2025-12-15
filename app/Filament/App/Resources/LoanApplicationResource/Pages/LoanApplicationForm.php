@@ -13,7 +13,7 @@ class LoanApplicationForm extends Page
 
     protected static string $resource = LoanApplicationResource::class;
 
-    protected static string $view = 'filament.app.resources.loan-application-resource.pages.loan-application-form';
+    protected string $view = 'filament.app.resources.loan-application-resource.pages.loan-application-form';
 
     public LoanApplication $loan_application;
 

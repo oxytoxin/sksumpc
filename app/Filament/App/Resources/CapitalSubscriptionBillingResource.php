@@ -2,6 +2,14 @@
 
 namespace App\Filament\App\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\App\Resources\CapitalSubscriptionBillingResource\Pages\ManageCapitalSubscriptionBillings;
+use App\Filament\App\Resources\CapitalSubscriptionBillingResource\Pages\CapitalSubscriptionBillingPayments;
 use App\Actions\CapitalSubscriptionBilling\PostCapitalSubscriptionBillingPayments;
 use App\Filament\App\Resources\CapitalSubscriptionBillingResource\Pages;
 use App\Models\CapitalSubscriptionBilling;
@@ -10,11 +18,9 @@ use App\Models\MemberType;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -23,7 +29,7 @@ class CapitalSubscriptionBillingResource extends Resource
 {
     protected static ?string $model = CapitalSubscriptionBilling::class;
 
-    protected static ?string $navigationGroup = 'Share Capital';
+    protected static string | \UnitEnum | null $navigationGroup = 'Share Capital';
 
     protected static ?int $navigationSort = 2;
 
@@ -32,10 +38,10 @@ class CapitalSubscriptionBillingResource extends Resource
         return false;
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Select::make('member_type_id')
                     ->label('Member Type')
                     ->reactive()
@@ -79,17 +85,17 @@ class CapitalSubscriptionBillingResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make()
+            ->recordActions([
+                EditAction::make()
                     ->visible(fn ($record) => ! $record->posted)
-                    ->form([
+                    ->schema([
                         Select::make('payment_type_id')
                             ->paymenttype()
                             ->default(null)
                             ->selectablePlaceholder(true),
                         TextInput::make('reference_number'),
                     ]),
-                Tables\Actions\DeleteAction::make()
+                DeleteAction::make()
                     ->visible(fn ($record) => ! $record->posted)
                     ->action(function (CapitalSubscriptionBilling $record) {
                         $record->capital_subscription_billing_payments()->delete();
@@ -126,9 +132,9 @@ class CapitalSubscriptionBillingResource extends Resource
                     ->button()
                     ->outlined(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -143,8 +149,8 @@ class CapitalSubscriptionBillingResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageCapitalSubscriptionBillings::route('/'),
-            'billing-payments' => Pages\CapitalSubscriptionBillingPayments::route('/{capital_subscription_billing}/receivables'),
+            'index' => ManageCapitalSubscriptionBillings::route('/'),
+            'billing-payments' => CapitalSubscriptionBillingPayments::route('/{capital_subscription_billing}/receivables'),
         ];
     }
 }

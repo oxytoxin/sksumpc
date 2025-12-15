@@ -2,19 +2,19 @@
 
 namespace App\Filament\App\Pages\Bookkeeper;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Actions;
+use Filament\Actions\Action;
 use App\Models\SystemConfiguration;
 use App\Models\TransactionDateHistory;
 use Carbon\Carbon;
 use DB;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 
@@ -24,9 +24,9 @@ class TransactionDateManager extends Page implements HasActions, HasForms
 
     protected static ?int $navigationSort = 1;
 
-    protected static ?string $navigationGroup = 'Bookkeeping';
+    protected static string | \UnitEnum | null $navigationGroup = 'Bookkeeping';
 
-    protected static string $view = 'filament.app.pages.bookkeeper.transaction-date-manager';
+    protected string $view = 'filament.app.pages.bookkeeper.transaction-date-manager';
 
     public $transaction_date;
 
@@ -35,9 +35,9 @@ class TransactionDateManager extends Page implements HasActions, HasForms
         return auth()->user()->can('manage bookkeeping');
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->components([
             Placeholder::make('current_transaction_date')
                 ->content(fn () => SystemConfiguration::config('Transaction Date')?->content['transaction_date']),
             Placeholder::make('note')

@@ -2,21 +2,21 @@
 
 namespace App\Filament\App\Pages\Billings;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Livewire;
 use App\Filament\App\Resources\CapitalSubscriptionBillingResource\Pages\ManageCapitalSubscriptionBillings;
 use App\Filament\App\Resources\CashCollectibleBillingResource\Pages\ManageCashCollectibleBillings;
 use App\Filament\App\Resources\LoanBillingResource\Pages\ManageLoanBillings;
 use App\Filament\App\Resources\MsoBillingResource\Pages\ManageMsoBillings;
-use Filament\Forms\Components\Livewire;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Forms\Form;
 use Filament\Pages\Page;
 
 class ManageBillings extends Page
 {
     protected static ?int $navigationSort = 1;
 
-    protected static string $view = 'filament.app.pages.billings.manage-billings';
+    protected string $view = 'filament.app.pages.billings.manage-billings';
 
     protected static ?string $title = 'Manage Billings';
 
@@ -32,11 +32,11 @@ class ManageBillings extends Page
         $this->form->fill();
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->statePath('data')
-            ->schema([
+            ->components([
                 Tabs::make('transactions')
                     ->activeTab(1)
                     ->persistTabInQueryString()

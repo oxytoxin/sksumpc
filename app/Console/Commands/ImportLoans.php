@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use Throwable;
 use App\Actions\Loans\ImportExistingLoan;
 use App\Models\LoanType;
 use App\Models\Member;
@@ -58,7 +59,7 @@ class ImportLoans extends Command
                         last_transaction_date: Carbon::parse(str($row['last_transaction_date'])->remove('.')->toString()),
                     );
                 }
-            } catch (\Throwable $th) {
+            } catch (Throwable $th) {
                 dd($row, $th);
             }
         });

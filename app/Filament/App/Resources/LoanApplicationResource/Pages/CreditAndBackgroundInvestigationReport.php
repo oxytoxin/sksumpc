@@ -14,7 +14,7 @@ class CreditAndBackgroundInvestigationReport extends Page
 {
     protected static string $resource = LoanApplicationResource::class;
 
-    protected static string $view = 'filament.app.resources.loan-application-resource.pages.credit-and-background-investigation-report';
+    protected string $view = 'filament.app.resources.loan-application-resource.pages.credit-and-background-investigation-report';
 
     use HasSignatories;
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use Exception;
 use App\Models\TransactionDateHistory;
 use Closure;
 use Illuminate\Http\Request;
@@ -12,13 +13,13 @@ class EnsurePresentBookkeeperTransactionDate
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param Closure(Request):Response $next
      */
     public function handle(Request $request, Closure $next): Response
     {
         try {
             config(['app.transaction_date' => TransactionDateHistory::current_date()]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
         }
 
         return $next($request);

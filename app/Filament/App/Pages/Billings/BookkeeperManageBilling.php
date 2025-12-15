@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Auth;
 
 class BookkeeperManageBilling extends ManageBillings
 {
-    protected static ?string $navigationGroup = 'Bookkeeping';
+    protected static string | \UnitEnum | null $navigationGroup = 'Bookkeeping';
 
     public static function shouldRegisterNavigation(): bool
     {

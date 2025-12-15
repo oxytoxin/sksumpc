@@ -6,7 +6,7 @@ use Auth;
 
 class CbuOfficerManageBilling extends ManageBillings
 {
-    protected static ?string $navigationGroup = 'Share Capital';
+    protected static string | \UnitEnum | null $navigationGroup = 'Share Capital';
 
     public static function shouldRegisterNavigation(): bool
     {

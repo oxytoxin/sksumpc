@@ -2,22 +2,22 @@
 
 namespace App\Filament\App\Pages\Cashier;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Livewire;
 use Auth;
-use Filament\Forms\Components\Livewire;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
 use Filament\Pages\Page;
 
 class CashierTransactionsPage extends Page implements HasForms
 {
     use InteractsWithForms;
 
-    protected static string $view = 'filament.app.pages.cashier.cashier-transactions-page';
+    protected string $view = 'filament.app.pages.cashier.cashier-transactions-page';
 
-    protected static ?string $navigationGroup = 'Cashier';
+    protected static string | \UnitEnum | null $navigationGroup = 'Cashier';
 
     protected ?string $heading = 'Transactions';
 
@@ -37,11 +37,11 @@ class CashierTransactionsPage extends Page implements HasForms
         $this->form->fill();
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->statePath('data')
-            ->schema([
+            ->components([
                 Tabs::make('transactions')
                     ->activeTab(1)
                     ->persistTabInQueryString()

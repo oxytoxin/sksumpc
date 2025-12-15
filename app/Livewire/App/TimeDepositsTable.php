@@ -2,6 +2,12 @@
 
 namespace App\Livewire\App;
 
+use Filament\Actions\Contracts\HasActions;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Support\Enums\Width;
+use Filament\Actions\BulkActionGroup;
 use App\Actions\TimeDeposits\ClaimTimeDeposit;
 use App\Actions\TimeDeposits\RolloverTimeDeposit;
 use App\Actions\TimeDeposits\TerminateTimeDeposit;
@@ -15,10 +21,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Filament\Support\Colors\Color;
-use Filament\Support\Enums\MaxWidth;
 use Filament\Tables;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -30,8 +33,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 use Number;
 
-class TimeDepositsTable extends Component implements HasForms, HasTable
+class TimeDepositsTable extends Component implements HasForms, HasTable, HasActions
 {
+    use InteractsWithActions;
     use InteractsWithForms;
     use InteractsWithTable;
 
@@ -65,9 +69,9 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                             ->when($data['value'] == 'terminated', fn ($query) => $query->whereHas('time_deposit', fn ($query) => $query->whereRaw('withdrawal_date <= maturity_date')));
                     }),
             ], layout: FiltersLayout::AboveContent)
-            ->actions([
+            ->recordActions([
                 Action::make('Terminate')
-                    ->form([
+                    ->schema([
                         Placeholder::make('note')->content(fn ($record) => 'Pretermination will accrue only 1% interest. Interest accrued: '.Number::currency($record->time_deposit->accrued_interest, 'PHP')),
                     ])->visible(Auth::user()->can('manage mso'))
                     ->action(function (TimeDepositAccount $record, $data) {
@@ -90,7 +94,7 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                     ->button(),
                 Action::make('rollover')
                     ->visible(Auth::user()->can('manage mso'))
-                    ->form(fn (TimeDepositAccount $record) => [
+                    ->schema(fn (TimeDepositAccount $record) => [
                         TextInput::make('number_of_days')->minValue(1)->reactive()->default($record->time_deposit->number_of_days),
                         TextInput::make('interest_rate')->minValue(0.01)->reactive()->default(round($record->time_deposit->interest_rate * 100, 2))->dehydrateStateUsing(fn ($state) => round($state / 100, 4)),
                         Placeholder::make('maturity_date')->content(TimeDepositsProvider::getMaturityDate(config('app.transaction_date') ?? today())->format('F d, Y')),
@@ -116,7 +120,7 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                     ->button(),
                 ActionGroup::make([
                     Action::make('certificate')
-                        ->modalWidth(MaxWidth::SixExtraLarge)
+                        ->modalWidth(Width::SixExtraLarge)
                         ->modalSubmitAction(false)
                         ->modalCancelAction(false)->visible(Auth::user()->can('manage mso'))
                         ->modalContent(fn ($record) => view('filament.app.views.time-deposit-certificate', ['time_deposit' => $record->time_deposit])),
@@ -130,8 +134,8 @@ class TimeDepositsTable extends Component implements HasForms, HasTable
                     ->label('View'),
             ])
             ->headerActions([])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+            ->toolbarActions([
+                BulkActionGroup::make([
                     //
                 ]),
             ]);

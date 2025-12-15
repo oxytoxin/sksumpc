@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Resources\BalanceForwardedSummaryResource\Pages;
 
+use Filament\Actions\DeleteAction;
 use App\Filament\App\Resources\BalanceForwardedSummaryResource;
 use Carbon\Carbon;
 use Filament\Actions;
@@ -15,7 +16,7 @@ class EditBalanceForwardedSummary extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            DeleteAction::make(),
         ];
     }
 

@@ -2,6 +2,9 @@
 
 namespace App\Filament\App\Resources\LoanBillingResource\Pages;
 
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
 use App\Filament\App\Resources\LoanBillingResource;
 use App\Models\LoanBilling;
 use App\Models\LoanBillingPayment;
@@ -11,9 +14,6 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
@@ -39,7 +39,7 @@ class LoanBillingPayments extends ListRecords
         return [
             Action::make('Import')
                 ->visible(auth()->user()->can('manage loans'))
-                ->form([
+                ->schema([
                     FileUpload::make('billing')
                         ->storeFiles(false)
                         ->acceptedFileTypes(['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/octet-stream']),
@@ -133,9 +133,9 @@ class LoanBillingPayments extends ListRecords
                     ->query(fn ($query, $livewire) => $query->when($livewire->tableFilters['member']['member_type_id']['value'] ?? null, fn ($q, $v) => $q->whereRelation('member', 'member_type_id', $v))),
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
-            ->actions([
+            ->recordActions([
                 EditAction::make()
-                    ->form([
+                    ->schema([
                         TextInput::make('amount_paid')
                             ->default(fn ($record) => $record->amount_paid)
                             ->moneymask(),
@@ -144,7 +144,7 @@ class LoanBillingPayments extends ListRecords
                 DeleteAction::make()
                     ->visible(fn ($record) => ! $record->posted && auth()->user()->can('manage loans')),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 DeleteBulkAction::make()
                     ->action(function ($records) {
                         $records->toQuery()->where('posted', false)->delete();

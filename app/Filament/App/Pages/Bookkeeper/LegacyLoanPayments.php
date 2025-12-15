@@ -2,17 +2,17 @@
 
 namespace App\Filament\App\Pages\Bookkeeper;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Actions;
+use Filament\Actions\Action;
 use App\Actions\Loans\PayLegacyLoan;
 use App\Models\LoanAccount;
 use App\Models\Member;
 use App\Models\TransactionType;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 
@@ -20,9 +20,9 @@ class LegacyLoanPayments extends Page
 {
     protected static ?int $navigationSort = 1;
 
-    protected static ?string $navigationGroup = 'Bookkeeping';
+    protected static string | \UnitEnum | null $navigationGroup = 'Bookkeeping';
 
-    protected static string $view = 'filament.app.pages.bookkeeper.legacy-loan-payments';
+    protected string $view = 'filament.app.pages.bookkeeper.legacy-loan-payments';
 
     public $data = [];
 
@@ -36,10 +36,10 @@ class LegacyLoanPayments extends Page
         $this->form->fill();
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Select::make('member_id')
                     ->dehydrated(false)
                     ->label('Member')

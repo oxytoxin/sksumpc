@@ -21,7 +21,7 @@ class MsoTransactions extends Page implements HasTable
 
     protected static ?string $title = 'MSO TRANSACTIONS';
 
-    protected static string $view = 'filament.app.pages.cashier.reports.mso-transactions';
+    protected string $view = 'filament.app.pages.cashier.reports.mso-transactions';
 
     public $report_title = "REPORT ON MEMBERS' MSO TRANSACTIONS";
 

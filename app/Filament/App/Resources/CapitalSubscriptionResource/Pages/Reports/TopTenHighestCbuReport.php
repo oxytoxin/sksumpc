@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Resources\CapitalSubscriptionResource\Pages\Reports;
 
+use Filament\Schemas\Schema;
 use App\Filament\App\Pages\Cashier\Reports\HasSignatories;
 use App\Filament\App\Resources\CapitalSubscriptionResource;
 use App\Models\Member;
@@ -11,7 +12,6 @@ use Carbon\Carbon;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\Page;
 use Livewire\Attributes\Computed;
 
@@ -21,16 +21,16 @@ class TopTenHighestCbuReport extends Page implements HasForms
 
     protected static string $resource = CapitalSubscriptionResource::class;
 
-    protected static string $view = 'filament.app.resources.capital-subscription-resource.pages.reports.top-ten-highest-cbu-report';
+    protected string $view = 'filament.app.resources.capital-subscription-resource.pages.reports.top-ten-highest-cbu-report';
 
     protected ?string $heading = 'Top 10 Highest CBU Contributor';
 
     public $data = [];
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Select::make('member_type_id')
                     ->options(MemberType::pluck('name', 'id'))
                     ->label('Member Type')

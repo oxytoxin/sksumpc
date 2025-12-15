@@ -2,12 +2,15 @@
 
 namespace App\Livewire\App;
 
+use Filament\Actions\Contracts\HasActions;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\ViewAction;
+use Filament\Actions\BulkActionGroup;
 use App\Models\Saving;
 use App\Models\SavingsAccount;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -17,8 +20,9 @@ use Filament\Tables\Table;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
-class SavingsTable extends Component implements HasForms, HasTable
+class SavingsTable extends Component implements HasForms, HasTable, HasActions
 {
+    use InteractsWithActions;
     use InteractsWithForms;
     use InteractsWithTable;
 
@@ -46,7 +50,7 @@ class SavingsTable extends Component implements HasForms, HasTable
                     ->label('Account'),
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
-            ->actions([])
+            ->recordActions([])
             ->headerActions([
                 ViewAction::make('subsidiary_ledger')
                     ->icon('heroicon-o-clipboard-document-list')
@@ -54,8 +58,8 @@ class SavingsTable extends Component implements HasForms, HasTable
                     ->visible(fn ($livewire) => filled($livewire->tableFilters['savings_account_id']['value']))
                     ->url(fn ($livewire) => route('filament.app.resources.members.savings-subsidiary-ledger', ['savings_account' => $livewire->tableFilters['savings_account_id']['value']])),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+            ->toolbarActions([
+                BulkActionGroup::make([
                     //
                 ]),
             ]);

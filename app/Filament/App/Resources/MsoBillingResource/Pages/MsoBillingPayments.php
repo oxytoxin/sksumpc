@@ -2,6 +2,9 @@
 
 namespace App\Filament\App\Resources\MsoBillingResource\Pages;
 
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
 use App\Filament\App\Resources\MsoBillingResource;
 use App\Models\Account;
 use App\Models\Member;
@@ -14,9 +17,6 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\SelectFilter;
@@ -44,7 +44,7 @@ class MsoBillingPayments extends ListRecords
             CreateAction::make()->label('New MSO Receivable')
                 ->createAnother(false)
                 ->disabled(fn () => $this->mso_billing->posted)
-                ->form([
+                ->schema([
                     Select::make('member_id')
                         ->label('Member')
                         ->options(Member::pluck('full_name', 'id'))
@@ -79,7 +79,7 @@ class MsoBillingPayments extends ListRecords
                 }),
             Action::make('Import')
                 ->visible(Auth::user()->can('manage cbu'))
-                ->form([
+                ->schema([
                     FileUpload::make('billing')
                         ->storeFiles(false)
                         ->acceptedFileTypes(['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/octet-stream']),
@@ -168,9 +168,9 @@ class MsoBillingPayments extends ListRecords
                     ->query(fn ($query, $livewire) => $query->when($livewire->tableFilters['member']['member_type_id']['value'] ?? null, fn ($q, $v) => $q->whereRelation('member', 'member_type_id', $v))),
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
-            ->actions([
+            ->recordActions([
                 EditAction::make()
-                    ->form([
+                    ->schema([
                         TextInput::make('amount_paid')
                             ->default(fn ($record) => $record->amount_paid)
                             ->moneymask(),
@@ -178,7 +178,7 @@ class MsoBillingPayments extends ListRecords
                     ->visible(fn ($record) => ! $record->posted),
                 DeleteAction::make()
                     ->visible(fn ($record) => ! $record->posted),
-            ])->bulkActions([
+            ])->toolbarActions([
                 DeleteBulkAction::make()
                     ->action(function ($records) {
                         $records->toQuery()->where('posted', false)->delete();

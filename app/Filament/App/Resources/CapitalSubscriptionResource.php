@@ -2,11 +2,14 @@
 
 namespace App\Filament\App\Resources;
 
+use Filament\Schemas\Schema;
+use App\Filament\App\Resources\CapitalSubscriptionResource\Pages\ListCapitalSubscriptions;
+use App\Filament\App\Resources\CapitalSubscriptionResource\Pages\Reports\TopTenHighestCbuReport;
+use App\Filament\App\Resources\CapitalSubscriptionResource\Pages\ShareCertificate;
 use App\Filament\App\Resources\CapitalSubscriptionResource\Pages;
 use App\Models\CapitalSubscription;
 use App\Models\MemberSubtype;
 use App\Models\MemberType;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
@@ -17,17 +20,17 @@ class CapitalSubscriptionResource extends Resource
 {
     protected static ?string $model = CapitalSubscription::class;
 
-    protected static ?string $navigationGroup = 'Share Capital';
+    protected static string | \UnitEnum | null $navigationGroup = 'Share Capital';
 
     public static function shouldRegisterNavigation(): bool
     {
         return auth()->user()->can('manage cbu');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([]);
+        return $schema
+            ->components([]);
     }
 
     public static function table(Table $table): Table
@@ -61,8 +64,8 @@ class CapitalSubscriptionResource extends Resource
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
             ->defaultSort('member.alt_full_name')
-            ->actions([])
-            ->bulkActions([]);
+            ->recordActions([])
+            ->toolbarActions([]);
     }
 
     public static function getRelations(): array
@@ -75,9 +78,9 @@ class CapitalSubscriptionResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListCapitalSubscriptions::route('/'),
-            'reports.top-ten-highest-cbu' => Pages\Reports\TopTenHighestCbuReport::route('/reports/top-ten-highest-cbu'),
-            'share-certificate' => Pages\ShareCertificate::route('/share-certificate/{capital_subscription}'),
+            'index' => ListCapitalSubscriptions::route('/'),
+            'reports.top-ten-highest-cbu' => TopTenHighestCbuReport::route('/reports/top-ten-highest-cbu'),
+            'share-certificate' => ShareCertificate::route('/share-certificate/{capital_subscription}'),
         ];
     }
 }

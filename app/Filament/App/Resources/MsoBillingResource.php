@@ -2,6 +2,14 @@
 
 namespace App\Filament\App\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\App\Resources\MsoBillingResource\Pages\ManageMsoBillings;
+use App\Filament\App\Resources\MsoBillingResource\Pages\MsoBillingPayments;
 use App\Actions\MsoBilling\PostMsoBillingPayments;
 use App\Filament\App\Resources\MsoBillingResource\Pages;
 use App\Models\MemberSubtype;
@@ -10,11 +18,9 @@ use App\Models\MsoBilling;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -23,17 +29,17 @@ class MsoBillingResource extends Resource
 {
     protected static ?string $model = MsoBilling::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function shouldRegisterNavigation(): bool
     {
         return false;
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Select::make('member_type_id')
                     ->label('Member Type')
                     ->reactive()
@@ -88,17 +94,17 @@ class MsoBillingResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make()
+            ->recordActions([
+                EditAction::make()
                     ->visible(fn ($record) => ! $record->posted)
-                    ->form([
+                    ->schema([
                         Select::make('payment_type_id')
                             ->paymenttype()
                             ->default(null)
                             ->selectablePlaceholder(true),
                         TextInput::make('reference_number'),
                     ]),
-                Tables\Actions\DeleteAction::make()
+                DeleteAction::make()
                     ->visible(fn ($record) => ! $record->posted)
                     ->action(function (MsoBilling $record) {
                         $record->payments()->delete();
@@ -135,9 +141,9 @@ class MsoBillingResource extends Resource
                     ->button()
                     ->outlined(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -145,8 +151,8 @@ class MsoBillingResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageMsoBillings::route('/'),
-            'billing-payments' => Pages\MsoBillingPayments::route('/{mso_billing}/receivables'),
+            'index' => ManageMsoBillings::route('/'),
+            'billing-payments' => MsoBillingPayments::route('/{mso_billing}/receivables'),
         ];
     }
 }

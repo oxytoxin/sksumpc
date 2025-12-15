@@ -12,7 +12,7 @@ class ShareCertificate extends Page
 {
     protected static string $resource = CapitalSubscriptionResource::class;
 
-    protected static string $view = 'filament.app.resources.capital-subscription-resource.pages.share-certificate';
+    protected string $view = 'filament.app.resources.capital-subscription-resource.pages.share-certificate';
 
     public CapitalSubscription $capital_subscription;
 

@@ -12,5 +12,5 @@ class PrintMemberProfile extends Page
 
     public Member $member;
 
-    protected static string $view = 'filament.app.resources.member-resource.pages.print-member-profile';
+    protected string $view = 'filament.app.resources.member-resource.pages.print-member-profile';
 }

@@ -2,27 +2,27 @@
 
 namespace App\Filament\App\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Livewire;
 use App\Filament\App\Pages\Cashier\Reports\BillingTransactions;
 use App\Filament\App\Pages\Cashier\Reports\CashProof;
 use App\Filament\App\Pages\Cashier\Reports\DailyCollectionsReport;
 use App\Filament\App\Pages\Cashier\Reports\MsoTransactions;
 use App\Filament\App\Pages\Cashier\Reports\PaymentTransactions;
 use App\Filament\App\Pages\Cashier\RequiresBookkeeperTransactionDate;
-use Filament\Forms\Components\Livewire;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
 use Filament\Pages\Page;
 
 class Reports extends Page implements HasForms
 {
     use InteractsWithForms, RequiresBookkeeperTransactionDate;
 
-    protected static string $view = 'filament.app.pages.reports';
+    protected string $view = 'filament.app.pages.reports';
 
-    protected static ?string $navigationGroup = 'Cashier';
+    protected static string | \UnitEnum | null $navigationGroup = 'Cashier';
 
     protected static ?int $navigationSort = 5;
 
@@ -31,9 +31,9 @@ class Reports extends Page implements HasForms
         return auth()->user()->can('manage payments');
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->components([
             Tabs::make()
                 ->activeTab(1)
                 ->persistTabInQueryString()

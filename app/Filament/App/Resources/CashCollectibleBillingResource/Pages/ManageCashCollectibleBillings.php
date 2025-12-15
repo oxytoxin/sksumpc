@@ -2,6 +2,8 @@
 
 namespace App\Filament\App\Resources\CashCollectibleBillingResource\Pages;
 
+use Filament\Actions\Action;
+use Filament\Actions\CreateAction;
 use App\Actions\CashCollectionBilling\CreateIndividualBilling;
 use App\Filament\App\Resources\CashCollectibleBillingResource;
 use App\Models\CashCollectibleAccount;
@@ -42,10 +44,10 @@ class ManageCashCollectibleBillings extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\Action::make('subscriptions')
+            Action::make('subscriptions')
                 ->label('Manage Subscriptions')
                 ->url(route('filament.app.resources.cash-collectible-subscriptions.index')),
-            Actions\CreateAction::make('group')
+            CreateAction::make('group')
                 ->label('New Group Billing')
                 ->action(function ($data) {
                     DB::beginTransaction();
@@ -64,9 +66,9 @@ class ManageCashCollectibleBillings extends ManageRecords
                     Notification::make()->title('New group billing created.')->success()->send();
                 })
                 ->createAnother(false),
-            Actions\CreateAction::make('individual')
+            CreateAction::make('individual')
                 ->label('New Individual Billing')
-                ->form([
+                ->schema([
                     Select::make('account_id')
                         ->options(CashCollectibleAccount::pluck('name', 'id'))
                         ->label('Cash Collectible Account')

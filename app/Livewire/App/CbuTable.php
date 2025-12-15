@@ -2,6 +2,12 @@
 
 namespace App\Livewire\App;
 
+use Filament\Actions\Contracts\HasActions;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\Action;
+use Filament\Actions\ViewAction;
+use Filament\Actions\CreateAction;
 use App\Actions\CapitalSubscription\CreateNewCapitalSubscription;
 use App\Models\CapitalSubscription;
 use App\Models\Member;
@@ -11,10 +17,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
@@ -29,8 +31,9 @@ use Illuminate\Support\Str;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
-class CbuTable extends Component implements HasForms, HasTable
+class CbuTable extends Component implements HasForms, HasTable, HasActions
 {
+    use InteractsWithActions;
     use InteractsWithForms;
     use InteractsWithTable;
 
@@ -71,7 +74,7 @@ class CbuTable extends Component implements HasForms, HasTable
                             ->when($data['value'] == 'ongoing', fn ($query) => $query->where('outstanding_balance', '>', 0));
                     }),
             ], layout: FiltersLayout::AboveContent)
-            ->actions([
+            ->recordActions([
                 ActionGroup::make([
                     Action::make('payments')
                         ->label('Payments')
@@ -90,7 +93,7 @@ class CbuTable extends Component implements HasForms, HasTable
                 CreateAction::make()
                     ->visible(fn () => ! $this->member->capital_subscriptions()->where('outstanding_balance', '>', 0)->exists() && auth()->user()->can('manage cbu'))
                     ->createAnother(false)
-                    ->form([
+                    ->schema([
                         Placeholder::make('number_of_terms')->content($this->member->member_type->additional_number_of_terms),
                         TextInput::make('number_of_shares')->numeric()->minValue(1)->default(144)
                             ->live(true)
@@ -147,7 +150,7 @@ class CbuTable extends Component implements HasForms, HasTable
                     ->label('Subsidiary Ledger')
                     ->url(route('filament.app.resources.members.cbu-subsidiary-ledger', ['member' => $this->member])),
             ])
-            ->bulkActions([]);
+            ->toolbarActions([]);
     }
 
     public function mount()

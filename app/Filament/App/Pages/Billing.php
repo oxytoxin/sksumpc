@@ -8,9 +8,9 @@ use Filament\Pages\Page;
 
 class Billing extends Page implements HasForms
 {
-    protected static ?string $navigationIcon = 'icon-billing';
+    protected static string | \BackedEnum | null $navigationIcon = 'icon-billing';
 
-    protected static string $view = 'filament.app.pages.billing';
+    protected string $view = 'filament.app.pages.billing';
 
     protected static ?int $navigationSort = 8;
 

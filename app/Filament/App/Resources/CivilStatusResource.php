@@ -2,10 +2,16 @@
 
 namespace App\Filament\App\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\CreateAction;
+use App\Filament\App\Resources\CivilStatusResource\Pages\ManageCivilStatuses;
 use App\Filament\App\Resources\CivilStatusResource\Pages;
 use App\Models\CivilStatus;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -15,7 +21,7 @@ class CivilStatusResource extends Resource
 {
     protected static ?string $model = CivilStatus::class;
 
-    protected static ?string $navigationGroup = 'Management';
+    protected static string | \UnitEnum | null $navigationGroup = 'Management';
 
     protected static ?int $navigationSort = 18;
 
@@ -24,10 +30,10 @@ class CivilStatusResource extends Resource
         return auth()->user()->hasRole('manager');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name'),
             ]);
     }
@@ -41,24 +47,24 @@ class CivilStatusResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+            ->recordActions([
+                EditAction::make(),
+                DeleteAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ])
             ->emptyStateActions([
-                Tables\Actions\CreateAction::make(),
+                CreateAction::make(),
             ]);
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageCivilStatuses::route('/'),
+            'index' => ManageCivilStatuses::route('/'),
         ];
     }
 }

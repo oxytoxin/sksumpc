@@ -2,6 +2,7 @@
 
     namespace App\Providers\Filament;
 
+    use Throwable;
     use App\Http\Middleware\EnsurePresentBookkeeperTransactionDate;
     use App\Models\TransactionDateHistory;
     use Filament\Http\Middleware\Authenticate;
@@ -35,11 +36,11 @@
             try {
                 $customcss = Vite::asset('resources/css/filament/app/theme.css');
                 $transaction_date = TransactionDateHistory::current_date();
-            } catch (\Throwable $th) {
+            } catch (Throwable $th) {
             }
             config(['app.transaction_date' => $transaction_date ?? null]);
             FilamentView::registerRenderHook(
-                PanelsRenderHook::TOPBAR_START,
+                PanelsRenderHook::TOPBAR_LOGO_AFTER,
                 fn() => Blade::render('<strong>Transaction Date: '.$transaction_date?->format('m/d/Y').'</strong>')
             );
             FilamentView::registerRenderHook(
@@ -53,9 +54,8 @@
 
             return $panel
                 ->id('app')
-                ->path('/')
+                ->path('')
                 ->spa()
-                ->domain(config('app.url'))
                 ->colors([
                     'primary' => '#3F9FEB',
                 ])

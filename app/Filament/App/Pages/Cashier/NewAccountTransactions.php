@@ -2,15 +2,15 @@
 
 namespace App\Filament\App\Pages\Cashier;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Actions;
+use Filament\Actions\Action;
 use App\Actions\Savings\CreateNewSavingsAccount;
 use App\Actions\Savings\GenerateAccountNumber;
 use App\Models\Member;
 use App\Oxytoxin\DTO\MSO\Accounts\SavingsAccountData;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 
@@ -18,14 +18,14 @@ class NewAccountTransactions extends Page
 {
     protected static bool $shouldRegisterNavigation = false;
 
-    protected static string $view = 'filament.app.pages.cashier.new-account-transactions';
+    protected string $view = 'filament.app.pages.cashier.new-account-transactions';
 
     public $data = [];
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Select::make('member_id')
                     ->options(Member::pluck('full_name', 'id'))
                     ->searchable()

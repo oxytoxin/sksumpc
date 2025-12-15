@@ -6,7 +6,7 @@ use Filament\Widgets\ChartWidget;
 
 class CbuChart extends ChartWidget
 {
-    protected static ?string $heading = 'CBU';
+    protected ?string $heading = 'CBU';
 
     protected function getData(): array
     {

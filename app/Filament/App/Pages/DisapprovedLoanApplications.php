@@ -13,11 +13,11 @@ class DisapprovedLoanApplications extends Page implements HasTable
 {
     use InteractsWithTable;
 
-    protected static string $view = 'filament.app.pages.disapproved-loan-applications';
+    protected string $view = 'filament.app.pages.disapproved-loan-applications';
 
     protected static ?string $navigationLabel = 'Disapproved Loan Applications';
 
-    protected static ?string $navigationGroup = 'Loan';
+    protected static string | \UnitEnum | null $navigationGroup = 'Loan';
 
     protected static ?int $navigationSort = 4;
 

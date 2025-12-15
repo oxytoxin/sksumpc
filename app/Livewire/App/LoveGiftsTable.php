@@ -2,11 +2,13 @@
 
 namespace App\Livewire\App;
 
+use Filament\Actions\Contracts\HasActions;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\ViewAction;
+use Filament\Actions\BulkActionGroup;
 use App\Models\LoveGift;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -14,8 +16,9 @@ use Filament\Tables\Table;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
-class LoveGiftsTable extends Component implements HasForms, HasTable
+class LoveGiftsTable extends Component implements HasForms, HasTable, HasActions
 {
+    use InteractsWithActions;
     use InteractsWithForms, InteractsWithTable;
 
     public $member_id;
@@ -46,8 +49,8 @@ class LoveGiftsTable extends Component implements HasForms, HasTable
                     ->label('Subsidiary Ledger')
                     ->url(route('filament.app.resources.members.love-gifts-subsidiary-ledger', ['member' => $this->member_id])),
             ])
-            ->actions([])
-            ->bulkActions([
+            ->recordActions([])
+            ->toolbarActions([
                 BulkActionGroup::make([]),
             ]);
     }

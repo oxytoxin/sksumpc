@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Resources\LoanBillingResource\Pages;
 
+use Filament\Actions\CreateAction;
 use App\Filament\App\Pages\Cashier\RequiresBookkeeperTransactionDate;
 use App\Filament\App\Resources\LoanBillingResource;
 use Filament\Actions;
@@ -29,7 +30,7 @@ class ManageLoanBillings extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()
+            CreateAction::make()
                 ->createAnother(false),
         ];
     }

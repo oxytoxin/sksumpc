@@ -2,17 +2,17 @@
 
 namespace App\Filament\App\Pages;
 
-use Filament\Infolists\Components\Tabs;
-use Filament\Infolists\Components\Tabs\Tab;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Infolists\Components\ViewEntry;
-use Filament\Infolists\Infolist;
 use Filament\Pages\Page;
 
 class SavingsOperation extends Page
 {
-    protected static ?string $navigationIcon = 'icon-savings-operation';
+    protected static string | \BackedEnum | null $navigationIcon = 'icon-savings-operation';
 
-    protected static string $view = 'filament.app.pages.savings-operation';
+    protected string $view = 'filament.app.pages.savings-operation';
 
     protected static ?int $navigationSort = 7;
 
@@ -21,10 +21,10 @@ class SavingsOperation extends Page
         return false;
     }
 
-    public function infolist(Infolist $infolist)
+    public function infolist(Schema $schema)
     {
-        return $infolist
-            ->schema([
+        return $schema
+            ->components([
                 Tabs::make()
                     ->tabs([
                         Tab::make('SAVINGS')

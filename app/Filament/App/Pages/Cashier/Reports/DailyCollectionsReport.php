@@ -17,7 +17,7 @@ class DailyCollectionsReport extends Page
 
     protected static bool $shouldRegisterNavigation = false;
 
-    protected static string $view = 'filament.app.pages.cashier.reports.daily-collections-report';
+    protected string $view = 'filament.app.pages.cashier.reports.daily-collections-report';
 
     #[Computed]
     public function PaymentTypes()

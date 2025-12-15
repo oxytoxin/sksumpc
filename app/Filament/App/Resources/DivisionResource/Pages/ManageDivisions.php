@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Resources\DivisionResource\Pages;
 
+use Filament\Actions\CreateAction;
 use App\Filament\App\Resources\DivisionResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
@@ -13,7 +14,7 @@ class ManageDivisions extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 }

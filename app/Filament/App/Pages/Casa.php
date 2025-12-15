@@ -6,9 +6,9 @@ use Filament\Pages\Page;
 
 class Casa extends Page
 {
-    protected static ?string $navigationIcon = 'icon-casa';
+    protected static string | \BackedEnum | null $navigationIcon = 'icon-casa';
 
-    protected static string $view = 'filament.app.pages.casa';
+    protected string $view = 'filament.app.pages.casa';
 
     protected static ?int $navigationSort = 13;
 

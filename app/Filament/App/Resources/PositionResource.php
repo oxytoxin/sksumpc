@@ -2,14 +2,17 @@
 
 namespace App\Filament\App\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\App\Resources\PositionResource\Pages\ListPositions;
+use App\Filament\App\Resources\PositionResource\Pages\CreatePosition;
+use App\Filament\App\Resources\PositionResource\Pages\EditPosition;
 use App\Models\Position;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -17,7 +20,7 @@ class PositionResource extends Resource
 {
     protected static ?string $model = Position::class;
 
-    protected static ?string $navigationGroup = 'Share Capital';
+    protected static string | \UnitEnum | null $navigationGroup = 'Share Capital';
 
     protected static ?int $navigationSort = 21;
 
@@ -26,10 +29,10 @@ class PositionResource extends Resource
         return auth()->user()->can('manage cbu');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->required(),
             ]);
@@ -46,11 +49,11 @@ class PositionResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
                 DeleteAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
@@ -60,9 +63,9 @@ class PositionResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \App\Filament\App\Resources\PositionResource\Pages\ListPositions::route('/'),
-            'create' => \App\Filament\App\Resources\PositionResource\Pages\CreatePosition::route('/create'),
-            'edit' => \App\Filament\App\Resources\PositionResource\Pages\EditPosition::route('/{record}/edit'),
+            'index' => ListPositions::route('/'),
+            'create' => CreatePosition::route('/create'),
+            'edit' => EditPosition::route('/{record}/edit'),
         ];
     }
 }

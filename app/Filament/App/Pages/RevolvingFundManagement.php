@@ -19,9 +19,9 @@ class RevolvingFundManagement extends Page implements HasForms, HasTable
 {
     use InteractsWithForms, InteractsWithTable;
 
-    protected static string $view = 'filament.app.pages.revolving-fund-management';
+    protected string $view = 'filament.app.pages.revolving-fund-management';
 
-    protected static ?string $navigationGroup = 'Cashier';
+    protected static string | \UnitEnum | null $navigationGroup = 'Cashier';
 
     protected static ?int $navigationSort = 4;
 
@@ -34,7 +34,7 @@ class RevolvingFundManagement extends Page implements HasForms, HasTable
     {
         return [
             Action::make('cash_in')
-                ->form([
+                ->schema([
                     TextInput::make('reference_number')->required(),
                     TextInput::make('amount')
                         ->moneymask(),

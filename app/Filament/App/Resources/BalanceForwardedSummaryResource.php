@@ -2,11 +2,17 @@
 
 namespace App\Filament\App\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\App\Resources\BalanceForwardedSummaryResource\Pages\ListBalanceForwardedSummaries;
+use App\Filament\App\Resources\BalanceForwardedSummaryResource\Pages\CreateBalanceForwardedSummary;
+use App\Filament\App\Resources\BalanceForwardedSummaryResource\Pages\EditBalanceForwardedSummary;
 use App\Filament\App\Resources\BalanceForwardedSummaryResource\Pages;
 use App\Filament\App\Resources\BalanceForwardedSummaryResource\RelationManagers\BalanceForwardedEntriesRelationManager;
 use App\Models\BalanceForwardedSummary;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -18,17 +24,17 @@ class BalanceForwardedSummaryResource extends Resource
 
     protected static ?int $navigationSort = 4;
 
-    protected static ?string $navigationGroup = 'Bookkeeping';
+    protected static string | \UnitEnum | null $navigationGroup = 'Bookkeeping';
 
     public static function shouldRegisterNavigation(): bool
     {
         return auth()->user()->can('manage bookkeeping');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Select::make('month')
                     ->options(oxy_get_month_range())
                     ->default(today()->subMonthNoOverflow()->month)
@@ -50,12 +56,12 @@ class BalanceForwardedSummaryResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -70,9 +76,9 @@ class BalanceForwardedSummaryResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListBalanceForwardedSummaries::route('/'),
-            'create' => Pages\CreateBalanceForwardedSummary::route('/create'),
-            'edit' => Pages\EditBalanceForwardedSummary::route('/{record}/edit'),
+            'index' => ListBalanceForwardedSummaries::route('/'),
+            'create' => CreateBalanceForwardedSummary::route('/create'),
+            'edit' => EditBalanceForwardedSummary::route('/{record}/edit'),
         ];
     }
 }
