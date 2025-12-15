@@ -40,7 +40,7 @@
             }
             config(['app.transaction_date' => $transaction_date ?? null]);
             FilamentView::registerRenderHook(
-                PanelsRenderHook::TOPBAR_LOGO_AFTER,
+                PanelsRenderHook::SIDEBAR_LOGO_AFTER,
                 fn() => Blade::render('<strong>Transaction Date: '.$transaction_date?->format('m/d/Y').'</strong>')
             );
             FilamentView::registerRenderHook(
@@ -59,6 +59,7 @@
                 ->colors([
                     'primary' => '#3F9FEB',
                 ])
+                ->topbar(false)
                 ->login()
                 ->navigationGroups([
                     NavigationGroup::make()

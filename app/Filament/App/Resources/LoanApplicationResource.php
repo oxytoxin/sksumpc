@@ -110,6 +110,7 @@
                                 ->relationship('member', 'full_name')
                                 ->preload(),
                         ])
+                        ->columnSpanFull()
                         ->maxItems(2)
                         ->default([])
                         ->relationship()
