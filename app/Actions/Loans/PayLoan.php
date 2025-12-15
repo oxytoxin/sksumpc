@@ -22,7 +22,7 @@
             $unpaid_interest = $loan->payments()->sum('unpaid_interest');
             $interest_due = round(LoansProvider::computeAccruedInterest($loan, $loan->outstanding_balance, $total_days) + $unpaid_interest, 2);
             $interest_payment = min($loanPaymentData->amount, $interest_due);
-            $interest_payment = min($interest_payment, 0);
+            $interest_payment = max($interest_payment, 0);
             if ($interest_payment < $interest_due) {
                 $remaining_unpaid_interest = round($interest_due - $interest_payment, 2);
             }
