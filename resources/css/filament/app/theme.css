@@ -1,6 +1,5 @@
 @import "../../../../vendor/filament/filament/resources/css/theme.css";
 
-/*@config './tailwind.config.js';*/
 @source "../../../../app/Filament/App/**/*.php";
 @source "../../../../app/Livewire/App/**/*.php";
 @source "../../../../resources/**/*.blade.php";
@@ -136,4 +135,12 @@ button[wire\:click="resetTableFiltersForm"] {
 
 .fi-ta-text-summary > span {
     @apply text-black;
+}
+
+table {
+    @apply w-full;
+}
+
+.table-cell {
+    @apply border border-black px-2 text-left;
 }
