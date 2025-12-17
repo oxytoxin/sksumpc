@@ -29,6 +29,9 @@
                     remarks: 'Member Loan Payment Principal',
                     transaction_date: $transaction_date
                 ));
+                $loan->update([
+                    'outstanding_balance' => $loan->outstanding_balance - $principal
+                ]);
             }
             if ($interest) {
                 app(CreateTransaction::class)->handle(new TransactionData(

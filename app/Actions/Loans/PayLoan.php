@@ -42,6 +42,9 @@
                     transaction_date: $loanPaymentData->transaction_date,
                     from_billing_type: $loanPaymentData->from_billing_type
                 ));
+                $loan->update([
+                    'outstanding_balance' => $loan->outstanding_balance - $principal_payment
+                ]);
             }
             if ($interest_payment > 0) {
                 app(CreateTransaction::class)->handle(new TransactionData(

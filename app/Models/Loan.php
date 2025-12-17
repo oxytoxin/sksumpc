@@ -136,9 +136,10 @@
         {
 
             static::saving(function (Loan $loan) {
-                $loan = app(UpdateLoanDeductionsData::class)->handle($loan);
                 if ($loan->posted) {
                     app(RunLoanProcessesAfterPosting::class)->handle($loan);
+                } else {
+                    $loan = app(UpdateLoanDeductionsData::class)->handle($loan);
                 }
             });
         }
