@@ -95,9 +95,6 @@
 
         public function mount(): void
         {
-            $this->form->fill([
-                'member_id' => 173,
-                'loan_id' => 1238,
-            ]);
+            $this->form->fill();
         }
     }
