@@ -1,6 +1,9 @@
 <x-filament-panels::page>
+    {{ $this->form }}
     <div class="w-full">
-        <x-app.cashier.reports.report-layout title="DAILY COLLECTIONS REPORT" :signatories="$this->getSignatories()">
+        <x-app.cashier.reports.report-layout title="DAILY COLLECTIONS REPORT"
+                                             :date="date_create($transaction_date ?? config('app.transaction_date'))"
+                                             :signatories="$this->getSignatories()">
             <div class="flex items-start gap-16">
                 <div class="w-1/2">
                     <div class="space-y-4">
@@ -40,7 +43,7 @@
                 </div>
                 <div class="flex w-1/2 flex-col items-center border-2 border-blue-700 p-4">
                     <h3 class="font-bold">CASH DEPOSITS</h3>
-                    <h4>{{ config('app.transaction_date')?->format('m/d/Y') }}</h4>
+                    <h4>{{ date_create($transaction_date)?->format('m/d/Y') }}</h4>
                     <div class="mt-8 w-2/3">
                         <div class="flex justify-between">
                             <h4>GEN FUND</h4>

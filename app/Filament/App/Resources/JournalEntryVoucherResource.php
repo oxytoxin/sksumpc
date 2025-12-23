@@ -37,12 +37,17 @@
 
         public static function form(Schema $schema): Schema
         {
+            $generated_reference = JournalEntryVoucher::generateCode();
             return $schema
                 ->components([
                     TextInput::make('name')->required(),
                     TextInput::make('address')->required(),
-                    TextInput::make('reference_number')->required(),
-                    TextInput::make('voucher_number')->required(),
+                    TextInput::make('reference_number')
+                        ->default($generated_reference)
+                        ->required()->unique('journal_entry_vouchers', 'reference_number'),
+                    TextInput::make('voucher_number')
+                        ->default($generated_reference)
+                        ->required()->unique('journal_entry_vouchers', 'voucher_number'),
                     Toggle::make('compute_net')->label('Compute Net Amount')->default(false),
                     Textarea::make('description')->columnSpanFull()->required(),
                     Repeater::make('journal_entry_voucher_items')
@@ -106,6 +111,7 @@
                     TextColumn::make('reference_number'),
                     TextColumn::make('description'),
                 ])
+                ->defaultSort('transaction_date', 'desc')
                 ->filters([
                     DateRangeFilter::make('transaction_date')
                         ->format('m/d/Y')

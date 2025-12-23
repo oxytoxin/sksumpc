@@ -17,8 +17,13 @@
     use Filament\Forms\Components\TextInput;
     use Filament\Notifications\Notification;
     use Filament\Resources\Pages\ListRecords;
+    use Filament\Resources\Pages\Page;
+    use Filament\Schemas\Concerns\InteractsWithSchemas;
+    use Filament\Schemas\Contracts\HasSchemas;
     use Filament\Tables\Columns\Summarizers\Sum;
     use Filament\Tables\Columns\TextColumn;
+    use Filament\Tables\Concerns\InteractsWithTable;
+    use Filament\Tables\Contracts\HasTable;
     use Filament\Tables\Enums\FiltersLayout;
     use Filament\Tables\Filters\SelectFilter;
     use Filament\Tables\Table;
@@ -28,9 +33,12 @@
     use PhpOffice\PhpSpreadsheet\IOFactory;
     use Spatie\SimpleExcel\SimpleExcelReader;
 
-    class MsoBillingPayments extends ListRecords
+    class MsoBillingPayments extends Page implements HasTable, HasSchemas
     {
+        use InteractsWithTable, InteractsWithSchemas;
+
         protected static string $resource = MsoBillingResource::class;
+        protected string $view = 'filament.app.resources.mso-billing-resource.pages.mso-billing-payments';
 
         public MsoBilling $mso_billing;
 

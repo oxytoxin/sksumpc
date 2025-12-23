@@ -1,20 +1,20 @@
 <?php
 
-namespace App\Filament\App\Resources\AccountResource\Pages;
+    namespace App\Filament\App\Resources\AccountResource\Pages;
 
-use Filament\Actions\DeleteAction;
-use App\Filament\App\Resources\AccountResource;
-use Filament\Actions;
-use Filament\Resources\Pages\EditRecord;
+    use Filament\Actions\DeleteAction;
+    use App\Filament\App\Resources\AccountResource;
+    use Filament\Actions;
+    use Filament\Resources\Pages\EditRecord;
 
-class EditAccount extends EditRecord
-{
-    protected static string $resource = AccountResource::class;
-
-    protected function getHeaderActions(): array
+    class EditAccount extends EditRecord
     {
-        return [
-            DeleteAction::make(),
-        ];
+        protected static string $resource = AccountResource::class;
+
+        protected function getHeaderActions(): array
+        {
+            return [
+//                DeleteAction::make(),
+            ];
+        }
     }
-}

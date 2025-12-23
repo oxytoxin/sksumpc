@@ -154,9 +154,9 @@
                 ])
                 ->filtersLayout(FiltersLayout::AboveContent)
                 ->recordActions([
-                    EditAction::make('check_number')
-                        ->label('Check Number')
+                    EditAction::make()
                         ->schema([
+                            TextInput::make('voucher_number'),
                             TextInput::make('check_number'),
                         ]),
                     Action::make('view')

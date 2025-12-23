@@ -133,3 +133,17 @@
 
         return $result;
     }
+
+    function incrementAlphaNumeric(string $code): string
+    {
+        if (!preg_match('/^(.*?)(\d+)$/', $code, $matches)) {
+            throw new InvalidArgumentException('Code must end with a numeric sequence.');
+        }
+
+        [$full, $prefix, $number] = $matches;
+
+        $length = strlen($number);
+        $next = str_pad(((int) $number) + 1, $length, '0', STR_PAD_LEFT);
+
+        return $prefix.$next;
+    }

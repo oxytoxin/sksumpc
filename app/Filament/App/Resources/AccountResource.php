@@ -75,7 +75,7 @@
             return $table
                 ->query(Account::withCode()->whereNull('member_id'))
                 ->columns([
-                    TextColumn::make('fullname')
+                    TextColumn::make('name')
                         ->label('Name')
                         ->searchable(),
                     TextColumn::make('number')
