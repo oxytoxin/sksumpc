@@ -8,7 +8,7 @@
             <tr class="border-y border-black">
                 <th>NO.</th>
                 <th>ACCOUNT NUMBER</th>
-                <th>NAME</th>
+                <th class="text-left">NAME</th>
                 <th>DATE RELEASED</th>
                 <th>AMOUNT RELEASED</th>
                 <th>LOAN TERM</th>
@@ -25,9 +25,9 @@
                     <td class="text-center">{{ $loop->iteration }}</td>
                     <td class="text-center">{{ $payment->loan->loan_account->number }}</td>
                     <td class="text-left">{{ $payment->member->alt_full_name }}</td>
-                    <td class="text-left">{{ $payment->loan->release_date?->format('m/d/Y') }}</td>
-                    <td class="text-left">{{ renumber_format($payment->loan->gross_amount) }}</td>
-                    <td class="text-left">{{ $payment->loan->number_of_terms }}</td>
+                    <td class="text-center">{{ $payment->loan->release_date?->format('m/d/Y') }}</td>
+                    <td class="text-center">{{ renumber_format($payment->loan->gross_amount) }}</td>
+                    <td class="text-center">{{ $payment->loan->number_of_terms }}</td>
                     <td class="text-center">{{ renumber_format($payment->amount_due) }}</td>
                     <td class="text-center">{{ renumber_format($payment->amount_paid) }}</td>
                 </tr>
