@@ -87,7 +87,7 @@
         {
             return $schema->components([
                 TextEntry::make('current_transaction_date')
-                    ->state(fn() => config('app.transaction_date')->format('m/d/Y')),
+                    ->state(fn() => config('app.transaction_date')?->format('m/d/Y')),
                 TextEntry::make('note')
                     ->state(fn($get) => config('app.transaction_date') ? 'All transactions date will be set to '.config('app.transaction_date')->format('m/d/Y') : "No transaction date set for today's transactions."),
                 DatePicker::make('transaction_date')
