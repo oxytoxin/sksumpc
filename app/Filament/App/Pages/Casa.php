@@ -89,7 +89,7 @@
             $transactions = collect();
             if ($loan) {
                 foreach ($loan->payments as $loan_payment) {
-                    $results = $this->getLoanPaymentTransactions($loan_payment);
+                    $results = $loan_payment->getTransactions();
                     $results->each(fn($result) => $transactions->push($result));
                 }
             }
@@ -183,35 +183,5 @@
             return $payments;
         }
 
-        private function getLoanPaymentTransactions(LoanPayment $loan_payment): \Illuminate\Database\Eloquent\Collection
-        {
-            return Transaction::query()
-                ->when($loan_payment->principal_payment, fn($query) => $query->where(function ($query) use ($loan_payment) {
-                    $query
-                        ->where('reference_number', $loan_payment->reference_number)
-                        ->where('member_id', $loan_payment->member_id)
-                        ->where('transaction_date', $loan_payment->transaction_date)
-                        ->where('credit', $loan_payment->principal_payment)
-                        ->where('remarks', 'Member Loan Payment Principal');
-                }))
-                ->when($loan_payment->interest_payment, fn($query) => $query->orWhere(function ($query) use ($loan_payment) {
-                    $query
-                        ->where('reference_number', $loan_payment->reference_number)
-                        ->where('member_id', $loan_payment->member_id)
-                        ->where('transaction_date', $loan_payment->transaction_date)
-                        ->where('credit', $loan_payment->interest_payment)
-                        ->where('remarks', 'Member Loan Payment Interest');
-                }))
-                ->orWhere(function ($query) use ($loan_payment) {
-                    $query
-                        ->where('reference_number', $loan_payment->reference_number)
-                        ->where('member_id', $loan_payment->member_id)
-                        ->where('transaction_date', $loan_payment->transaction_date)
-                        ->whereIn('account_id', [2, 4])
-                        ->whereNull('credit')
-                        ->where('debit', $loan_payment->amount);
-                })
-                ->get();
-        }
 
     }
