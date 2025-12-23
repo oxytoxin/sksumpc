@@ -60,10 +60,10 @@
         #[Computed]
         public function unposted_billings(): Collection
         {
-            $cbu = CapitalSubscriptionBilling::where('posted', false)->where('date', config('app.transaction_date'))->select(['name', 'reference_number', 'billable_date']);
-            $mso = MsoBilling::where('posted', false)->where('date', config('app.transaction_date'))->select(['name', 'reference_number', 'billable_date']);
-            $loans = LoanBilling::where('posted', false)->where('date', config('app.transaction_date'))->select(['name', 'reference_number', 'billable_date']);
-            $cash_collections = CashCollectibleBilling::where('posted', false)->where('date', config('app.transaction_date'))->select(['name', 'reference_number', 'billable_date']);
+            $cbu = CapitalSubscriptionBilling::where('posted', false)->whereNotNull('or_number')->where('date', config('app.transaction_date'))->select(['name', 'reference_number', 'billable_date']);
+            $mso = MsoBilling::where('posted', false)->whereNotNull('or_number')->where('date', config('app.transaction_date'))->select(['name', 'reference_number', 'billable_date']);
+            $loans = LoanBilling::where('posted', false)->whereNotNull('or_number')->where('date', config('app.transaction_date'))->select(['name', 'reference_number', 'billable_date']);
+            $cash_collections = CashCollectibleBilling::where('posted', false)->whereNotNull('or_number')->where('date', config('app.transaction_date'))->select(['name', 'reference_number', 'billable_date']);
             return $cbu->union($mso)->union($loans)->union($cash_collections)->get();
         }
 
