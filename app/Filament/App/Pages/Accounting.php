@@ -42,7 +42,7 @@
                         ->afterStateUpdated(fn($set, $state) => $set('loan_id', null))
                         ->searchable(),
                     Select::make('loan_id')
-                        ->afterStateUpdated(fn($set, $state) => $this->loan_payment = null)
+                        ->afterStateUpdated(fn($set, $state) => $this->reset('loan_payment_id'))
                         ->options(fn($get) => Loan::whereMemberId($get('member_id'))->pluck('reference_number', 'id')),
                     Action::make('delete_payment')
                         ->requiresConfirmation()
