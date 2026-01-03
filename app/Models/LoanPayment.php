@@ -6,8 +6,8 @@
     use Illuminate\Database\Eloquent\Model;
 
     /**
-     * @mixin IdeHelperLoanPayment
-     */
+ * @mixin IdeHelperLoanPayment
+ */
     class LoanPayment extends Model
     {
         use HasFactory;

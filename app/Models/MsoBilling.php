@@ -8,8 +8,8 @@
     use Illuminate\Database\Eloquent\Model;
 
     /**
-     * @mixin IdeHelperMsoBilling
-     */
+ * @mixin IdeHelperMsoBilling
+ */
     class MsoBilling extends Model
     {
         use HasFactory;

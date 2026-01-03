@@ -17,8 +17,8 @@
     use NumberFormatter;
 
     /**
-     * @mixin IdeHelperLoan
-     */
+ * @mixin IdeHelperLoan
+ */
     class Loan extends Model
     {
         use HasFactory;

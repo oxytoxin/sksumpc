@@ -39,10 +39,17 @@
             } catch (Throwable $th) {
             }
             config(['app.transaction_date' => $transaction_date ?? null]);
-            FilamentView::registerRenderHook(
-                PanelsRenderHook::SIDEBAR_LOGO_AFTER,
-                fn() => Blade::render('<strong>Transaction Date: '.$transaction_date?->format('m/d/Y').'</strong>')
-            );
+            if (isset($transaction_date)) {
+                FilamentView::registerRenderHook(
+                    PanelsRenderHook::SIDEBAR_LOGO_AFTER,
+                    fn() => Blade::render('<strong>Transaction Date: '.$transaction_date?->format('m/d/Y').'</strong>')
+                );
+            } else {
+                FilamentView::registerRenderHook(
+                    PanelsRenderHook::SIDEBAR_LOGO_AFTER,
+                    fn() => Blade::render('<strong>Transaction Date Not Set</strong>')
+                );
+            }
             FilamentView::registerRenderHook(
                 PanelsRenderHook::CONTENT_START,
                 fn() => Blade::render("@livewire('bookkeeper-transaction-date-checker')")

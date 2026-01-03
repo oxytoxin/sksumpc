@@ -1,23 +1,25 @@
 <?php
 
-namespace App\Actions\CapitalSubscription;
+    namespace App\Actions\CapitalSubscription;
 
-use App\Models\CapitalSubscription;
-use App\Models\Member;
-use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionData;
-use Illuminate\Support\Facades\DB;
+    use App\Models\CapitalSubscription;
+    use App\Models\Member;
+    use App\Oxytoxin\DTO\CapitalSubscription\CapitalSubscriptionData;
+    use Illuminate\Support\Facades\DB;
 
-class CreateNewCapitalSubscription
-{
-    public function handle(Member $member, CapitalSubscriptionData $data): CapitalSubscription
+    class CreateNewCapitalSubscription
     {
-        DB::beginTransaction();
-        $member->capital_subscriptions()->update([
-            'is_active' => false,
-        ]);
-        $cbu = $member->capital_subscriptions()->create($data->toArray());
-        DB::commit();
+        public function handle(Member $member, CapitalSubscriptionData $data): CapitalSubscription
+        {
+            DB::beginTransaction();
+            $member->capital_subscriptions()->update([
+                'is_active' => false,
+            ]);
+            $cbuData = $data->toArray();
+            $cbuData['member_id'] = $member->id;
+            $cbu = CapitalSubscription::create($cbuData);
+            DB::commit();
 
-        return $cbu;
+            return $cbu;
+        }
     }
-}

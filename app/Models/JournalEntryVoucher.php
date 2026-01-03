@@ -6,8 +6,8 @@
     use Illuminate\Database\Eloquent\Model;
 
     /**
-     * @mixin IdeHelperJournalEntryVoucher
-     */
+ * @mixin IdeHelperJournalEntryVoucher
+ */
     class JournalEntryVoucher extends Model
     {
         use HasFactory;
