@@ -10,7 +10,63 @@ use NumberFormatter;
 use Spatie\LaravelData\DataCollection;
 
 /**
- * @mixin IdeHelperLoanApplication
+ * @property int $id
+ * @property int $member_id
+ * @property int|null $processor_id
+ * @property int $loan_type_id
+ * @property numeric $desired_amount
+ * @property numeric $cbu_amount
+ * @property int $number_of_terms
+ * @property string|null $reference_number
+ * @property string|null $priority_number
+ * @property string|null $purpose
+ * @property numeric $monthly_payment
+ * @property int $status
+ * @property \Carbon\CarbonImmutable $transaction_date
+ * @property int|null $disapproval_reason_id
+ * @property \Carbon\CarbonImmutable|null $disapproval_date
+ * @property \Carbon\CarbonImmutable|null $approval_date
+ * @property \Carbon\CarbonImmutable|null $payment_start_date
+ * @property \Carbon\CarbonImmutable|null $surcharge_start_date
+ * @property \Spatie\LaravelData\DataCollection $approvals
+ * @property string|null $remarks
+ * @property \Carbon\CarbonImmutable|null $created_at
+ * @property \Carbon\CarbonImmutable|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\LoanApplicationComaker> $comakers
+ * @property-read int|null $comakers_count
+ * @property-read mixed $desired_amount_in_words
+ * @property-read \App\Models\DisapprovalReason|null $disapproval_reason
+ * @property-read mixed $status_name
+ * @property-read \App\Models\Loan|null $loan
+ * @property-read \App\Models\LoanType $loan_type
+ * @property-read \App\Models\Member $member
+ * @property-read \App\Models\User|null $processor
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanApplication newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanApplication newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanApplication query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanApplication whereApprovalDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanApplication whereApprovals($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanApplication whereCbuAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanApplication whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanApplication whereDesiredAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanApplication whereDisapprovalDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanApplication whereDisapprovalReasonId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanApplication whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanApplication whereLoanTypeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanApplication whereMemberId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanApplication whereMonthlyPayment($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanApplication whereNumberOfTerms($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanApplication wherePaymentStartDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanApplication wherePriorityNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanApplication whereProcessorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanApplication wherePurpose($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanApplication whereReferenceNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanApplication whereRemarks($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanApplication whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanApplication whereSurchargeStartDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanApplication whereTransactionDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanApplication whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class LoanApplication extends Model
 {

@@ -11,7 +11,83 @@ use Illuminate\Database\Eloquent\Model;
 use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 
 /**
- * @mixin IdeHelperAccount
+ * @property int $id
+ * @property int $account_type_id
+ * @property int|null $member_id
+ * @property int|null $parent_id
+ * @property string $name
+ * @property string $number
+ * @property string|null $tag
+ * @property string|null $accountable_type
+ * @property int|null $accountable_id
+ * @property \Carbon\CarbonImmutable|null $created_at
+ * @property \Carbon\CarbonImmutable|null $updated_at
+ * @property int $show_sum
+ * @property string $sum_description
+ * @property int $sort
+ * @property-read \App\Models\AccountType $account_type
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, \App\Models\Account> $children
+ * @property-read int|null $children_count
+ * @property-read \App\Models\Member|null $member
+ * @property-read \App\Models\Account|null $parent
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Transaction> $transactions
+ * @property-read int|null $transactions_count
+ * @property-read int $depth
+ * @property-read string $path
+ * @property-read string $fullname
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, \App\Models\Account> $ancestors The model's recursive parents.
+ * @property-read int|null $ancestors_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, \App\Models\Account> $ancestorsAndSelf The model's recursive parents and itself.
+ * @property-read int|null $ancestors_and_self_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, \App\Models\Account> $bloodline The model's ancestors, descendants and itself.
+ * @property-read int|null $bloodline_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, \App\Models\Account> $childrenAndSelf The model's direct children and itself.
+ * @property-read int|null $children_and_self_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, \App\Models\Account> $descendants The model's recursive children.
+ * @property-read int|null $descendants_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, \App\Models\Account> $descendantsAndSelf The model's recursive children and itself.
+ * @property-read int|null $descendants_and_self_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, \App\Models\Account> $parentAndSelf The model's direct parent and itself.
+ * @property-read int|null $parent_and_self_count
+ * @property-read \App\Models\Account|null $rootAncestor The model's topmost parent.
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, \App\Models\Account> $siblings The parent's other children.
+ * @property-read int|null $siblings_count
+ * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, \App\Models\Account> $siblingsAndSelf All the parent's children.
+ * @property-read int|null $siblings_and_self_count
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, static> all($columns = ['*'])
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|Account breadthFirst()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|Account depthFirst()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|Account doesntHaveChildren()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, static> get($columns = ['*'])
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|Account getExpressionGrammar()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|Account hasChildren()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|Account hasParent()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|Account isLeaf()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|Account isRoot()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|Account newModelQuery()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|Account newQuery()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|Account query()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|Account tree($maxDepth = null)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|Account treeOf(\Illuminate\Database\Eloquent\Model|callable $constraint, $maxDepth = null)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|Account whereAccountTypeId($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|Account whereAccountableId($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|Account whereAccountableType($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|Account whereCreatedAt($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|Account whereDepth($operator, $value = null)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|Account whereId($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|Account whereMemberId($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|Account whereName($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|Account whereNumber($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|Account whereParentId($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|Account whereShowSum($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|Account whereSort($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|Account whereSumDescription($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|Account whereTag($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|Account whereUpdatedAt($value)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|Account withCode()
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|Account withGlobalScopes(array $scopes)
+ * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|Account withRelationshipExpression($direction, callable $constraint, $initialDepth, $from = null, $maxDepth = null)
+ * @mixin \Eloquent
  */
 class Account extends Model
 {

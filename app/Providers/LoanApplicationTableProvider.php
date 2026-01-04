@@ -63,9 +63,8 @@
                         ->format('m/d/Y')
                         ->displayFormat('MM/DD/YYYY');
                 }
-
-                return static::filters($filters)
-                    ->filtersLayout(FiltersLayout::AboveContent);
+                /** @phpstan-ignore-next-line */
+                return static::filters($filters)->filtersLayout(FiltersLayout::AboveContent);
             });
         }
     }

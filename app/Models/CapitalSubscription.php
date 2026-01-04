@@ -8,7 +8,51 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @mixin IdeHelperCapitalSubscription
+ * @property int $id
+ * @property int $member_id
+ * @property bool $is_active
+ * @property string|null $code
+ * @property int $number_of_terms
+ * @property numeric $number_of_shares
+ * @property numeric $amount_subscribed
+ * @property numeric|null $monthly_payment
+ * @property numeric|null $initial_amount_paid
+ * @property numeric $par_value
+ * @property numeric $actual_amount_paid
+ * @property numeric|null $total_amount_paid
+ * @property numeric $outstanding_balance
+ * @property \Carbon\CarbonImmutable $transaction_date
+ * @property \Carbon\CarbonImmutable|null $created_at
+ * @property \Carbon\CarbonImmutable|null $updated_at
+ * @property-read \App\Models\CapitalSubscriptionAmortization|null $active_capital_subscription_amortization
+ * @property-read mixed $amount_shares_subscribed
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CapitalSubscriptionAmortization> $capital_subscription_amortizations
+ * @property-read int|null $capital_subscription_amortizations_count
+ * @property-read \App\Models\Member $member
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CapitalSubscriptionAmortization> $paid_capital_subscription_amortizations
+ * @property-read int|null $paid_capital_subscription_amortizations_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CapitalSubscriptionPayment> $payments
+ * @property-read int|null $payments_count
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscription newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscription newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscription query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscription whereActualAmountPaid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscription whereAmountSubscribed($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscription whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscription whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscription whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscription whereInitialAmountPaid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscription whereIsActive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscription whereMemberId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscription whereMonthlyPayment($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscription whereNumberOfShares($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscription whereNumberOfTerms($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscription whereOutstandingBalance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscription whereParValue($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscription whereTotalAmountPaid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscription whereTransactionDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscription whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class CapitalSubscription extends Model
 {

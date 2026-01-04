@@ -10,7 +10,54 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use NumberFormatter;
 
 /**
- * @mixin IdeHelperTimeDeposit
+ * @property int $id
+ * @property int $member_id
+ * @property int $payment_type_id
+ * @property string $reference_number
+ * @property string|null $identifier
+ * @property \Carbon\CarbonImmutable $maturity_date
+ * @property string|null $withdrawal_date
+ * @property numeric $amount
+ * @property int $number_of_days
+ * @property numeric $maturity_amount
+ * @property numeric $interest_rate
+ * @property numeric|null $interest
+ * @property \Carbon\CarbonImmutable $transaction_date
+ * @property string $tdc_number
+ * @property string $time_deposit_account_id
+ * @property int|null $cashier_id
+ * @property \Carbon\CarbonImmutable|null $created_at
+ * @property \Carbon\CarbonImmutable|null $updated_at
+ * @property-read mixed $accrued_interest
+ * @property-read mixed $amount_in_words
+ * @property-read \App\Models\User|null $cashier
+ * @property-read mixed $days_in_words
+ * @property-read mixed $interest_earned
+ * @property-read mixed $interest_rate_in_words
+ * @property-read \App\Models\Member $member
+ * @property-read \App\Models\TimeDepositAccount|null $time_deposit_account
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TimeDeposit newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TimeDeposit newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TimeDeposit query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TimeDeposit whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TimeDeposit whereCashierId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TimeDeposit whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TimeDeposit whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TimeDeposit whereIdentifier($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TimeDeposit whereInterest($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TimeDeposit whereInterestRate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TimeDeposit whereMaturityAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TimeDeposit whereMaturityDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TimeDeposit whereMemberId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TimeDeposit whereNumberOfDays($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TimeDeposit wherePaymentTypeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TimeDeposit whereReferenceNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TimeDeposit whereTdcNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TimeDeposit whereTimeDepositAccountId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TimeDeposit whereTransactionDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TimeDeposit whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TimeDeposit whereWithdrawalDate($value)
+ * @mixin \Eloquent
  */
 class TimeDeposit extends Model
 {

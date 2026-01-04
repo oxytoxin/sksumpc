@@ -8,7 +8,45 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @mixin IdeHelperCapitalSubscriptionBilling
+ * @property int $id
+ * @property \Carbon\CarbonImmutable $date
+ * @property string|null $billable_date
+ * @property int|null $payment_type_id
+ * @property int|null $member_type_id
+ * @property int|null $member_subtype_id
+ * @property string|null $reference_number
+ * @property string|null $name
+ * @property string|null $or_number
+ * @property \Carbon\CarbonImmutable|null $or_date
+ * @property int|null $cashier_id
+ * @property bool $posted
+ * @property bool $for_or
+ * @property \Carbon\CarbonImmutable|null $created_at
+ * @property \Carbon\CarbonImmutable|null $updated_at
+ * @property-read mixed $or_approved
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CapitalSubscriptionBillingPayment> $capital_subscription_billing_payments
+ * @property-read int|null $capital_subscription_billing_payments_count
+ * @property-read \App\Models\User|null $cashier
+ * @property-read \App\Models\PaymentType|null $payment_type
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscriptionBilling newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscriptionBilling newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscriptionBilling query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscriptionBilling whereBillableDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscriptionBilling whereCashierId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscriptionBilling whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscriptionBilling whereDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscriptionBilling whereForOr($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscriptionBilling whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscriptionBilling whereMemberSubtypeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscriptionBilling whereMemberTypeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscriptionBilling whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscriptionBilling whereOrDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscriptionBilling whereOrNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscriptionBilling wherePaymentTypeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscriptionBilling wherePosted($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscriptionBilling whereReferenceNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscriptionBilling whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class CapitalSubscriptionBilling extends Model
 {

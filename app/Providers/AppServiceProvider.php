@@ -25,6 +25,7 @@
         public function register(): void
         {
             TextInput::macro('moneymask', function () {
+                /** phpstan-ignore-next-line */
                 $this->prefix('P')
                     ->live(true)
                     ->numeric()
@@ -34,6 +35,7 @@
             });
 
             Select::macro('paymenttype', function () {
+                /** phpstan-ignore-next-line */
                 $this->options(PaymentType::whereIn('id', [1, 3, 4, 5])->pluck('name', 'id'))
                     ->default(1)
                     ->label('Payment Type')

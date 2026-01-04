@@ -11,7 +11,50 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @mixin IdeHelperSaving
+ * @property int $id
+ * @property int $savings_account_id
+ * @property int $member_id
+ * @property int $payment_type_id
+ * @property string $reference_number
+ * @property numeric $amount
+ * @property numeric|null $deposit
+ * @property numeric|null $withdrawal
+ * @property numeric $interest_rate
+ * @property numeric $interest
+ * @property \Carbon\CarbonImmutable $transaction_date
+ * @property \Carbon\CarbonImmutable|null $transaction_datetime
+ * @property numeric $balance
+ * @property \Carbon\CarbonImmutable|null $interest_date
+ * @property bool $accrued
+ * @property int|null $cashier_id
+ * @property \Carbon\CarbonImmutable|null $created_at
+ * @property \Carbon\CarbonImmutable|null $updated_at
+ * @property-read \App\Models\User|null $cashier
+ * @property-read \App\Models\Member $member
+ * @property-read \App\Models\RevolvingFund|null $revolving_fund
+ * @property-read \App\Models\SavingsAccount $savings_account
+ * @method static Builder<static>|Saving newModelQuery()
+ * @method static Builder<static>|Saving newQuery()
+ * @method static Builder<static>|Saving query()
+ * @method static Builder<static>|Saving whereAccrued($value)
+ * @method static Builder<static>|Saving whereAmount($value)
+ * @method static Builder<static>|Saving whereBalance($value)
+ * @method static Builder<static>|Saving whereCashierId($value)
+ * @method static Builder<static>|Saving whereCreatedAt($value)
+ * @method static Builder<static>|Saving whereDeposit($value)
+ * @method static Builder<static>|Saving whereId($value)
+ * @method static Builder<static>|Saving whereInterest($value)
+ * @method static Builder<static>|Saving whereInterestDate($value)
+ * @method static Builder<static>|Saving whereInterestRate($value)
+ * @method static Builder<static>|Saving whereMemberId($value)
+ * @method static Builder<static>|Saving wherePaymentTypeId($value)
+ * @method static Builder<static>|Saving whereReferenceNumber($value)
+ * @method static Builder<static>|Saving whereSavingsAccountId($value)
+ * @method static Builder<static>|Saving whereTransactionDate($value)
+ * @method static Builder<static>|Saving whereTransactionDatetime($value)
+ * @method static Builder<static>|Saving whereUpdatedAt($value)
+ * @method static Builder<static>|Saving whereWithdrawal($value)
+ * @mixin \Eloquent
  */
 class Saving extends Model
 {

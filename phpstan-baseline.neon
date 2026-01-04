@@ -1,0 +1,1507 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Access to an undefined property App\\Models\\Imprest\:\:\$days_till_next_transaction\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Actions/Imprests/GenerateImprestsInterestForMember.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Builder\<Illuminate\\Database\\Eloquent\\Model\>\:\:each\(\) expects callable\(Illuminate\\Database\\Eloquent\\Model, int\)\: mixed, Closure\(App\\Models\\Imprest\)\: void given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Actions/Imprests/GenerateImprestsInterestForMember.php
+
+		-
+			message: '#^Parameter \#1 \$string of function str_pad expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Actions/Loans/CreateNewLoan.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Account\|Staudenmeir\\LaravelAdjacencyList\\Eloquent\\Collection\<int, App\\Models\\Account\>\:\:\$code\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Actions/Loans/ImportExistingLoan.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<int,array\<string, mixed\>\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Actions/Loans/ImportExistingLoan.php
+
+		-
+			message: '#^Method App\\Actions\\Loans\\PayLegacyLoan\:\:handle\(\) should return App\\Models\\LoanPayment but returns Illuminate\\Database\\Eloquent\\Model\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Actions/Loans/PayLegacyLoan.php
+
+		-
+			message: '#^Binary operation "\-" between string and 0\|float\|string results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: app/Actions/Loans/PayLoan.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>transaction_date" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Actions/Loans/PayLoan.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$balance\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Actions/LoveGifts/GenerateLoveGiftsInterestForMember.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$days_till_next_transaction\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Actions/LoveGifts/GenerateLoveGiftsInterestForMember.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$interest_rate\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Actions/LoveGifts/GenerateLoveGiftsInterestForMember.php
+
+		-
+			message: '#^Parameter \#1 \$string of function str_pad expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Actions/Savings/GenerateAccountNumber.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Actions/Savings/GenerateAccountNumber.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$balance\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Actions/Savings/GenerateSavingsInterestForMember.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$days_till_next_transaction\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Actions/Savings/GenerateSavingsInterestForMember.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$interest_rate\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Actions/Savings/GenerateSavingsInterestForMember.php
+
+		-
+			message: '#^Parameter \$account_id of class App\\Oxytoxin\\DTO\\Transactions\\TransactionData constructor expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Actions/TimeDeposits/ClaimTimeDeposit.php
+
+		-
+			message: '#^Parameter \#1 \$string of function str_pad expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Actions/TimeDeposits/CreateTimeDeposit.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Actions/TimeDeposits/CreateTimeDeposit.php
+
+		-
+			message: '#^Parameter \$account_id of class App\\Oxytoxin\\DTO\\Transactions\\TransactionData constructor expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Actions/TimeDeposits/RolloverTimeDeposit.php
+
+		-
+			message: '#^Parameter \$account_id of class App\\Oxytoxin\\DTO\\Transactions\\TransactionData constructor expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Actions/TimeDeposits/TerminateTimeDeposit.php
+
+		-
+			message: '#^Parameter \$amount_subscribed of class App\\Oxytoxin\\DTO\\CapitalSubscription\\CapitalSubscriptionData constructor expects string, float given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Console/Commands/ImportCbu.php
+
+		-
+			message: '#^Parameter \$monthly_payment of class App\\Oxytoxin\\DTO\\CapitalSubscription\\CapitalSubscriptionData constructor expects string, float\|int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Console/Commands/ImportCbu.php
+
+		-
+			message: '#^Relation ''existing_capital_subscription_account'' is not found in App\\Models\\Member model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Console/Commands/ImportMemberAccounts.php
+
+		-
+			message: '#^Relation ''imprest_account'' is not found in App\\Models\\Member model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Console/Commands/ImportMemberAccounts.php
+
+		-
+			message: '#^Relation ''love_gift_account'' is not found in App\\Models\\Member model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Console/Commands/ImportMemberAccounts.php
+
+		-
+			message: '#^Relation ''savings_accounts'' is not found in App\\Models\\Member model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Console/Commands/ImportMemberAccounts.php
+
+		-
+			message: '#^Parameter \$maturity_amount of class App\\Oxytoxin\\DTO\\MSO\\TimeDepositData constructor expects string, float given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Console/Commands/ImportMso.php
+
+		-
+			message: '#^Variable \$account might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: app/Console/Commands/ImportMso.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\DisbursementVoucherItem\:\:\$disbursement_voucher\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/UpdateDatabaseConcernsCommand.php
+
+		-
+			message: '#^Access to an undefined property App\\Filament\\App\\Pages\\Accounting\:\:\$form\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/App/Pages/Accounting.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>payments" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Filament/App/Pages/Accounting.php
+
+		-
+			message: '#^Call to an undefined method Filament\\Tables\\Table\:\:defaultLoanApplicationFilters\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Filament/App/Pages/ApprovedLoanApplications.php
+
+		-
+			message: '#^Parameter \#1 \$icon of method Filament\\Actions\\ActionGroup\:\:icon\(\) expects BackedEnum\|Closure\|Illuminate\\Contracts\\Support\\Htmlable\|string\|null, false given\.$#'
+			identifier: argument.type
+			count: 3
+			path: app/Filament/App/Pages/ApprovedLoanApplications.php
+
+		-
+			message: '#^Relation ''loan'' is not found in App\\Models\\LoanApplication model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Filament/App/Pages/ApprovedLoanApplications.php
+
+		-
+			message: '#^Access to an undefined property App\\Filament\\App\\Pages\\Billings\\ManageBillings\:\:\$form\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/App/Pages/Billings/ManageBillings.php
+
+		-
+			message: '#^Parameter \#1 \$options of method Filament\\Forms\\Components\\Select\:\:options\(\) expects array\<array\<string\>\|string\>\|Closure\|Illuminate\\Contracts\\Support\\Arrayable\|string\|null, array\{2023\: 2023, 2024\: 2024, 2025\: 2025, 2026\: 2026, 2027\: 2027, 2028\: 2028, 2029\: 2029, 2030\: 2030, \.\.\.\} given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Filament/App/Pages/Bookkeeper/AccountBalanceReport.php
+
+		-
+			message: '#^Relation ''account'' is not found in App\\Models\\Transaction model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Filament/App/Pages/Bookkeeper/AccountBalanceReport.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>year" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Filament/App/Pages/Bookkeeper/AccountBalanceReport.php
+
+		-
+			message: '#^Access to an undefined property App\\Filament\\App\\Pages\\Bookkeeper\\AccountTransactionsList\:\:\$form\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/App/Pages/Bookkeeper/AccountTransactionsList.php
+
+		-
+			message: '#^Expression on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.expr
+			count: 1
+			path: app/Filament/App/Pages/Bookkeeper/AccountTransactionsList.php
+
+		-
+			message: '#^Relation ''account'' is not found in App\\Models\\Transaction model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Filament/App/Pages/Bookkeeper/AccountTransactionsList.php
+
+		-
+			message: '#^Relation ''account_type'' is not found in App\\Models\\Account model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Filament/App/Pages/Bookkeeper/AccountTransactionsList.php
+
+		-
+			message: '#^Access to an undefined property App\\Filament\\App\\Pages\\Bookkeeper\\CdjLoanReport\:\:\$form\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/App/Pages/Bookkeeper/CdjLoanReport.php
+
+		-
+			message: '#^Access to an undefined property App\\Filament\\App\\Pages\\Bookkeeper\\FinancialStatementReport\:\:\$form\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/App/Pages/Bookkeeper/FinancialStatementReport.php
+
+		-
+			message: '#^Access to an undefined property App\\Filament\\App\\Pages\\Bookkeeper\\FinancialStatementReport\:\:\$from_date\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Filament/App/Pages/Bookkeeper/FinancialStatementReport.php
+
+		-
+			message: '#^Access to an undefined property App\\Filament\\App\\Pages\\Bookkeeper\\FinancialStatementReport\:\:\$selected_month\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/App/Pages/Bookkeeper/FinancialStatementReport.php
+
+		-
+			message: '#^Access to an undefined property App\\Filament\\App\\Pages\\Bookkeeper\\FinancialStatementReport\:\:\$to_date\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Filament/App/Pages/Bookkeeper/FinancialStatementReport.php
+
+		-
+			message: '#^Match expression does not handle remaining value\: mixed$#'
+			identifier: match.unhandled
+			count: 3
+			path: app/Filament/App/Pages/Bookkeeper/FinancialStatementReport.php
+
+		-
+			message: '#^Access to an undefined property App\\Filament\\App\\Pages\\Bookkeeper\\LegacyLoanPayments\:\:\$form\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Filament/App/Pages/Bookkeeper/LegacyLoanPayments.php
+
+		-
+			message: '#^Call to an undefined method Filament\\Forms\\Components\\Select\:\:paymenttype\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Filament/App/Pages/Bookkeeper/LegacyLoanPayments.php
+
+		-
+			message: '#^Call to an undefined method Filament\\Forms\\Components\\TextInput\:\:moneymask\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Filament/App/Pages/Bookkeeper/LegacyLoanPayments.php
+
+		-
+			message: '#^Access to an undefined property App\\Filament\\App\\Pages\\Bookkeeper\\LegacyLoanVoucherPayments\:\:\$form\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Filament/App/Pages/Bookkeeper/LegacyLoanVoucherPayments.php
+
+		-
+			message: '#^Call to an undefined method Filament\\Forms\\Components\\TextInput\:\:moneymask\(\)\.$#'
+			identifier: method.notFound
+			count: 4
+			path: app/Filament/App/Pages/Bookkeeper/LegacyLoanVoucherPayments.php
+
+		-
+			message: '#^Access to an undefined property App\\Filament\\App\\Pages\\Bookkeeper\\TransactionDateManager\:\:\$active_users\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/App/Pages/Bookkeeper/TransactionDateManager.php
+
+		-
+			message: '#^Access to an undefined property App\\Filament\\App\\Pages\\Bookkeeper\\TransactionDateManager\:\:\$form\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Filament/App/Pages/Bookkeeper/TransactionDateManager.php
+
+		-
+			message: '#^Access to an undefined property App\\Filament\\App\\Pages\\Bookkeeper\\TransactionDateManager\:\:\$loans_for_voucher\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/App/Pages/Bookkeeper/TransactionDateManager.php
+
+		-
+			message: '#^Access to an undefined property App\\Filament\\App\\Pages\\Bookkeeper\\TransactionDateManager\:\:\$revolving_fund_cleared\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/App/Pages/Bookkeeper/TransactionDateManager.php
+
+		-
+			message: '#^Access to an undefined property App\\Filament\\App\\Pages\\Bookkeeper\\TransactionDateManager\:\:\$unposted_billings\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/App/Pages/Bookkeeper/TransactionDateManager.php
+
+		-
+			message: '#^Expression on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.expr
+			count: 1
+			path: app/Filament/App/Pages/Bookkeeper/TransactionsList.php
+
+		-
+			message: '#^Access to an undefined property App\\Filament\\App\\Pages\\Casa\:\:\$form\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/App/Pages/Casa.php
+
+		-
+			message: '#^Parameter \$amount of class App\\Oxytoxin\\DTO\\Loan\\LoanPaymentData constructor expects string, float\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Filament/App/Pages/Cashier/Actions/CashierTransactionsPageLoan.php
+
+		-
+			message: '#^Parameter \$amount of class App\\Oxytoxin\\DTO\\MSO\\TimeDepositData constructor expects string, float\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Filament/App/Pages/Cashier/Actions/CashierTransactionsPageTimeDeposit.php
+
+		-
+			message: '#^Parameter \$maturity_amount of class App\\Oxytoxin\\DTO\\MSO\\TimeDepositData constructor expects string, float given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Filament/App/Pages/Cashier/Actions/CashierTransactionsPageTimeDeposit.php
+
+		-
+			message: '#^Access to an undefined property App\\Filament\\App\\Pages\\Cashier\\BillingTransactions\:\:\$form\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Filament/App/Pages/Cashier/BillingTransactions.php
+
+		-
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
+			count: 5
+			path: app/Filament/App/Pages/Cashier/BillingTransactions.php
+
+		-
+			message: '#^Access to an undefined property App\\Filament\\App\\Pages\\Cashier\\CashierTransactionsPage\:\:\$form\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/App/Pages/Cashier/CashierTransactionsPage.php
+
+		-
+			message: '#^Access to an undefined property App\\Filament\\App\\Pages\\Cashier\\NewAccountTransactions\:\:\$form\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Filament/App/Pages/Cashier/NewAccountTransactions.php
+
+		-
+			message: '#^Access to an undefined property App\\Filament\\App\\Pages\\Cashier\\PaymentTransactions\:\:\$form\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Filament/App/Pages/Cashier/PaymentTransactions.php
+
+		-
+			message: '#^Call to an undefined method Filament\\Forms\\Components\\Select\:\:paymenttype\(\)\.$#'
+			identifier: method.notFound
+			count: 8
+			path: app/Filament/App/Pages/Cashier/PaymentTransactions.php
+
+		-
+			message: '#^Call to an undefined method Filament\\Forms\\Components\\TextInput\:\:moneymask\(\)\.$#'
+			identifier: method.notFound
+			count: 8
+			path: app/Filament/App/Pages/Cashier/PaymentTransactions.php
+
+		-
+			message: '#^Match expression does not handle remaining value\: mixed$#'
+			identifier: match.unhandled
+			count: 2
+			path: app/Filament/App/Pages/Cashier/PaymentTransactions.php
+
+		-
+			message: '#^Parameter \#1 \$label of method Filament\\Infolists\\Components\\Entry\:\:label\(\) expects Closure\|Illuminate\\Contracts\\Support\\Htmlable\|string\|null, false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Filament/App/Pages/Cashier/PaymentTransactions.php
+
+		-
+			message: '#^Parameter \#1 \$string of function str_pad expects string, int\<1, 100000\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Filament/App/Pages/Cashier/PaymentTransactions.php
+
+		-
+			message: '#^Property App\\Filament\\App\\Pages\\Cashier\\PaymentTransactions\:\:\$transactions is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: app/Filament/App/Pages/Cashier/PaymentTransactions.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>full_name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Filament/App/Pages/Cashier/PaymentTransactions.php
+
+		-
+			message: '#^Access to an undefined property App\\Filament\\App\\Pages\\Cashier\\Reports\\CashProof\:\:\$form\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/App/Pages/Cashier/Reports/CashProof.php
+
+		-
+			message: '#^Access to an undefined property App\\Filament\\App\\Pages\\Cashier\\Reports\\DailyCollectionsReport\:\:\$form\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/App/Pages/Cashier/Reports/DailyCollectionsReport.php
+
+		-
+			message: '#^Relation ''account'' is not found in App\\Models\\Transaction model\.$#'
+			identifier: larastan.relationExistence
+			count: 8
+			path: app/Filament/App/Pages/Cashier/Reports/DailyCollectionsReport.php
+
+		-
+			message: '#^Trait App\\Filament\\App\\Pages\\Cashier\\Reports\\HasReport is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: app/Filament/App/Pages/Cashier/Reports/HasReport.php
+
+		-
+			message: '#^Relation ''account'' is not found in App\\Models\\Transaction model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Filament/App/Pages/Cashier/Reports/PaymentTransactions.php
+
+		-
+			message: '#^Relation ''loan'' is not found in App\\Models\\LoanPayment model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Filament/App/Pages/Cashier/Reports/PaymentTransactions.php
+
+		-
+			message: '#^Access to an undefined property App\\Filament\\App\\Pages\\CbuSchedule\:\:\$form\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/App/Pages/CbuSchedule.php
+
+		-
+			message: '#^Method App\\Filament\\App\\Pages\\CbuSchedule\:\:amount_shares_paid\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: app/Filament/App/Pages/CbuSchedule.php
+
+		-
+			message: '#^Method App\\Filament\\App\\Pages\\CbuSchedule\:\:number_of_shares_paid\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: app/Filament/App/Pages/CbuSchedule.php
+
+		-
+			message: '#^Access to an undefined property App\\Filament\\App\\Pages\\CbuScheduleSummary\:\:\$form\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/App/Pages/CbuScheduleSummary.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Account\:\:\$credit\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Filament/App/Pages/CbuScheduleSummary.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Account\:\:\$debit\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Filament/App/Pages/CbuScheduleSummary.php
+
+		-
+			message: '#^Match expression does not handle remaining value\: App\\Enums\\MemberTypes\:\:ORGANIZATION$#'
+			identifier: match.unhandled
+			count: 1
+			path: app/Filament/App/Pages/CbuScheduleSummary.php
+
+		-
+			message: '#^Call to an undefined method Filament\\Tables\\Table\:\:defaultLoanApplicationFilters\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Filament/App/Pages/DisapprovedLoanApplications.php
+
+		-
+			message: '#^Match expression does not handle remaining value\: mixed$#'
+			identifier: match.unhandled
+			count: 1
+			path: app/Filament/App/Pages/DisapprovedLoanApplications.php
+
+		-
+			message: '#^Call to an undefined method Filament\\Forms\\Components\\TextInput\:\:moneymask\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Filament/App/Pages/RevolvingFundManagement.php
+
+		-
+			message: '#^Parameter \#1 \$view of method Filament\\Support\\Components\\ViewComponent\:\:view\(\) expects view\-string\|null, string given\.$#'
+			identifier: argument.type
+			count: 3
+			path: app/Filament/App/Pages/SavingsOperation.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$generated_date\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Filament/App/Resources/BalanceForwardedSummaryResource/Pages/EditBalanceForwardedSummary.php
+
+		-
+			message: '#^Call to an undefined method Filament\\Forms\\Components\\Select\:\:paymenttype\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Filament/App/Resources/CapitalSubscriptionBillingResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\CapitalSubscriptionBillingPayment\:\:\$member_code\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/App/Resources/CapitalSubscriptionBillingResource/Pages/CapitalSubscriptionBillingPayments.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\CapitalSubscriptionBillingPayment\:\:\$member_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/App/Resources/CapitalSubscriptionBillingResource/Pages/CapitalSubscriptionBillingPayments.php
+
+		-
+			message: '#^Call to an undefined method Filament\\Forms\\Components\\TextInput\:\:moneymask\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Filament/App/Resources/CapitalSubscriptionBillingResource/Pages/CapitalSubscriptionBillingPayments.php
+
+		-
+			message: '#^Variable \$key might not be defined\.$#'
+			identifier: variable.undefined
+			count: 5
+			path: app/Filament/App/Resources/CapitalSubscriptionBillingResource/Pages/CapitalSubscriptionBillingPayments.php
+
+		-
+			message: '#^Call to an undefined method Filament\\Forms\\Components\\Select\:\:paymenttype\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Filament/App/Resources/CapitalSubscriptionBillingResource/Pages/ManageCapitalSubscriptionBillings.php
+
+		-
+			message: '#^Call to an undefined static method Filament\\Tables\\Filters\\Filter\:\:dateRange\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: app/Filament/App/Resources/CapitalSubscriptionPaymentResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Filament\\App\\Resources\\CapitalSubscriptionResource\\Pages\\Reports\\TopTenHighestCbuReport\:\:\$form\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/App/Resources/CapitalSubscriptionResource/Pages/Reports/TopTenHighestCbuReport.php
+
+		-
+			message: '#^Call to an undefined method Filament\\Forms\\Components\\Select\:\:paymenttype\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Filament/App/Resources/CashCollectibleBillingResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\CashCollectibleBillingPayment\:\:\$member_code\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/App/Resources/CashCollectibleBillingResource/Pages/CashCollectibleBillingPayments.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\CashCollectibleBillingPayment\:\:\$member_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/App/Resources/CashCollectibleBillingResource/Pages/CashCollectibleBillingPayments.php
+
+		-
+			message: '#^Call to an undefined method Filament\\Forms\\Components\\TextInput\:\:moneymask\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Filament/App/Resources/CashCollectibleBillingResource/Pages/CashCollectibleBillingPayments.php
+
+		-
+			message: '#^Variable \$key might not be defined\.$#'
+			identifier: variable.undefined
+			count: 5
+			path: app/Filament/App/Resources/CashCollectibleBillingResource/Pages/CashCollectibleBillingPayments.php
+
+		-
+			message: '#^Call to an undefined method Filament\\Forms\\Components\\Select\:\:paymenttype\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Filament/App/Resources/CashCollectibleBillingResource/Pages/ManageCashCollectibleBillings.php
+
+		-
+			message: '#^Call to an undefined method Filament\\Forms\\Components\\TextInput\:\:moneymask\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Filament/App/Resources/CashCollectibleBillingResource/Pages/ManageCashCollectibleBillings.php
+
+		-
+			message: '#^Parameter \#1 \$options of method Filament\\Forms\\Components\\Select\:\:options\(\) expects array\<array\<string\>\|string\>\|Closure\|Illuminate\\Contracts\\Support\\Arrayable\|string\|null, array\{1\: 1, 2\: 2, 4\: 4, 6\: 6, 12\: 12\} given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Filament/App/Resources/CashCollectibleSubscriptionResource.php
+
+		-
+			message: '#^Call to an undefined method Filament\\Forms\\Components\\TextInput\:\:moneymask\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Filament/App/Resources/DisbursementVoucherResource.php
+
+		-
+			message: '#^Call to an undefined method Filament\\Forms\\Components\\TextInput\:\:moneymask\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Filament/App/Resources/JournalEntryVoucherResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Account\|Staudenmeir\\LaravelAdjacencyList\\Eloquent\\Collection\<int, App\\Models\\Account\>\:\:\$code\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/App/Resources/LoanApplicationResource.php
+
+		-
+			message: '#^Array has 2 duplicate keys with value ''success'' \(''success'', ''success''\)\.$#'
+			identifier: array.duplicateKey
+			count: 1
+			path: app/Filament/App/Resources/LoanApplicationResource.php
+
+		-
+			message: '#^Call to an undefined method Filament\\Forms\\Components\\TextInput\:\:moneymask\(\)\.$#'
+			identifier: method.notFound
+			count: 4
+			path: app/Filament/App/Resources/LoanApplicationResource.php
+
+		-
+			message: '#^Call to an undefined method Filament\\Tables\\Table\:\:defaultLoanApplicationFilters\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Filament/App/Resources/LoanApplicationResource.php
+
+		-
+			message: '#^Expression on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.expr
+			count: 1
+			path: app/Filament/App/Resources/LoanApplicationResource.php
+
+		-
+			message: '#^Match expression does not handle remaining value\: mixed$#'
+			identifier: match.unhandled
+			count: 1
+			path: app/Filament/App/Resources/LoanApplicationResource.php
+
+		-
+			message: '#^Parameter \#1 \$condition of method Filament\\Forms\\Components\\Select\:\:preload\(\) expects bool\|Closure, 50 given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Filament/App/Resources/LoanApplicationResource.php
+
+		-
+			message: '#^Parameter \#1 \$icon of method Filament\\Actions\\ActionGroup\:\:icon\(\) expects BackedEnum\|Closure\|Illuminate\\Contracts\\Support\\Htmlable\|string\|null, false given\.$#'
+			identifier: argument.type
+			count: 3
+			path: app/Filament/App/Resources/LoanApplicationResource.php
+
+		-
+			message: '#^Parameter \#1 \$options of method Filament\\Forms\\Components\\Select\:\:options\(\) expects array\<array\<string\>\|string\>\|Closure\|Illuminate\\Contracts\\Support\\Arrayable\|string\|null, array\{1\: 1, 3\: 3, 4\: 4, 6\: 6, 12\: 12, 24\: 24, 36\: 36, 48\: 48, \.\.\.\} given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Filament/App/Resources/LoanApplicationResource.php
+
+		-
+			message: '#^Parameter \#1 \$string of function str expects string\|null, \(float\|int\) given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Filament/App/Resources/LoanApplicationResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Filament\\App\\Resources\\LoanApplicationResource\\Pages\\CreditAndBackgroundInvestigationForm\:\:\$form\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Filament/App/Resources/LoanApplicationResource/Pages/CreditAndBackgroundInvestigationForm.php
+
+		-
+			message: '#^Method App\\Filament\\App\\Resources\\LoanApplicationResource\\Pages\\CreditAndBackgroundInvestigationForm\:\:keyvaluefield\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: app/Filament/App/Resources/LoanApplicationResource/Pages/CreditAndBackgroundInvestigationForm.php
+
+		-
+			message: '#^Call to an undefined method Filament\\Forms\\Components\\Select\:\:paymenttype\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Filament/App/Resources/LoanBillingResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\LoanBillingPayment\:\:\$member_code\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/App/Resources/LoanBillingResource/Pages/LoanBillingPayments.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\LoanBillingPayment\:\:\$member_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/App/Resources/LoanBillingResource/Pages/LoanBillingPayments.php
+
+		-
+			message: '#^Call to an undefined method Filament\\Forms\\Components\\TextInput\:\:moneymask\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Filament/App/Resources/LoanBillingResource/Pages/LoanBillingPayments.php
+
+		-
+			message: '#^Relation ''loan'' is not found in App\\Models\\LoanBillingPayment model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Filament/App/Resources/LoanBillingResource/Pages/LoanBillingPayments.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type Carbon\\CarbonImmutable\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Filament/App/Resources/LoanBillingResource/Pages/LoanBillingPayments.php
+
+		-
+			message: '#^Variable \$key might not be defined\.$#'
+			identifier: variable.undefined
+			count: 7
+			path: app/Filament/App/Resources/LoanBillingResource/Pages/LoanBillingPayments.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Account\|Staudenmeir\\LaravelAdjacencyList\\Eloquent\\Collection\<int, App\\Models\\Account\>\:\:\$code\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/App/Resources/LoanResource.php
+
+		-
+			message: '#^Call to an undefined method Filament\\Forms\\Components\\TextInput\:\:moneymask\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Filament/App/Resources/LoanResource.php
+
+		-
+			message: '#^Parameter \#1 \$icon of method Filament\\Actions\\ActionGroup\:\:icon\(\) expects BackedEnum\|Closure\|Illuminate\\Contracts\\Support\\Htmlable\|string\|null, false given\.$#'
+			identifier: argument.type
+			count: 3
+			path: app/Filament/App/Resources/LoanResource.php
+
+		-
+			message: '#^Parameter \#1 \$icon of method Filament\\Actions\\ActionGroup\:\:icon\(\) expects BackedEnum\|Closure\|Illuminate\\Contracts\\Support\\Htmlable\|string\|null, false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Filament/App/Resources/LoanResource/Actions/ViewLoanDetailsActionGroup.php
+
+		-
+			message: '#^Call to an undefined method Filament\\Forms\\Components\\TextInput\:\:moneymask\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Filament/App/Resources/MemberResource.php
+
+		-
+			message: '#^Comparison operation "\=\=" between array\<string, mixed\>\|null and 1 results in an error\.$#'
+			identifier: equal.invalid
+			count: 1
+			path: app/Filament/App/Resources/MemberResource.php
+
+		-
+			message: '#^Loose comparison using \=\= between array\<string, mixed\>\|null and 1 will always evaluate to false\.$#'
+			identifier: equal.alwaysFalse
+			count: 1
+			path: app/Filament/App/Resources/MemberResource.php
+
+		-
+			message: '#^Call to an undefined static method Filament\\Tables\\Filters\\Filter\:\:dateRange\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: app/Filament/App/Resources/MemberResource/Pages/CbuSubsidiaryLedger.php
+
+		-
+			message: '#^Relation ''capital_subscription'' is not found in App\\Models\\CapitalSubscriptionPayment model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Filament/App/Resources/MemberResource/Pages/CbuSubsidiaryLedger.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/App/Resources/MemberResource/Pages/CreateMember.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$member_type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/App/Resources/MemberResource/Pages/CreateMember.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:capital_subscriptions\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Filament/App/Resources/MemberResource/Pages/CreateMember.php
+
+		-
+			message: '#^Parameter \#1 \$member of method App\\Actions\\Memberships\\CreateMemberInitialAccounts\:\:handle\(\) expects App\\Models\\Member, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Filament/App/Resources/MemberResource/Pages/CreateMember.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/App/Resources/MemberResource/Pages/EditMember.php
+
+		-
+			message: '#^Access to an undefined property App\\Filament\\App\\Resources\\MemberResource\\Pages\\EditMemberLoan\:\:\$form\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/App/Resources/MemberResource/Pages/EditMemberLoan.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Loan\:\:\$deductions\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/App/Resources/MemberResource/Pages/EditMemberLoan.php
+
+		-
+			message: '#^Call to an undefined method Filament\\Forms\\Components\\TextInput\:\:moneymask\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Filament/App/Resources/MemberResource/Pages/EditMemberLoan.php
+
+		-
+			message: '#^Expression on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.expr
+			count: 1
+			path: app/Filament/App/Resources/MemberResource/Pages/EditMemberLoan.php
+
+		-
+			message: '#^Parameter \#1 \$column of method Filament\\Forms\\Components\\Repeater\:\:orderColumn\(\) expects Closure\|string\|null, false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Filament/App/Resources/MemberResource/Pages/EditMemberLoan.php
+
+		-
+			message: '#^Parameter \#1 \$options of method Filament\\Forms\\Components\\Select\:\:options\(\) expects array\<array\<string\>\|string\>\|Closure\|Illuminate\\Contracts\\Support\\Arrayable\|string\|null, array\{1\: 1, 3\: 3, 4\: 4, 6\: 6, 12\: 12, 24\: 24, 36\: 36, 48\: 48, \.\.\.\} given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Filament/App/Resources/MemberResource/Pages/EditMemberLoan.php
+
+		-
+			message: '#^Parameter \#1 \$string of function str expects string\|null, float\|int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Filament/App/Resources/MemberResource/Pages/EditMemberLoan.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>transaction_date" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Filament/App/Resources/MemberResource/Pages/LoanSubsidiaryLedger.php
+
+		-
+			message: '#^Relation ''patronage_status'' is not found in App\\Models\\Member model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Filament/App/Resources/MemberResource/Pages/MembersReport.php
+
+		-
+			message: '#^Cannot access property \$alt_full_name on Illuminate\\Database\\Eloquent\\Model\|int\|string\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Filament/App/Resources/MemberResource/Pages/ViewMember.php
+
+		-
+			message: '#^Call to an undefined method Filament\\Forms\\Components\\TextInput\:\:moneymask\(\)\.$#'
+			identifier: method.notFound
+			count: 4
+			path: app/Filament/App/Resources/MemberTypeResource.php
+
+		-
+			message: '#^Call to an undefined method Filament\\Forms\\Components\\Select\:\:paymenttype\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Filament/App/Resources/MsoBillingResource.php
+
+		-
+			message: '#^Parameter \#1 \$statePath of method Filament\\Forms\\Components\\Field\:\:gte\(\) expects Closure\|string, 0 given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Filament/App/Resources/MsoBillingResource.php
+
+		-
+			message: '#^Relation ''imprest_account'' is not found in App\\Models\\Member model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Filament/App/Resources/MsoBillingResource/Pages/ManageMsoBillings.php
+
+		-
+			message: '#^Relation ''love_gift_account'' is not found in App\\Models\\Member model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Filament/App/Resources/MsoBillingResource/Pages/ManageMsoBillings.php
+
+		-
+			message: '#^Relation ''savings_accounts'' is not found in App\\Models\\Member model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Filament/App/Resources/MsoBillingResource/Pages/ManageMsoBillings.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\MsoBillingPayment\:\:\$member_code\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/App/Resources/MsoBillingResource/Pages/MsoBillingPayments.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\MsoBillingPayment\:\:\$member_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/App/Resources/MsoBillingResource/Pages/MsoBillingPayments.php
+
+		-
+			message: '#^Call to an undefined method Filament\\Forms\\Components\\TextInput\:\:moneymask\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Filament/App/Resources/MsoBillingResource/Pages/MsoBillingPayments.php
+
+		-
+			message: '#^Match arm comparison between App\\Enums\\MsoBillingType\:\:IMPREST\|App\\Enums\\MsoBillingType\:\:LOVE_GIFT\|App\\Enums\\MsoBillingType\:\:SAVINGS and 1 is always false\.$#'
+			identifier: match.alwaysFalse
+			count: 1
+			path: app/Filament/App/Resources/MsoBillingResource/Pages/MsoBillingPayments.php
+
+		-
+			message: '#^Match arm comparison between App\\Enums\\MsoBillingType\:\:IMPREST\|App\\Enums\\MsoBillingType\:\:LOVE_GIFT\|App\\Enums\\MsoBillingType\:\:SAVINGS and 2 is always false\.$#'
+			identifier: match.alwaysFalse
+			count: 1
+			path: app/Filament/App/Resources/MsoBillingResource/Pages/MsoBillingPayments.php
+
+		-
+			message: '#^Match arm comparison between App\\Enums\\MsoBillingType\:\:IMPREST\|App\\Enums\\MsoBillingType\:\:LOVE_GIFT\|App\\Enums\\MsoBillingType\:\:SAVINGS and 3 is always false\.$#'
+			identifier: match.alwaysFalse
+			count: 1
+			path: app/Filament/App/Resources/MsoBillingResource/Pages/MsoBillingPayments.php
+
+		-
+			message: '#^Match expression does not handle remaining values\: App\\Enums\\MsoBillingType\:\:IMPREST\|App\\Enums\\MsoBillingType\:\:LOVE_GIFT\|App\\Enums\\MsoBillingType\:\:SAVINGS$#'
+			identifier: match.unhandled
+			count: 1
+			path: app/Filament/App/Resources/MsoBillingResource/Pages/MsoBillingPayments.php
+
+		-
+			message: '#^Variable \$key might not be defined\.$#'
+			identifier: variable.undefined
+			count: 5
+			path: app/Filament/App/Resources/MsoBillingResource/Pages/MsoBillingPayments.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:members\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Filament/App/Resources/OfficersListResource/Pages/EditOfficersList.php
+
+		-
+			message: '#^Parameter \#1 \$member of method App\\Actions\\Memberships\\CreateMemberInitialAccounts\:\:handle\(\) expects App\\Models\\Member, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Filament/App/Resources/OrganizationResource/Pages/CreateOrganization.php
+
+		-
+			message: '#^Parameter \#1 \$view of function view expects view\-string\|null, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Auth/AuthenticatedSessionController.php
+
+		-
+			message: '#^Parameter \#1 \$view of function view expects view\-string\|null, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Auth/ConfirmablePasswordController.php
+
+		-
+			message: '#^Parameter \#1 \$view of function view expects view\-string\|null, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Auth/EmailVerificationPromptController.php
+
+		-
+			message: '#^Parameter \#1 \$view of function view expects view\-string\|null, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Auth/NewPasswordController.php
+
+		-
+			message: '#^Parameter \#1 \$view of function view expects view\-string\|null, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Auth/PasswordResetLinkController.php
+
+		-
+			message: '#^Parameter \#1 \$view of function view expects view\-string\|null, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Auth/RegisteredUserController.php
+
+		-
+			message: '#^Parameter \#1 \$user of class Illuminate\\Auth\\Events\\Verified constructor expects Illuminate\\Contracts\\Auth\\MustVerifyEmail, App\\Models\\User\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Auth/VerifyEmailController.php
+
+		-
+			message: '#^Parameter \#1 \$view of function view expects view\-string\|null, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/ProfileController.php
+
+		-
+			message: '#^Call to an undefined method Filament\\Forms\\Components\\TextInput\:\:moneymask\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Livewire/App/CashBeginningsTable.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\App\\CashFloating\:\:\$form\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/App/CashFloating.php
+
+		-
+			message: '#^Call to an undefined method Filament\\Forms\\Components\\TextInput\:\:moneymask\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: app/Livewire/App/CbuTable.php
+
+		-
+			message: '#^Call to an undefined method Filament\\Forms\\Components\\TextInput\:\:moneymask\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Livewire/App/LoansTable.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\:\:posted\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Livewire/App/LoansTable.php
+
+		-
+			message: '#^Expression on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.expr
+			count: 1
+			path: app/Livewire/App/LoansTable.php
+
+		-
+			message: '#^Parameter \#1 \$column of method Filament\\Forms\\Components\\Repeater\:\:orderColumn\(\) expects Closure\|string\|null, false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Livewire/App/LoansTable.php
+
+		-
+			message: '#^Parameter \#1 \$icon of method Filament\\Actions\\ActionGroup\:\:icon\(\) expects BackedEnum\|Closure\|Illuminate\\Contracts\\Support\\Htmlable\|string\|null, false given\.$#'
+			identifier: argument.type
+			count: 3
+			path: app/Livewire/App/LoansTable.php
+
+		-
+			message: '#^Parameter \#1 \$options of method Filament\\Forms\\Components\\Select\:\:options\(\) expects array\<array\<string\>\|string\>\|Closure\|Illuminate\\Contracts\\Support\\Arrayable\|string\|null, array\{1\: 1, 3\: 3, 4\: 4, 6\: 6, 12\: 12, 24\: 24, 36\: 36, 48\: 48, \.\.\.\} given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Livewire/App/LoansTable.php
+
+		-
+			message: '#^Parameter \#1 \$string of function str expects string\|null, float\|int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Livewire/App/LoansTable.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\TimeDepositAccount\:\:\$withdrawal_date\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/App/TimeDepositsTable.php
+
+		-
+			message: '#^Call to an undefined method Filament\\Forms\\Components\\Select\:\:paymenttype\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Livewire/App/TimeDepositsTable.php
+
+		-
+			message: '#^Parameter \#1 \$icon of method Filament\\Actions\\ActionGroup\:\:icon\(\) expects BackedEnum\|Closure\|Illuminate\\Contracts\\Support\\Htmlable\|string\|null, false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Livewire/App/TimeDepositsTable.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\RevolvingFund\:\:\$balance\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/CashierRevolvingFundReplenishmentChecker.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\Testcomponent\:\:\$selected_month\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Testcomponent.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\:\:tree\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Models/Account.php
+
+		-
+			message: '#^Parameter \#1 \$string of function str_pad expects string, int given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Models/CapitalSubscription.php
+
+		-
+			message: '#^Parameter \#1 \$string of function str_pad expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Models/CapitalSubscriptionBilling.php
+
+		-
+			message: '#^Parameter \#1 \$string of function mb_str_pad expects string, int given\.$#'
+			identifier: argument.type
+			count: 3
+			path: app/Models/CashCollectible.php
+
+		-
+			message: '#^Parameter \#1 \$string of function str_pad expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Models/CashCollectibleBilling.php
+
+		-
+			message: '#^Parameter \#1 \$string of function str_pad expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Models/Imprest.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Loan\:\:\$deductions\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Loan.php
+
+		-
+			message: '#^Parameter \#1 \$string of function str_pad expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Models/LoanApplication.php
+
+		-
+			message: '#^Property App\\Models\\LoanApplication\:\:\$approvals \(Spatie\\LaravelData\\DataCollection\) does not accept array\<int, App\\Oxytoxin\\DTO\\Loan\\LoanApproval\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: app/Models/LoanApplication.php
+
+		-
+			message: '#^Parameter \#1 \$string of function str_pad expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Models/LoanBilling.php
+
+		-
+			message: '#^Parameter \#1 \$string of function mb_str_pad expects string, int given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Models/LoanType.php
+
+		-
+			message: '#^Parameter \#1 \$string of function str_pad expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Models/LoveGift.php
+
+		-
+			message: '#^Parameter \#1 \$string of function str_pad expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Models/Member.php
+
+		-
+			message: '#^Parameter \#1 \$string of function str_pad expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Models/MsoBilling.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Member\:\:\$pivot\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/OfficersList.php
+
+		-
+			message: '#^Parameter \#1 \$string of function str_pad expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Models/Saving.php
+
+		-
+			message: '#^Parameter \#1 \$string of function str_pad expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Models/TimeDeposit.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type Carbon\\CarbonImmutable\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Models/TimeDeposit.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>full_name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Models/Transaction.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>date" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Models/TransactionDateHistory.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\User\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\User\:\:\$hidden is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$hidden\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\DisbursementVoucherItem\:\:\$disbursement_voucher\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Observers/DisbursementVoucherItemObserver.php
+
+		-
+			message: '#^Parameter \$credit of class App\\Oxytoxin\\DTO\\Transactions\\TransactionData constructor expects float\|null, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Observers/DisbursementVoucherItemObserver.php
+
+		-
+			message: '#^Parameter \$debit of class App\\Oxytoxin\\DTO\\Transactions\\TransactionData constructor expects float\|null, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Observers/DisbursementVoucherItemObserver.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>full_name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Observers/DisbursementVoucherItemObserver.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\JournalEntryVoucherItem\:\:\$journal_entry_voucher\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Observers/JournalEntryVoucherItemObserver.php
+
+		-
+			message: '#^Method App\\Observers\\JournalEntryVoucherItemObserver\:\:processCbu\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: app/Observers/JournalEntryVoucherItemObserver.php
+
+		-
+			message: '#^Parameter \$credit of class App\\Oxytoxin\\DTO\\Transactions\\TransactionData constructor expects float\|null, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Observers/JournalEntryVoucherItemObserver.php
+
+		-
+			message: '#^Parameter \$debit of class App\\Oxytoxin\\DTO\\Transactions\\TransactionData constructor expects float\|null, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Observers/JournalEntryVoucherItemObserver.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>full_name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Observers/JournalEntryVoucherItemObserver.php
+
+		-
+			message: '#^Parameter \#1 \$string of function str_pad expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Oxytoxin/DTO/Loan/LoanData.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Oxytoxin/DTO/Loan/LoanData.php
+
+		-
+			message: '#^Parameter \#1 \$string of function str_pad expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Oxytoxin/DTO/MSO/Accounts/CapitalSubscriptionAccountData.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Oxytoxin/DTO/MSO/Accounts/CapitalSubscriptionAccountData.php
+
+		-
+			message: '#^Parameter \#1 \$string of function str_pad expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Oxytoxin/DTO/MSO/Accounts/ImprestAccountData.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Oxytoxin/DTO/MSO/Accounts/ImprestAccountData.php
+
+		-
+			message: '#^Parameter \#1 \$string of function str_pad expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Oxytoxin/DTO/MSO/Accounts/LoveGiftAccountData.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Oxytoxin/DTO/MSO/Accounts/LoveGiftAccountData.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$children_count\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Oxytoxin/Helpers/helpers.php
+
+		-
+			message: '#^Parameter \#1 \$string of function str expects string\|null, float given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Oxytoxin/Helpers/helpers.php
+
+		-
+			message: '#^Parameter \#1 \$string of function str_pad expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Oxytoxin/Helpers/helpers.php
+
+		-
+			message: '#^Relation ''balance_forwarded_summary'' is not found in App\\Models\\BalanceForwardedEntry model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Oxytoxin/Providers/FinancialStatementProvider.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Oxytoxin/Providers/LoansProvider.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$loan_account_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Oxytoxin/Providers/LoansProvider.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$outstanding_balance\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Oxytoxin/Providers/LoansProvider.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$transaction_date\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Oxytoxin/Providers/LoansProvider.php
+
+		-
+			message: '#^Called ''Model\:\:make\(\)'' which performs unnecessary work, use ''new Model\(\)''\.$#'
+			identifier: larastan.noModelMake
+			count: 2
+			path: app/Oxytoxin/Providers/LoansProvider.php
+
+		-
+			message: '#^Method App\\Oxytoxin\\Providers\\LoansProvider\:\:computeAccruedInterest\(\) should return float but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Oxytoxin/Providers/LoansProvider.php
+
+		-
+			message: '#^Parameter \#1 \$loan of static method App\\Oxytoxin\\Providers\\LoansProvider\:\:computeAccruedInterest\(\) expects App\\Models\\Loan, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Oxytoxin/Providers/LoansProvider.php
+
+		-
+			message: '#^Parameter \#1 \$num of function round expects float\|int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Oxytoxin/Providers/LoansProvider.php
+
+		-
+			message: '#^Parameter \#1 \$num1 of function bcdiv expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Oxytoxin/Providers/LoansProvider.php
+
+		-
+			message: '#^Parameter \#1 \$value of function collect contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Oxytoxin/Providers/LoansProvider.php
+
+		-
+			message: '#^Parameter \#2 \$num2 of function bcdiv expects string, int given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Oxytoxin/Providers/LoansProvider.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>transaction_date" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Oxytoxin/Providers/LoansProvider.php
+
+		-
+			message: '#^Call to an undefined method App\\Providers\\AppServiceProvider\:\:options\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Providers/AppServiceProvider.php
+
+		-
+			message: '#^Call to an undefined method App\\Providers\\AppServiceProvider\:\:prefix\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Providers/AppServiceProvider.php

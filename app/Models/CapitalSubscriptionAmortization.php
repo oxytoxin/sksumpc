@@ -6,7 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @mixin IdeHelperCapitalSubscriptionAmortization
+ * @property-read \App\Models\CapitalSubscription|null $capital_subscription
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscriptionAmortization newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscriptionAmortization newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscriptionAmortization query()
+ * @mixin \Eloquent
  */
 class CapitalSubscriptionAmortization extends Model
 {

@@ -2,6 +2,7 @@
 
     namespace App\Providers\Filament;
 
+    use Illuminate\View\View;
     use Throwable;
     use App\Http\Middleware\EnsurePresentBookkeeperTransactionDate;
     use App\Models\TransactionDateHistory;
@@ -34,7 +35,6 @@
             ]);
 
             try {
-                $customcss = Vite::asset('resources/css/filament/app/theme.css');
                 $transaction_date = TransactionDateHistory::current_date();
             } catch (Throwable $th) {
             }
@@ -42,7 +42,7 @@
             if (isset($transaction_date)) {
                 FilamentView::registerRenderHook(
                     PanelsRenderHook::SIDEBAR_LOGO_AFTER,
-                    fn() => Blade::render('<strong>Transaction Date: '.$transaction_date?->format('m/d/Y').'</strong>')
+                    fn() => Blade::render('<strong>Transaction Date: '.$transaction_date->format('m/d/Y').'</strong>')
                 );
             } else {
                 FilamentView::registerRenderHook(
@@ -111,39 +111,7 @@
                 ->darkMode(false)
                 ->renderHook(
                     'panels::body.end',
-                    fn(): string => Blade::render("
-                <div x-data='{
-                init(){
-                    Livewire.hook(`commit`, ({ succeed }) => {
-                        succeed(() => {
-                            setTimeout(() => {
-                                const firstErrorMessage = document.querySelector(`[data-validation-error]`)
-
-                                if (firstErrorMessage !== null) {
-                                    firstErrorMessage.scrollIntoView({ block: `center`, inline: `center` })
-                                }
-                            }, 0)
-                        })
-                    })
-                    }
-                }'>
-                </div>
-                <script type='text/javascript'>
-                    function printOut(data, title) {
-                        var mywindow = window.open('', title, 'height=1000,width=1000');
-                        mywindow.document.write('<html><head>');
-                        mywindow.document.write('<title>' + title + '</title>');
-                        mywindow.document.write(`<link rel='stylesheet' href='$customcss'><body>`);
-                        mywindow.document.write(data);
-                        mywindow.document.close();
-                        mywindow.focus();
-                        setTimeout(() => {
-                            mywindow.print();
-                        }, 1000);
-                        return false;
-                    }
-                </script>
-                ")
+                    fn(): View => view('filament.app.views.body-end-render-hook')
                 )
                 ->favicon(asset('images/logo.jpg'));
         }

@@ -6,7 +6,37 @@
     use Illuminate\Database\Eloquent\Model;
 
     /**
- * @mixin IdeHelperJournalEntryVoucher
+ * @property int $id
+ * @property int|null $voucher_type_id
+ * @property string $name
+ * @property string|null $address
+ * @property string $reference_number
+ * @property string $voucher_number
+ * @property string $description
+ * @property \Carbon\CarbonImmutable $transaction_date
+ * @property int $bookkeeper_id
+ * @property int $is_legacy
+ * @property \Carbon\CarbonImmutable|null $created_at
+ * @property \Carbon\CarbonImmutable|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\JournalEntryVoucherItem> $journal_entry_voucher_items
+ * @property-read int|null $journal_entry_voucher_items_count
+ * @property-read \App\Models\VoucherType|null $voucher_type
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntryVoucher newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntryVoucher newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntryVoucher query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntryVoucher whereAddress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntryVoucher whereBookkeeperId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntryVoucher whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntryVoucher whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntryVoucher whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntryVoucher whereIsLegacy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntryVoucher whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntryVoucher whereReferenceNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntryVoucher whereTransactionDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntryVoucher whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntryVoucher whereVoucherNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntryVoucher whereVoucherTypeId($value)
+ * @mixin \Eloquent
  */
     class JournalEntryVoucher extends Model
     {

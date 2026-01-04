@@ -11,7 +11,45 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\DB;
 
 /**
- * @mixin IdeHelperLoveGift
+ * @property int $id
+ * @property int $member_id
+ * @property int $payment_type_id
+ * @property string $reference_number
+ * @property numeric $amount
+ * @property numeric|null $deposit
+ * @property numeric|null $withdrawal
+ * @property numeric $interest_rate
+ * @property numeric $interest
+ * @property \Carbon\CarbonImmutable $transaction_date
+ * @property \Carbon\CarbonImmutable|null $interest_date
+ * @property numeric $balance
+ * @property bool $accrued
+ * @property int|null $cashier_id
+ * @property \Carbon\CarbonImmutable|null $created_at
+ * @property \Carbon\CarbonImmutable|null $updated_at
+ * @property-read \App\Models\User|null $cashier
+ * @property-read \App\Models\Member $member
+ * @property-read \App\Models\RevolvingFund|null $revolving_fund
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoveGift newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoveGift newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoveGift query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoveGift whereAccrued($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoveGift whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoveGift whereBalance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoveGift whereCashierId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoveGift whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoveGift whereDeposit($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoveGift whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoveGift whereInterest($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoveGift whereInterestDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoveGift whereInterestRate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoveGift whereMemberId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoveGift wherePaymentTypeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoveGift whereReferenceNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoveGift whereTransactionDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoveGift whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoveGift whereWithdrawal($value)
+ * @mixin \Eloquent
  */
 class LoveGift extends Model
 {

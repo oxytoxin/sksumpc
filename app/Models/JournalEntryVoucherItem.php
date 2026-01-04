@@ -9,7 +9,30 @@ use Illuminate\Database\Eloquent\Model;
 
 #[ObservedBy(JournalEntryVoucherItemObserver::class)]
 /**
- * @mixin IdeHelperJournalEntryVoucherItem
+ * @property int $id
+ * @property int $journal_entry_voucher_id
+ * @property int $account_id
+ * @property numeric|null $credit
+ * @property numeric|null $debit
+ * @property array<array-key, mixed> $details
+ * @property string $transaction_date
+ * @property \Carbon\CarbonImmutable|null $created_at
+ * @property \Carbon\CarbonImmutable|null $updated_at
+ * @property-read \App\Models\Account $account
+ * @property-read \App\Models\JournalEntryVoucher $journal_entry_voucher
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntryVoucherItem newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntryVoucherItem newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntryVoucherItem query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntryVoucherItem whereAccountId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntryVoucherItem whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntryVoucherItem whereCredit($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntryVoucherItem whereDebit($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntryVoucherItem whereDetails($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntryVoucherItem whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntryVoucherItem whereJournalEntryVoucherId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntryVoucherItem whereTransactionDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntryVoucherItem whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class JournalEntryVoucherItem extends Model
 {

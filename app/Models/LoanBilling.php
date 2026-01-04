@@ -8,7 +8,50 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @mixin IdeHelperLoanBilling
+ * @property int $id
+ * @property \Carbon\CarbonImmutable $date
+ * @property string|null $billable_date
+ * @property int|null $payment_type_id
+ * @property int|null $member_type_id
+ * @property int|null $member_subtype_id
+ * @property string|null $reference_number
+ * @property string|null $name
+ * @property string|null $or_number
+ * @property \Carbon\CarbonImmutable|null $or_date
+ * @property int $loan_type_id
+ * @property int|null $cashier_id
+ * @property bool $posted
+ * @property bool $for_or
+ * @property \Carbon\CarbonImmutable|null $created_at
+ * @property \Carbon\CarbonImmutable|null $updated_at
+ * @property-read mixed $can_for_or
+ * @property-read mixed $can_post_payments
+ * @property-read mixed $or_approved
+ * @property-read \App\Models\User|null $cashier
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\LoanBillingPayment> $loan_billing_payments
+ * @property-read int|null $loan_billing_payments_count
+ * @property-read \App\Models\LoanType $loan_type
+ * @property-read \App\Models\PaymentType|null $payment_type
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanBilling newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanBilling newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanBilling query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanBilling whereBillableDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanBilling whereCashierId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanBilling whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanBilling whereDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanBilling whereForOr($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanBilling whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanBilling whereLoanTypeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanBilling whereMemberSubtypeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanBilling whereMemberTypeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanBilling whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanBilling whereOrDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanBilling whereOrNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanBilling wherePaymentTypeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanBilling wherePosted($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanBilling whereReferenceNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanBilling whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class LoanBilling extends Model
 {

@@ -8,7 +8,37 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @mixin IdeHelperRevolvingFund
+ * @property int $id
+ * @property numeric|null $deposit
+ * @property numeric|null $withdrawal
+ * @property string $reference_number
+ * @property \Carbon\CarbonImmutable $transaction_date
+ * @property int $cashier_id
+ * @property string|null $withdrawable_type
+ * @property int|null $withdrawable_id
+ * @property \Carbon\CarbonImmutable|null $deleted_at
+ * @property \Carbon\CarbonImmutable|null $created_at
+ * @property \Carbon\CarbonImmutable|null $updated_at
+ * @property-read \App\Models\User $cashier
+ * @property-read Model|\Eloquent|null $withdrawable
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RevolvingFund newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RevolvingFund newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RevolvingFund onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RevolvingFund query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RevolvingFund whereCashierId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RevolvingFund whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RevolvingFund whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RevolvingFund whereDeposit($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RevolvingFund whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RevolvingFund whereReferenceNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RevolvingFund whereTransactionDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RevolvingFund whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RevolvingFund whereWithdrawableId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RevolvingFund whereWithdrawableType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RevolvingFund whereWithdrawal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RevolvingFund withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RevolvingFund withoutTrashed()
+ * @mixin \Eloquent
  */
 class RevolvingFund extends Model
 {

@@ -8,7 +8,25 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @mixin IdeHelperCashCollectible
+ * @property int $id
+ * @property int $cash_collectible_category_id
+ * @property string $name
+ * @property bool $has_inventory
+ * @property \Carbon\CarbonImmutable|null $created_at
+ * @property \Carbon\CarbonImmutable|null $updated_at
+ * @property-read \App\Models\CashCollectibleCategory $cash_collectible_category
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CashCollectiblePayment> $payments
+ * @property-read int|null $payments_count
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CashCollectible newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CashCollectible newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CashCollectible query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CashCollectible whereCashCollectibleCategoryId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CashCollectible whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CashCollectible whereHasInventory($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CashCollectible whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CashCollectible whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CashCollectible whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class CashCollectible extends Model
 {
