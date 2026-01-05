@@ -46,8 +46,6 @@
                 ));
             }
 
-            $cash_in_bank_account_id = Account::getCashInBankGF()->id;
-            $cash_on_hand_account_id = Account::getCashOnHand()->id;
 
             $amount = 0;
             if ($principal) {
@@ -56,25 +54,6 @@
             if ($interest) {
                 $amount += $interest;
             }
-
-            $data = new TransactionData(
-                account_id: $cash_on_hand_account_id,
-                transactionType: $transactionType,
-                reference_number: $reference_number,
-                payment_type_id: $payment_type_id,
-                debit: round($amount, 2),
-                member_id: $loan->member_id,
-                remarks: 'Member Legacy Loan Payment',
-                transaction_date: $transaction_date
-            );
-
-            if ($data->payment_type_id == PaymentTypes::ADA->value) {
-                $data->account_id = $cash_in_bank_account_id;
-            } else {
-                $data->account_id = $cash_on_hand_account_id;
-            }
-
-            app(CreateTransaction::class)->handle($data);
 
 
             return $loan->payments()->create([
