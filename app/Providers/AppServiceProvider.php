@@ -44,6 +44,9 @@
 
                 return $this;
             });
+
+            Table::configureUsing(fn(Table $table) => $table
+                ->paginationPageOptions([5, 10, 25, 50, 'all']));
         }
 
         /**

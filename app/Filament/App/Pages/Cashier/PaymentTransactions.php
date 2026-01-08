@@ -279,13 +279,13 @@
                                                 )
                                                 ->searchable()
                                                 ->live()
-                                                ->afterStateUpdated(fn($set, $state) => $set('amount', LoanAccount::find($state)?->loan?->monthly_payment))
+                                                ->afterStateUpdated(fn($set, $state) => $set('amount', round(LoanAccount::find($state)?->loan?->monthly_payment, 2)))
                                                 ->required()
                                                 ->preload(),
                                             Placeholder::make('loan_type')
                                                 ->content(fn($get) => LoanAccount::find($get('loan_account_id'))?->loan?->loan_type?->name),
                                             Placeholder::make('outstanding_balance')
-                                                ->content(fn($get) => LoanAccount::find($get('loan_account_id'))?->loan?->outstanding_balance),
+                                                ->content(fn($get) => round(LoanAccount::find($get('loan_account_id'))?->loan?->outstanding_balance, 2)),
                                             Select::make('payment_type_id')
                                                 ->paymenttype()
                                                 ->required(),
