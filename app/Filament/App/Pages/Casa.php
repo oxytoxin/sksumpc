@@ -160,11 +160,20 @@
             $payments = [];
             $balance = $loan->gross_amount;
             $previous_date = $loan->transaction_date;
+            $unpaid_interest = 0;
             foreach ($loan->payments as $loan_payment) {
                 if ($loan_payment->reference_number == '#BALANCEFORWARDED') {
                     $interest = 0;
                 } else {
-                    $interest = LoansProvider::computeAccruedInterestFromDates($loan, $balance, $previous_date, $loan_payment->transaction_date);
+                    $interest = LoansProvider::computeAccruedInterestFromDates($loan, $balance, $previous_date, $loan_payment->transaction_date) + $unpaid_interest;
+                }
+
+
+                $unpaid_interest = 0;
+                if ($loan_payment->amount < $interest) {
+                    $principal = 0;
+                    $unpaid_interest = $interest - $loan_payment->amount;
+                    $interest = $loan_payment->amount;
                 }
                 $principal = $loan_payment->amount - $interest;
                 $balance -= $principal;
@@ -176,6 +185,7 @@
                     'principal_payment' => $principal,
                     'interest_payment' => $interest,
                     'balance' => $balance,
+                    'unpaid_interest' => $unpaid_interest,
                     'transaction_date' => $loan_payment->transaction_date,
                 ]);
                 $payments[] = $payment;
