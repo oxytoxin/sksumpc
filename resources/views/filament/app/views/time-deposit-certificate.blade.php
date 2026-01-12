@@ -64,30 +64,30 @@
             </div>
             <div class="flex-1">
                 <h2 class="text-center">EXTENSION AGREEMENT</h2>
-                <table>
+                <table class="doc-table">
                     <thead>
-                        <th class="border border-black px-4">Date</th>
-                        <th class="border border-black px-4">Amount</th>
-                        <th class="border border-black px-4">Rate per Annum</th>
-                        <th class="border border-black px-4">Value upon maturity</th>
-                        <th class="border border-black px-4">Authorized Signatory</th>
-                        <th class="border border-black px-4">Endorsed by</th>
-                        <th class="border border-black px-4">Maturity Date</th>
+                        <th class="doc-table-header-cell">Date</th>
+                        <th class="doc-table-header-cell">Amount</th>
+                        <th class="doc-table-header-cell">Rate per Annum</th>
+                        <th class="doc-table-header-cell">Value upon maturity</th>
+                        <th class="doc-table-header-cell">Authorized Signatory</th>
+                        <th class="doc-table-header-cell">Endorsed by</th>
+                        <th class="doc-table-header-cell">Maturity Date</th>
                     </thead>
                     <tbody>
                         <tr>
-                            <td class="border border-black px-4">{{ $time_deposit->transaction_date->format('m/d/Y') }}
+                            <td class="doc-table-cell">{{ $time_deposit->transaction_date->format('m/d/Y') }}
                             </td>
-                            <td class="border border-black px-4">{{ renumber_format($time_deposit->amount, 2) }}</td>
-                            <td class="border border-black px-4">
+                            <td class="doc-table-cell">{{ renumber_format($time_deposit->amount, 2) }}</td>
+                            <td class="doc-table-cell">
                                 {{ renumber_format($time_deposit->interest_rate * 100, 2) }}%
                             </td>
-                            <td class="border border-black px-4">
+                            <td class="doc-table-cell">
                                 {{ renumber_format($time_deposit->maturity_amount, 2) }}
                             </td>
-                            <td class="border border-black px-4"></td>
-                            <td class="border border-black px-4"></td>
-                            <td class="border border-black px-4">{{ $time_deposit->maturity_date->format('m/d/Y') }}
+                            <td class="doc-table-cell"></td>
+                            <td class="doc-table-cell"></td>
+                            <td class="doc-table-cell">{{ $time_deposit->maturity_date->format('m/d/Y') }}
                             </td>
                         </tr>
                     </tbody>

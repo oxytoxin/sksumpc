@@ -1,17 +1,17 @@
 <x-app.cashier.reports.report-layout :signatories="$this->getSignatories()" :title="$report_title">
-    <table class="w-full text-xs">
+    <table class="doc-table">
         <thead>
             <tr>
-                <th class="border border-black text-center">NO.</th>
-                <th class="border border-black px-2 text-left">DATE</th>
-                <th class="border border-black px-2 text-left">MEMBER NAME</th>
-                <th class="border border-black px-2 text-left">PAYEE</th>
-                <th class="border border-black px-2 text-left">ACCOUNT NAME</th>
-                <th class="border border-black text-center">ACCOUNT NUMBER</th>
-                <th class="border border-black text-center">REFERENCE #</th>
-                <th class="border border-black px-2 text-center">DEPOSIT</th>
-                <th class="border border-black px-2 text-center">WITHDRAWAL</th>
-                <th class="border border-black text-center">RUNNING BALANCE</th>
+                <th class="doc-table-header-cell">NO.</th>
+                <th class="doc-table-header-cell">DATE</th>
+                <th class="doc-table-header-cell">MEMBER NAME</th>
+                <th class="doc-table-header-cell">PAYEE</th>
+                <th class="doc-table-header-cell">ACCOUNT NAME</th>
+                <th class="doc-table-header-cell">ACCOUNT NUMBER</th>
+                <th class="doc-table-header-cell">REFERENCE #</th>
+                <th class="doc-table-header-cell">DEPOSIT</th>
+                <th class="doc-table-header-cell">WITHDRAWAL</th>
+                <th class="doc-table-header-cell">RUNNING BALANCE</th>
             </tr>
         </thead>
         <tbody>
@@ -27,43 +27,43 @@
                     $total_credit += $record->credit ?? 0;
                 @endphp
                 <tr>
-                    <th class="border border-black text-center">{{ $loop->iteration }}</th>
-                    <td class="whitespace-nowrap border border-black px-2 text-left">
+                    <th class="doc-table-cell-center">{{ $loop->iteration }}</th>
+                    <td class="doc-table-cell">
                         {{ $record->transaction_date->format('m/d/Y') }}
                     </td>
-                    <td class="whitespace-nowrap border border-black px-2 text-left">
+                    <td class="doc-table-cell">
                         {{ $record->member?->full_name }}
                     </td>
-                    <td class="whitespace-nowrap border border-black px-2 text-left">
+                    <td class="doc-table-cell">
                         {{ $record->payee }}
                     </td>
-                    <td class="whitespace-nowrap border border-black px-2 text-left">
+                    <td class="doc-table-cell">
                         {{ $record->account->name }}
                     </td>
-                    <td class="whitespace-nowrap border border-black px-2 text-center">
+                    <td class="doc-table-cell-center">
                         {{ $record->account->number }}
                     </td>
-                    <td class="whitespace-nowrap border border-black px-2 text-center">
+                    <td class="doc-table-cell-center">
                         {{ $record->reference_number }}
                     </td>
-                    <td class="border border-black text-center">{{ renumber_format($record->credit, 2) }}</td>
-                    <td class="border border-black text-center">{{ renumber_format($record->debit, 2) }}</td>
-                    <td class="border border-black text-center">{{ renumber_format($balance, 2) }}</td>
+                    <td class="doc-table-cell-center">{{ renumber_format($record->credit, 2) }}</td>
+                    <td class="doc-table-cell-center">{{ renumber_format($record->debit, 2) }}</td>
+                    <td class="doc-table-cell-center">{{ renumber_format($balance, 2) }}</td>
                 </tr>
             @empty
                 <tr>
-                    <td class="border border-black text-center" colspan="10">No transactions today.</td>
+                    <td class="doc-table-cell-center" colspan="10">No transactions today.</td>
                 </tr>
             @endforelse
-            <tr>
-                <th class="border border-black text-center" colspan="7">GRAND TOTAL</th>
-                <td class="border border-black text-center font-bold">
+            <tr class="doc-table-row-total">
+                <th class="doc-table-cell-center" colspan="7">GRAND TOTAL</th>
+                <td class="doc-table-cell-center font-bold">
                     {{ renumber_format($total_credit, 2) }}
                 </td>
-                <td class="border border-black text-center font-bold">
+                <td class="doc-table-cell-center font-bold">
                     {{ renumber_format($total_debit, 2) }}
                 </td>
-                <td class="border border-black text-center font-bold">{{ renumber_format($balance, 2) }}</td>
+                <td class="doc-table-cell-center font-bold">{{ renumber_format($balance, 2) }}</td>
             </tr>
         </tbody>
     </table>

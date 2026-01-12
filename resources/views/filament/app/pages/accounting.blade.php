@@ -17,17 +17,17 @@
             </h3>
         </div>
         <h3>Payments</h3>
-        <table>
+        <table class="doc-table">
             <thead>
             <tr>
-                <th class="table-cell">ID</th>
-                <th class="table-cell">Reference Number</th>
-                <th class="table-cell">Amount</th>
-                <th class="table-cell">Principal</th>
-                <th class="table-cell">Interest</th>
-                <th class="table-cell">Outstanding Balance</th>
-                <th class="table-cell">Date</th>
-                <th class="table-cell"></th>
+                <th class="doc-table-header-cell">ID</th>
+                <th class="doc-table-header-cell">Reference Number</th>
+                <th class="doc-table-header-cell">Amount</th>
+                <th class="doc-table-header-cell">Principal</th>
+                <th class="doc-table-header-cell">Interest</th>
+                <th class="doc-table-header-cell">Outstanding Balance</th>
+                <th class="doc-table-header-cell">Date</th>
+                <th class="doc-table-header-cell"></th>
             </tr>
             </thead>
             <tbody>
@@ -39,14 +39,14 @@
                     $balance -= $payment->principal_payment;
                 @endphp
                 <tr>
-                    <td class="table-cell">{{ $payment->id }}</td>
-                    <td class="table-cell">{{ $payment->reference_number }}</td>
-                    <td class="table-cell">{{ renumber_format($payment->amount) }}</td>
-                    <td class="table-cell">{{ renumber_format($payment->principal_payment) }}</td>
-                    <td class="table-cell">{{ renumber_format($payment->interest_payment) }}</td>
-                    <td class="table-cell">{{ renumber_format($balance) }}</td>
-                    <td class="table-cell">{{ $payment->transaction_date->format('m/d/Y') }}</td>
-                    <td class="table-cell py-2">
+                    <td class="doc-table-cell">{{ $payment->id }}</td>
+                    <td class="doc-table-cell">{{ $payment->reference_number }}</td>
+                    <td class="doc-table-cell">{{ renumber_format($payment->amount) }}</td>
+                    <td class="doc-table-cell">{{ renumber_format($payment->principal_payment) }}</td>
+                    <td class="doc-table-cell">{{ renumber_format($payment->interest_payment) }}</td>
+                    <td class="doc-table-cell">{{ renumber_format($balance) }}</td>
+                    <td class="doc-table-cell">{{ $payment->transaction_date->format('m/d/Y') }}</td>
+                    <td class="doc-table-cell py-2">
                         <button wire:click="selectPayment({{ $payment->id }})" class="w-full border border-black">
                             Select
                         </button>
@@ -57,24 +57,24 @@
         </table>
 
         <h3 class="mt-8">Transactions</h3>
-        <table>
+        <table class="doc-table">
             <thead>
             <tr>
-                <th class="table-cell">ID</th>
-                <th class="table-cell">Reference Number</th>
-                <th class="table-cell">Credit</th>
-                <th class="table-cell">Debit</th>
-                <th class="table-cell">Date</th>
+                <th class="doc-table-header-cell">ID</th>
+                <th class="doc-table-header-cell">Reference Number</th>
+                <th class="doc-table-header-cell">Credit</th>
+                <th class="doc-table-header-cell">Debit</th>
+                <th class="doc-table-header-cell">Date</th>
             </tr>
             </thead>
             <tbody>
             @foreach($this->loan_payment_transactions as $transaction)
                 <tr>
-                    <td class="table-cell">{{ $transaction->id }}</td>
-                    <td class="table-cell">{{ $transaction->reference_number }}</td>
-                    <td class="table-cell">{{ renumber_format($transaction->credit) }}</td>
-                    <td class="table-cell">{{ renumber_format($transaction->debit) }}</td>
-                    <td class="table-cell">{{ $transaction->transaction_date->format('m/d/Y') }}</td>
+                    <td class="doc-table-cell">{{ $transaction->id }}</td>
+                    <td class="doc-table-cell">{{ $transaction->reference_number }}</td>
+                    <td class="doc-table-cell">{{ renumber_format($transaction->credit) }}</td>
+                    <td class="doc-table-cell">{{ renumber_format($transaction->debit) }}</td>
+                    <td class="doc-table-cell">{{ $transaction->transaction_date->format('m/d/Y') }}</td>
                 </tr>
             @endforeach
             </tbody>

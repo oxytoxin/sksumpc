@@ -22,26 +22,26 @@
             <h5 class="text-center font-semibold uppercase">{{ $date_from->format('F d, Y') }} to {{ $date_to->format('F d, Y') }}</h5>
         @endif
         <h5 class="mt-8 text-center font-semibold uppercase" wire:loading.block>Refreshing data...</h5>
-        <table class="w-6xl mx-auto mt-8 overflow-auto print:text-[8pt]" id="loan_report" wire:loading.remove>
+        <table class="doc-table mx-auto mt-8 overflow-auto print:text-[8pt]" id="loan_report" wire:loading.remove>
             <thead>
                 <tr>
-                    <th class="border-2 border-black text-center" rowspan="2">No.</th>
-                    <th class="border-2 border-black text-center" rowspan="2">Priority Number</th>
-                    <th class="border-2 border-black text-center" rowspan="2">Name of Borrower</th>
-                    <th class="border-2 border-black text-center" rowspan="2">Gender</th>
-                    <th class="border-2 border-black text-center" colspan="{{ $loan_types->count() + 1 }}">GROSS AMOUNT</th>
-                    <th class="border-2 border-black text-center" colspan="{{ $loan_types->count() + 1 }}">NET AMOUNT</th>
-                    <th class="border-2 border-black px-4 text-center" rowspan="2">Received</th>
+                    <th class="doc-table-header-cell" rowspan="2">No.</th>
+                    <th class="doc-table-header-cell" rowspan="2">Priority Number</th>
+                    <th class="doc-table-header-cell" rowspan="2">Name of Borrower</th>
+                    <th class="doc-table-header-cell" rowspan="2">Gender</th>
+                    <th class="doc-table-header-cell" colspan="{{ $loan_types->count() + 1 }}">GROSS AMOUNT</th>
+                    <th class="doc-table-header-cell" colspan="{{ $loan_types->count() + 1 }}">NET AMOUNT</th>
+                    <th class="doc-table-header-cell" rowspan="2">Received</th>
                 </tr>
                 <tr>
-                    <th class="whitespace-nowrap border-2 border-black px-4 text-center">GROSS TOTAL</th>
+                    <th class="doc-table-header-cell">GROSS TOTAL</th>
                     @foreach ($loan_types as $loan_type)
-                        <th class="whitespace-nowrap border-2 border-black px-4 text-center">{{ $loan_type->code }}</th>
+                        <th class="doc-table-header-cell">{{ $loan_type->code }}</th>
                     @endforeach
                     @foreach ($loan_types as $loan_type)
-                        <th class="whitespace-nowrap border-2 border-black px-4 text-center">{{ $loan_type->code }}</th>
+                        <th class="doc-table-header-cell">{{ $loan_type->code }}</th>
                     @endforeach
-                    <th class="border-2 border-black px-4 text-center">NET PROCEEDS</th>
+                    <th class="doc-table-header-cell">NET PROCEEDS</th>
 
                 </tr>
             </thead>
@@ -55,34 +55,34 @@
                 @endphp
                 @foreach ($member_loans as $member_id => $loans)
                     <tr>
-                        <th class="whitespace-nowrap border-2 border-black px-4 text-center">{{ $loop->iteration }}</th>
-                        <th class="whitespace-nowrap border-2 border-black px-4 text-center">{{ $loans->sortByDesc('transaction_date')->first()->priority_number }}</th>
-                        <td class="whitespace-nowrap border-2 border-black px-4 text-left">{{ $members[$member_id]->alt_full_name }}</td>
-                        <td class="whitespace-nowrap border-2 border-black px-4 text-left">{{ $members[$member_id]->gender?->name }}</td>
-                        <td class="whitespace-nowrap border-2 border-black px-4 text-right">{{ number_format($loans->sum('gross_amount'), 2) }}</td>
+                        <th class="doc-table-cell-center">{{ $loop->iteration }}</th>
+                        <th class="doc-table-cell-center">{{ $loans->sortByDesc('transaction_date')->first()->priority_number }}</th>
+                        <td class="doc-table-cell">{{ $members[$member_id]->alt_full_name }}</td>
+                        <td class="doc-table-cell">{{ $members[$member_id]->gender?->name }}</td>
+                        <td class="doc-table-cell-right">{{ number_format($loans->sum('gross_amount'), 2) }}</td>
                         @foreach ($loan_types as $loan_type)
-                            <td class="whitespace-nowrap border-2 border-black px-4 text-right">{{ $loans->where('loan_type_id', $loan_type->id)->sum('gross_amount') ? number_format($loans->where('loan_type_id', $loan_type->id)->sum('gross_amount'), 2) : '' }}</td>
+                            <td class="doc-table-cell-right">{{ $loans->where('loan_type_id', $loan_type->id)->sum('gross_amount') ? number_format($loans->where('loan_type_id', $loan_type->id)->sum('gross_amount'), 2) : '' }}</td>
                         @endforeach
                         @foreach ($loan_types as $loan_type)
-                            <td class="whitespace-nowrap border-2 border-black px-4 text-right">{{ $loans->where('loan_type_id', $loan_type->id)->sum('net_amount') ? number_format($loans->where('loan_type_id', $loan_type->id)->sum('net_amount'), 2) : '' }}</td>
+                            <td class="doc-table-cell-right">{{ $loans->where('loan_type_id', $loan_type->id)->sum('net_amount') ? number_format($loans->where('loan_type_id', $loan_type->id)->sum('net_amount'), 2) : '' }}</td>
                         @endforeach
-                        <td class="whitespace-nowrap border-2 border-black px-4 text-right">{{ number_format($loans->sum('net_amount'), 2) }}</td>
-                        <td class="whitespace-nowrap border-2 border-black px-4 text-right"></td>
+                        <td class="doc-table-cell-right">{{ number_format($loans->sum('net_amount'), 2) }}</td>
+                        <td class="doc-table-cell-right"></td>
                     </tr>
                 @endforeach
-                <tr>
-                    <td class="whitespace-nowrap border-2 border-black px-4 text-center">&nbsp;</td>
-                    <td class="whitespace-nowrap border-2 border-black px-4 text-center">&nbsp;</td>
-                    <td class="whitespace-nowrap border-2 border-black px-4 text-center">&nbsp;</td>
-                    <td class="whitespace-nowrap border-2 border-black px-4 text-right">{{ number_format($gross_amount, 2) }}</td>
+                <tr class="doc-table-row-total">
+                    <td class="doc-table-cell-center">&nbsp;</td>
+                    <td class="doc-table-cell-center">&nbsp;</td>
+                    <td class="doc-table-cell-center">&nbsp;</td>
+                    <td class="doc-table-cell-right">{{ number_format($gross_amount, 2) }}</td>
                     @foreach ($loan_types as $loan_type)
-                        <th class="whitespace-nowrap border-2 border-black px-4 text-right">{{ $records->where('loan_type_id', $loan_type->id)->sum('gross_amount') ? number_format($records->where('loan_type_id', $loan_type->id)->sum('gross_amount'), 2) : '' }}</th>
+                        <th class="doc-table-cell-right">{{ $records->where('loan_type_id', $loan_type->id)->sum('gross_amount') ? number_format($records->where('loan_type_id', $loan_type->id)->sum('gross_amount'), 2) : '' }}</th>
                     @endforeach
                     @foreach ($loan_types as $loan_type)
-                        <th class="whitespace-nowrap border-2 border-black px-4 text-right">{{ $records->where('loan_type_id', $loan_type->id)->sum('net_amount') ? number_format($records->where('loan_type_id', $loan_type->id)->sum('net_amount'), 2) : '' }}</th>
+                        <th class="doc-table-cell-right">{{ $records->where('loan_type_id', $loan_type->id)->sum('net_amount') ? number_format($records->where('loan_type_id', $loan_type->id)->sum('net_amount'), 2) : '' }}</th>
                     @endforeach
-                    <th class="whitespace-nowrap border-2 border-black px-4 text-right">{{ number_format($net_amount, 2) }}</th>
-                    <td class="whitespace-nowrap border-2 border-black px-4 text-center">&nbsp;</td>
+                    <th class="doc-table-cell-right">{{ number_format($net_amount, 2) }}</th>
+                    <td class="doc-table-cell-center">&nbsp;</td>
                 </tr>
             </tbody>
         </table>

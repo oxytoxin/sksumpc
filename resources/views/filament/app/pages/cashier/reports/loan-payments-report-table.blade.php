@@ -1,17 +1,17 @@
 <x-app.cashier.reports.report-layout :signatories="$this->getSignatories()" :title="$report_title">
-    <table class="w-full">
+    <table class="doc-table">
         <thead>
             <tr>
-                <th class="border border-black text-center">NO.</th>
-                <th class="border border-black text-center">MEMBER NAME</th>
-                <th class="border border-black text-center">ACCOUNT #</th>
-                <th class="border border-black text-center">LOAN TYPE</th>
-                <th class="border border-black text-center">REFERENCE #</th>
-                <th class="border border-black text-center">AMOUNT</th>
-                <th class="border border-black text-center">PRINCIPAL</th>
-                <th class="border border-black text-center">INTEREST</th>
-                <th class="border border-black text-center">SURCHARGE</th>
-                <th class="border border-black text-center">DATE</th>
+                <th class="doc-table-header-cell">NO.</th>
+                <th class="doc-table-header-cell">MEMBER NAME</th>
+                <th class="doc-table-header-cell">ACCOUNT #</th>
+                <th class="doc-table-header-cell">LOAN TYPE</th>
+                <th class="doc-table-header-cell">REFERENCE #</th>
+                <th class="doc-table-header-cell">AMOUNT</th>
+                <th class="doc-table-header-cell">PRINCIPAL</th>
+                <th class="doc-table-header-cell">INTEREST</th>
+                <th class="doc-table-header-cell">SURCHARGE</th>
+                <th class="doc-table-header-cell">DATE</th>
             </tr>
         </thead>
         <tbody>
@@ -29,37 +29,37 @@
                     $surcharge_payment += $record->surcharge_payment;
                 @endphp
                 <tr>
-                    <th class="border border-black text-center">{{ $loop->iteration }}</th>
-                    <td class="whitespace-nowrap border border-black px-2 text-center">
+                    <th class="doc-table-cell-center">{{ $loop->iteration }}</th>
+                    <td class="doc-table-cell-center">
                         {{ $record->member->full_name }}
                     </td>
-                    <td class="border border-black text-center">
+                    <td class="doc-table-cell-center">
                         {{ $record->loan->loan_account->number }}
                     </td>
-                    <td class="border border-black text-center">
+                    <td class="doc-table-cell-center">
                         {{ $record->loan->loan_type->name }}
                     </td>
-                    <td class="border border-black text-center">
+                    <td class="doc-table-cell-center">
                         {{ $record->reference_number }}
                     </td>
-                    <td class="border border-black text-center">{{ renumber_format($record->amount, 2) }}</td>
-                    <td class="border border-black text-center">{{ renumber_format($record->principal_payment, 2) }}</td>
-                    <td class="border border-black text-center">{{ renumber_format($record->interest_payment, 2) }}</td>
-                    <td class="border border-black text-center">{{ renumber_format($record->surcharge_payment, 2) }}</td>
-                    <td class="border border-black text-center">{{ $record->transaction_date?->format('m/d/Y') }}</td>
+                    <td class="doc-table-cell-center">{{ renumber_format($record->amount, 2) }}</td>
+                    <td class="doc-table-cell-center">{{ renumber_format($record->principal_payment, 2) }}</td>
+                    <td class="doc-table-cell-center">{{ renumber_format($record->interest_payment, 2) }}</td>
+                    <td class="doc-table-cell-center">{{ renumber_format($record->surcharge_payment, 2) }}</td>
+                    <td class="doc-table-cell-center">{{ $record->transaction_date?->format('m/d/Y') }}</td>
                 </tr>
             @empty
                 <tr>
-                    <td class="border border-black text-center" colspan="5">No transactions today.</td>
+                    <td class="doc-table-cell-center" colspan="5">No transactions today.</td>
                 </tr>
             @endforelse
-            <tr>
-                <th class="border border-black text-center" colspan="5">GRAND TOTAL</th>
-                <td class="border border-black text-center font-bold">{{ renumber_format($amount, 2) }}</td>
-                <td class="border border-black text-center font-bold">{{ renumber_format($principal_payment, 2) }}</td>
-                <td class="border border-black text-center font-bold">{{ renumber_format($interest_payment, 2) }}</td>
-                <td class="border border-black text-center font-bold">{{ renumber_format($surcharge_payment, 2) }}</td>
-                <td class="border border-black text-center"></td>
+            <tr class="doc-table-row-total">
+                <th class="doc-table-cell-center" colspan="5">GRAND TOTAL</th>
+                <td class="doc-table-cell-center font-bold">{{ renumber_format($amount, 2) }}</td>
+                <td class="doc-table-cell-center font-bold">{{ renumber_format($principal_payment, 2) }}</td>
+                <td class="doc-table-cell-center font-bold">{{ renumber_format($interest_payment, 2) }}</td>
+                <td class="doc-table-cell-center font-bold">{{ renumber_format($surcharge_payment, 2) }}</td>
+                <td class="doc-table-cell-center"></td>
             </tr>
         </tbody>
     </table>

@@ -144,3 +144,54 @@ table {
 .table-cell {
     @apply border border-black px-2 text-left;
 }
+
+/* Base Print Table Styling */
+.doc-table {
+    @apply w-full border-collapse;
+}
+
+/* Header Cell - Light gray background, black borders, bold */
+.doc-table-header-cell {
+    @apply border border-black p-2 text-left font-semibold bg-gray-100 text-xs whitespace-nowrap print:text-[10pt] uppercase hover:bg-transparent;
+}
+
+/* Header Cell - Right-aligned variant for numeric columns */
+.doc-table-header-cell-right {
+    @apply border border-black p-2 text-right font-semibold bg-gray-100 text-xs whitespace-nowrap print:text-[10pt] uppercase hover:bg-transparent;
+}
+
+/* Body Cell - White background, black borders, left-aligned */
+.doc-table-cell {
+    @apply border border-black px-2 text-left text-sm print:text-[10pt] hover:bg-transparent;
+}
+
+/* Body Cell - Right-aligned variant for numbers */
+.doc-table-cell-right {
+    @apply border border-black px-2 text-right text-sm print:text-[10pt] hover:bg-transparent;
+}
+
+/* Body Cell - Center-aligned variant */
+.doc-table-cell-center {
+    @apply border border-black px-2 text-center text-sm print:text-[10pt] hover:bg-transparent;
+}
+
+/* Compact variant for dense tables, left-aligned */
+.doc-table-cell-compact {
+    @apply border border-black px-2 text-left text-xs print:text-[9pt] uppercase hover:bg-transparent;
+}
+
+/* Compact variant for dense tables, right-aligned */
+.doc-table-cell-compact-right {
+    @apply border border-black px-2 text-right text-xs print:text-[9pt] uppercase hover:bg-transparent;
+}
+
+/* Total/Footer Row - Light gray background, bold */
+.doc-table-row-total {
+    @apply font-semibold bg-gray-200;
+}
+
+/* Remove hover effects from existing classes */
+.fs-row-data,
+.fs-row-header {
+    @apply hover:bg-transparent;
+}

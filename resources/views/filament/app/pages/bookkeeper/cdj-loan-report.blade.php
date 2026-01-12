@@ -6,41 +6,41 @@
             <h3 class="font-bold">{{ oxy_get_month_range()[$data['month']] }} {{ $data['year'] }}</h3>
         </div>
         <div class="overflow-auto p-4">
-            <table class="w-full print:text-[10pt]">
+            <table class="doc-table print:text-[10pt]">
                 <thead>
                     <tr>
-                        <th rowspan="2" colspan="3" class="whitespace-nowrap border border-black p-2 text-center">CDJ SL- LOANS RECEIVABLES- {{ oxy_get_month_range()[$data['month']] }} {{ $data['year'] }}</th>
-                        <th colspan="{{ $this->loan_types->count() * 2 + 2 }}" class="whitespace-nowrap border border-black p-1 text-center">LOANS</th>
-                        <th colspan="{{ $this->loan_types->count() * 2 + 2 }}" class="whitespace-nowrap border border-black p-1 text-center">INTEREST</th>
+                        <th rowspan="2" colspan="3" class="whitespace-nowrap doc-table-header-cell">CDJ SL- LOANS RECEIVABLES- {{ oxy_get_month_range()[$data['month']] }} {{ $data['year'] }}</th>
+                        <th colspan="{{ $this->loan_types->count() * 2 + 2 }}" class="whitespace-nowrap doc-table-header-cell">LOANS</th>
+                        <th colspan="{{ $this->loan_types->count() * 2 + 2 }}" class="whitespace-nowrap doc-table-header-cell">INTEREST</th>
                     </tr>
                     <tr>
                         @foreach ($this->loan_types as $loan_type)
-                            <th colspan="2" class="whitespace-nowrap border border-black px-4 text-center">{{ $loan_type->code }}</th>
+                            <th colspan="2" class="whitespace-nowrap doc-table-header-cell">{{ $loan_type->code }}</th>
                         @endforeach
-                        <th class="whitespace-nowrap border border-black px-4 text-center">TOTAL DEBIT</th>
-                        <th class="whitespace-nowrap border border-black px-4 text-center">TOTAL CREDIT</th>
+                        <th class="whitespace-nowrap doc-table-header-cell">TOTAL DEBIT</th>
+                        <th class="whitespace-nowrap doc-table-header-cell">TOTAL CREDIT</th>
                         @foreach ($this->loan_types as $loan_type)
-                            <th colspan="2" class="whitespace-nowrap border border-black px-4 text-center">{{ $loan_type->code }}</th>
+                            <th colspan="2" class="whitespace-nowrap doc-table-header-cell">{{ $loan_type->code }}</th>
                         @endforeach
-                        <th class="whitespace-nowrap border border-black px-4 text-center">TOTAL DEBIT</th>
-                        <th class="whitespace-nowrap border border-black px-4 text-center">TOTAL CREDIT</th>
+                        <th class="whitespace-nowrap doc-table-header-cell">TOTAL DEBIT</th>
+                        <th class="whitespace-nowrap doc-table-header-cell">TOTAL CREDIT</th>
                     </tr>
                     <tr>
-                        <th class="whitespace-nowrap border border-black px-4 text-left">DATE</th>
-                        <th class="whitespace-nowrap border border-black px-4 text-left">NAME</th>
-                        <th class="whitespace-nowrap border border-black px-4 text-left">REFERENCE NUMBER</th>
+                        <th class="whitespace-nowrap doc-table-header-cell">DATE</th>
+                        <th class="whitespace-nowrap doc-table-header-cell">NAME</th>
+                        <th class="whitespace-nowrap doc-table-header-cell">REFERENCE NUMBER</th>
                         @foreach ($this->loan_types as $loan_type)
-                            <th class="whitespace-nowrap border border-black px-4 text-center">DEBIT</th>
-                            <th class="whitespace-nowrap border border-black px-4 text-center">CREDIT</th>
+                            <th class="whitespace-nowrap doc-table-header-cell">DEBIT</th>
+                            <th class="whitespace-nowrap doc-table-header-cell">CREDIT</th>
                         @endforeach
-                        <th class="whitespace-nowrap border border-black px-4 text-center"></th>
-                        <th class="whitespace-nowrap border border-black px-4 text-center"></th>
+                        <th class="whitespace-nowrap doc-table-header-cell"></th>
+                        <th class="whitespace-nowrap doc-table-header-cell"></th>
                         @foreach ($this->loan_types as $loan_type)
-                            <th class="whitespace-nowrap border border-black px-4 text-center">DEBIT</th>
-                            <th class="whitespace-nowrap border border-black px-4 text-center">CREDIT</th>
+                            <th class="whitespace-nowrap doc-table-header-cell">DEBIT</th>
+                            <th class="whitespace-nowrap doc-table-header-cell">CREDIT</th>
                         @endforeach
-                        <th class="whitespace-nowrap border border-black px-4 text-center"></th>
-                        <th class="whitespace-nowrap border border-black px-4 text-center"></th>
+                        <th class="whitespace-nowrap doc-table-header-cell"></th>
+                        <th class="whitespace-nowrap doc-table-header-cell"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -61,14 +61,14 @@
                             $total_interest_credit = 0;
                         @endphp
                         <tr>
-                            <td class="whitespace-nowrap border border-black px-4 text-left">{{ $receivable->transaction_date->format('m/d/Y') }}</td>
-                            <td class="whitespace-nowrap border border-black px-4 text-left">{{ $receivable->member->alt_full_name }}</td>
-                            <td class="whitespace-nowrap border border-black px-4 text-left">{{ $receivable->reference_number }}</td>
+                            <td class="whitespace-nowrap doc-table-cell">{{ $receivable->transaction_date->format('m/d/Y') }}</td>
+                            <td class="whitespace-nowrap doc-table-cell">{{ $receivable->member->alt_full_name }}</td>
+                            <td class="whitespace-nowrap doc-table-cell">{{ $receivable->reference_number }}</td>
                             @foreach ($this->loan_types as $loan_type)
-                                <td class="whitespace-nowrap border border-black px-4 text-right">
+                                <td class="whitespace-nowrap doc-table-cell-right">
                                     {{ $receivable->loan_type_id == $loan_type->id ? number_format($receivable->gross_amount, 2) : '' }}
                                 </td>
-                                <td class="whitespace-nowrap border border-black px-4 text-right">
+                                <td class="whitespace-nowrap doc-table-cell-right">
                                     {{ $receivable->loan_type_id == $loan_type->id && $buyout > 0 ? number_format($buyout, 2) : '' }}
                                 </td>
                             @endforeach
@@ -76,23 +76,23 @@
                                 $total_loan_debit += $receivable->gross_amount;
                                 $total_loan_credit += $buyout;
                             @endphp
-                            <td class="whitespace-nowrap border border-black px-4 text-left">{{ number_format($total_loan_debit, 2) }}</td>
-                            <td class="whitespace-nowrap border border-black px-4 text-left">{{ number_format($total_loan_credit, 2) }}</td>
+                            <td class="whitespace-nowrap doc-table-cell">{{ number_format($total_loan_debit, 2) }}</td>
+                            <td class="whitespace-nowrap doc-table-cell">{{ number_format($total_loan_credit, 2) }}</td>
                             @php
                                 $grand_total_loan_debit += $total_loan_debit;
                                 $grand_total_loan_credit += $total_loan_credit;
                             @endphp
                             @foreach ($this->loan_types as $loan_type)
-                                <td class="whitespace-nowrap border border-black px-4 text-right"></td>
-                                <td class="whitespace-nowrap border border-black px-4 text-right">
+                                <td class="whitespace-nowrap doc-table-cell-right"></td>
+                                <td class="whitespace-nowrap doc-table-cell-right">
                                     {{ $receivable->loan_type_id == $loan_type->id ? number_format($receivable->interest, 2) : '' }}
                                 </td>
                             @endforeach
                             @php
                                 $total_interest_credit += $receivable->interest;
                             @endphp
-                            <td class="whitespace-nowrap border border-black px-4 text-left"></td>
-                            <td class="whitespace-nowrap border border-black px-4 text-left">{{ $total_interest_credit ? number_format($total_interest_credit, 2) : '' }}</td>
+                            <td class="whitespace-nowrap doc-table-cell"></td>
+                            <td class="whitespace-nowrap doc-table-cell">{{ $total_interest_credit ? number_format($total_interest_credit, 2) : '' }}</td>
                             @php
                                 $grand_total_interest_debit += $total_interest_debit;
                                 $grand_total_interest_credit += $total_interest_credit;

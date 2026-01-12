@@ -15,45 +15,45 @@
                 {{ date_create($this->tableFilters['release_date']['to'] ?? today())->format('F d, Y') }}
             </h5>
         @endif
-        <table class="w-full overflow-auto print:text-[10pt]">
+        <table class="doc-table overflow-auto print:text-[10pt]">
             <thead>
                 <tr>
-                    <th class="border-2 border-black text-center" rowspan="2">No.</th>
-                    <th class="border-2 border-black text-center" rowspan="2">Full Name</th>
-                    <th class="border-2 border-black text-center" rowspan="2">OR Number</th>
+                    <th class="doc-table-header-cell" rowspan="2">No.</th>
+                    <th class="doc-table-header-cell" rowspan="2">Full Name</th>
+                    <th class="doc-table-header-cell" rowspan="2">OR Number</th>
                     @foreach ($loan_types as $loan_type)
-                        <th class="whitespace-nowrap border-2 border-black px-4 text-center" colspan="3">
+                        <th class="doc-table-header-cell" colspan="3">
                             {{ $loan_type->code }}</th>
                     @endforeach
-                    <th class="border-2 border-black text-center" rowspan="2">TOTAL</th>
+                    <th class="doc-table-header-cell" rowspan="2">TOTAL</th>
                 </tr>
                 <tr>
                     @foreach ($loan_types as $loan_type)
-                        <th class="whitespace-nowrap border-2 border-black px-4 text-center">PRINCIPAL</th>
-                        <th class="whitespace-nowrap border-2 border-black px-4 text-center">INTEREST</th>
-                        <th class="whitespace-nowrap border-2 border-black px-4 text-center">SURCHARGE</th>
+                        <th class="doc-table-header-cell">PRINCIPAL</th>
+                        <th class="doc-table-header-cell">INTEREST</th>
+                        <th class="doc-table-header-cell">SURCHARGE</th>
                     @endforeach
                 </tr>
             </thead>
             <tbody>
                 @foreach ($this->table->getRecords() as $loan_payment)
                     <tr>
-                        <th class="whitespace-nowrap border-2 border-black px-4 text-center">{{ $loop->iteration }}</th>
-                        <td class="whitespace-nowrap border-2 border-black px-4 text-left">
+                        <th class="doc-table-cell-center">{{ $loop->iteration }}</th>
+                        <td class="doc-table-cell">
                             {{ $loan_payment->loan->member->alt_full_name }}</td>
-                        <td class="whitespace-nowrap border-2 border-black px-4 text-right">
+                        <td class="doc-table-cell-right">
                             {{ $loan_payment->reference_number }}</td>
                         @foreach ($loan_types as $loan_type)
-                            <td class="whitespace-nowrap border-2 border-black px-4 text-right">
+                            <td class="doc-table-cell-right">
                                 {{ $loan_payment->loan->loan_type_id == $loan_type->id ? number_format($loan_payment->principal_payment, 2) : '' }}
                             </td>
-                            <td class="whitespace-nowrap border-2 border-black px-4 text-right">
+                            <td class="doc-table-cell-right">
                                 {{ $loan_payment->loan->loan_type_id == $loan_type->id ? number_format($loan_payment->interest, 2) : '' }}
                             </td>
-                            <td class="whitespace-nowrap border-2 border-black px-4 text-right">
+                            <td class="doc-table-cell-right">
                                 {{ $loan_payment->loan->loan_type_id == $loan_type->id ? '' : '' }}</td>
                         @endforeach
-                        <td class="whitespace-nowrap border-2 border-black px-4 text-right font-bold">
+                        <td class="doc-table-cell-right font-bold">
                             {{ number_format($loan_payment->amount, 2) }}</td>
                     </tr>
                 @endforeach

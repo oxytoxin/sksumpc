@@ -5,18 +5,18 @@
             {{ Carbon\CarbonImmutable::make($this->transaction_date)->format('F d, Y') }}</h4>
         <h5 class="text-center font-bold uppercase">
             {{ App\Models\MemberType::find($this->tableFilters['member_type_id']['value'])?->name }}</h5>
-        <table class="mt-4 w-full print:text-[8pt]">
+        <table class="mt-4 doc-table print:text-[8pt]">
             <thead>
                 <tr>
-                    <th class="border border-black text-center">No.</th>
-                    <th class="border border-black text-center">Name</th>
-                    <th class="border border-black text-center">No. of Shares Subscribed</th>
-                    <th class="border border-black text-center">Amount of Shares Subscribed</th>
-                    <th class="border border-black text-center">No. of Shares Paid</th>
-                    <th class="border border-black text-center">Total Amount Paid-Up Capital Share Common</th>
-                    <th class="border border-black text-center">Subscription Receivable Common</th>
-                    <th class="border border-black text-center">Paid-Up Share Capital Common</th>
-                    <th class="border border-black text-center">Deposit for Share Capital Subscription</th>
+                    <th class="doc-table-header-cell">No.</th>
+                    <th class="doc-table-header-cell">Name</th>
+                    <th class="doc-table-header-cell">No. of Shares Subscribed</th>
+                    <th class="doc-table-header-cell">Amount of Shares Subscribed</th>
+                    <th class="doc-table-header-cell">No. of Shares Paid</th>
+                    <th class="doc-table-header-cell">Total Amount Paid-Up Capital Share Common</th>
+                    <th class="doc-table-header-cell">Subscription Receivable Common</th>
+                    <th class="doc-table-header-cell">Paid-Up Share Capital Common</th>
+                    <th class="doc-table-header-cell">Deposit for Share Capital Subscription</th>
                 </tr>
             </thead>
             <tbody class="relative">
@@ -31,23 +31,23 @@
                 @endphp
                 @foreach ($this->table->getRecords() as $record)
                     <tr wire:loading.remove>
-                        <td class="whitespace-nowrap border border-black px-4 text-center">{{ $loop->iteration }}</td>
-                        <td class="whitespace-nowrap border border-black px-4 text-left">{{ $record->alt_full_name }}
+                        <td class="whitespace-nowrap doc-table-cell">{{ $loop->iteration }}</td>
+                        <td class="whitespace-nowrap doc-table-cell">{{ $record->alt_full_name }}
                         </td>
-                        <td class="whitespace-nowrap border border-black px-4 text-center">
+                        <td class="whitespace-nowrap doc-table-cell">
                             {{ renumber_format($record->capital_subscriptions_sum_number_of_shares, 0) }}</td>
-                        <td class="whitespace-nowrap border border-black px-4 text-right">
+                        <td class="whitespace-nowrap doc-table-cell-right">
                             {{ renumber_format($record->capital_subscriptions_sum_amount_subscribed, 2) }}</td>
-                        <td class="whitespace-nowrap border border-black px-4 text-center">
+                        <td class="whitespace-nowrap doc-table-cell">
                             {{ renumber_format($this->number_of_shares_paid($record), 0) }}</td>
-                        <td class="whitespace-nowrap border border-black px-4 text-right">
+                        <td class="whitespace-nowrap doc-table-cell-right">
                             {{ renumber_format($record->capital_subscription_payments_sum_amount, 2) }}</td>
-                        <td class="whitespace-nowrap border border-black px-4 text-right">
+                        <td class="whitespace-nowrap doc-table-cell-right">
                             {{ renumber_format($record->capital_subscriptions_sum_amount_subscribed - $record->capital_subscription_payments_sum_amount, 2) }}
                         </td>
-                        <td class="whitespace-nowrap border border-black px-4 text-right">
+                        <td class="whitespace-nowrap doc-table-cell-right">
                             {{ renumber_format($this->amount_shares_paid($record), 2) }}</td>
-                        <td class="whitespace-nowrap border border-black px-4 text-right">
+                        <td class="whitespace-nowrap doc-table-cell-right">
                             {{ renumber_format($record->capital_subscription_payments_sum_amount - $this->amount_shares_paid($record), 2) }}
                         </td>
                     </tr>
@@ -61,20 +61,20 @@
                         $totals['capital_subscriptions_sum_deposit'] += $record->capital_subscription_payments_sum_amount - $this->amount_shares_paid($record);
                     @endphp
                 @endforeach
-                <tr wire:loading.remove>
-                    <td colspan="2" class="whitespace-nowrap border border-black px-4 text-left font-bold">TOTAL</td>
-                    <td class="whitespace-nowrap border border-black px-4 text-center font-bold">{{ renumber_format($totals['capital_subscriptions_sum_number_of_shares'], 0) }}</td>
-                    <td class="whitespace-nowrap border border-black px-4 text-right font-bold">{{ renumber_format($totals['capital_subscriptions_sum_amount_subscribed'], 2) }}</td>
-                    <td class="whitespace-nowrap border border-black px-4 text-center font-bold">{{ renumber_format($totals['number_of_shares_paid'], 0) }}</td>
-                    <td class="whitespace-nowrap border border-black px-4 text-right font-bold">{{ renumber_format($totals['capital_subscription_payments_sum_amount'], 2) }}</td>
-                    <td class="whitespace-nowrap border border-black px-4 text-right font-bold">
+                <tr wire:loading.remove class="doc-table-row-total">
+                    <td colspan="2" class="whitespace-nowrap doc-table-cell font-bold">TOTAL</td>
+                    <td class="whitespace-nowrap doc-table-cell font-bold">{{ renumber_format($totals['capital_subscriptions_sum_number_of_shares'], 0) }}</td>
+                    <td class="whitespace-nowrap doc-table-cell-right font-bold">{{ renumber_format($totals['capital_subscriptions_sum_amount_subscribed'], 2) }}</td>
+                    <td class="whitespace-nowrap doc-table-cell font-bold">{{ renumber_format($totals['number_of_shares_paid'], 0) }}</td>
+                    <td class="whitespace-nowrap doc-table-cell-right font-bold">{{ renumber_format($totals['capital_subscription_payments_sum_amount'], 2) }}</td>
+                    <td class="whitespace-nowrap doc-table-cell-right font-bold">
                         {{ renumber_format($totals['capital_subscriptions_sum_receivable'], 2) }}
                     </td>
-                    <td class="whitespace-nowrap border border-black px-4 text-right font-bold">{{ renumber_format($totals['amount_shares_paid'], 2) }}</td>
-                    <td class="whitespace-nowrap border border-black px-4 text-right font-bold">{{ renumber_format($totals['capital_subscriptions_sum_deposit'], 2) }}</td>
+                    <td class="whitespace-nowrap doc-table-cell-right font-bold">{{ renumber_format($totals['amount_shares_paid'], 2) }}</td>
+                    <td class="whitespace-nowrap doc-table-cell-right font-bold">{{ renumber_format($totals['capital_subscriptions_sum_deposit'], 2) }}</td>
                 </tr>
                 <tr class="hidden" wire:loading.class.remove="hidden">
-                    <td colspan="9" class="whitespace-nowrap border border-black px-4 text-center font-bold">Loading data...</td>
+                    <td colspan="9" class="whitespace-nowrap doc-table-cell font-bold">Loading data...</td>
                 </tr>
             </tbody>
         </table>

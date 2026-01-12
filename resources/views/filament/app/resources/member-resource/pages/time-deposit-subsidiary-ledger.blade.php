@@ -21,14 +21,14 @@
             </div>
         </div>
         <div class="mt-4">
-            <table class="w-full print:text-[8pt]">
+            <table class="doc-table">
                 <thead>
                     <tr>
-                        <th class="border border-black px-4">Date</th>
-                        <th class="border border-black px-4">Withdrawal</th>
-                        <th class="border border-black px-4">Deposit</th>
-                        <th class="border border-black px-4">Balance</th>
-                        <th class="border border-black px-4">Remarks/Initial</th>
+                        <th class="doc-table-header-cell">Date</th>
+                        <th class="doc-table-header-cell">Withdrawal</th>
+                        <th class="doc-table-header-cell">Deposit</th>
+                        <th class="doc-table-header-cell">Balance</th>
+                        <th class="doc-table-header-cell">Remarks/Initial</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -40,11 +40,11 @@
                             $balance += $transaction->credit - $transaction->debit;
                         @endphp
                         <tr>
-                            <td class="whitespace-nowrap border border-black px-4">{{ $transaction->transaction_date->format('F d, Y') }}</td>
-                            <td class="whitespace-nowrap border border-black px-4 text-right">{{ renumber_format($transaction->debit, 2) }}</td>
-                            <td class="whitespace-nowrap border border-black px-4 text-right">{{ renumber_format($transaction->credit, 2) }}</td>
-                            <td class="whitespace-nowrap border border-black px-4 text-right">{{ renumber_format($balance, 2) }}</td>
-                            <td class="border border-black px-4">{{ $transaction->remarks }}</td>
+                            <td class="doc-table-cell">{{ $transaction->transaction_date->format('F d, Y') }}</td>
+                            <td class="doc-table-cell-right">{{ renumber_format($transaction->debit, 2) }}</td>
+                            <td class="doc-table-cell-right">{{ renumber_format($transaction->credit, 2) }}</td>
+                            <td class="doc-table-cell-right">{{ renumber_format($balance, 2) }}</td>
+                            <td class="doc-table-cell">{{ $transaction->remarks }}</td>
                         </tr>
                     @empty
                         <tr class="border border-black">
@@ -52,11 +52,11 @@
                         </tr>
                     @endforelse
                     <tr>
-                        <td class="border border-black px-4">Total</td>
-                        <td class="border border-black px-4 text-right">{{ renumber_format($time_deposit_account->transactions->sum('debit'), 2) }}</td>
-                        <td class="border border-black px-4 text-right">{{ renumber_format($time_deposit_account->transactions->sum('credit'), 2) }}</td>
-                        <td class="border border-black px-4 text-right">{{ renumber_format($time_deposit_account->transactions->sum('credit') - $time_deposit_account->transactions->sum('debit'), 2) }}</td>
-                        <td class="border border-black px-4"></td>
+                        <td class="doc-table-cell">Total</td>
+                        <td class="doc-table-cell-right">{{ renumber_format($time_deposit_account->transactions->sum('debit'), 2) }}</td>
+                        <td class="doc-table-cell-right">{{ renumber_format($time_deposit_account->transactions->sum('credit'), 2) }}</td>
+                        <td class="doc-table-cell-right">{{ renumber_format($time_deposit_account->transactions->sum('credit') - $time_deposit_account->transactions->sum('debit'), 2) }}</td>
+                        <td class="doc-table-cell"></td>
                     </tr>
                 </tbody>
             </table>

@@ -24,17 +24,17 @@
         </div>
 
         <div class="mt-4">
-            <table class="w-full print:text-[8pt]">
+            <table class="doc-table">
                 <thead>
                     <tr>
-                        <th class="border border-black px-4">Date</th>
-                        <th class="border border-black px-4">Reference Number</th>
-                        <th class="border border-black px-4">Amortization</th>
-                        <th class="border border-black px-4">Surcharge</th>
-                        <th class="border border-black px-4">Interest</th>
-                        <th class="border border-black px-4">Payment Principal</th>
-                        <th class="border border-black px-4">Outstanding Balance</th>
-                        <th class="border border-black px-4">Remarks/Initial</th>
+                        <th class="doc-table-header-cell">Date</th>
+                        <th class="doc-table-header-cell">Reference Number</th>
+                        <th class="doc-table-header-cell">Amortization</th>
+                        <th class="doc-table-header-cell">Surcharge</th>
+                        <th class="doc-table-header-cell">Interest</th>
+                        <th class="doc-table-header-cell">Payment Principal</th>
+                        <th class="doc-table-header-cell">Outstanding Balance</th>
+                        <th class="doc-table-header-cell">Remarks/Initial</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -46,24 +46,24 @@
                             $running_balance = round($running_balance - $payment->principal_payment, 4);
                         @endphp
                         <tr>
-                            <td class="whitespace-nowrap border border-black px-4">
+                            <td class="doc-table-cell">
                                 {{ $payment->transaction_date->format('F d, Y') }}
                             </td>
-                            <td class="border border-black px-4 text-center">{{ $payment->reference_number }}</td>
-                            <td class="whitespace-nowrap border border-black px-4 text-right">
+                            <td class="doc-table-cell-center">{{ $payment->reference_number }}</td>
+                            <td class="doc-table-cell-right">
                                 {{ number_format($payment->amount, 2) }}
                             </td>
-                            <td class="whitespace-nowrap border border-black px-4 text-right"></td>
-                            <td class="whitespace-nowrap border border-black px-4 text-right">
+                            <td class="doc-table-cell-right"></td>
+                            <td class="doc-table-cell-right">
                                 {{ number_format($payment->interest_payment, 2) }}
                             </td>
-                            <td class="whitespace-nowrap border border-black px-4 text-right">
+                            <td class="doc-table-cell-right">
                                 {{ number_format($payment->principal_payment, 2) }}
                             </td>
-                            <td class="whitespace-nowrap border border-black px-4 text-right">
+                            <td class="doc-table-cell-right">
                                 {{ number_format($running_balance, 2) }}
                             </td>
-                            <td class="border border-black px-4">{{ $payment->remarks }}</td>
+                            <td class="doc-table-cell">{{ $payment->remarks }}</td>
                         </tr>
                     @empty
                         <tr class="border border-black">
@@ -71,20 +71,20 @@
                         </tr>
                     @endforelse
                     <tr>
-                        <td class="border border-black px-4">Total</td>
-                        <td class="border border-black px-4"></td>
-                        <td class="border border-black px-4 text-right">
+                        <td class="doc-table-cell">Total</td>
+                        <td class="doc-table-cell"></td>
+                        <td class="doc-table-cell-right">
                             {{ number_format($loan->payments->sum('amount'), 2) }}
                         </td>
-                        <td class="border border-black px-4 text-right">{{ number_format(0, 2) }}</td>
-                        <td class="border border-black px-4 text-right">
+                        <td class="doc-table-cell-right">{{ number_format(0, 2) }}</td>
+                        <td class="doc-table-cell-right">
                             {{ number_format($loan->payments->sum('interest_payment'), 2) }}
                         </td>
-                        <td class="border border-black px-4 text-right">
+                        <td class="doc-table-cell-right">
                             {{ number_format($loan->payments->sum('principal_payment'), 2) }}
                         </td>
-                        <td class="border border-black px-4"></td>
-                        <td class="border border-black px-4"></td>
+                        <td class="doc-table-cell"></td>
+                        <td class="doc-table-cell"></td>
                     </tr>
                 </tbody>
             </table>

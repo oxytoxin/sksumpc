@@ -10,15 +10,15 @@
             <h4>Campus: {{ $member->division?->name }}</h4>
             <h4>Account Number:</h4>
         </div>
-        <table class="w-full print:text-[10pt]">
+        <table class="doc-table">
             <thead>
                 <tr>
-                    <th class="border-2 border-black text-center">DATE</th>
-                    <th class="border-2 border-black text-center">REF. #</th>
-                    <th class="border-2 border-black px-6 text-center">DR</th>
-                    <th class="border-2 border-black text-center">CR</th>
-                    <th class="border-2 border-black text-center">OUTSTANDING BALANCE</th>
-                    <th class="border-2 border-black px-4 text-center">REMARKS</th>
+                    <th class="doc-table-header-cell">DATE</th>
+                    <th class="doc-table-header-cell">REF. #</th>
+                    <th class="doc-table-header-cell">DR</th>
+                    <th class="doc-table-header-cell">CR</th>
+                    <th class="doc-table-header-cell">OUTSTANDING BALANCE</th>
+                    <th class="doc-table-header-cell">REMARKS</th>
                 </tr>
             </thead>
             <tbody>
@@ -27,18 +27,18 @@
                 @endphp
                 @foreach ($this->table->getRecords() as $record)
                     <tr>
-                        <th class="border-2 border-black px-4 text-left">
+                        <th class="doc-table-cell">
                             {{ $record->transaction_date->format('m/d/Y') }}</th>
-                        <td class="border-2 border-black px-4 text-left">{{ $record->reference_number }}</td>
-                        <td class="border-2 border-black px-4 text-right">
+                        <td class="doc-table-cell">{{ $record->reference_number }}</td>
+                        <td class="doc-table-cell-right">
                             {{ $record->withdrawal ? number_format($record->withdrawal, 2) : '' }}</td>
-                        <td class="border-2 border-black px-4 text-right">
+                        <td class="doc-table-cell-right">
                             {{ $record->deposit ? number_format($record->deposit, 2) : '' }}</td>
                         @php
                             $total += $record->amount;
                         @endphp
-                        <td class="border-2 border-black px-4 text-right">{{ number_format($total, 2) }}</td>
-                        <td class="border-2 border-black text-center">{{ $record->remarks }}</td>
+                        <td class="doc-table-cell-right">{{ number_format($total, 2) }}</td>
+                        <td class="doc-table-cell-center">{{ $record->remarks }}</td>
                     </tr>
                 @endforeach
             </tbody>

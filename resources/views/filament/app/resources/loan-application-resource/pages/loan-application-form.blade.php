@@ -16,7 +16,7 @@
 
 <x-filament-panels::page>
     <div class="mx-auto" x-data>
-        <div class="p-4 print:w-full print:text-[8pt] print:leading-tight" x-ref="print">
+        <div class="p-4 print:w-full print:p-4 print:text-[8pt] print:leading-tight" x-ref="print">
             <div>
                 <x-app.cashier.reports.report-heading />
                 <h4 class="text-center text-xl font-bold print:text-[10pt]">APPLICATION FORM</h4>
@@ -127,46 +127,46 @@
                     </div>
                     <h3 class="my-4 text-center font-bold">STATEMENT OF ACCOUNT</h3>
                     <div>
-                        <table class="w-full print:text-[9pt]">
+                        <table class="doc-table print:text-[9pt]">
                             <thead>
                                 <tr>
-                                    <th class="border border-black px-2 text-left">Date</th>
-                                    <th class="border border-black px-2 text-left">Particulars</th>
-                                    <th class="border border-black px-2 text-left">Date Granted</th>
-                                    <th class="border border-black px-2 text-left">Amount Granted</th>
-                                    <th class="border border-black px-2 text-left">Monthly Amortization</th>
-                                    <th class="border border-black px-2 text-left">Balance</th>
-                                    <th class="border border-black px-2 text-left">Remarks</th>
+                                    <th class="doc-table-header-cell">Date</th>
+                                    <th class="doc-table-header-cell">Particulars</th>
+                                    <th class="doc-table-header-cell">Date Granted</th>
+                                    <th class="doc-table-header-cell">Amount Granted</th>
+                                    <th class="doc-table-header-cell">Monthly Amortization</th>
+                                    <th class="doc-table-header-cell">Balance</th>
+                                    <th class="doc-table-header-cell">Remarks</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($loans as $loan)
                                     <tr>
-                                        <td class="border border-black px-2">{{ $loan->transaction_date->format('m/d/Y') }}</td>
-                                        <td class="border border-black px-2">{{ $loan->loan_type->name }}</td>
-                                        <td class="border border-black px-2">{{ $loan->release_date?->format('m/d/Y') }}</td>
-                                        <td class="border border-black px-2">{{ renumber_format($loan->gross_amount) }}</td>
-                                        <td class="border border-black px-2">{{ renumber_format($loan->monthly_payment) }} </td>
-                                        <td class="border border-black px-2">
+                                        <td class="doc-table-cell">{{ $loan->transaction_date->format('m/d/Y') }}</td>
+                                        <td class="doc-table-cell">{{ $loan->loan_type->name }}</td>
+                                        <td class="doc-table-cell">{{ $loan->release_date?->format('m/d/Y') }}</td>
+                                        <td class="doc-table-cell">{{ renumber_format($loan->gross_amount) }}</td>
+                                        <td class="doc-table-cell">{{ renumber_format($loan->monthly_payment) }} </td>
+                                        <td class="doc-table-cell">
                                             {{ renumber_format($loan->outstanding_balance) }}
                                         </td>
-                                        <td class="border border-black px-2">
+                                        <td class="doc-table-cell">
                                         </td>
                                     </tr>
                                 @endforeach
                                 @foreach ($loan_applications as $la)
                                     <tr>
-                                        <td class="border border-black px-2">{{ $la->transaction_date->format('m/d/Y') }}</td>
-                                        <td class="border border-black px-2">{{ $la->loan_type->name }}</td>
-                                        <td class="border border-black px-2"></td>
-                                        <td class="border border-black px-2">{{ renumber_format($la->desired_amount) }}</td>
-                                        <td class="border border-black px-2">{{ renumber_format($la->monthly_payment) }}</td>
-                                        <td class="border border-black px-2"></td>
-                                        <td class="border border-black px-2">{{ $la->status_name }}</td>
+                                        <td class="doc-table-cell">{{ $la->transaction_date->format('m/d/Y') }}</td>
+                                        <td class="doc-table-cell">{{ $la->loan_type->name }}</td>
+                                        <td class="doc-table-cell"></td>
+                                        <td class="doc-table-cell">{{ renumber_format($la->desired_amount) }}</td>
+                                        <td class="doc-table-cell">{{ renumber_format($la->monthly_payment) }}</td>
+                                        <td class="doc-table-cell"></td>
+                                        <td class="doc-table-cell">{{ $la->status_name }}</td>
                                     </tr>
                                 @endforeach
-                                <tr>
-                                    <td class="border border-black px-2 text-center" colspan="8">Nothing follows.</td>
+                                <tr class="doc-table-row-total">
+                                    <td class="doc-table-cell-center" colspan="7">Nothing follows.</td>
                                 </tr>
                             </tbody>
                         </table>

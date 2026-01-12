@@ -13,29 +13,29 @@
                 <p class="mt-4">FROM WHOM TRANSFERRED</p>
                 <p class="w-full border-b border-green-700 text-center">&nbsp;</p>
                 <p class="mt-2 font-semibold italic">Dated {{ $capital_subscription->transaction_date->format('F d, Y') }}</p>
-                <table class="mt-4 text-xs text-green-700">
+                <table class="mt-4 doc-table text-xs text-green-700">
                     <thead>
                         <tr>
-                            <td class="border border-black px-2 font-normal">NO. OF ORIGINAL CERTIFICATE</td>
-                            <td class="border border-black px-2 font-normal">NO. OF ORIGINAL CERTIFICATE</td>
-                            <td class="border border-black px-2 font-normal">NO. OF SHARES TRANSFERRED</td>
+                            <th class="doc-table-header-cell">NO. OF ORIGINAL CERTIFICATE</th>
+                            <th class="doc-table-header-cell">NO. OF ORIGINAL CERTIFICATE</th>
+                            <th class="doc-table-header-cell">NO. OF SHARES TRANSFERRED</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td class="border border-black">&nbsp;</td>
-                            <td class="border border-black">&nbsp;</td>
-                            <td class="border border-black">&nbsp;</td>
+                            <td class="doc-table-cell">&nbsp;</td>
+                            <td class="doc-table-cell">&nbsp;</td>
+                            <td class="doc-table-cell">&nbsp;</td>
                         </tr>
                         <tr>
-                            <td class="border border-black">&nbsp;</td>
-                            <td class="border border-black">&nbsp;</td>
-                            <td class="border border-black">&nbsp;</td>
+                            <td class="doc-table-cell">&nbsp;</td>
+                            <td class="doc-table-cell">&nbsp;</td>
+                            <td class="doc-table-cell">&nbsp;</td>
                         </tr>
                         <tr>
-                            <td class="border border-black">&nbsp;</td>
-                            <td class="border border-black">&nbsp;</td>
-                            <td class="border border-black">&nbsp;</td>
+                            <td class="doc-table-cell">&nbsp;</td>
+                            <td class="doc-table-cell">&nbsp;</td>
+                            <td class="doc-table-cell">&nbsp;</td>
                         </tr>
                     </tbody>
                 </table>

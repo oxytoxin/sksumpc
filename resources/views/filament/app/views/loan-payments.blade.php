@@ -1,31 +1,31 @@
-<table>
+<table class="doc-table">
     <thead>
-        <tr class="border-2 border-black">
-            <th class="border-2 border-black text-left">DATE</th>
-            <th class="border-2 border-black text-left">REF#</th>
-            <th class="border-2 border-black text-left">DEBIT</th>
-            <th class="border-2 border-black text-left">CREDIT</th>
-            <th class="border-2 border-black text-left">REMARKS</th>
+        <tr>
+            <th class="doc-table-header-cell">DATE</th>
+            <th class="doc-table-header-cell">REF#</th>
+            <th class="doc-table-header-cell">DEBIT</th>
+            <th class="doc-table-header-cell">CREDIT</th>
+            <th class="doc-table-header-cell">REMARKS</th>
         </tr>
     </thead>
     <tbody>
         @forelse ($loan->payments as $payment)
-            <tr class="border-2 border-black">
-                <td class="border-2 border-black">
+            <tr>
+                <td class="doc-table-cell">
                     {{ $payment->transaction_date->format('m/d/Y') }}
                 </td>
-                <td class="border-2 border-black">
+                <td class="doc-table-cell">
                     {{ $payment->reference_number }}
                 </td>
-                <td class="border-2 border-black"></td>
-                <td class="border-2 border-black">
+                <td class="doc-table-cell"></td>
+                <td class="doc-table-cell">
                     {{ Filament\Support\format_money($payment->amount, 'PHP') }}
                 </td>
-                <td class="border-2 border-black">{{ $payment->remarks }}</td>
+                <td class="doc-table-cell">{{ $payment->remarks }}</td>
             </tr>
         @empty
-            <tr class="border-2 border-black">
-                <td colspan="6">No payments made.</td>
+            <tr>
+                <td class="doc-table-cell" colspan="6">No payments made.</td>
             </tr>
         @endforelse
     </tbody>

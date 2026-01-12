@@ -1,37 +1,37 @@
 <x-app.cashier.reports.report-layout :signatories="$this->getSignatories()" :title="$report_title">
-    <table class="w-full">
+    <table class="doc-table">
         <thead>
             <tr>
-                <th class="border border-black text-center">NO.</th>
-                <th class="border border-black text-center">MEMBER NAME</th>
-                <th class="border border-black text-center">CASH COLLECTIBLE</th>
-                <th class="border border-black text-center">REFERENCE #</th>
-                <th class="border border-black text-center">AMOUNT</th>
-                <th class="border border-black text-center">DATE</th>
+                <th class="doc-table-header-cell">NO.</th>
+                <th class="doc-table-header-cell">MEMBER NAME</th>
+                <th class="doc-table-header-cell">CASH COLLECTIBLE</th>
+                <th class="doc-table-header-cell">REFERENCE #</th>
+                <th class="doc-table-header-cell">AMOUNT</th>
+                <th class="doc-table-header-cell">DATE</th>
             </tr>
         </thead>
         <tbody>
             @forelse ($this->table->getRecords() as $record)
                 <tr>
-                    <th class="border border-black text-center">{{ $loop->iteration }}</th>
-                    <td class="whitespace-nowrap border border-black px-2 text-center">
+                    <th class="doc-table-cell-center">{{ $loop->iteration }}</th>
+                    <td class="doc-table-cell-center">
                         {{ $record->payee }}
                     </td>
-                    <td class="border border-black text-center">
+                    <td class="doc-table-cell-center">
                         {{ $record->account->name }}
                     </td>
-                    <td class="border border-black text-center">
+                    <td class="doc-table-cell-center">
                         {{ $record->reference_number }}
                     </td>
-                    <td class="border border-black text-center">
+                    <td class="doc-table-cell-center">
                         {{ renumber_format($record->credit, 2) }}</td>
-                    <td class="border border-black text-center">
+                    <td class="doc-table-cell-center">
                         {{ $record->transaction_date?->format('m/d/Y') }}
                     </td>
                 </tr>
             @empty
                 <tr>
-                    <td class="border border-black text-center" colspan="5">No transactions today.</td>
+                    <td class="doc-table-cell-center" colspan="5">No transactions today.</td>
                 </tr>
             @endforelse
         </tbody>
