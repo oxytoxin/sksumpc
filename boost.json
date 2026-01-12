@@ -1,0 +1,13 @@
+{
+    "agents": [
+        "opencode"
+    ],
+    "editors": [
+        "opencode",
+        "phpstorm"
+    ],
+    "guidelines": [
+        "filament/filament"
+    ],
+    "herd_mcp": true
+}
