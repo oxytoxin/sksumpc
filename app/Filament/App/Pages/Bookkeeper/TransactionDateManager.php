@@ -2,29 +2,31 @@
 
     namespace App\Filament\App\Pages\Bookkeeper;
 
+    use App\Actions\Imprests\GenerateImprestsInterestForMember;
+    use App\Actions\LoveGifts\GenerateLoveGiftsInterestForMember;
+    use App\Actions\Savings\GenerateSavingsInterestForMember;
     use App\Models\CapitalSubscriptionBilling;
     use App\Models\CashCollectibleBilling;
     use App\Models\Loan;
     use App\Models\LoanBilling;
+    use App\Models\Member;
     use App\Models\MsoBilling;
     use App\Models\RevolvingFund;
-    use App\Models\User;
-    use Filament\Infolists\Components\TextEntry;
-    use Filament\Schemas\Schema;
-    use Filament\Schemas\Components\Actions;
-    use Filament\Actions\Action;
-    use App\Models\SystemConfiguration;
     use App\Models\TransactionDateHistory;
+    use App\Models\User;
     use Carbon\Carbon;
     use DB;
+    use Filament\Actions\Action;
     use Filament\Actions\Concerns\InteractsWithActions;
     use Filament\Actions\Contracts\HasActions;
     use Filament\Forms\Components\DatePicker;
-    use Filament\Forms\Components\Placeholder;
     use Filament\Forms\Concerns\InteractsWithForms;
     use Filament\Forms\Contracts\HasForms;
+    use Filament\Infolists\Components\TextEntry;
     use Filament\Notifications\Notification;
     use Filament\Pages\Page;
+    use Filament\Schemas\Components\Actions;
+    use Filament\Schemas\Schema;
     use Illuminate\Database\Eloquent\Collection;
     use Illuminate\Support\Collection as SupportCollection;
     use Livewire\Attributes\Computed;
@@ -64,6 +66,7 @@
             $mso = MsoBilling::where('posted', false)->whereNotNull('or_number')->select(['name', 'reference_number', 'billable_date']);
             $loans = LoanBilling::where('posted', false)->whereNotNull('or_number')->select(['name', 'reference_number', 'billable_date']);
             $cash_collections = CashCollectibleBilling::where('posted', false)->whereNotNull('or_number')->select(['name', 'reference_number', 'billable_date']);
+
             return $cbu->union($mso)->union($loans)->union($cash_collections)->get();
         }
 
@@ -118,18 +121,57 @@
                         ->color('success'),
                     Action::make('clear')
                         ->label('Close Date')
+                        ->modalDescription(fn() => $this->isQuarterEndDate(config('app.transaction_date'))
+                            ? "This is a quarter-end date. Interest for all members' Savings, Love Gifts, and Imprests will be automatically generated."
+                            : null)
                         ->action(function () {
+                            $dateToClose = config('app.transaction_date');
+                            DB::beginTransaction();
                             TransactionDateHistory::query()->update([
                                 'is_current' => false,
                             ]);
-                            SystemConfiguration::config('Transaction Date')?->delete();
                             $this->reset();
-                            Notification::make()->title('Transaction date cleared!')->success()->send();
+
+                            if ($this->isQuarterEndDate($dateToClose)) {
+                                $this->generateQuarterlyInterest($dateToClose);
+                                Notification::make()
+                                    ->title('Transaction date closed and quarterly interest generated for all members!')
+                                    ->success()
+                                    ->send();
+                            } else {
+                                Notification::make()->title('Transaction date closed!')->success()->send();
+                            }
+                            DB::commit();
                         })
                         ->disabled(fn() => !$this->revolving_fund_cleared || $this->active_users->isNotEmpty() || $this->loans_for_voucher->isNotEmpty() || $this->unposted_billings->isNotEmpty())
                         ->requiresConfirmation()
                         ->color('danger'),
                 ]),
             ]);
+        }
+
+        private function isQuarterEndDate($date): bool
+        {
+            if (!$date) {
+                return false;
+            }
+
+            $date = Carbon::parse($date);
+            $day = $date->day;
+            $month = $date->month;
+
+            return ($month === 3 && $day === 31) ||
+                ($month === 6 && $day === 30) ||
+                ($month === 9 && $day === 30) ||
+                ($month === 12 && $day === 31);
+        }
+
+        private function generateQuarterlyInterest($date): void
+        {
+            Member::each(function ($member) use ($date) {
+                app(GenerateSavingsInterestForMember::class)->handle($member, $date);
+                app(GenerateLoveGiftsInterestForMember::class)->handle($member, $date);
+                app(GenerateImprestsInterestForMember::class)->handle($member, $date);
+            });
         }
     }
