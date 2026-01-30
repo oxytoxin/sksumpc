@@ -31,10 +31,9 @@
                     <td class="doc-table-cell-center">{{ renumber_format($this->forwarded_balance?->total_credit) }}</td>
                     <td class="doc-table-cell-center">{{ renumber_format($balance) }}</td>
                 </tr>
-                @forelse ($this->table->getRecords() as $record)
+                @forelse ($this->transactions as $record)
                     @php
-                        $balance += $record->debit * $this->selected_account?->account_type->debit_operator ?? 0;
-                        $balance += $record->credit * $this->selected_account?->account_type->credit_operator ?? 0;
+                        $balance = $record->running_balance;
                     @endphp
                     <tr>
                         <th class="doc-table-cell">{{ $loop->iteration }}</th>
@@ -54,10 +53,10 @@
                 <tr class="doc-table-row-total">
                     <th colspan="5" class="doc-table-cell-center">GRAND TOTAL</th>
                     <td class="doc-table-cell-center">
-                        {{ renumber_format($this->table->getRecords()->sum('debit')) }}
+                        {{ renumber_format($this->table_totals->total_debit) }}
                     </td>
                     <td class="doc-table-cell-center">
-                        {{ renumber_format($this->table->getRecords()->sum('credit')) }}
+                        {{ renumber_format($this->table_totals->total_credit) }}
                     </td>
                     <td class="doc-table-cell-center">
                         {{ renumber_format($balance) }}
