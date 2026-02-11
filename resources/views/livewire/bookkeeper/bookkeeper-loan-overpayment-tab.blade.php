@@ -9,6 +9,8 @@
                     <th class="doc-table-header-cell">Loan Type</th>
                     <th class="doc-table-header-cell">Reference</th>
                     <th class="doc-table-header-cell">Total Paid</th>
+                    <th class="doc-table-header-cell">Principal</th>
+                    <th class="doc-table-header-cell">Interest</th>
                     <th class="doc-table-header-cell">Overpayment</th>
                 </tr>
                 </thead>
@@ -18,15 +20,17 @@
                         <td class="doc-table-cell">{{ $item->loan->member->full_name }}</td>
                         <td class="doc-table-cell">{{ $item->loan->loan_type->name }}</td>
                         <td class="doc-table-cell">{{ $item->loan->reference_number }}</td>
-                        <td class="doc-table-cell-right">{{ renumber_format($item->total_paid) }}</td>
+                        <td class="doc-table-cell-right">{{ renumber_format($item->total_paid, 4) }}</td>
+                        <td class="doc-table-cell-right">{{ renumber_format($item->total_principal, 4) }}</td>
+                        <td class="doc-table-cell-right">{{ renumber_format($item->total_interest, 4) }}</td>
                         <td class="doc-table-cell-right text-red-600 font-bold">{{ renumber_format($item->overpayment, 4) }}</td>
                     </tr>
                 @endforeach
                 </tbody>
                 <tfoot>
                 <tr>
-                    <td colspan="4" class="doc-table-cell-right font-bold">Total Overpayments:</td>
-                    <td class="doc-table-cell-right font-bold">{{ renumber_format($this->loanOverpaymentsExcess->sum('overpayment')) }}</td>
+                    <td colspan="6" class="doc-table-cell-right font-bold">Total Overpayments:</td>
+                    <td class="doc-table-cell-right font-bold">{{ renumber_format($this->loanOverpaymentsExcess->sum('overpayment'), 4) }}</td>
                 </tr>
                 </tfoot>
             </table>
