@@ -19,7 +19,7 @@
                         <td class="doc-table-cell">{{ $item->loan->loan_type->name }}</td>
                         <td class="doc-table-cell">{{ $item->loan->reference_number }}</td>
                         <td class="doc-table-cell-right">{{ renumber_format($item->total_paid) }}</td>
-                        <td class="doc-table-cell-right text-red-600 font-bold">{{ renumber_format($item->overpayment) }}</td>
+                        <td class="doc-table-cell-right text-red-600 font-bold">{{ renumber_format($item->overpayment, 4) }}</td>
                     </tr>
                 @endforeach
                 </tbody>
@@ -51,7 +51,7 @@
                         <td class="doc-table-cell">{{ $loan->loan_type->name }}</td>
                         <td class="doc-table-cell">{{ $loan->reference_number }}</td>
                         <td class="doc-table-cell-right">{{ renumber_format($loan->gross_amount) }}</td>
-                        <td class="doc-table-cell-right text-red-600 font-bold">{{ renumber_format($loan->outstanding_balance) }}</td>
+                        <td class="doc-table-cell-right text-red-600 font-bold">{{ renumber_format($loan->outstanding_balance, 4) }}</td>
                     </tr>
                 @endforeach
                 </tbody>
