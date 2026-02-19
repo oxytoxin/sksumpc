@@ -22,7 +22,7 @@
 
         protected static string|\UnitEnum|null $navigationGroup = 'Bookkeeping';
 
-        protected static ?string $title = 'Bookkeeper Summary Report';
+        //protected static ?string $title = 'Bookkeeper Summary Report';
 
         protected string $view = 'filament.app.pages.bookkeeper.bookkeeper-reports';
 
@@ -30,7 +30,7 @@
 
         public static function shouldRegisterNavigation(): bool
         {
-            return true || Auth::user()->can('manage bookkeeping');
+            return Auth::user()->can('manage bookkeeping');
         }
 
         public function mount(): void
