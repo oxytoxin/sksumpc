@@ -22,7 +22,7 @@
 
         protected static string|\UnitEnum|null $navigationGroup = 'Bookkeeping';
 
-        //protected static ?string $title = 'Bookkeeper Summary Report';
+        protected static ?string $title = 'Bookkeeper Summary Report';
 
         protected string $view = 'filament.app.pages.bookkeeper.bookkeeper-reports';
 
