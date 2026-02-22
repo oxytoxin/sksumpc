@@ -25,6 +25,9 @@ class ViewMember extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('credit-and-background')
+                ->label('Credit & Background')
+                ->url(MemberResource::getUrl('credit-and-background.edit', ['record' => $this->record])),
             Action::make('membership')
                 ->extraAttributes(['wire:ignore' => true])
                 ->label('Back to Membership Module')

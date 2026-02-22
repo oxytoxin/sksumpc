@@ -2,37 +2,24 @@
 
     namespace App\Filament\App\Resources;
 
-    use Filament\Forms\Components\Repeater;
-    use Filament\Schemas\Schema;
-    use Filament\Schemas\Components\Tabs;
-    use Filament\Schemas\Components\Tabs\Tab;
-    use Filament\Schemas\Components\Section;
-    use Filament\Schemas\Components\Actions;
-    use Filament\Actions\Action;
-    use Filament\Schemas\Components\Livewire;
-    use Filament\Schemas\Components\Grid;
-    use Filament\Schemas\Components\Fieldset;
-    use Filament\Actions\EditAction;
-    use Filament\Actions\DeleteAction;
-    use Throwable;
-    use App\Filament\App\Resources\MemberResource\Pages\ListMembers;
-    use App\Filament\App\Resources\MemberResource\Pages\CreateMember;
-    use App\Filament\App\Resources\MemberResource\Pages\MembersReport;
-    use App\Filament\App\Resources\MemberResource\Pages\ViewMember;
-    use App\Filament\App\Resources\MemberResource\Pages\PrintMemberProfile;
-    use App\Filament\App\Resources\MemberResource\Pages\EditMember;
-    use App\Filament\App\Resources\MemberResource\Pages\EditMemberLoan;
     use App\Enums\MemberTypes;
     use App\Filament\App\Resources\MemberResource\Pages;
     use App\Filament\App\Resources\MemberResource\Pages\CbuAmortizationSchedule;
     use App\Filament\App\Resources\MemberResource\Pages\CbuSubsidiaryLedger;
+    use App\Filament\App\Resources\MemberResource\Pages\CreateMember;
+    use App\Filament\App\Resources\MemberResource\Pages\EditMember;
+    use App\Filament\App\Resources\MemberResource\Pages\EditMemberLoan;
     use App\Filament\App\Resources\MemberResource\Pages\ImprestSubsidiaryLedger;
+    use App\Filament\App\Resources\MemberResource\Pages\ListMembers;
     use App\Filament\App\Resources\MemberResource\Pages\LoanAmortizationSchedule;
     use App\Filament\App\Resources\MemberResource\Pages\LoanDisclosureSheet;
     use App\Filament\App\Resources\MemberResource\Pages\LoanSubsidiaryLedger;
     use App\Filament\App\Resources\MemberResource\Pages\LoveGiftsSubsidiaryLedger;
+    use App\Filament\App\Resources\MemberResource\Pages\MembersReport;
+    use App\Filament\App\Resources\MemberResource\Pages\PrintMemberProfile;
     use App\Filament\App\Resources\MemberResource\Pages\SavingsSubsidiaryLedger;
     use App\Filament\App\Resources\MemberResource\Pages\TimeDepositSubsidiaryLedger;
+    use App\Filament\App\Resources\MemberResource\Pages\ViewMember;
     use App\Infolists\Components\DependentsEntry;
     use App\Livewire\App\CbuTable;
     use App\Livewire\App\LoansTable;
@@ -50,8 +37,13 @@
     use Auth;
     use Carbon\Carbon;
     use DB;
+    use Filament\Actions\Action;
+    use Filament\Actions\ActionGroup;
+    use Filament\Actions\DeleteAction;
+    use Filament\Actions\EditAction;
     use Filament\Forms\Components\DatePicker;
     use Filament\Forms\Components\Hidden;
+    use Filament\Forms\Components\Repeater;
     use Filament\Forms\Components\Select;
     use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
     use Filament\Forms\Components\TextInput;
@@ -59,14 +51,23 @@
     use Filament\Infolists\Components\TextEntry;
     use Filament\Notifications\Notification;
     use Filament\Resources\Resource;
+    use Filament\Schemas\Components\Actions;
+    use Filament\Schemas\Components\Fieldset;
+    use Filament\Schemas\Components\Grid;
+    use Filament\Schemas\Components\Livewire;
+    use Filament\Schemas\Components\Section;
+    use Filament\Schemas\Components\Tabs;
+    use Filament\Schemas\Components\Tabs\Tab;
+    use Filament\Schemas\Schema;
     use Filament\Support\Colors\Color;
-    use Filament\Tables;
+    use Filament\Support\Icons\Heroicon;
     use Filament\Tables\Columns\TextColumn;
     use Filament\Tables\Contracts\HasTable;
     use Filament\Tables\Enums\FiltersLayout;
     use Filament\Tables\Filters\SelectFilter;
     use Filament\Tables\Table;
     use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
+    use Throwable;
 
     class MemberResource extends Resource
     {
@@ -450,59 +451,66 @@
                 ->filtersLayout(FiltersLayout::AboveContent)
                 ->persistFiltersInSession()
                 ->recordActions([
-                    Action::make('terminate')
-                        ->requiresConfirmation()
-                        ->button()
-                        ->color(Color::Amber)
-                        ->visible(Auth::user()->can('manage members'))
-                        ->hidden(fn($record) => $record->terminated_at)
-                        ->schema([
-                            TextInput::make('bod_resolution')->label('BOD Resolution')->required(),
-                            DatePicker::make('termination_date')->default(config('app.transaction_date') ?? today())->native(false)->required(),
-                        ])
-                        ->action(function ($record, $data) {
-                            DB::beginTransaction();
-                            MembershipStatus::create([
-                                'member_id' => $record->id,
-                                'type' => MembershipStatus::TERMINATION,
-                                'bod_resolution' => $data['bod_resolution'],
-                                'effectivity_date' => $data['termination_date'],
-                            ]);
-                            $record->update(['terminated_at' => config('app.transaction_date') ?? now()]);
-                            DB::commit();
-                            Notification::make()->title('Member terminated.')->success()->send();
-                        }),
-                    EditAction::make()
-                        ->hidden(fn($record) => $record->terminated_at)
-                        ->visible(Auth::user()->can('manage members')),
-                    DeleteAction::make()
-                        ->hidden(fn($record) => $record->terminated_at)
-                        ->schema([
-                            TextInput::make('passkey')
-                                ->hint("Manager's Password")
-                                ->required()
-                                ->password(),
-                        ])
-                        ->action(function (Member $record, $data) {
-                            if (!OverrideProvider::promptManagerPasskey($data['passkey'])) {
-                                return;
-                            }
-                            DB::beginTransaction();
-                            try {
-                                if ($record->capital_subscription_payments()->count() <= 1) {
-                                    $record->capital_subscriptions()->delete();
-                                    $record->delete();
-                                } else {
+                    ActionGroup::make([
+                        Action::make('credit-and-background')
+                            ->label('Credit & Background')
+                            ->icon('heroicon-o-identification')
+                            ->url(fn($record) => MemberResource::getUrl('credit-and-background.edit', ['record' => $record])),
+
+                        EditAction::make()
+                            ->hidden(fn($record) => $record->terminated_at)
+                            ->visible(Auth::user()->can('manage members')),
+                        DeleteAction::make()
+                            ->hidden(fn($record) => $record->terminated_at)
+                            ->schema([
+                                TextInput::make('passkey')
+                                    ->hint("Manager's Password")
+                                    ->required()
+                                    ->password(),
+                            ])
+                            ->action(function (Member $record, $data) {
+                                if (!OverrideProvider::promptManagerPasskey($data['passkey'])) {
+                                    return false;
+                                }
+                                DB::beginTransaction();
+                                try {
+                                    if ($record->capital_subscription_payments()->count() <= 1) {
+                                        $record->capital_subscriptions()->delete();
+                                        $record->delete();
+                                    } else {
+                                        return Notification::make()->title('Member has existing payments.')->danger()->send();
+                                    }
+                                } catch (Throwable $th) {
+                                    DB::rollBack();
+
                                     return Notification::make()->title('Member has existing payments.')->danger()->send();
                                 }
-                            } catch (Throwable $th) {
-                                DB::rollBack();
-
-                                return Notification::make()->title('Member has existing payments.')->danger()->send();
-                            }
-                            Notification::make()->title('Member deleted.')->success()->send();
-                            DB::commit();
-                        })->visible(Auth::user()->can('manage members')),
+                                Notification::make()->title('Member deleted.')->success()->send();
+                                DB::commit();
+                                return true;
+                            })->visible(Auth::user()->can('manage members')),
+                        Action::make('terminate')
+                            ->requiresConfirmation()
+                            ->visible(Auth::user()->can('manage members'))
+                            ->hidden(fn($record) => $record->terminated_at)
+                            ->schema([
+                                TextInput::make('bod_resolution')->label('BOD Resolution')->required(),
+                                DatePicker::make('termination_date')->default(config('app.transaction_date') ?? today())->native(false)->required(),
+                            ])
+                            ->icon(Heroicon::NoSymbol)
+                            ->action(function ($record, $data) {
+                                DB::beginTransaction();
+                                MembershipStatus::create([
+                                    'member_id' => $record->id,
+                                    'type' => MembershipStatus::TERMINATION,
+                                    'bod_resolution' => $data['bod_resolution'],
+                                    'effectivity_date' => $data['termination_date'],
+                                ]);
+                                $record->update(['terminated_at' => config('app.transaction_date') ?? now()]);
+                                DB::commit();
+                                Notification::make()->title('Member terminated.')->success()->send();
+                            }),
+                    ]),
                 ])
                 ->toolbarActions([])
                 ->emptyStateActions([])
@@ -526,6 +534,7 @@
                 'view' => ViewMember::route('/{record}'),
                 'print' => PrintMemberProfile::route('/{member}/print'),
                 'edit' => EditMember::route('/{record}/edit'),
+                'credit-and-background.edit' => Pages\EditMemberCreditAndBackground::route('/{record}/credit-and-background'),
                 'loan.edit' => EditMemberLoan::route('/{record}/{loan}/edit'),
                 'cbu-subsidiary-ledger' => CbuSubsidiaryLedger::route('cbu-subsidiary-ledger/{member}'),
                 'cbu-amortization-schedule' => CbuAmortizationSchedule::route('cbu-amortization-schedule/{cbu}'),
