@@ -93,6 +93,45 @@ class BookkeeperSavingsBalanceTab extends Component implements HasForms
         return $this->totalSavingsBalance + $this->totalImprestBalance + $this->totalLoveGiftBalance;
     }
 
+    public function getSavingsAccountCountProperty(): int
+    {
+        $accountIds = SavingsAccount::query()->pluck('id');
+
+        return DB::table('transactions')
+            ->selectRaw('account_id, SUM(COALESCE(credit, 0)) - SUM(COALESCE(debit, 0)) as balance')
+            ->whereIn('account_id', $accountIds)
+            ->whereDate('transaction_date', '<=', $this->asOfDate)
+            ->groupBy('account_id')
+            ->having('balance', '!=', 0)
+            ->count();
+    }
+
+    public function getImprestAccountCountProperty(): int
+    {
+        $accountIds = ImprestAccount::query()->pluck('id');
+
+        return DB::table('transactions')
+            ->selectRaw('account_id, SUM(COALESCE(credit, 0)) - SUM(COALESCE(debit, 0)) as balance')
+            ->whereIn('account_id', $accountIds)
+            ->whereDate('transaction_date', '<=', $this->asOfDate)
+            ->groupBy('account_id')
+            ->having('balance', '!=', 0)
+            ->count();
+    }
+
+    public function getLoveGiftAccountCountProperty(): int
+    {
+        $accountIds = LoveGiftAccount::query()->pluck('id');
+
+        return DB::table('transactions')
+            ->selectRaw('account_id, SUM(COALESCE(credit, 0)) - SUM(COALESCE(debit, 0)) as balance')
+            ->whereIn('account_id', $accountIds)
+            ->whereDate('transaction_date', '<=', $this->asOfDate)
+            ->groupBy('account_id')
+            ->having('balance', '!=', 0)
+            ->count();
+    }
+
     public function getSelectedSavingsTypeProperty(): string
     {
         return $this->data['savings_type'] ?? 'savings';

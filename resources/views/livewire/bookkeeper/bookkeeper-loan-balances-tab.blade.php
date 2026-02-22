@@ -19,8 +19,8 @@
             <thead>
             <tr>
                 <th class="doc-table-header-cell">Loan Type</th>
-                <th class="doc-table-header-cell">Count</th>
-                <th class="doc-table-header-cell">Total Outstanding</th>
+                <th class="doc-table-header-cell-right">Count</th>
+                <th class="doc-table-header-cell-right">Total Outstanding</th>
             </tr>
             </thead>
             <tbody>
@@ -49,8 +49,8 @@
                 <th class="doc-table-header-cell">Reference Number</th>
                 <th class="doc-table-header-cell">Member</th>
                 <th class="doc-table-header-cell">Loan Type</th>
-                <th class="doc-table-header-cell">Gross Amount</th>
-                <th class="doc-table-header-cell">Outstanding Balance</th>
+                <th class="doc-table-header-cell-right">Gross Amount</th>
+                <th class="doc-table-header-cell-right">Outstanding Balance</th>
             </tr>
             </thead>
             <tbody>

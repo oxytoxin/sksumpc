@@ -27,20 +27,24 @@
             <thead>
             <tr>
                 <th class="doc-table-header-cell">Account Type</th>
-                <th class="doc-table-header-cell">Total Balance</th>
+                <th class="doc-table-header-cell-right">Count</th>
+                <th class="doc-table-header-cell-right">Total Balance</th>
             </tr>
             </thead>
             <tbody>
             <tr>
                 <td class="doc-table-cell">Savings</td>
+                <td class="doc-table-cell-right">{{ $this->savingsAccountCount }}</td>
                 <td class="doc-table-cell-right">{{ renumber_format($this->totalSavingsBalance) }}</td>
             </tr>
             <tr>
                 <td class="doc-table-cell">Imprests</td>
+                <td class="doc-table-cell-right">{{ $this->imprestAccountCount }}</td>
                 <td class="doc-table-cell-right">{{ renumber_format($this->totalImprestBalance) }}</td>
             </tr>
             <tr>
                 <td class="doc-table-cell">Love Gifts</td>
+                <td class="doc-table-cell-right">{{ $this->loveGiftAccountCount }}</td>
                 <td class="doc-table-cell-right">{{ renumber_format($this->totalLoveGiftBalance) }}</td>
             </tr>
             </tbody>
@@ -48,18 +52,20 @@
             <tr>
                 <td class="doc-table-cell-right font-bold">Total:</td>
                 <td class="doc-table-cell-right font-bold">{{ renumber_format($this->totalAccountBalance) }}</td>
+                <td class="doc-table-cell-right font-bold">{{ $this->savingsAccountCount + $this->imprestAccountCount + $this->loveGiftAccountCount }}</td>
             </tr>
             </tfoot>
         </table>
 
-        <h3 class="text-xl font-bold mt-8 mb-4">{{ $this->savingsTypeLabel }} Accounts (As
-            of {{ $this->asOfDate->format('F d, Y') }})</h3>
+        <h3 class="text-xl font-bold mt-8 mb-4">
+            {{ $this->savingsTypeLabel }} Accounts (As of {{ $this->asOfDate->format('F d, Y') }})
+        </h3>
         <table class="doc-table border border-black px-4 text-sm w-full">
             <thead>
             <tr>
                 <th class="doc-table-header-cell">Account Number</th>
                 <th class="doc-table-header-cell">Member</th>
-                <th class="doc-table-header-cell">Balance</th>
+                <th class="doc-table-header-cell-right">Balance</th>
             </tr>
             </thead>
             <tbody>
