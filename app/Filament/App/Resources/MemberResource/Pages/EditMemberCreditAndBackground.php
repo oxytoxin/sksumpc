@@ -41,46 +41,28 @@
 
         public function mount(): void
         {
-            $data['nickname'] = $this->record->credit_and_background?->nickname ?? null;
-            $data['nationality'] = $this->record->credit_and_background?->nationality ?? null;
-            $data['school'] = $this->record->credit_and_background?->school ?? null;
+            $this->form->fill($this->getData());
+        }
 
-            $data['spouse_name'] = $this->record->credit_and_background?->spouse?->name ?? null;
-            $data['spouse_nickname'] = $this->record->credit_and_background?->spouse?->nickname ?? null;
-            $data['spouse_middle_name'] = $this->record->credit_and_background?->spouse?->middle_name ?? null;
-            $data['spouse_date_of_birth'] = $this->record->credit_and_background?->spouse?->date_of_birth ?? null;
-            $data['spouse_age'] = $this->record->credit_and_background?->spouse?->age ?? null;
-            $data['spouse_contact_number'] = $this->record->credit_and_background?->spouse?->contact_number ?? null;
-            $data['spouse_civil_status'] = $this->record->credit_and_background?->spouse?->civil_status ?? null;
-            $data['spouse_nationality'] = $this->record->credit_and_background?->spouse?->nationality ?? null;
-            $data['spouse_address'] = $this->record->credit_and_background?->spouse?->address ?? null;
-            $data['spouse_highest_educational_attainment'] = $this->record->credit_and_background?->spouse?->highest_educational_attainment ?? null;
-            $data['spouse_school'] = $this->record->credit_and_background?->spouse?->school ?? null;
+        private function getData(): array
+        {
+            $cibi = $this->record->credit_and_background;
+            return array_filter([
+                'nickname' => $cibi?->nickname,
+                'nationality' => $cibi?->nationality,
+                'school' => $cibi?->school,
+                ...$this->prefixKeys($cibi?->spouse?->toArray() ?? [], 'spouse_'),
+                'children' => collect($cibi?->children ?? [])->map(fn(ChildData $child) => $child->toArray())->toArray(),
+                ...($cibi?->employment_verification?->toArray() ?? []),
+                ...($cibi?->income_verification?->toArray() ?? []),
+            ]);
+        }
 
-            $data['children'] = collect($this->record->credit_and_background?->children ?? [])
-                ->map(fn(ChildData $child) => [
-                    'name' => $child->name,
-                    'birthdate' => $child->birthdate,
-                    'course_and_school' => $child->course_and_school,
-                ])
+        private function prefixKeys(array $array, string $prefix): array
+        {
+            return collect($array)
+                ->mapWithKeys(fn($value, $key) => [$prefix.$key => $value])
                 ->toArray();
-
-            $data['employer'] = $this->record->credit_and_background?->employment_verification?->employer ?? null;
-            $data['office_address'] = $this->record->credit_and_background?->employment_verification?->office_address ?? null;
-            $data['business_form'] = $this->record->credit_and_background?->employment_verification?->business_form ?? null;
-            $data['nature_of_business'] = $this->record->credit_and_background?->employment_verification?->nature_of_business ?? null;
-            $data['year_connected'] = $this->record->credit_and_background?->employment_verification?->year_connected ?? null;
-            $data['position'] = $this->record->credit_and_background?->employment_verification?->position ?? null;
-            $data['employment_status'] = $this->record->credit_and_background?->employment_verification?->employment_status ?? null;
-
-            $data['basic_salary'] = $this->record->credit_and_background?->income_verification?->basic_salary ?? null;
-            $data['allowances'] = $this->record->credit_and_background?->income_verification?->allowances ?? null;
-            $data['business_income'] = $this->record->credit_and_background?->income_verification?->business_income ?? null;
-            $data['other_income'] = $this->record->credit_and_background?->income_verification?->other_income ?? null;
-            $data['monthly_income'] = $this->record->credit_and_background?->income_verification?->monthly_income ?? null;
-            $data['annual_income'] = $this->record->credit_and_background?->income_verification?->annual_income ?? null;
-
-            $this->form->fill($data);
         }
 
         public function form(Schema $schema): Schema
@@ -125,6 +107,11 @@
                             Repeater::make('children')
                                 ->default([])
                                 ->hiddenLabel()
+                                ->table([
+                                    Repeater\TableColumn::make('Name'),
+                                    Repeater\TableColumn::make('Birthdate'),
+                                    Repeater\TableColumn::make('Course and School'),
+                                ])
                                 ->schema([
                                     TextInput::make('name')->required()->maxLength(125),
                                     DatePicker::make('birthdate')->native(false)->required(),
@@ -168,60 +155,57 @@
                         \Filament\Actions\Action::make('save')
                             ->label('Save')
                             ->color('success')
+                            ->keyBindings(['command+s', 'ctrl+s'])
                             ->action(function () {
+                                $data = $this->form->getState();
                                 $spouseData = new SpouseData(
-                                    name: $this->data['spouse_name'] ?? null,
-                                    nickname: $this->data['spouse_nickname'] ?? null,
-                                    middle_name: $this->data['spouse_middle_name'] ?? null,
-                                    date_of_birth: $this->data['spouse_date_of_birth'] ?? null,
-                                    age: $this->data['spouse_age'] ?? null,
-                                    contact_number: $this->data['spouse_contact_number'] ?? null,
-                                    civil_status: $this->data['spouse_civil_status'] ?? null,
-                                    nationality: $this->data['spouse_nationality'] ?? null,
-                                    address: $this->data['spouse_address'] ?? null,
-                                    highest_educational_attainment: $this->data['spouse_highest_educational_attainment'] ?? null,
-                                    school: $this->data['spouse_school'] ?? null,
+                                    name: $data['spouse_name'] ?? null,
+                                    nickname: $data['spouse_nickname'] ?? null,
+                                    middle_name: $data['spouse_middle_name'] ?? null,
+                                    date_of_birth: $data['spouse_date_of_birth'] ?? null,
+                                    age: $data['spouse_age'] ?? null,
+                                    contact_number: $data['spouse_contact_number'] ?? null,
+                                    civil_status: $data['spouse_civil_status'] ?? null,
+                                    nationality: $data['spouse_nationality'] ?? null,
+                                    address: $data['spouse_address'] ?? null,
+                                    highest_educational_attainment: $data['spouse_highest_educational_attainment'] ?? null,
+                                    school: $data['spouse_school'] ?? null,
                                 );
 
-                                $childrenData = collect($this->data['children'] ?? [])
+                                $childrenData = collect($data['children'] ?? [])
                                     ->map(fn($child) => new ChildData(
                                         name: $child['name'] ?? null,
                                         birthdate: $child['birthdate'] ?? null,
                                         course_and_school: $child['course_and_school'] ?? null,
                                     ))
                                     ->toArray();
-
                                 $employmentVerificationData = new EmploymentVerificationData(
-                                    employer: $this->data['employer'] ?? null,
-                                    office_address: $this->data['office_address'] ?? null,
-                                    business_form: $this->data['business_form'] ?? null,
-                                    nature_of_business: $this->data['nature_of_business'] ?? null,
-                                    year_connected: $this->data['year_connected'] ?? null,
-                                    position: $this->data['position'] ?? null,
-                                    employment_status: $this->data['employment_status'] ?? null,
+                                    employer: $data['employer'] ?? null,
+                                    office_address: $data['office_address'] ?? null,
+                                    business_form: $data['business_form'] ?? null,
+                                    nature_of_business: $data['nature_of_business'] ?? null,
+                                    year_connected: $data['year_connected'] ?? null,
+                                    position: $data['position'] ?? null,
+                                    employment_status: $data['employment_status'] ?? null,
                                 );
 
                                 $incomeVerificationData = new IncomeVerificationData(
-                                    basic_salary: $this->data['basic_salary'] ?? null,
-                                    allowances: $this->data['allowances'] ?? null,
-                                    business_income: $this->data['business_income'] ?? null,
-                                    other_income: $this->data['other_income'] ?? null,
-                                    monthly_income: $this->data['monthly_income'] ?? null,
-                                    annual_income: $this->data['annual_income'] ?? null,
+                                    basic_salary: $data['basic_salary'] ?? null,
+                                    allowances: $data['allowances'] ?? null,
+                                    business_income: $data['business_income'] ?? null,
+                                    other_income: $data['other_income'] ?? null,
+                                    monthly_income: $data['monthly_income'] ?? null,
+                                    annual_income: $data['annual_income'] ?? null,
                                 );
-
-                                $creditAndBackground = $this->record->credit_and_background()->firstOrNew();
-
-                                $creditAndBackground->fill([
-                                    'nickname' => $this->data['nickname'] ?? null,
-                                    'nationality' => $this->data['nationality'] ?? null,
-                                    'school' => $this->data['school'] ?? null,
+                                $creditAndBackground = $this->record->credit_and_background()->updateOrCreate(['member_id' => $this->record->id], [
+                                    'nickname' => $data['nickname'] ?? null,
+                                    'nationality' => $data['nationality'] ?? null,
+                                    'school' => $data['school'] ?? null,
                                     'spouse' => $spouseData,
                                     'children' => $childrenData,
                                     'employment_verification' => $employmentVerificationData,
                                     'income_verification' => $incomeVerificationData,
-                                ])->save();
-
+                                ]);
                                 Notification::make()->title('Credit & background updated.')->success()->send();
                             }),
                     ])->alignRight(),
