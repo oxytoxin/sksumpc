@@ -93,9 +93,11 @@
                     Select::make('loan_type_id')
                         ->relationship('loan_type', 'name')
                         ->required(),
-                    Select::make('number_of_terms')
-                        ->options(LoansProvider::LOAN_TERMS)
+                    TextInput::make('number_of_terms')
                         ->default(12)
+                        ->minValue(1)
+                        ->maxValue(600)
+                        ->numeric()
                         ->required()
                         ->live(),
                     TextInput::make('priority_number'),
