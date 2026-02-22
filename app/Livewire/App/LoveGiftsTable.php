@@ -1,62 +1,65 @@
 <?php
 
-namespace App\Livewire\App;
+    namespace App\Livewire\App;
 
-use Filament\Actions\Contracts\HasActions;
-use Filament\Actions\Concerns\InteractsWithActions;
-use Filament\Actions\ViewAction;
-use Filament\Actions\BulkActionGroup;
-use App\Models\LoveGift;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Concerns\InteractsWithTable;
-use Filament\Tables\Contracts\HasTable;
-use Filament\Tables\Table;
-use Livewire\Attributes\On;
-use Livewire\Component;
+    use Filament\Actions\Contracts\HasActions;
+    use Filament\Actions\Concerns\InteractsWithActions;
+    use Filament\Actions\ViewAction;
+    use Filament\Actions\BulkActionGroup;
+    use App\Models\LoveGift;
+    use Filament\Forms\Concerns\InteractsWithForms;
+    use Filament\Forms\Contracts\HasForms;
+    use Filament\Tables\Columns\TextColumn;
+    use Filament\Tables\Concerns\InteractsWithTable;
+    use Filament\Tables\Contracts\HasTable;
+    use Filament\Tables\Table;
+    use Livewire\Attributes\On;
+    use Livewire\Component;
 
-class LoveGiftsTable extends Component implements HasForms, HasTable, HasActions
-{
-    use InteractsWithActions;
-    use InteractsWithForms, InteractsWithTable;
-
-    public $member_id;
-
-    #[On('refresh')]
-    public function loanCreated() {}
-
-    public function table(Table $table): Table
+    class LoveGiftsTable extends Component implements HasForms, HasTable, HasActions
     {
-        return $table
-            ->query(LoveGift::whereMemberId($this->member_id))
-            ->recordclasses(fn ($record) => $record->amount > 0 ? 'bg-green-200' : 'bg-red-200')
-            ->columns([
-                TextColumn::make('transaction_date')->date('m/d/Y'),
-                TextColumn::make('reference_number'),
-                TextColumn::make('withdrawal')->label('Withdrawal')->money('PHP'),
-                TextColumn::make('deposit')->label('Deposit/Interest')->money('PHP'),
-                TextColumn::make('balance')->money('PHP'),
-                TextColumn::make('days_till_next_transaction'),
-                TextColumn::make('interest')->money('PHP'),
-            ])
-            ->filters([
-                //
-            ])
-            ->headerActions([
-                ViewAction::make('subsidiary_ledger')
-                    ->icon('heroicon-o-clipboard-document-list')
-                    ->label('Subsidiary Ledger')
-                    ->url(route('filament.app.resources.members.love-gifts-subsidiary-ledger', ['member' => $this->member_id])),
-            ])
-            ->recordActions([])
-            ->toolbarActions([
-                BulkActionGroup::make([]),
-            ]);
-    }
+        use InteractsWithActions;
+        use InteractsWithForms, InteractsWithTable;
 
-    public function render()
-    {
-        return view('livewire.app.love-gifts-table');
+        public $member_id;
+
+        #[On('refresh')]
+        public function loanCreated()
+        {
+        }
+
+        public function table(Table $table): Table
+        {
+            return $table
+                ->query(LoveGift::whereMemberId($this->member_id))
+                ->recordclasses(fn($record) => $record->amount > 0 ? 'bg-green-200' : 'bg-red-200')
+                ->columns([
+                    TextColumn::make('transaction_date')->date('m/d/Y'),
+                    TextColumn::make('reference_number'),
+                    TextColumn::make('withdrawal')->label('Withdrawal')->money('PHP'),
+                    TextColumn::make('deposit')->label('Deposit/Interest')->money('PHP'),
+                    TextColumn::make('balance')->money('PHP'),
+                    TextColumn::make('days_till_next_transaction'),
+                    TextColumn::make('interest')->money('PHP'),
+                ])
+                ->filters([
+                    //
+                ])
+                ->defaultSort('transaction_date')
+                ->headerActions([
+                    ViewAction::make('subsidiary_ledger')
+                        ->icon('heroicon-o-clipboard-document-list')
+                        ->label('Subsidiary Ledger')
+                        ->url(route('filament.app.resources.members.love-gifts-subsidiary-ledger', ['member' => $this->member_id])),
+                ])
+                ->recordActions([])
+                ->toolbarActions([
+                    BulkActionGroup::make([]),
+                ]);
+        }
+
+        public function render()
+        {
+            return view('livewire.app.love-gifts-table');
+        }
     }
-}

@@ -51,5 +51,37 @@
             </tr>
             </tfoot>
         </table>
+
+        <h3 class="text-xl font-bold mt-8 mb-4">{{ $this->savingsTypeLabel }} Accounts (As of {{ $this->asOfDate->format('F d, Y') }})</h3>
+        <table class="doc-table border border-black px-4 text-sm w-full">
+            <thead>
+            <tr>
+                <th class="doc-table-header-cell">Account Number</th>
+                <th class="doc-table-header-cell">Account Name</th>
+                <th class="doc-table-header-cell">Member</th>
+                <th class="doc-table-header-cell">Balance</th>
+            </tr>
+            </thead>
+            <tbody>
+            @forelse($this->accountsWithBalances as $account)
+                <tr>
+                    <td class="doc-table-cell">{{ $account->number }}</td>
+                    <td class="doc-table-cell">{{ $account->name }}</td>
+                    <td class="doc-table-cell">{{ $account->member?->full_name ?? '-' }}</td>
+                    <td class="doc-table-cell-right">{{ renumber_format($account->balance) }}</td>
+                </tr>
+            @empty
+                <tr>
+                    <td class="doc-table-cell" colspan="4">No accounts found</td>
+                </tr>
+            @endforelse
+            </tbody>
+            <tfoot>
+            <tr>
+                <td class="doc-table-cell-right font-bold" colspan="3">Total:</td>
+                <td class="doc-table-cell-right font-bold">{{ renumber_format($this->accountsWithBalances->sum('balance')) }}</td>
+            </tr>
+            </tfoot>
+        </table>
     </x-app.cashier.reports.report-layout>
 </div>
