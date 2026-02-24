@@ -41,12 +41,14 @@ class BookkeeperSavingsBalanceTab extends Component implements HasForms
                 Select::make('savings_type')
                     ->label('Savings Type')
                     ->options([
-                        'savings' => 'Savings',
+                        'regular_savings' => 'Regular Savings (1011, 2111)',
+                        'associate_savings' => 'Associate Savings (1012)',
+                        'laboratory_savings' => 'Laboratory Savings (1013)',
                         'imprest' => 'Imprests',
                         'love_gift' => 'Love Gifts',
                     ])
                     ->live()
-                    ->default('savings'),
+                    ->default('regular_savings'),
             ]);
     }
 
@@ -55,15 +57,45 @@ class BookkeeperSavingsBalanceTab extends Component implements HasForms
         return $this->data['to_date'] ? CarbonImmutable::parse($this->data['to_date']) : config('app.transaction_date');
     }
 
-    public function getTotalSavingsBalanceProperty(): float
+    public function getRegularSavingsBalanceProperty(): float
     {
-        $accountIds = SavingsAccount::query()->pluck('id');
+        $accountIds = SavingsAccount::query()->where(function ($query) {
+            $query->where('number', 'like', '1011%')
+                ->orWhere('number', 'like', '2111%');
+        })->pluck('id');
 
         return DB::table('transactions')
             ->selectRaw('SUM(COALESCE(credit, 0)) - SUM(COALESCE(debit, 0)) as balance')
             ->whereIn('account_id', $accountIds)
             ->whereDate('transaction_date', '<=', $this->asOfDate)
             ->value('balance') ?? 0;
+    }
+
+    public function getAssociateSavingsBalanceProperty(): float
+    {
+        $accountIds = SavingsAccount::query()->where('number', 'like', '1012%')->pluck('id');
+
+        return DB::table('transactions')
+            ->selectRaw('SUM(COALESCE(credit, 0)) - SUM(COALESCE(debit, 0)) as balance')
+            ->whereIn('account_id', $accountIds)
+            ->whereDate('transaction_date', '<=', $this->asOfDate)
+            ->value('balance') ?? 0;
+    }
+
+    public function getLaboratorySavingsBalanceProperty(): float
+    {
+        $accountIds = SavingsAccount::query()->where('number', 'like', '1013%')->pluck('id');
+
+        return DB::table('transactions')
+            ->selectRaw('SUM(COALESCE(credit, 0)) - SUM(COALESCE(debit, 0)) as balance')
+            ->whereIn('account_id', $accountIds)
+            ->whereDate('transaction_date', '<=', $this->asOfDate)
+            ->value('balance') ?? 0;
+    }
+
+    public function getTotalSavingsBalanceProperty(): float
+    {
+        return $this->regularSavingsBalance + $this->associateSavingsBalance + $this->laboratorySavingsBalance;
     }
 
     public function getTotalImprestBalanceProperty(): float
@@ -90,12 +122,15 @@ class BookkeeperSavingsBalanceTab extends Component implements HasForms
 
     public function getTotalAccountBalanceProperty(): float
     {
-        return $this->totalSavingsBalance + $this->totalImprestBalance + $this->totalLoveGiftBalance;
+        return $this->regularSavingsBalance + $this->associateSavingsBalance + $this->laboratorySavingsBalance + $this->totalImprestBalance + $this->totalLoveGiftBalance;
     }
 
-    public function getSavingsAccountCountProperty(): int
+    public function getRegularSavingsAccountCountProperty(): int
     {
-        $accountIds = SavingsAccount::query()->pluck('id');
+        $accountIds = SavingsAccount::query()->where(function ($query) {
+            $query->where('number', 'like', '1011%')
+                ->orWhere('number', 'like', '2111%');
+        })->pluck('id');
 
         return DB::table('transactions')
             ->selectRaw('account_id, SUM(COALESCE(credit, 0)) - SUM(COALESCE(debit, 0)) as balance')
@@ -104,6 +139,37 @@ class BookkeeperSavingsBalanceTab extends Component implements HasForms
             ->groupBy('account_id')
             ->having('balance', '!=', 0)
             ->count();
+    }
+
+    public function getAssociateSavingsAccountCountProperty(): int
+    {
+        $accountIds = SavingsAccount::query()->where('number', 'like', '1012%')->pluck('id');
+
+        return DB::table('transactions')
+            ->selectRaw('account_id, SUM(COALESCE(credit, 0)) - SUM(COALESCE(debit, 0)) as balance')
+            ->whereIn('account_id', $accountIds)
+            ->whereDate('transaction_date', '<=', $this->asOfDate)
+            ->groupBy('account_id')
+            ->having('balance', '!=', 0)
+            ->count();
+    }
+
+    public function getLaboratorySavingsAccountCountProperty(): int
+    {
+        $accountIds = SavingsAccount::query()->where('number', 'like', '1013%')->pluck('id');
+
+        return DB::table('transactions')
+            ->selectRaw('account_id, SUM(COALESCE(credit, 0)) - SUM(COALESCE(debit, 0)) as balance')
+            ->whereIn('account_id', $accountIds)
+            ->whereDate('transaction_date', '<=', $this->asOfDate)
+            ->groupBy('account_id')
+            ->having('balance', '!=', 0)
+            ->count();
+    }
+
+    public function getSavingsAccountCountProperty(): int
+    {
+        return $this->regularSavingsAccountCount + $this->associateSavingsAccountCount + $this->laboratorySavingsAccountCount;
     }
 
     public function getImprestAccountCountProperty(): int
@@ -134,7 +200,7 @@ class BookkeeperSavingsBalanceTab extends Component implements HasForms
 
     public function getSelectedSavingsTypeProperty(): string
     {
-        return $this->data['savings_type'] ?? 'savings';
+        return $this->data['savings_type'] ?? 'regular_savings';
     }
 
     public function getAccountsProperty(): Collection
@@ -142,7 +208,9 @@ class BookkeeperSavingsBalanceTab extends Component implements HasForms
         $type = $this->selectedSavingsType;
 
         $model = match ($type) {
-            'savings' => SavingsAccount::class,
+            'regular_savings' => SavingsAccount::class,
+            'associate_savings' => SavingsAccount::class,
+            'laboratory_savings' => SavingsAccount::class,
             'imprest' => ImprestAccount::class,
             'love_gift' => LoveGiftAccount::class,
             default => null,
@@ -152,7 +220,20 @@ class BookkeeperSavingsBalanceTab extends Component implements HasForms
             return collect();
         }
 
-        $accountIds = $model::query()->pluck('id');
+        $query = $model::query();
+
+        if ($type === 'regular_savings') {
+            $query->where(function ($q) {
+                $q->where('number', 'like', '1011%')
+                    ->orWhere('number', 'like', '2111%');
+            });
+        } elseif ($type === 'associate_savings') {
+            $query->where('number', 'like', '1012%');
+        } elseif ($type === 'laboratory_savings') {
+            $query->where('number', 'like', '1013%');
+        }
+
+        $accountIds = $query->pluck('id');
 
         $balances = DB::table('transactions')
             ->selectRaw('account_id, SUM(COALESCE(credit, 0)) - SUM(COALESCE(debit, 0)) as balance')
@@ -163,7 +244,20 @@ class BookkeeperSavingsBalanceTab extends Component implements HasForms
             ->get()
             ->keyBy('account_id');
 
-        return $model::query()
+        $finalQuery = $model::query();
+
+        if ($type === 'regular_savings') {
+            $finalQuery->where(function ($q) {
+                $q->where('number', 'like', '1011%')
+                    ->orWhere('number', 'like', '2111%');
+            });
+        } elseif ($type === 'associate_savings') {
+            $finalQuery->where('number', 'like', '1012%');
+        } elseif ($type === 'laboratory_savings') {
+            $finalQuery->where('number', 'like', '1013%');
+        }
+
+        return $finalQuery
             ->with('member')
             ->whereIn('id', $balances->keys())
             ->orderBy('name')
@@ -183,7 +277,9 @@ class BookkeeperSavingsBalanceTab extends Component implements HasForms
     public function getSavingsTypeLabelProperty(): string
     {
         return match ($this->selectedSavingsType) {
-            'savings' => 'Savings',
+            'regular_savings' => 'Regular Savings',
+            'associate_savings' => 'Associate Savings',
+            'laboratory_savings' => 'Laboratory Savings',
             'imprest' => 'Imprests',
             'love_gift' => 'Love Gifts',
             default => 'Accounts',
