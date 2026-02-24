@@ -5,6 +5,7 @@ namespace App\Livewire\Bookkeeper;
 use App\Models\ImprestAccount;
 use App\Models\LoveGiftAccount;
 use App\Models\SavingsAccount;
+use App\Models\TimeDepositAccount;
 use Carbon\CarbonImmutable;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
@@ -44,6 +45,7 @@ class BookkeeperSavingsBalanceTab extends Component implements HasForms
                         'regular_savings' => 'Regular Savings (1011, 2111)',
                         'associate_savings' => 'Associate Savings (1012)',
                         'laboratory_savings' => 'Laboratory Savings (1013)',
+                        'time_deposit' => 'Time Deposits',
                         'imprest' => 'Imprests',
                         'love_gift' => 'Love Gifts',
                     ])
@@ -120,9 +122,16 @@ class BookkeeperSavingsBalanceTab extends Component implements HasForms
             ->value('balance') ?? 0;
     }
 
+    public function getTimeDepositBalanceProperty(): float
+    {
+        return DB::table('time_deposits')
+            ->whereNull('withdrawal_date')
+            ->sum('amount') ?? 0;
+    }
+
     public function getTotalAccountBalanceProperty(): float
     {
-        return $this->regularSavingsBalance + $this->associateSavingsBalance + $this->laboratorySavingsBalance + $this->totalImprestBalance + $this->totalLoveGiftBalance;
+        return $this->regularSavingsBalance + $this->associateSavingsBalance + $this->laboratorySavingsBalance + $this->totalImprestBalance + $this->totalLoveGiftBalance + $this->timeDepositBalance;
     }
 
     public function getRegularSavingsAccountCountProperty(): int
@@ -198,6 +207,14 @@ class BookkeeperSavingsBalanceTab extends Component implements HasForms
             ->count();
     }
 
+    public function getTimeDepositAccountCountProperty(): int
+    {
+        return DB::table('time_deposits')
+            ->whereNull('withdrawal_date')
+            ->distinct('time_deposit_account_id')
+            ->count('time_deposit_account_id');
+    }
+
     public function getSelectedSavingsTypeProperty(): string
     {
         return $this->data['savings_type'] ?? 'regular_savings';
@@ -211,6 +228,7 @@ class BookkeeperSavingsBalanceTab extends Component implements HasForms
             'regular_savings' => SavingsAccount::class,
             'associate_savings' => SavingsAccount::class,
             'laboratory_savings' => SavingsAccount::class,
+            'time_deposit' => TimeDepositAccount::class,
             'imprest' => ImprestAccount::class,
             'love_gift' => LoveGiftAccount::class,
             default => null,
@@ -234,6 +252,28 @@ class BookkeeperSavingsBalanceTab extends Component implements HasForms
         }
 
         $accountIds = $query->pluck('id');
+
+        if ($type === 'time_deposit') {
+            $timeDepositBalances = DB::table('time_deposits')
+                ->selectRaw('time_deposit_account_id, amount as balance')
+                ->whereNull('withdrawal_date')
+                ->whereIn('time_deposit_account_id', $accountIds)
+                ->get()
+                ->keyBy('time_deposit_account_id');
+
+            $accountIds = $timeDepositBalances->keys();
+
+            return TimeDepositAccount::query()
+                ->with('member')
+                ->whereIn('id', $accountIds)
+                ->orderBy('name')
+                ->get()
+                ->map(function ($account) use ($timeDepositBalances) {
+                    $account->balance = $timeDepositBalances[$account->id]->balance;
+
+                    return $account;
+                });
+        }
 
         $balances = DB::table('transactions')
             ->selectRaw('account_id, SUM(COALESCE(credit, 0)) - SUM(COALESCE(debit, 0)) as balance')
@@ -280,6 +320,7 @@ class BookkeeperSavingsBalanceTab extends Component implements HasForms
             'regular_savings' => 'Regular Savings',
             'associate_savings' => 'Associate Savings',
             'laboratory_savings' => 'Laboratory Savings',
+            'time_deposit' => 'Time Deposits',
             'imprest' => 'Imprests',
             'love_gift' => 'Love Gifts',
             default => 'Accounts',

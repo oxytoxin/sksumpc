@@ -3,7 +3,7 @@
         {{ $this->form }}
     </div>
 
-    <div class="grid grid-cols-5 gap-4 my-6">
+    <div class="grid grid-cols-6 gap-4 my-6">
         <div class="bg-blue-50 p-4 rounded border border-blue-200">
             <h3 class="font-bold text-blue-800">Regular Savings</h3>
             <p class="text-2xl font-semibold">{{ number_format($this->regularSavingsBalance, 2) }}</p>
@@ -17,6 +17,11 @@
         <div class="bg-teal-50 p-4 rounded border border-teal-200">
             <h3 class="font-bold text-teal-800">Laboratory Savings</h3>
             <p class="text-2xl font-semibold">{{ number_format($this->laboratorySavingsBalance, 2) }}</p>
+        </div>
+
+        <div class="bg-orange-50 p-4 rounded border border-orange-200">
+            <h3 class="font-bold text-orange-800">Time Deposits</h3>
+            <p class="text-2xl font-semibold">{{ number_format($this->timeDepositBalance, 2) }}</p>
         </div>
 
         <div class="bg-green-50 p-4 rounded border border-green-200">
@@ -58,6 +63,11 @@
                 <td class="doc-table-cell-right">{{ renumber_format($this->laboratorySavingsBalance) }}</td>
             </tr>
             <tr>
+                <td class="doc-table-cell">Time Deposits</td>
+                <td class="doc-table-cell-right">{{ $this->timeDepositAccountCount }}</td>
+                <td class="doc-table-cell-right">{{ renumber_format($this->timeDepositBalance) }}</td>
+            </tr>
+            <tr>
                 <td class="doc-table-cell">Imprests</td>
                 <td class="doc-table-cell-right">{{ $this->imprestAccountCount }}</td>
                 <td class="doc-table-cell-right">{{ renumber_format($this->totalImprestBalance) }}</td>
@@ -71,7 +81,7 @@
             <tfoot>
             <tr>
                 <td class="doc-table-cell-right font-bold">Total:</td>
-                <td class="doc-table-cell-right font-bold">{{ $this->regularSavingsAccountCount + $this->associateSavingsAccountCount + $this->laboratorySavingsAccountCount + $this->imprestAccountCount + $this->loveGiftAccountCount }}</td>
+                <td class="doc-table-cell-right font-bold">{{ $this->regularSavingsAccountCount + $this->associateSavingsAccountCount + $this->laboratorySavingsAccountCount + $this->timeDepositAccountCount + $this->imprestAccountCount + $this->loveGiftAccountCount }}</td>
                 <td class="doc-table-cell-right font-bold">{{ renumber_format($this->totalAccountBalance) }}</td>
             </tr>
             </tfoot>
