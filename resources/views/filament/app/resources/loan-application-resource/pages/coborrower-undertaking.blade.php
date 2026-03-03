@@ -1,5 +1,5 @@
 <x-filament-panels::page>
-    <div class="print:text-[8pt] font-serif" x-ref="print">
+    <div class="print:text-[8pt] p-8 font-serif" x-ref="print">
         <h1 class="text-center text-2xl font-semibold mb-8">
             Co-Borrower’s Undertaking
         </h1>
@@ -12,13 +12,12 @@
             @foreach($loan_application->comakers as $comaker)
                 <span class="underline">{{ $comaker->member->address }}</span>,
             @endforeach
-
             do hereby declare under oath, that I/We the
             Co-borrower of
         </p>
 
-        <div class="grid grid-cols-3 mt-6 mb-4 font-bold">
-            <div>
+        <div class="grid grid-cols-3  mt-6 mb-4 font-bold">
+            <div class="text-center">
                 <span class="underline">{{ $loan_application->member->full_name }}</span><br>
                 <span class="font-normal">(Name of borrower)</span>
             </div>
@@ -28,7 +27,7 @@
                 <span class="font-normal">(Amount of Loan)</span>
             </div>
 
-            <div class="text-right">
+            <div class="text-center">
                 <span class="underline">{{ $loan_application->member->address }}</span><br>
                 <span class="font-normal">(Address)</span>
             </div>
@@ -79,16 +78,13 @@
 
         <p class="text-center mt-6 mb-2 font-semibold">Signed in the presence of</p>
 
-        <div class="grid grid-cols-2 mt-6">
-            <div class="text-center">
-                <p class="font-bold underline">DESIREE G. LEGASPI</p>
-                <p>Treasurer</p>
-            </div>
-
-            <div class="text-center">
-                <p class="font-bold underline">ROLANDO F. HECHANOVA, RPAE, Ph.D.</p>
-                <p>BOD-Chairperson</p>
-            </div>
+        <div class="grid grid-cols-2 gap-y-16 mt-6">
+            @foreach($this->signatories as $signatory)
+                <div class="text-center">
+                    <p class="font-bold underline">{{ $signatory['name'] }}</p>
+                    <p>{{ $signatory['designation'] }}</p>
+                </div>
+            @endforeach
         </div>
 
         <div class="mt-12">
@@ -116,6 +112,8 @@
         </div>
     </div>
     <div class="flex justify-end space-x-2 p-4">
-        <x-filament::button icon="heroicon-o-printer" @click="printOut($refs.print.outerHTML, `Coborrower's Undertaking`)">Print</x-filament::button>
+        <x-filament::button icon="heroicon-o-printer"
+                            @click="printOut($refs.print.outerHTML, `Coborrower's Undertaking`)">Print
+        </x-filament::button>
     </div>
 </x-filament-panels::page>
