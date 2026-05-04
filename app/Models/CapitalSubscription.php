@@ -33,6 +33,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read int|null $paid_capital_subscription_amortizations_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CapitalSubscriptionPayment> $payments
  * @property-read int|null $payments_count
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscription newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscription newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscription query()
@@ -52,6 +53,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscription whereTotalAmountPaid($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscription whereTransactionDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscription whereUpdatedAt($value)
+ *
  * @mixin \Eloquent
  */
 class CapitalSubscription extends Model
@@ -60,10 +62,14 @@ class CapitalSubscription extends Model
 
     protected $casts = [
         'is_active' => 'boolean',
-        'number_of_shares' => 'decimal:4',
-        'par_value' => 'decimal:4',
-        'amount_subscribed' => 'decimal:4',
-        'initial_amount_paid' => 'decimal:4',
+        'number_of_shares' => 'decimal:2',
+        'par_value' => 'decimal:2',
+        'amount_subscribed' => 'decimal:2',
+        'initial_amount_paid' => 'decimal:2',
+        'monthly_payment' => 'decimal:2',
+        'actual_amount_paid' => 'decimal:2',
+        'total_amount_paid' => 'decimal:2',
+        'outstanding_balance' => 'decimal:2',
         'number_of_terms' => 'integer',
         'transaction_date' => 'immutable_date',
     ];

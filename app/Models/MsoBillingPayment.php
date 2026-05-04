@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read \App\Models\Account $account
  * @property-read \App\Models\Member|null $member
  * @property-read \App\Models\MsoBilling $mso_billing
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MsoBillingPayment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MsoBillingPayment newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MsoBillingPayment query()
@@ -32,11 +33,17 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MsoBillingPayment wherePayee($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MsoBillingPayment wherePosted($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MsoBillingPayment whereUpdatedAt($value)
+ *
  * @mixin \Eloquent
  */
 class MsoBillingPayment extends Model
 {
     use HasFactory;
+
+    protected $casts = [
+        'amount_due' => 'decimal:2',
+        'amount_paid' => 'decimal:2',
+    ];
 
     public function account()
     {

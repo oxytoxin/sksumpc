@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property numeric $amount
  * @property \Carbon\CarbonImmutable|null $created_at
  * @property \Carbon\CarbonImmutable|null $updated_at
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MsoSubscription newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MsoSubscription newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MsoSubscription query()
@@ -25,9 +26,14 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MsoSubscription wherePayee($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MsoSubscription whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MsoSubscription whereUpdatedAt($value)
+ *
  * @mixin \Eloquent
  */
 class MsoSubscription extends Model
 {
     use HasFactory;
+
+    protected $casts = [
+        'amount' => 'decimal:2',
+    ];
 }

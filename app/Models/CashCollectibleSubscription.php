@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Carbon\CarbonImmutable|null $updated_at
  * @property-read \App\Models\CashCollectibleAccount $cash_collectible_account
  * @property-read \App\Models\Member|null $member
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CashCollectibleSubscription newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CashCollectibleSubscription newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CashCollectibleSubscription query()
@@ -29,6 +30,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CashCollectibleSubscription whereNumberOfTerms($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CashCollectibleSubscription wherePayee($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CashCollectibleSubscription whereUpdatedAt($value)
+ *
  * @mixin \Eloquent
  */
 class CashCollectibleSubscription extends Model
@@ -36,8 +38,8 @@ class CashCollectibleSubscription extends Model
     use HasFactory;
 
     protected $casts = [
-        'amount' => 'decimal:4',
-        'billable_amount' => 'decimal:4',
+        'amount' => 'decimal:2',
+        'billable_amount' => 'decimal:2',
     ];
 
     public function cash_collectible_account()

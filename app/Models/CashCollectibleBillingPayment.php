@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read \App\Models\CashCollectibleAccount $cash_collectible_account
  * @property-read \App\Models\CashCollectibleBilling $cash_collectible_billing
  * @property-read \App\Models\Member|null $member
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CashCollectibleBillingPayment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CashCollectibleBillingPayment newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CashCollectibleBillingPayment query()
@@ -32,11 +33,17 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CashCollectibleBillingPayment wherePayee($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CashCollectibleBillingPayment wherePosted($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CashCollectibleBillingPayment whereUpdatedAt($value)
+ *
  * @mixin \Eloquent
  */
 class CashCollectibleBillingPayment extends Model
 {
     use HasFactory;
+
+    protected $casts = [
+        'amount_due' => 'decimal:2',
+        'amount_paid' => 'decimal:2',
+    ];
 
     public function cash_collectible_account()
     {

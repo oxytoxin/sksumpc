@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Carbon\CarbonImmutable|null $updated_at
  * @property-read \App\Models\Account $account
  * @property-read \App\Models\BalanceForwardedSummary $balance_forwarded_summary
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BalanceForwardedEntry newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BalanceForwardedEntry newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BalanceForwardedEntry query()
@@ -25,6 +26,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BalanceForwardedEntry whereDebit($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BalanceForwardedEntry whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BalanceForwardedEntry whereUpdatedAt($value)
+ *
  * @mixin \Eloquent
  */
 class BalanceForwardedEntry extends Model
@@ -32,8 +34,8 @@ class BalanceForwardedEntry extends Model
     use HasFactory;
 
     protected $casts = [
-        'credit' => 'decimal:4',
-        'debit' => 'decimal:4',
+        'credit' => 'decimal:2',
+        'debit' => 'decimal:2',
     ];
 
     public function balance_forwarded_summary()

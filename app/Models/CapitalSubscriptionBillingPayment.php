@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read \App\Models\CapitalSubscription $capital_subscription
  * @property-read \App\Models\CapitalSubscriptionBilling $capital_subscription_billing
  * @property-read \App\Models\Member $member
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscriptionBillingPayment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscriptionBillingPayment newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscriptionBillingPayment query()
@@ -30,11 +31,17 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscriptionBillingPayment whereMemberId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscriptionBillingPayment wherePosted($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscriptionBillingPayment whereUpdatedAt($value)
+ *
  * @mixin \Eloquent
  */
 class CapitalSubscriptionBillingPayment extends Model
 {
     use HasFactory;
+
+    protected $casts = [
+        'amount_due' => 'decimal:2',
+        'amount_paid' => 'decimal:2',
+    ];
 
     public function capital_subscription()
     {

@@ -27,6 +27,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read \App\Models\Account $account
  * @property-read \App\Models\Member|null $member
  * @property-read \App\Models\TransactionType $transaction_type
+ *
  * @method static Builder<static>|Transaction newModelQuery()
  * @method static Builder<static>|Transaction newQuery()
  * @method static Builder<static>|Transaction query()
@@ -47,6 +48,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static Builder<static>|Transaction whereUpdatedAt($value)
  * @method static Builder<static>|Transaction withoutCashEquivalents()
  * @method static Builder<static>|Transaction withoutMso()
+ *
  * @mixin \Eloquent
  */
 class Transaction extends Model
@@ -54,8 +56,8 @@ class Transaction extends Model
     use HasFactory;
 
     protected $casts = [
-        'credit' => 'decimal:4',
-        'debit' => 'decimal:4',
+        'credit' => 'decimal:2',
+        'debit' => 'decimal:2',
         'transaction_date' => 'immutable_datetime',
     ];
 

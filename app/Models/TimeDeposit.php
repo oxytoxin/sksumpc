@@ -36,6 +36,7 @@ use NumberFormatter;
  * @property-read mixed $interest_rate_in_words
  * @property-read \App\Models\Member $member
  * @property-read \App\Models\TimeDepositAccount|null $time_deposit_account
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TimeDeposit newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TimeDeposit newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TimeDeposit query()
@@ -57,6 +58,7 @@ use NumberFormatter;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TimeDeposit whereTransactionDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TimeDeposit whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TimeDeposit whereWithdrawalDate($value)
+ *
  * @mixin \Eloquent
  */
 class TimeDeposit extends Model
@@ -64,10 +66,11 @@ class TimeDeposit extends Model
     use HasFactory;
 
     protected $casts = [
-        'amount' => 'decimal:4',
+        'amount' => 'decimal:2',
         'number_of_days' => 'integer',
-        'maturity_amount' => 'decimal:4',
+        'maturity_amount' => 'decimal:2',
         'interest_rate' => 'decimal:4',
+        'interest' => 'decimal:2',
         'transaction_date' => 'immutable_date',
         'maturity_date' => 'immutable_date',
     ];

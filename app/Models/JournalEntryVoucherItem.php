@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Carbon\CarbonImmutable|null $updated_at
  * @property-read \App\Models\Account $account
  * @property-read \App\Models\JournalEntryVoucher $journal_entry_voucher
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntryVoucherItem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntryVoucherItem newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntryVoucherItem query()
@@ -32,6 +33,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntryVoucherItem whereJournalEntryVoucherId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntryVoucherItem whereTransactionDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntryVoucherItem whereUpdatedAt($value)
+ *
  * @mixin \Eloquent
  */
 class JournalEntryVoucherItem extends Model
@@ -39,8 +41,8 @@ class JournalEntryVoucherItem extends Model
     use HasFactory;
 
     protected $casts = [
-        'credit' => 'decimal:4',
-        'debit' => 'decimal:4',
+        'credit' => 'decimal:2',
+        'debit' => 'decimal:2',
         'details' => 'array',
     ];
 

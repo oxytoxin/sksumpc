@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read \App\Models\CashCollectible $cash_collectible
  * @property-read \App\Models\User|null $cashier
  * @property-read \App\Models\Member|null $member
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CashCollectiblePayment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CashCollectiblePayment newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CashCollectiblePayment query()
@@ -34,6 +35,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CashCollectiblePayment whereReferenceNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CashCollectiblePayment whereTransactionDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CashCollectiblePayment whereUpdatedAt($value)
+ *
  * @mixin \Eloquent
  */
 class CashCollectiblePayment extends Model
@@ -41,7 +43,7 @@ class CashCollectiblePayment extends Model
     use HasFactory;
 
     protected $casts = [
-        'amount' => 'decimal:4',
+        'amount' => 'decimal:2',
         'transaction_date' => 'immutable_date',
     ];
 

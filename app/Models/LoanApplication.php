@@ -41,6 +41,7 @@ use Spatie\LaravelData\DataCollection;
  * @property-read \App\Models\LoanType $loan_type
  * @property-read \App\Models\Member $member
  * @property-read \App\Models\User|null $processor
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanApplication newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanApplication newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanApplication query()
@@ -66,6 +67,7 @@ use Spatie\LaravelData\DataCollection;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanApplication whereSurchargeStartDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanApplication whereTransactionDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanApplication whereUpdatedAt($value)
+ *
  * @mixin \Eloquent
  */
 class LoanApplication extends Model
@@ -82,9 +84,9 @@ class LoanApplication extends Model
 
     protected $casts = [
         'number_of_terms' => 'integer',
-        'desired_amount' => 'decimal:4',
-        'cbu_amount' => 'decimal:4',
-        'monthly_payment' => 'decimal:4',
+        'desired_amount' => 'decimal:2',
+        'cbu_amount' => 'decimal:2',
+        'monthly_payment' => 'decimal:2',
         'transaction_date' => 'immutable_date',
         'disapproval_date' => 'immutable_date',
         'approval_date' => 'immutable_date',

@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Carbon\CarbonImmutable|null $updated_at
  * @property-read \App\Models\User $cashier
  * @property-read Model|\Eloquent|null $withdrawable
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RevolvingFund newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RevolvingFund newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RevolvingFund onlyTrashed()
@@ -38,6 +39,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RevolvingFund whereWithdrawal($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RevolvingFund withTrashed(bool $withTrashed = true)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RevolvingFund withoutTrashed()
+ *
  * @mixin \Eloquent
  */
 class RevolvingFund extends Model
@@ -45,6 +47,8 @@ class RevolvingFund extends Model
     use HasFactory, SoftDeletes;
 
     protected $casts = [
+        'deposit' => 'decimal:2',
+        'withdrawal' => 'decimal:2',
         'transaction_date' => 'immutable_datetime',
     ];
 

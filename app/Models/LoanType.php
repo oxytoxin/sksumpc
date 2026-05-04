@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property \Carbon\CarbonImmutable|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Loan> $loans
  * @property-read int|null $loans_count
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanType newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanType newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanType query()
@@ -40,6 +41,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanType whereServiceFee($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanType whereSurchargeRate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanType whereUpdatedAt($value)
+ *
  * @mixin \Eloquent
  */
 class LoanType extends Model
@@ -47,9 +49,11 @@ class LoanType extends Model
     use HasFactory;
 
     protected $casts = [
+        'minimum_cbu' => 'decimal:2',
+        'max_amount' => 'decimal:2',
         'interest_rate' => 'decimal:4',
         'surcharge_rate' => 'decimal:4',
-        'interest' => 'decimal:4',
+        'interest' => 'decimal:2',
         'service_fee' => 'decimal:4',
         'cbu_common' => 'decimal:4',
         'imprest' => 'decimal:4',

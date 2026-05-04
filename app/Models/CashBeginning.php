@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Carbon\CarbonImmutable|null $created_at
  * @property \Carbon\CarbonImmutable|null $updated_at
  * @property-read \App\Models\User|null $cashier
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CashBeginning newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CashBeginning newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CashBeginning query()
@@ -22,6 +23,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CashBeginning whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CashBeginning whereTransactionDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CashBeginning whereUpdatedAt($value)
+ *
  * @mixin \Eloquent
  */
 class CashBeginning extends Model
@@ -29,7 +31,7 @@ class CashBeginning extends Model
     use HasFactory;
 
     protected $casts = [
-        'amount' => 'decimal:4',
+        'amount' => 'decimal:2',
         'transaction_date' => 'immutable_date',
     ];
 

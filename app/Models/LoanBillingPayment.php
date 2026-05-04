@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read \App\Models\Loan $loan
  * @property-read \App\Models\LoanBilling $loan_billing
  * @property-read \App\Models\Member $member
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanBillingPayment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanBillingPayment newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanBillingPayment query()
@@ -30,6 +31,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanBillingPayment whereMemberId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanBillingPayment wherePosted($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanBillingPayment whereUpdatedAt($value)
+ *
  * @mixin \Eloquent
  */
 class LoanBillingPayment extends Model
@@ -38,8 +40,8 @@ class LoanBillingPayment extends Model
 
     protected $casts = [
         'posted' => 'boolean',
-        'amount_due' => 'decimal:4',
-        'amount_paid' => 'decimal:4',
+        'amount_due' => 'decimal:2',
+        'amount_paid' => 'decimal:2',
     ];
 
     public function loan_billing()

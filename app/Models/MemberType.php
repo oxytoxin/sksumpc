@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Carbon\CarbonImmutable|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Member> $members
  * @property-read int|null $members_count
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MemberType newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MemberType newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MemberType query()
@@ -33,6 +34,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MemberType whereParValue($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MemberType whereSurchargeRate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MemberType whereUpdatedAt($value)
+ *
  * @mixin \Eloquent
  */
 class MemberType extends Model
@@ -40,10 +42,10 @@ class MemberType extends Model
     use HasFactory;
 
     protected $casts = [
-        'default_number_of_shares' => 'decimal:4',
-        'default_amount_subscribed' => 'decimal:4',
-        'minimum_initial_payment' => 'decimal:4',
-        'par_value' => 'decimal:4',
+        'default_number_of_shares' => 'decimal:2',
+        'default_amount_subscribed' => 'decimal:2',
+        'minimum_initial_payment' => 'decimal:2',
+        'par_value' => 'decimal:2',
         'surcharge_rate' => 'decimal:4',
     ];
 

@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read \App\Models\Account $account
  * @property-read \App\Models\DisbursementVoucher $disbursement_voucher
  * @property-read \App\Models\Account $item_account
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DisbursementVoucherItem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DisbursementVoucherItem newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DisbursementVoucherItem query()
@@ -33,6 +34,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DisbursementVoucherItem whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DisbursementVoucherItem whereTransactionDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DisbursementVoucherItem whereUpdatedAt($value)
+ *
  * @mixin \Eloquent
  */
 class DisbursementVoucherItem extends Model
@@ -40,8 +42,8 @@ class DisbursementVoucherItem extends Model
     use HasFactory;
 
     protected $casts = [
-        'credit' => 'decimal:4',
-        'debit' => 'decimal:4',
+        'credit' => 'decimal:2',
+        'debit' => 'decimal:2',
         'details' => 'array',
     ];
 

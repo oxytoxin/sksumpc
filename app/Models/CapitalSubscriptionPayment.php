@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read \App\Models\CapitalSubscription $capital_subscription
  * @property-read \App\Models\User|null $cashier
  * @property-read \App\Models\Member $member
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscriptionPayment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscriptionPayment newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscriptionPayment query()
@@ -40,6 +41,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscriptionPayment whereTransactionDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscriptionPayment whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscriptionPayment whereWithdrawal($value)
+ *
  * @mixin \Eloquent
  */
 class CapitalSubscriptionPayment extends Model
@@ -47,10 +49,10 @@ class CapitalSubscriptionPayment extends Model
     use HasFactory;
 
     protected $casts = [
-        'amount' => 'decimal:4',
-        'deposit' => 'decimal:4',
-        'withdrawal' => 'decimal:4',
-        'running_balance' => 'decimal:4',
+        'amount' => 'decimal:2',
+        'deposit' => 'decimal:2',
+        'withdrawal' => 'decimal:2',
+        'running_balance' => 'decimal:2',
         'transaction_date' => 'immutable_date',
     ];
 
