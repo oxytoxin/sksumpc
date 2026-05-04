@@ -17,84 +17,84 @@
     use NumberFormatter;
 
     /**
- * @property int $id
- * @property int $loan_account_id
- * @property int|null $loan_buyout_id
- * @property int $member_id
- * @property int $loan_application_id
- * @property int $loan_type_id
- * @property int|null $disbursement_voucher_id
- * @property string $reference_number
- * @property string|null $check_number
- * @property string $priority_number
- * @property numeric $gross_amount
- * @property numeric|null $net_amount
- * @property array<array-key, mixed> $disclosure_sheet_items
- * @property int $number_of_terms
- * @property numeric $interest_rate
- * @property numeric $interest
- * @property numeric $service_fee
- * @property numeric $cbu_amount
- * @property numeric $imprest_amount
- * @property numeric $insurance_amount
- * @property numeric $loan_buyout
- * @property numeric $deductions_amount
- * @property numeric $monthly_payment
- * @property numeric $outstanding_balance
- * @property CarbonImmutable $release_date
- * @property CarbonImmutable $transaction_date
- * @property bool $posted
- * @property CarbonImmutable|null $created_at
- * @property CarbonImmutable|null $updated_at
- * @property-read \App\Models\DisbursementVoucher|null $disbursement_voucher
- * @property-read mixed $deductions_list
- * @property-read mixed $maturity_date
- * @property-read mixed $last_payment_before_transaction_date
- * @property-read \App\Models\LoanPayment|null $last_payment
- * @property-read \App\Models\LoanAccount $loan_account
- * @property-read \App\Models\LoanApplication $loan_application
- * @property-read \App\Models\LoanType $loan_type
- * @property-read \App\Models\Member $member
- * @property-read mixed $net_amount_in_words
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\LoanPayment> $payments
- * @property-read int|null $payments_count
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan payable()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan pending()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan posted()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereCbuAmount($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereCheckNumber($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereDeductionsAmount($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereDisbursementVoucherId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereDisclosureSheetItems($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereGrossAmount($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereImprestAmount($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereInsuranceAmount($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereInterest($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereInterestRate($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereLoanAccountId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereLoanApplicationId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereLoanBuyout($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereLoanBuyoutId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereLoanTypeId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereMemberId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereMonthlyPayment($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereNetAmount($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereNumberOfTerms($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereOutstandingBalance($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan wherePosted($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan wherePriorityNumber($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereReferenceNumber($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereReleaseDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereServiceFee($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereTransactionDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereUpdatedAt($value)
- * @mixin \Eloquent
- */
+     * @property int $id
+     * @property int $loan_account_id
+     * @property int|null $loan_buyout_id
+     * @property int $member_id
+     * @property int $loan_application_id
+     * @property int $loan_type_id
+     * @property int|null $disbursement_voucher_id
+     * @property string $reference_number
+     * @property string|null $check_number
+     * @property string $priority_number
+     * @property numeric $gross_amount
+     * @property numeric|null $net_amount
+     * @property array<array-key, mixed> $disclosure_sheet_items
+     * @property int $number_of_terms
+     * @property numeric $interest_rate
+     * @property numeric $interest
+     * @property numeric $service_fee
+     * @property numeric $cbu_amount
+     * @property numeric $imprest_amount
+     * @property numeric $insurance_amount
+     * @property numeric $loan_buyout
+     * @property numeric $deductions_amount
+     * @property numeric $monthly_payment
+     * @property numeric $outstanding_balance
+     * @property CarbonImmutable $release_date
+     * @property CarbonImmutable $transaction_date
+     * @property bool $posted
+     * @property CarbonImmutable|null $created_at
+     * @property CarbonImmutable|null $updated_at
+     * @property-read \App\Models\DisbursementVoucher|null $disbursement_voucher
+     * @property-read mixed $deductions_list
+     * @property-read mixed $maturity_date
+     * @property-read mixed $last_payment_before_transaction_date
+     * @property-read \App\Models\LoanPayment|null $last_payment
+     * @property-read \App\Models\LoanAccount $loan_account
+     * @property-read \App\Models\LoanApplication $loan_application
+     * @property-read \App\Models\LoanType $loan_type
+     * @property-read \App\Models\Member $member
+     * @property-read mixed $net_amount_in_words
+     * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\LoanPayment> $payments
+     * @property-read int|null $payments_count
+     * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan newModelQuery()
+     * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan newQuery()
+     * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan payable()
+     * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan pending()
+     * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan posted()
+     * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan query()
+     * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereCbuAmount($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereCheckNumber($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereCreatedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereDeductionsAmount($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereDisbursementVoucherId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereDisclosureSheetItems($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereGrossAmount($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereImprestAmount($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereInsuranceAmount($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereInterest($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereInterestRate($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereLoanAccountId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereLoanApplicationId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereLoanBuyout($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereLoanBuyoutId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereLoanTypeId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereMemberId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereMonthlyPayment($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereNetAmount($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereNumberOfTerms($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereOutstandingBalance($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan wherePosted($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan wherePriorityNumber($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereReferenceNumber($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereReleaseDate($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereServiceFee($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereTransactionDate($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan whereUpdatedAt($value)
+     * @mixin \Eloquent
+     */
     class Loan extends Model
     {
         use HasFactory;
@@ -116,6 +116,7 @@
             'monthly_payment' => 'decimal:4',
             'release_date' => 'immutable_date',
             'transaction_date' => 'immutable_date',
+            'maturity_date' => 'immutable_date',
             'posted' => 'boolean',
         ];
 
@@ -151,21 +152,6 @@
         public function getDeductionsListAttribute()
         {
             return collect($this->deductions)->map(fn($d) => $d['name'].': '.Number::currency($d['amount'], 'PHP'))->toArray();
-        }
-
-        public function getMaturityDateAttribute()
-        {
-            if ($this->loan_type->code == 'SL') {
-                if ($this->release_date > CarbonImmutable::create($this->release_date->year, 11, 20)) {
-                    return CarbonImmutable::create($this->release_date->year + 1, 5, 20);
-                } elseif ($this->release_date > CarbonImmutable::create($this->release_date->year, 5, 20)) {
-                    return CarbonImmutable::create($this->release_date->year, 11, 20);
-                } else {
-                    return CarbonImmutable::create($this->release_date->year, 5, 20);
-                }
-            }
-
-            return $this->transaction_date->addMonthsNoOverflow($this->number_of_terms);
         }
 
         public function loan_type(): BelongsTo
@@ -210,6 +196,20 @@
 
         protected static function booted(): void
         {
+
+            static::creating(function (Loan $loan) {
+                if ($loan->loan_type_id == LoanTypes::SPECIAL_LOAN->value) {
+                    if ($loan->release_date > CarbonImmutable::create($loan->release_date->year, 11, 20)) {
+                        $loan->maturity_date = CarbonImmutable::create($loan->release_date->year + 1, 5, 20);
+                    } elseif ($loan->release_date > CarbonImmutable::create($loan->release_date->year, 5, 20)) {
+                        $loan->maturity_date = CarbonImmutable::create($loan->release_date->year, 11, 20);
+                    } else {
+                        $loan->maturity_date = CarbonImmutable::create($loan->release_date->year, 5, 20);
+                    }
+                } else {
+                    $loan->maturity_date = $loan->transaction_date->addMonthsNoOverflow($loan->number_of_terms);
+                }
+            });
 
             static::saving(function (Loan $loan) {
                 if ($loan->posted) {

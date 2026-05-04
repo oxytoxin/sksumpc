@@ -1,7 +1,7 @@
 {
     "mcpServers": {
         "laravel-boost": {
-            "command": "/Users/lerry/Library/Application Support/Herd/bin/php83",
+            "command": "/Users/lerry/Library/Application Support/Herd/bin/php84",
             "args": [
                 "/Users/lerry/Herd/sksumpc/artisan",
                 "boost:mcp"

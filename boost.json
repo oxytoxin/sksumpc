@@ -1,6 +1,7 @@
 {
     "agents": [
-        "opencode"
+        "opencode",
+        "phpstorm"
     ],
     "editors": [
         "opencode",
@@ -8,6 +9,5 @@
     ],
     "guidelines": [
         "filament/filament"
-    ],
-    "herd_mcp": true
+    ]
 }
