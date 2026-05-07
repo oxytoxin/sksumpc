@@ -39,7 +39,7 @@ class CreditAndBackgroundInvestigationReport extends Page
 
     protected function getAdditionalSignatories()
     {
-        if ($this->cibi->loan_application->desired_amount > 50000) {
+        if ($this->cibi->loan_application->desired_amount > $this->cibi->loan_application->loan_type->approval_threshold) {
             $user = User::whereRelation('roles', 'name', 'bod-chairperson')->first();
             $designation = 'BOD-Chairperson';
         } else {

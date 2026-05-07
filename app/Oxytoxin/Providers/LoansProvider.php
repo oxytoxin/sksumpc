@@ -137,10 +137,10 @@
             $items[] = [
                 'member_id' => null,
                 'account_id' => Account::getFamilyInsurance()->id,
-                'credit' => 190,
+                'credit' => $loanType->family_insurance,
                 'debit' => null,
                 'readonly' => true,
-                'code' => 'service_fee',
+                'code' => 'family_insurance',
             ];
 
             if ($loanType->id != 2) {

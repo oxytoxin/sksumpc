@@ -58,6 +58,8 @@ class LoanType extends Model
         'cbu_common' => 'decimal:4',
         'imprest' => 'decimal:4',
         'insurance' => 'decimal:4',
+        'family_insurance' => 'decimal:2',
+        'approval_threshold' => 'decimal:2',
     ];
 
     public function loans(): HasMany

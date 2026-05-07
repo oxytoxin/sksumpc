@@ -159,7 +159,7 @@ class LoanApplication extends Model
                 $approvals[] = (new LoanApproval($crecom_vicechairperson->name, 'CRECOM-Vice Chairperson'));
             }
 
-            if ($loanApplication->desired_amount > 50000) {
+            if ($loanApplication->desired_amount > $loanApplication->loan_type->approval_threshold) {
                 $bod_chairperson = User::whereRelation('roles', 'name', 'bod-chairperson')->first();
                 $approvals[] = (new LoanApproval($bod_chairperson->name, 'BOD-Chairperson'));
             } else {

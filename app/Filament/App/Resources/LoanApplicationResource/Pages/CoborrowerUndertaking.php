@@ -85,7 +85,7 @@ class CoborrowerUndertaking extends Page
     protected function getAdditionalSignatories()
     {
 
-        if ($this->loan_application->desired_amount > 50000) {
+        if ($this->loan_application->desired_amount > $this->loan_application->loan_type->approval_threshold) {
             $user = User::whereRelation('roles', 'name', 'bod-chairperson')->first();
             $designation = 'BOD-Chairperson';
         } else {

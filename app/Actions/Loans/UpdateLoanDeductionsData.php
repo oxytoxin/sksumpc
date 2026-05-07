@@ -11,6 +11,7 @@ class UpdateLoanDeductionsData
         $loan->outstanding_balance = $loan->gross_amount;
         $loan->deductions_amount = collect($loan->disclosure_sheet_items)->sum('credit') - collect($loan->disclosure_sheet_items)->firstWhere('code', 'net_amount')['credit'];
         $loan->service_fee = collect($loan->disclosure_sheet_items)->firstWhere('code', 'service_fee')['credit'] ?? 0;
+        $loan->family_insurance = collect($loan->disclosure_sheet_items)->firstWhere('code', 'family_insurance')['credit'] ?? 0;
         $loan->cbu_amount = collect($loan->disclosure_sheet_items)->firstWhere('code', 'cbu_amount')['credit'] ?? 0;
         $loan->imprest_amount = collect($loan->disclosure_sheet_items)->firstWhere('code', 'imprest_amount')['credit'] ?? 0;
         $loan->insurance_amount = collect($loan->disclosure_sheet_items)->firstWhere('code', 'insurance_amount')['credit'] ?? 0;

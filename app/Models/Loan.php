@@ -113,6 +113,7 @@ class Loan extends Model
         'cbu_amount' => 'decimal:2',
         'imprest_amount' => 'decimal:2',
         'insurance_amount' => 'decimal:2',
+        'family_insurance' => 'decimal:2',
         'loan_buyout' => 'decimal:2',
             'interest_rate' => 'decimal:4',
         'monthly_payment' => 'decimal:2',
