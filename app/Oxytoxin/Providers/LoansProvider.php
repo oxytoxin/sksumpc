@@ -48,12 +48,11 @@
 
         public static function computeAccruedInterest(Loan $loan, $outstanding_balance, $days): float
         {
-            bcscale(10);
             if ($loan->loan_type_id == LoanTypes::SPECIAL_LOAN->value) {
                 return 0;
             }
 
-            return bcmul($loan->interest_rate, bcmul($outstanding_balance, bcdiv($days, LoansProvider::DAYS_IN_MONTH)));
+            return round((float) $loan->interest_rate * (float) $outstanding_balance * ($days / self::DAYS_IN_MONTH), 2);
         }
 
         public static function computeAccruedInterestFromDates(Loan $loan, $outstanding_balance, $start_date, $end_date): float
@@ -107,7 +106,7 @@
             $s = $q / $r;
             $t = $gross_amount * $s;
 
-            return round($t, 4);
+            return round($t, 2);
         }
 
         public static function getDisclosureSheetItems(?LoanType $loanType, $gross_amount, ?Member $member, $existing_loan_id = null): array
@@ -250,10 +249,9 @@
         public static function generateAmortizationSchedule(Loan $loan): array
         {
             $schedule = [];
-            $outstanding_balance = $loan->gross_amount;
+            $outstanding_balance = (float) $loan->gross_amount;
             $start = $loan->transaction_date ?? today();
             $amortization = LoansProvider::computeRegularAmortization($loan);
-            bcscale(10);
 
             for ($i = 1; $i <= $loan->number_of_terms; $i++) {
                 if ($start->day <= 10) {
@@ -272,25 +270,25 @@
                     $date = $start->addMonthsNoOverflow($i);
                 }
 
-                $interest = bcmul($loan->interest_rate, bcmul($outstanding_balance, bcdiv($days, LoansProvider::DAYS_IN_MONTH)));
+                $interest = round((float) $loan->interest_rate * $outstanding_balance * ($days / self::DAYS_IN_MONTH), 2);
                 if ($i == $loan->number_of_terms) {
-                    $amortization = bcadd($outstanding_balance, $interest);
-                    $principal = $outstanding_balance;
+                    $amortization = round($outstanding_balance + $interest, 2);
+                    $principal = round($outstanding_balance, 2);
                 } else {
-                    $principal = bcsub($amortization, $interest);
+                    $principal = round($amortization - $interest, 2);
                 }
 
                 $schedule[] = [
                     'term' => $i,
                     'date' => $date,
                     'days' => $days,
-                    'amortization' => $amortization,
+                    'amortization' => round($amortization, 2),
                     'interest' => $interest,
                     'principal' => $principal,
-                    'previous_balance' => round($outstanding_balance, 4),
+                    'previous_balance' => round($outstanding_balance, 2),
                 ];
 
-                $outstanding_balance = round(bcsub($outstanding_balance, $principal), 6);
+                $outstanding_balance = round($outstanding_balance - $principal, 4);
             }
 
             return $schedule;

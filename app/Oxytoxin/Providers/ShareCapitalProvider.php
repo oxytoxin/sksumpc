@@ -28,7 +28,6 @@
             $start = $cbu->transaction_date ?? today();
             $term = 1;
             $outstanding_balance = $cbu->outstanding_balance;
-            bcscale(10);
             do {
                 $schedule[] = [
                     'term' => $term,
@@ -36,7 +35,7 @@
                     'amount' => $cbu->monthly_payment,
                 ];
 
-                $outstanding_balance = round(floatval(bcsub($outstanding_balance, $cbu->monthly_payment)), 2);
+                $outstanding_balance = round($outstanding_balance - $cbu->monthly_payment, 2);
                 $term++;
             } while ($term <= $cbu->number_of_terms);
 
