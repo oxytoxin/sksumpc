@@ -16,6 +16,10 @@ button[wire\:click="resetTableFiltersForm"] {
     display: none;
 }
 
+.fi-body {
+    @apply bg-white;
+}
+
 .fi-sidebar-nav {
     @apply py-0;
 }
@@ -37,7 +41,7 @@ button[wire\:click="resetTableFiltersForm"] {
 }
 
 .fi-page {
-    @apply outline-2 outline-gray-500 bg-white p-4;
+    @apply p-4;
 }
 
 .fi-ta-header-toolbar {
