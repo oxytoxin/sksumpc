@@ -5,6 +5,7 @@ $groupColors = [
     'Share Capital' => 'bg-emerald-50 border-emerald-200 hover:border-emerald-400 hover:bg-emerald-100',
     'Bookkeeping' => 'bg-violet-50 border-violet-200 hover:border-violet-400 hover:bg-violet-100',
     'Management' => 'bg-rose-50 border-rose-200 hover:border-rose-400 hover:bg-rose-100',
+    'Reports' => 'bg-orange-50 border-orange-200 hover:border-orange-400 hover:bg-orange-100',
 ];
 $groupIconColors = [
     'Cashier' => 'text-sky-500',
@@ -12,6 +13,7 @@ $groupIconColors = [
     'Share Capital' => 'text-emerald-500',
     'Bookkeeping' => 'text-violet-500',
     'Management' => 'text-rose-500',
+    'Reports' => 'text-orange-500',
 ];
 $groupHeadingColors = [
     'Cashier' => 'border-sky-300 text-sky-700',
@@ -19,6 +21,7 @@ $groupHeadingColors = [
     'Share Capital' => 'border-emerald-300 text-emerald-700',
     'Bookkeeping' => 'border-violet-300 text-violet-700',
     'Management' => 'border-rose-300 text-rose-700',
+    'Reports' => 'border-orange-300 text-orange-700',
 ];
 @endphp
 

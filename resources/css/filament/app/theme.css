@@ -159,6 +159,10 @@ table {
     @apply border border-black p-2 text-left font-semibold bg-gray-100 text-xs whitespace-nowrap print:text-[10pt] uppercase hover:bg-transparent;
 }
 
+.doc-table-header-cell-center {
+    @apply border border-black p-2 text-center font-semibold bg-gray-100 text-xs whitespace-nowrap print:text-[10pt] uppercase hover:bg-transparent;
+}
+
 /* Header Cell - Right-aligned variant for numeric columns */
 .doc-table-header-cell-right {
     @apply border border-black p-2 text-right font-semibold bg-gray-100 text-xs whitespace-nowrap print:text-[10pt] uppercase hover:bg-transparent;
