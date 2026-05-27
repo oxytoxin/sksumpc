@@ -78,7 +78,7 @@
                         Notification::make()->title('New receivable created!')->success()->send();
                     }),
                 Action::make('Import')
-                    ->visible(Auth::user()->can('manage cbu'))
+                    ->visible(Auth::user()->can('manage payments'))
                     ->schema([
                         FileUpload::make('billing')
                             ->storeFiles(false)
@@ -107,7 +107,7 @@
                     })
                     ->color('success'),
                 Action::make('Export')
-                    ->visible(Auth::user()->can('manage cbu'))
+                    ->visible(Auth::user()->can('manage payments'))
                     ->action(function () {
                         $title = str('SKSU MPC CASH COLLECTIBLE BILLING')->append(' - as of ')->append($this->cash_collectible_billing->date->format('F Y'))->upper();
                         $filename = $title->append('.xlsx');
@@ -173,11 +173,12 @@
                                 ->default(fn($record) => $record->amount_paid)
                                 ->moneymask(),
                         ])
-                        ->visible(fn($record) => !$record->posted),
+                        ->visible(fn($record) => !$record->posted && auth()->user()->can('manage payments')),
                     DeleteAction::make()
-                        ->visible(fn($record) => !$record->posted),
+                        ->visible(fn($record) => !$record->posted && auth()->user()->can('manage payments')),
                 ])->toolbarActions([
                     DeleteBulkAction::make()
+                        ->visible(fn() => auth()->user()->can('manage payments'))
                         ->action(function ($records) {
                             $records->toQuery()->where('posted', false)->delete();
                             Notification::make()->title('Records deleted!')->body('Only unposted records are deleted.')->success()->send();

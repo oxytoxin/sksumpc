@@ -2,6 +2,7 @@
 
     namespace App\Filament\App\Resources;
 
+    use App\Filament\App\Filters\BillingStatusFilter;
     use Filament\Schemas\Schema;
     use Filament\Actions\EditAction;
     use Filament\Actions\DeleteAction;
@@ -78,19 +79,7 @@
                         ->boolean(),
                 ])
                 ->filters([
-                    SelectFilter::make('status')
-                        ->options([
-                            'posted' => 'Posted',
-                            'for_or' => 'For OR',
-                            'unposted' => 'Unposted',
-                            'pending' => 'Pending'
-                        ])
-                        ->query(fn($query, $state) => $query
-                            ->when($state['value'] == 'posted', fn($q) => $q->where('posted', true))
-                            ->when($state['value'] == 'for_or', fn($q) => $q->where('for_or', true))
-                            ->when($state['value'] == 'unposted', fn($q) => $q->where('posted', false)->whereNotNull('or_number'))
-                            ->when($state['value'] == 'pending', fn($q) => $q->where('posted', false)->whereNull('or_number'))
-                        ),
+                    BillingStatusFilter::make('status'),
                 ])
                 ->filtersLayout(FiltersLayout::AboveContent)
                 ->recordActions([

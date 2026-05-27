@@ -2,6 +2,7 @@
 
     namespace App\Filament\App\Resources;
 
+    use App\Filament\App\Filters\BillingStatusFilter;
     use Filament\Schemas\Schema;
     use Filament\Actions\EditAction;
     use Filament\Actions\DeleteAction;
@@ -85,24 +86,12 @@
                         ->boolean(),
                 ])
                 ->filters([
-                    SelectFilter::make('status')
-                        ->options([
-                            'posted' => 'Posted',
-                            'for_or' => 'For OR',
-                            'unposted' => 'Unposted',
-                            'pending' => 'Pending'
-                        ])
-                        ->query(fn($query, $state) => $query
-                            ->when($state['value'] == 'posted', fn($q) => $q->where('posted', true))
-                            ->when($state['value'] == 'for_or', fn($q) => $q->where('for_or', true))
-                            ->when($state['value'] == 'unposted', fn($q) => $q->where('posted', false)->whereNotNull('or_number'))
-                            ->when($state['value'] == 'pending', fn($q) => $q->where('posted', false)->whereNull('or_number'))
-                        ),
+                    BillingStatusFilter::make('status'),
                 ])
                 ->filtersLayout(FiltersLayout::AboveContent)
                 ->recordActions([
                     EditAction::make()
-                        ->visible(fn($record) => !$record->posted)
+                        ->visible(fn($record, $livewire) => !$record->posted && $livewire->user_is_cbu_officer)
                         ->schema([
                             Select::make('payment_type_id')
                                 ->paymenttype()
@@ -111,7 +100,7 @@
                             TextInput::make('reference_number'),
                         ]),
                     DeleteAction::make()
-                        ->visible(fn($record) => !$record->posted)
+                        ->visible(fn($record, $livewire) => !$record->posted && $livewire->user_is_cbu_officer)
                         ->action(function (CapitalSubscriptionBilling $record) {
                             $record->capital_subscription_billing_payments()->delete();
                             $record->delete();
@@ -119,7 +108,7 @@
                     Action::make('for_or')
                         ->button()
                         ->color('success')
-                        ->visible(fn($record, $livewire) => !$record->posted && !$record->for_or && !$record->or_number && $livewire->user_is_cashier)
+                        ->visible(fn($record, $livewire) => !$record->posted && !$record->for_or && !$record->or_number && $livewire->user_is_cbu_officer)
                         ->label('For OR')
                         ->requiresConfirmation()
                         ->action(function (CapitalSubscriptionBilling $record) {

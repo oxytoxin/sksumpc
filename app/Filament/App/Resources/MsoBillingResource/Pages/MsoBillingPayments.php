@@ -67,6 +67,7 @@
                                 1 => Account::withCode()->whereMemberId($get('member_id'))->whereTag('regular_savings')->pluck('code', 'id'),
                                 2 => Account::withCode()->whereMemberId($get('member_id'))->whereTag('imprest_savings')->pluck('code', 'id'),
                                 3 => Account::withCode()->whereMemberId($get('member_id'))->whereTag('love_gift_savings')->pluck('code', 'id'),
+                                default => throw new \Exception('Unexpected match value'),
                             })
                             ->searchable()
                             ->preload(),
@@ -87,7 +88,7 @@
                         Notification::make()->title('New MSO receivable created!')->success()->send();
                     }),
                 Action::make('Import')
-                    ->visible(Auth::user()->can('manage cbu'))
+                    ->visible(Auth::user()->can('manage payments'))
                     ->schema([
                         FileUpload::make('billing')
                             ->storeFiles(false)
@@ -116,7 +117,7 @@
                     })
                     ->color('success'),
                 Action::make('Export')
-                    ->visible(Auth::user()->can('manage cbu'))
+                    ->visible(Auth::user()->can('manage payments'))
                     ->action(function () {
                         $title = str('SKSU MPC MSO BILLING')->append(' - as of ')->append($this->mso_billing->date->format('F Y'))->upper();
                         $filename = $title->append('.xlsx');

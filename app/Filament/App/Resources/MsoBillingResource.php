@@ -3,6 +3,7 @@
     namespace App\Filament\App\Resources;
 
     use App\Enums\MsoBillingType;
+    use App\Filament\App\Filters\BillingStatusFilter;
     use Filament\Schemas\Schema;
     use Filament\Actions\EditAction;
     use Filament\Actions\DeleteAction;
@@ -92,19 +93,7 @@
                 ])
                 ->defaultSort('date', 'desc')
                 ->filters([
-                    SelectFilter::make('status')
-                        ->options([
-                            'posted' => 'Posted',
-                            'for_or' => 'For OR',
-                            'unposted' => 'Unposted',
-                            'pending' => 'Pending'
-                        ])
-                        ->query(fn($query, $state) => $query
-                            ->when($state['value'] == 'posted', fn($q) => $q->where('posted', true))
-                            ->when($state['value'] == 'for_or', fn($q) => $q->where('for_or', true))
-                            ->when($state['value'] == 'unposted', fn($q) => $q->where('posted', false)->whereNotNull('or_number'))
-                            ->when($state['value'] == 'pending', fn($q) => $q->where('posted', false)->whereNull('or_number'))
-                        ),
+                    BillingStatusFilter::make('status'),
                     SelectFilter::make('type')
                         ->options(MsoBillingType::class),
                 ])
@@ -145,7 +134,7 @@
                     Action::make('post_payments')
                         ->button()
                         ->color('success')
-                        ->visible(fn($record, $livewire) => !$record->posted && !$record->for_or && $record->or_number && $livewire->user_is_cbu_officer)
+                        ->visible(fn($record, $livewire) => !$record->posted && !$record->for_or && $record->or_number && $livewire->user_is_cashier)
                         ->requiresConfirmation()
                         ->action(function (MsoBilling $record) {
                             app(PostMsoBillingPayments::class)->handle($record);
@@ -155,11 +144,6 @@
                         ->url(fn($record) => route('filament.app.resources.mso-billings.billing-payments', ['mso_billing' => $record]))
                         ->button()
                         ->outlined(),
-                ])
-                ->toolbarActions([
-                    BulkActionGroup::make([
-                        DeleteBulkAction::make(),
-                    ]),
                 ]);
         }
 

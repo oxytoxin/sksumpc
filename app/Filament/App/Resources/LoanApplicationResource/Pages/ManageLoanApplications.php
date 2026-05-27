@@ -1,33 +1,33 @@
 <?php
 
-namespace App\Filament\App\Resources\LoanApplicationResource\Pages;
+    namespace App\Filament\App\Resources\LoanApplicationResource\Pages;
 
-use App\Filament\App\Pages\Cashier\RequiresBookkeeperTransactionDate;
-use App\Filament\App\Resources\LoanApplicationResource;
-use App\Models\LoanType;
-use App\Oxytoxin\Providers\LoansProvider;
-use Auth;
-use Filament\Actions\CreateAction;
-use Filament\Resources\Pages\ManageRecords;
+    use App\Filament\App\Pages\Cashier\RequiresBookkeeperTransactionDate;
+    use App\Filament\App\Resources\LoanApplicationResource;
+    use App\Models\LoanType;
+    use App\Oxytoxin\Providers\LoansProvider;
+    use Auth;
+    use Filament\Actions\CreateAction;
+    use Filament\Resources\Pages\ManageRecords;
 
-class ManageLoanApplications extends ManageRecords
-{
-    use RequiresBookkeeperTransactionDate;
-
-    protected static string $resource = LoanApplicationResource::class;
-
-    protected function getHeaderActions(): array
+    class ManageLoanApplications extends ManageRecords
     {
-        return [
-            CreateAction::make()
-                ->mutateDataUsing(function ($data) {
-                    $data['transaction_date'] = config('app.transaction_date') ?? today();
-                    $data['monthly_payment'] = LoansProvider::computeMonthlyPayment($data['desired_amount'], LoanType::find($data['loan_type_id']), $data['number_of_terms'], config('app.transaction_date') ?? today());
+        use RequiresBookkeeperTransactionDate;
 
-                    return $data;
-                })
-                ->visible(Auth::user()->can('manage loans'))
-                ->createAnother(false),
-        ];
+        protected static string $resource = LoanApplicationResource::class;
+
+        protected function getHeaderActions(): array
+        {
+            return [
+                CreateAction::make()
+                    ->mutateDataUsing(function ($data) {
+                        $data['transaction_date'] = config('app.transaction_date') ?? today();
+                        $data['monthly_payment'] = LoansProvider::computeMonthlyPayment($data['desired_amount'], LoanType::find($data['loan_type_id']), $data['number_of_terms'], config('app.transaction_date') ?? today());
+
+                        return $data;
+                    })
+                    ->visible(Auth::user()->can('manage loans') || Auth::user()->can('manage cbu'))
+                    ->createAnother(false),
+            ];
+        }
     }
-}

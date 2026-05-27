@@ -53,7 +53,7 @@
 
         public static function shouldRegisterNavigation(): bool
         {
-            return Auth::user()->can('manage loans');
+            return Auth::user()->can('manage loans') || auth()->user()->can('manage cbu');
         }
 
         public static function infolist(Schema $schema): Schema
@@ -161,7 +161,7 @@
                         ->requiresConfirmation()
                         ->button()
                         ->color('success')
-                        ->visible(fn($record) => $record->status == LoanApplication::STATUS_PROCESSING),
+                        ->visible(fn($record) => $record->status == LoanApplication::STATUS_PROCESSING && auth()->user()->can('manage loans')),
                     Action::make('Disapprove')
                         ->schema([
                             TextInput::make('priority_number')->default(fn($record) => $record->priority_number),
@@ -173,8 +173,8 @@
                         ->action(function (LoanApplication $record, $data) {
                             app(DisapproveLoanApplication::class)->handle(
                                 loan_application: $record,
-                                disapproval_reason_id: $data['disapproval_reason_id'],
                                 priority_number: $data['priority_number'],
+                                disapproval_reason_id: $data['disapproval_reason_id'],
                                 remarks: $data['remarks'],
                                 disapproval_date: config('app.transaction_date')
                             );
@@ -183,13 +183,12 @@
                         ->requiresConfirmation()
                         ->button()
                         ->color('danger')
-                        ->visible(fn($record) => $record->status == LoanApplication::STATUS_PROCESSING),
+                        ->visible(fn($record) => $record->status == LoanApplication::STATUS_PROCESSING && auth()->user()->can('manage loans')),
                     Action::make('disclosure')
                         ->visible(fn($record) => Auth::user()->can('manage loans') && !$record->loan && $record->status == LoanApplication::STATUS_APPROVED)
                         ->modalWidth(Width::ScreenExtraLarge)
                         ->fillForm(function ($record) {
                             $disclosure_sheet_items = LoansProvider::getDisclosureSheetItems($record->loan_type, $record->desired_amount, $record->member);
-
                             return [
                                 'gross_amount' => $record->desired_amount,
                                 'number_of_terms' => $record->number_of_terms,

@@ -32,7 +32,7 @@
 
         public static function shouldRegisterNavigation(): bool
         {
-            return auth()->user()->can('manage bookkeeping');
+            return auth()->user()->can('manage bookkeeping') || auth()->user()->can('manage payments');
         }
 
         public function mount()
