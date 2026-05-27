@@ -365,6 +365,9 @@
         public static function table(Table $table): Table
         {
             return $table
+                ->modifyQueryUsing(function ($query) {
+                    $query->whereNot('member_type_id', MemberTypes::ORGANIZATION->value);
+                })
                 ->columns([
                     TextColumn::make('id'),
                     TextColumn::make('mpc_code')

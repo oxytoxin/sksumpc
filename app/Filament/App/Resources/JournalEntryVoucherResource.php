@@ -104,12 +104,9 @@
                 ->columns([
                     TextColumn::make('transaction_date')->date('F d, Y'),
                     TextColumn::make('voucher_type.name'),
-                    TextColumn::make('journal_entry_voucher_items.account.number')
-                        ->label('Account Numbers')
-                        ->listWithLineBreaks(),
                     TextColumn::make('name'),
                     TextColumn::make('reference_number'),
-                    TextColumn::make('description'),
+                    TextColumn::make('description')->wrap(),
                 ])
                 ->defaultSort('transaction_date', 'desc')
                 ->filters([

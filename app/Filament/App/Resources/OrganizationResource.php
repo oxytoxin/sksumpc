@@ -45,7 +45,7 @@
                         ->label('Name'),
                     View::make('organization_members')
                         ->visible(fn($context) => $context === 'edit')
-                        ->viewData(fn($record) => ['members' => Member::find($record->member_ids)]),
+                        ->viewData(fn($record) => ['members' => Member::orderBy('last_name')->findMany($record->member_ids)]),
                 ]);
         }
 

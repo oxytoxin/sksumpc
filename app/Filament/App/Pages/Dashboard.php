@@ -1,35 +1,35 @@
 <?php
 
-namespace App\Filament\App\Pages;
+    namespace App\Filament\App\Pages;
 
-use App\Filament\App\Widgets\CbuChart;
-use App\Filament\App\Widgets\IncomeChart;
-use App\Filament\App\Widgets\StatsOverview as NewStatsOverview;
-use App\Filament\App\Widgets\TotalStatsOverview;
-use Filament\Pages\Page;
+    use App\Filament\App\Widgets\CbuChart;
+    use App\Filament\App\Widgets\IncomeChart;
+    use App\Filament\App\Widgets\StatsOverview;
+    use App\Filament\App\Widgets\TotalStatsOverview;
+    use Filament\Pages\Page;
 
-class Dashboard extends Page
-{
-    protected static string | \BackedEnum | null $navigationIcon = 'icon-dashboard';
-
-    protected string $view = 'filament.app.pages.dashboard-page';
-
-    protected static ?int $navigationSort = 1;
-
-    protected ?string $heading = '';
-
-    public static function shouldRegisterNavigation(): bool
+    class Dashboard extends Page
     {
-        return auth()->user()->cannot('view own member profile');
-    }
+        protected static string|\BackedEnum|null $navigationIcon = 'icon-dashboard';
 
-    protected function getHeaderWidgets(): array
-    {
-        return [
-            NewStatsOverview::class,
-            CbuChart::class,
-            IncomeChart::class,
-            TotalStatsOverview::class,
-        ];
+        protected string $view = 'filament.app.pages.dashboard-page';
+
+        protected static ?int $navigationSort = 1;
+
+        protected ?string $heading = '';
+
+        public static function shouldRegisterNavigation(): bool
+        {
+            return auth()->user()->cannot('view own member profile');
+        }
+
+        protected function getHeaderWidgets(): array
+        {
+            return [
+                StatsOverview::class,
+                CbuChart::class,
+                IncomeChart::class,
+                TotalStatsOverview::class,
+            ];
+        }
     }
-}

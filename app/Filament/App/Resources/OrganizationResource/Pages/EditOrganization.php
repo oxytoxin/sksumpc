@@ -18,11 +18,9 @@
         {
             return [
                 DeleteAction::make(),
-                EditAction::make()
-                    ->label('Edit Members')
-                    ->fillForm(
-                        fn($record) => ['member_ids' => $record->member_ids]
-                    )
+                Actions\Action::make('add')
+                    ->label('Add Members')
+                    ->closeModalByClickingAway(false)
                     ->schema([
                         Select::make('member_ids')
                             ->label('Members')
@@ -30,12 +28,21 @@
                             ->multiple()
                     ])
                     ->action(function ($record, $data) {
-                        $record->member_ids = $data['member_ids'];
+                        $record->member_ids = collect($record->member_ids)->merge($data['member_ids'])->all();
                         $record->save();
-                        $this->refreshFormData([
-                            'members',
-                        ]);
-                    })
+                    }),
+                Actions\Action::make('remove')
+                    ->label('Remove Members')
+                    ->closeModalByClickingAway(false)
+                    ->schema([
+                        Select::make('member_ids')
+                            ->label('Members')
+                            ->options(fn() => \App\Models\Member::pluck('full_name', 'id'))
+                            ->multiple()
+                    ])->action(function ($record, $data) {
+                        $record->member_ids = collect($record->member_ids)->diff($data['member_ids'])->all();
+                        $record->save();
+                    }),
             ];
         }
     }
