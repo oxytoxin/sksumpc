@@ -20,7 +20,7 @@
                         <p>{{ renumber_format($transaction['amount'], 2) }}</p>
                     </div>
                     <p>REFERENCE #: {{ $transaction['reference_number'] }}</p>
-                    <p>TRANSACTION DATE: {{ date_create($this->transaction_date)->format('m/d/Y') }}</p>
+                    <p>TRANSACTION DATE: {{ date_create($transaction['transaction_date'] ?? $this->transaction_date)->format('m/d/Y') }}</p>
                     <p>{{ $transaction['remarks'] }}</p>
                 </div>
             @endforeach
