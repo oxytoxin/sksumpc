@@ -197,7 +197,7 @@
 
             $others = Transaction::whereHas('account', function ($q1) {
                 $q1->whereDoesntHave('ancestorsAndSelf', function ($q2) {
-                    $q2->whereIn('id', OthersTransactionExcludedAccounts::get());
+                    $q2->whereIn('id', OthersTransactionExcludedAccounts::ids());
                 });
             })
                 ->where('transaction_type_id', TransactionTypes::CRJ->value)

@@ -47,7 +47,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="doc-table-cell-center">No transactions today.</td>
+                        <td colspan="8" class="doc-table-cell-center">No transactions today.</td>
                     </tr>
                 @endforelse
                 <tr class="doc-table-row-total">

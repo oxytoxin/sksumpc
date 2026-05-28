@@ -24,6 +24,10 @@ button[wire\:click="resetTableFiltersForm"] {
     @apply py-0;
 }
 
+.fi-page-header-main-ctn {
+    @apply pt-0 px-16;
+}
+
 .fi-sidebar-header {
     @apply flex items-center h-40 flex-col py-8;
 }
@@ -33,7 +37,7 @@ button[wire\:click="resetTableFiltersForm"] {
 }
 
 .fi-topbar {
-    @apply bg-primary text-white pl-84;
+    @apply text-white pl-24;
 }
 
 .fi-main {

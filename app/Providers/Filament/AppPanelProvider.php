@@ -66,7 +66,8 @@
                 ->colors([
                     'primary' => '#3F9FEB',
                 ])
-                ->topbar(false)
+                ->topbar(true)
+                ->topNavigation(true)
                 ->login()
                 ->navigationGroups([
                     NavigationGroup::make()
