@@ -29,8 +29,8 @@ return new class extends Migration
         Schema::table('imprests', function (Blueprint $table) {
             $table->decimal('amount', 18, 2)->change();
             $table->dropColumn(['deposit', 'withdrawal']);
-            $table->decimal('interest', 18, 2)->change();
-            $table->decimal('balance', 18, 2)->change();
+            $table->decimal('interest', 18, 2)->default(0)->change();
+            $table->decimal('balance', 18, 2)->default(0)->change();
         });
         Schema::table('imprests', function (Blueprint $table) {
             $table->decimal('deposit', 18, 2)->virtualAs('if(amount >= 0, amount, null)');
@@ -59,15 +59,15 @@ return new class extends Migration
         $this->roundColumns('loan_payments', ['amount', 'interest_payment', 'principal_payment', 'unpaid_interest', 'surcharge_payment']);
         Schema::table('loan_payments', function (Blueprint $table) {
             $table->decimal('amount', 18, 2)->change();
-            $table->decimal('interest_payment', 18, 2)->change();
-            $table->decimal('principal_payment', 18, 2)->change();
-            $table->decimal('unpaid_interest', 18, 2)->change();
-            $table->decimal('surcharge_payment', 18, 2)->change();
+            $table->decimal('interest_payment', 18, 2)->default(0)->change();
+            $table->decimal('principal_payment', 18, 2)->default(0)->change();
+            $table->decimal('unpaid_interest', 18, 2)->default(0)->change();
+            $table->decimal('surcharge_payment', 18, 2)->default(0)->change();
         });
 
         $this->roundColumns('loan_types', ['minimum_cbu', 'max_amount']);
         Schema::table('loan_types', function (Blueprint $table) {
-            $table->decimal('minimum_cbu', 18, 2)->change();
+            $table->decimal('minimum_cbu', 18, 2)->default(0)->change();
             $table->decimal('max_amount', 18, 2)->change();
         });
 
@@ -76,10 +76,10 @@ return new class extends Migration
             $table->decimal('gross_amount', 18, 2)->change();
             $table->dropColumn('net_amount');
             $table->decimal('interest', 18, 2)->change();
-            $table->decimal('service_fee', 18, 2)->change();
-            $table->decimal('cbu_amount', 18, 2)->change();
-            $table->decimal('imprest_amount', 18, 2)->change();
-            $table->decimal('insurance_amount', 18, 2)->change();
+            $table->decimal('service_fee', 18, 2)->default(0)->change();
+            $table->decimal('cbu_amount', 18, 2)->default(0)->change();
+            $table->decimal('imprest_amount', 18, 2)->default(0)->change();
+            $table->decimal('insurance_amount', 18, 2)->default(0)->change();
             $table->decimal('loan_buyout', 18, 2)->change();
             $table->decimal('deductions_amount', 18, 2)->change();
             $table->decimal('monthly_payment', 16, 2)->change();
@@ -93,8 +93,8 @@ return new class extends Migration
         Schema::table('love_gifts', function (Blueprint $table) {
             $table->decimal('amount', 18, 2)->change();
             $table->dropColumn(['deposit', 'withdrawal']);
-            $table->decimal('interest', 18, 2)->change();
-            $table->decimal('balance', 18, 2)->change();
+            $table->decimal('interest', 18, 2)->default(0)->change();
+            $table->decimal('balance', 18, 2)->default(0)->change();
         });
         Schema::table('love_gifts', function (Blueprint $table) {
             $table->decimal('deposit', 18, 2)->virtualAs('if(amount >= 0, amount, null)');
@@ -131,8 +131,8 @@ return new class extends Migration
         Schema::table('savings', function (Blueprint $table) {
             $table->decimal('amount', 18, 2)->change();
             $table->dropColumn(['deposit', 'withdrawal']);
-            $table->decimal('interest', 18, 2)->change();
-            $table->decimal('balance', 18, 2)->change();
+            $table->decimal('interest', 18, 2)->default(0)->change();
+            $table->decimal('balance', 18, 2)->default(0)->change();
         });
         Schema::table('savings', function (Blueprint $table) {
             $table->decimal('deposit', 18, 2)->virtualAs('if(amount >= 0, amount, null)');
