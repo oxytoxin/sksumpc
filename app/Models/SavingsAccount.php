@@ -52,6 +52,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property-read int|null $siblings_count
  * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, \App\Models\SavingsAccount> $siblingsAndSelf All the parent's children.
  * @property-read int|null $siblings_and_self_count
+ *
  * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, static> all($columns = ['*'])
  * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|SavingsAccount breadthFirst()
  * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|SavingsAccount depthFirst()
@@ -85,13 +86,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|SavingsAccount withCode()
  * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|SavingsAccount withGlobalScopes(array $scopes)
  * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|SavingsAccount withRelationshipExpression($direction, callable $constraint, $initialDepth, $from = null, $maxDepth = null)
+ *
  * @mixin \Eloquent
  */
 class SavingsAccount extends Account
 {
     use HasFactory;
 
-    protected $casts = [];
+    protected $casts = [
+        'closed_at' => 'immutable_datetime',
+    ];
 
     public function savings()
     {
@@ -111,6 +115,34 @@ class SavingsAccount extends Account
     public function member()
     {
         return $this->belongsTo(Member::class);
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->whereNull('closed_at');
+    }
+
+    public function scopeClosed($query)
+    {
+        return $query->whereNotNull('closed_at');
+    }
+
+    public function isClosed(): bool
+    {
+        return $this->closed_at !== null;
+    }
+
+    public function isActive(): bool
+    {
+        return ! $this->isClosed();
+    }
+
+    public function close(?string $remarks = null): void
+    {
+        $this->update([
+            'closed_at' => now(),
+            'close_remarks' => $remarks,
+        ]);
     }
 
     protected static function boot()
