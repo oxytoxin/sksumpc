@@ -64,8 +64,8 @@
                                 ->label('Remarks')
                                 ->placeholder('Optional reason for closing this account'),
                         ])
-                        ->action(function (array $arguments) {
-                            $this->savings_account->close($arguments['data']['remarks'] ?? null);
+                        ->action(function (array $data) {
+                            $this->savings_account->close($data['remarks'] ?? null);
                             Notification::make()
                                 ->title('Savings account closed successfully.')
                                 ->success()
