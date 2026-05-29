@@ -44,10 +44,18 @@
                     PanelsRenderHook::SIDEBAR_LOGO_AFTER,
                     fn() => Blade::render('<strong>Transaction Date: '.$transaction_date->format('m/d/Y').'</strong>')
                 );
+                FilamentView::registerRenderHook(
+                    PanelsRenderHook::USER_MENU_BEFORE,
+                    fn() => Blade::render('<strong style="color: black;">Transaction Date: '.$transaction_date->format('m/d/Y').'</strong>')
+                );
             } else {
                 FilamentView::registerRenderHook(
                     PanelsRenderHook::SIDEBAR_LOGO_AFTER,
                     fn() => Blade::render('<strong>Transaction Date Not Set</strong>')
+                );
+                FilamentView::registerRenderHook(
+                    PanelsRenderHook::USER_MENU_BEFORE,
+                    fn() => Blade::render('<strong style="color: black;">Transaction Date Not Set</strong>')
                 );
             }
             FilamentView::registerRenderHook(
