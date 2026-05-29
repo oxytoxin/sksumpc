@@ -16,10 +16,12 @@
     use App\Filament\App\Resources\MemberResource\Pages\LoanSubsidiaryLedger;
     use App\Filament\App\Resources\MemberResource\Pages\LoveGiftsSubsidiaryLedger;
     use App\Filament\App\Resources\MemberResource\Pages\MembersReport;
+    use App\Filament\App\Resources\MemberResource\Pages\PrintLoanHistory;
     use App\Filament\App\Resources\MemberResource\Pages\PrintMemberProfile;
     use App\Filament\App\Resources\MemberResource\Pages\SavingsSubsidiaryLedger;
     use App\Filament\App\Resources\MemberResource\Pages\TimeDepositSubsidiaryLedger;
     use App\Filament\App\Resources\MemberResource\Pages\ViewMember;
+    use App\Infolists\Components\BeneficiariesEntry;
     use App\Infolists\Components\DependentsEntry;
     use App\Livewire\App\CbuTable;
     use App\Livewire\App\LoansTable;
@@ -59,10 +61,8 @@
     use Filament\Schemas\Components\Tabs;
     use Filament\Schemas\Components\Tabs\Tab;
     use Filament\Schemas\Schema;
-    use Filament\Support\Colors\Color;
     use Filament\Support\Icons\Heroicon;
     use Filament\Tables\Columns\TextColumn;
-    use Filament\Tables\Contracts\HasTable;
     use Filament\Tables\Enums\FiltersLayout;
     use Filament\Tables\Filters\SelectFilter;
     use Filament\Tables\Table;
@@ -128,11 +128,17 @@
                                 TextEntry::make('occupation.name')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                                 TextEntry::make('occupation_description')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                                 TextEntry::make('annual_income')->money('PHP')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
+                                TextEntry::make('monthly_salary')->money('PHP')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                                 TextEntry::make('other_income_sources')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                             ]),
                         Section::make()
                             ->schema([
                                 DependentsEntry::make('dependents')->label('Number of Dependents')
+                                    ->inlineLabel(),
+                            ]),
+                        Section::make()
+                            ->schema([
+                                BeneficiariesEntry::make('beneficiaries')->label('Number of Beneficiaries')
                                     ->inlineLabel(),
                             ]),
                         Section::make('Initial Capital Subscription')
@@ -160,6 +166,12 @@
                 ]);
             $tabs[] = Tab::make('Loan')
                 ->schema(fn($record) => [
+                    Actions::make([
+                        Action::make('print_loan_history')
+                            ->label('Print Loan History')
+                            ->icon('heroicon-o-printer')
+                            ->url(fn($livewire) => route('filament.app.resources.members.print-loan-history', ['member' => $livewire->record])),
+                    ])->alignEnd(),
                     Livewire::make(LoansTable::class, ['member' => $record]),
                 ]);
 
@@ -322,6 +334,32 @@
                                 ])->required(),
                         ])
                         ->columnSpanFull(),
+                    Repeater::make('beneficiaries')
+                        ->default([])
+                        ->label('Beneficiaries')
+                        ->table([
+                            Repeater\TableColumn::make('Name'),
+                            Repeater\TableColumn::make('Date of Birth'),
+                            Repeater\TableColumn::make('Relationship'),
+                        ])
+                        ->schema([
+                            TextInput::make('name')->required(),
+                            DatePicker::make('dob')->format('Y-m-d'),
+                            Select::make('relationship')
+                                ->options([
+                                    'FATHER' => 'FATHER',
+                                    'MOTHER' => 'MOTHER',
+                                    'HUSBAND' => 'HUSBAND',
+                                    'WIFE' => 'WIFE',
+                                    'SON' => 'SON',
+                                    'DAUGHTER' => 'DAUGHTER',
+                                    'BROTHER' => 'BROTHER',
+                                    'SISTER' => 'SISTER',
+                                    'COUSIN' => 'COUSIN',
+                                    'OTHERS' => 'OTHERS',
+                                ])->required(),
+                        ])
+                        ->columnSpanFull(),
                     Select::make('occupation_id')
                         ->relationship('occupation', 'name')
                         ->options(Occupation::pluck('name', 'id')),
@@ -330,6 +368,9 @@
                         ->maxLength(125),
                     TextInput::make('present_employer'),
                     TextInput::make('annual_income')
+                        ->moneymask()
+                        ->minValue(0),
+                    TextInput::make('monthly_salary')
                         ->moneymask()
                         ->minValue(0),
                     TextInput::make('other_income_sources'),
@@ -489,6 +530,7 @@
                                 }
                                 Notification::make()->title('Member deleted.')->success()->send();
                                 DB::commit();
+
                                 return true;
                             })->visible(Auth::user()->can('manage members')),
                         Action::make('terminate')
@@ -535,6 +577,7 @@
                 'report' => MembersReport::route('/reports'),
                 'view' => ViewMember::route('/{record}'),
                 'print' => PrintMemberProfile::route('/{member}/print'),
+                'print-loan-history' => PrintLoanHistory::route('/{member}/print-loan-history'),
                 'edit' => EditMember::route('/{record}/edit'),
                 'credit-and-background.edit' => Pages\EditMemberCreditAndBackground::route('/{record}/credit-and-background'),
                 'loan.edit' => EditMemberLoan::route('/{record}/{loan}/edit'),

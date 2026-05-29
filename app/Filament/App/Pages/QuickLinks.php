@@ -127,6 +127,8 @@ class QuickLinks extends Page
                         ['label' => 'Transactions List', 'url' => TransactionsList::getUrl(), 'icon' => 'heroicon-o-list-bullet'],
                         ['label' => 'Account Balance', 'url' => AccountBalanceReport::getUrl(), 'icon' => 'heroicon-o-calculator'],
                         ['label' => 'Closed Savings', 'url' => ClosedSavingsReport::getUrl(), 'icon' => 'heroicon-o-archive-box'],
+                        ['label' => 'New Members', 'url' => NewMembersReport::getUrl(), 'icon' => 'heroicon-o-user-plus'],
+                        ['label' => 'Terminated Members', 'url' => TerminatedMembersReport::getUrl(), 'icon' => 'heroicon-o-user-minus'],
                     ],
                 ],
             ],

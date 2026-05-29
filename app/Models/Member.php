@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Observers\MemberObserver;
+use App\Oxytoxin\DTO\Membership\MemberBeneficiary;
 use App\Oxytoxin\DTO\Membership\MemberDependent;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -170,8 +171,10 @@ class Member extends Model implements HasMedia
         'dob' => 'immutable_date',
         'membership_date' => 'immutable_date',
         'dependents' => DataCollection::class.':'.MemberDependent::class,
+        'beneficiaries' => DataCollection::class.':'.MemberBeneficiary::class,
         'other_income_sources' => 'array',
         'annual_income' => 'decimal:2',
+        'monthly_salary' => 'decimal:2',
         'member_ids' => 'array',
         'member_type_id' => 'integer',
     ];
