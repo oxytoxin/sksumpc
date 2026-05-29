@@ -32,6 +32,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read int|null $loan_billing_payments_count
  * @property-read \App\Models\LoanType $loan_type
  * @property-read \App\Models\PaymentType|null $payment_type
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanBilling newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanBilling newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanBilling query()
@@ -51,6 +52,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanBilling wherePosted($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanBilling whereReferenceNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanBilling whereUpdatedAt($value)
+ *
  * @mixin \Eloquent
  */
 class LoanBilling extends Model
@@ -107,6 +109,7 @@ class LoanBilling extends Model
             Loan::wherePosted(true)
                 ->where('outstanding_balance', '>', 1)
                 ->whereLoanTypeId($loanBilling->loan_type_id)
+                ->whereRelation('member', 'terminated_at', null)
                 ->when($loanBilling->member_type_id, fn ($query, $value) => $query->whereRelation('member', 'member_type_id', $value))
                 ->when($loanBilling->member_subtype_id, fn ($query, $value) => $query->whereRelation('member', 'member_subtype_id', $value))
                 ->each(function ($loan) use ($loanBilling) {

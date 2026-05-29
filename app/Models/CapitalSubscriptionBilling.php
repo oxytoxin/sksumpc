@@ -28,6 +28,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read int|null $capital_subscription_billing_payments_count
  * @property-read \App\Models\User|null $cashier
  * @property-read \App\Models\PaymentType|null $payment_type
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscriptionBilling newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscriptionBilling newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscriptionBilling query()
@@ -46,6 +47,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscriptionBilling wherePosted($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscriptionBilling whereReferenceNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CapitalSubscriptionBilling whereUpdatedAt($value)
+ *
  * @mixin \Eloquent
  */
 class CapitalSubscriptionBilling extends Model
@@ -91,6 +93,7 @@ class CapitalSubscriptionBilling extends Model
             $capitalSubscriptionBilling->reference_number = $capitalSubscriptionBilling->generateReferenceNumber($capitalSubscriptionBilling);
             CapitalSubscription::query()
                 ->where('is_active', true)
+                ->whereRelation('member', 'terminated_at', null)
                 ->withCount('payments')
                 ->when($capitalSubscriptionBilling->member_type_id, fn ($query, $value) => $query->whereRelation('member', 'member_type_id', $value))
                 ->when($capitalSubscriptionBilling->member_subtype_id, fn ($query, $value) => $query->whereRelation('member', 'member_subtype_id', $value))
