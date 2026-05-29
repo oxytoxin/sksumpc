@@ -404,7 +404,6 @@
                     TextColumn::make('member_type.name')
                         ->sortable(),
                     TextColumn::make('member_subtype.name')
-                        ->visible(fn(HasTable $livewire) => $livewire->getTableFilterState('member_type')['value'] == 1)
                         ->sortable(),
                     TextColumn::make('terminated_at')
                         ->date('m/d/Y')
