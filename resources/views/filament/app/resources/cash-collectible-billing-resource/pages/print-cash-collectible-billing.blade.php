@@ -1,20 +1,20 @@
 <x-filament-panels::page>
     <div class="p-4 font-arial text-[12pt] print:w-full print:text-[10pt] print:leading-tight" x-ref="print">
         <x-app.cashier.reports.report-heading/>
-        <h1 class="text-center font-bold">SKSU-MPC {{ $mso_billing->type->getLabel() }} Billing Statement <br> as
-            of {{ $mso_billing->billable_date }}</h1>
+        <h1 class="text-center font-bold">SKSU-MPC {{ $cash_collectible_billing->cash_collectible_account->name }} Billing Statement <br> as
+            of {{ $cash_collectible_billing->billable_date }}</h1>
         <table class="mt-4 w-1/2 print:w-full mx-auto print:text-[8pt]">
             <thead>
             <tr class="border-y border-black">
                 <th>NO.</th>
-                <th class="text-left">NAME OF DEPOSITOR</th>
+                <th class="text-left">NAME</th>
                 <th>AMOUNT DUE</th>
                 <th>AMOUNT PAID</th>
             </tr>
             </thead>
             <tbody>
             @php
-                $payments = $this->mso_billing->payments()->join('members', 'mso_billing_payments.member_id', 'members.id')->selectRaw('mso_billing_payments.*, members.alt_full_name as member_name')->orderBy('member_name')->get();
+                $payments = $this->cash_collectible_billing->cash_collectible_billing_payments()->join('members', 'cash_collectible_billing_payments.member_id', 'members.id')->selectRaw('cash_collectible_billing_payments.*, members.alt_full_name as member_name')->orderBy('member_name')->get();
             @endphp
             @forelse ($payments as $payment)
                 <tr>

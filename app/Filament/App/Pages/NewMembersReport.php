@@ -30,27 +30,21 @@ class NewMembersReport extends Page implements HasTable
             ->query(
                 fn () => Member::query()
                     ->whereNotNull('membership_date')
-                    ->with(['member_type', 'division', 'gender', 'civil_status'])
+                    ->with(['membership_acceptance', 'initial_capital_subscription'])
                     ->orderBy('membership_date')
             )
             ->columns([
-                TextColumn::make('mpc_code')
-                    ->label('MPC Code')
-                    ->searchable(),
                 TextColumn::make('full_name')
                     ->label('Member Name')
                     ->searchable(),
                 TextColumn::make('membership_date')
                     ->label('Membership Date')
                     ->date('m/d/Y'),
-                TextColumn::make('member_type.name')
-                    ->label('Member Type'),
-                TextColumn::make('division.name')
-                    ->label('Division'),
-                TextColumn::make('gender.name')
-                    ->label('Gender'),
-                TextColumn::make('civil_status.name')
-                    ->label('Civil Status'),
+                TextColumn::make('membership_acceptance.bod_resolution')
+                    ->label('BOD Resolution'),
+                TextColumn::make('initial_capital_subscription.initial_amount_paid')
+                    ->label('Initial Paid Up Capital')
+                    ->numeric(decimalPlaces: 2),
             ])
             ->content(fn () => view('filament.app.pages.new-members-report-table', [
                 'signatories' => $this->getSignatories(),

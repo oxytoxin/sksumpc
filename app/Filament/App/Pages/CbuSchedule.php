@@ -79,6 +79,7 @@ class CbuSchedule extends Page implements HasForms, HasTable
         return $table
             ->query(
                 fn () => Member::query()
+                    ->whereNull('terminated_at')
                     ->has('capital_subscriptions')
                     ->orderBy('alt_full_name')
                     ->withSum(['capital_subscriptions' => function ($query) {

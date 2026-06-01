@@ -1,25 +1,25 @@
 <x-filament-panels::page>
     <div class="p-4 font-arial text-[12pt] print:w-full print:text-[10pt] print:leading-tight" x-ref="print">
         <x-app.cashier.reports.report-heading/>
-        <h1 class="text-center font-bold">SKSU-MPC {{ $mso_billing->type->getLabel() }} Billing Statement <br> as
-            of {{ $mso_billing->billable_date }}</h1>
+        <h1 class="text-center font-bold">SKSU-MPC Capital Subscription Billing Statement <br> as
+            of {{ $capital_subscription_billing->billable_date }}</h1>
         <table class="mt-4 w-1/2 print:w-full mx-auto print:text-[8pt]">
             <thead>
             <tr class="border-y border-black">
                 <th>NO.</th>
-                <th class="text-left">NAME OF DEPOSITOR</th>
+                <th class="text-left">NAME</th>
                 <th>AMOUNT DUE</th>
                 <th>AMOUNT PAID</th>
             </tr>
             </thead>
             <tbody>
             @php
-                $payments = $this->mso_billing->payments()->join('members', 'mso_billing_payments.member_id', 'members.id')->selectRaw('mso_billing_payments.*, members.alt_full_name as member_name')->orderBy('member_name')->get();
+                $payments = $this->capital_subscription_billing->capital_subscription_billing_payments()->join('members', 'capital_subscription_billing_payments.member_id', 'members.id')->selectRaw('capital_subscription_billing_payments.*, members.alt_full_name as member_name')->orderBy('member_name')->get();
             @endphp
             @forelse ($payments as $payment)
                 <tr>
                     <td class="text-center">{{ $loop->iteration }}</td>
-                    <td class="text-left">{{ $payment->member?->alt_full_name ?? $payment->payee }}</td>
+                    <td class="text-left">{{ $payment->member->alt_full_name }}</td>
                     <td class="text-center">{{ renumber_format($payment->amount_due) }}</td>
                     <td class="text-center">{{ renumber_format($payment->amount_paid) }}</td>
                 </tr>
