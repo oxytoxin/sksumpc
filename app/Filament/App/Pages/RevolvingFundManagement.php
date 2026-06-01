@@ -21,7 +21,7 @@ class RevolvingFundManagement extends Page implements HasForms, HasTable
 
     protected string $view = 'filament.app.pages.revolving-fund-management';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Cashier';
+    protected static string|\UnitEnum|null $navigationGroup = 'Cashier';
 
     protected static ?int $navigationSort = 4;
 
@@ -59,7 +59,7 @@ class RevolvingFundManagement extends Page implements HasForms, HasTable
             ->query(
                 RevolvingFund::query()
                     ->whereDate('transaction_date', config('app.transaction_date'))
-
+                    ->with('withdrawable.member')
             )
             ->paginated(false);
     }
