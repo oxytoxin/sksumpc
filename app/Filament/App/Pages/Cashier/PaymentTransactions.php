@@ -12,6 +12,7 @@ use App\Filament\App\Pages\Cashier\Actions\CashierTransactionsPageMSO;
 use App\Filament\App\Pages\Cashier\Actions\CashierTransactionsPageOthers;
 use App\Filament\App\Pages\Cashier\Actions\CashierTransactionsPageTimeDeposit;
 use App\Filament\App\Pages\Cashier\Traits\HasReceipt;
+use App\Filament\App\Resources\MemberResource;
 use App\Models\Account;
 use App\Models\CashCollectibleAccount;
 use App\Models\CashierTransaction;
@@ -307,6 +308,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                             $formData = $this->form->getState();
                             $member = Member::find($formData['member_id']);
                             $transactions = [];
+                            $mso_links = [];
                             $transaction_type = TransactionType::CRJ();
 
                             foreach ($formData['transactions'] as $key => $transaction) {
@@ -356,11 +358,30 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                         is_deposit: $is_deposit,
                                         data: $data
                                     );
+                                    $mso_links[] = match ($transaction['type']) {
+                                        'savings' => [
+                                            'type' => 'Savings',
+                                            'url' => MemberResource::getUrl('savings-subsidiary-ledger', ['savings_account' => $transaction['data']['savings_account_id']]),
+                                        ],
+                                        'imprest' => [
+                                            'type' => 'Imprest',
+                                            'url' => MemberResource::getUrl('imprest-subsidiary-ledger', ['member' => $member->id]),
+                                        ],
+                                        'love_gift' => [
+                                            'type' => 'Love Gift',
+                                            'url' => MemberResource::getUrl('love-gifts-subsidiary-ledger', ['member' => $member->id]),
+                                        ],
+                                    };
                                 }
 
                                 if ($transaction['type'] == 'time_deposit') {
                                     $data->credit = $transaction['data']['amount'];
-                                    $transactions[] = app(CashierTransactionsPageTimeDeposit::class)->handle($data, $transaction['data']['interest_rate'] / 100, $transaction['data']['number_of_days']);
+                                    $td_result = app(CashierTransactionsPageTimeDeposit::class)->handle($data, $transaction['data']['interest_rate'] / 100, $transaction['data']['number_of_days']);
+                                    $transactions[] = $td_result;
+                                    $mso_links[] = [
+                                        'type' => 'Time Deposit',
+                                        'url' => MemberResource::getUrl('time-deposit-subsidiary-ledger', ['time_deposit_account' => $td_result['time_deposit_account_id']]),
+                                    ];
                                 }
 
                                 if ($transaction['type'] == 'loan') {
@@ -380,7 +401,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                             ]);
                             Notification::make()->title('Transactions successful!')->success()->send();
                             $this->form->fill();
-                            $this->replaceMountedAction('receipt', ['transactions' => $transactions]);
+                            $this->replaceMountedAction('receipt', ['transactions' => $transactions, 'mso_links' => $mso_links]);
                         })
                         ->modalContent(function ($action) {
                             return view('filament.app.pages.cashier.transaction-summary', ['data' => $this->data]);

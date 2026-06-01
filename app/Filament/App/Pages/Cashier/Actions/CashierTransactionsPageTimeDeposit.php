@@ -51,6 +51,7 @@ class CashierTransactionsPageTimeDeposit
             'payment_type' => PaymentType::find($data->payment_type_id)->name,
             'payee' => $member->full_name,
             'remarks' => 'TIME DEPOSIT',
+            'time_deposit_account_id' => $time_deposit_account->id,
         ];
     }
 }
