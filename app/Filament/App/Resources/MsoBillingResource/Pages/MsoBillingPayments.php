@@ -44,7 +44,7 @@
 
         public function getHeading(): string|Htmlable
         {
-            return 'MSO Receivables';
+            return 'MSO '.strtoupper($this->mso_billing->type->getLabel()).' Receivables';
         }
 
         protected function getHeaderActions(): array
@@ -119,7 +119,11 @@
                 Action::make('Export')
                     ->visible(Auth::user()->can('manage payments'))
                     ->action(function () {
-                        $title = str('SKSU MPC MSO BILLING')->append(' - as of ')->append($this->mso_billing->date->format('F Y'))->upper();
+                        $title = str('SKSU MPC MSO ')
+                            ->append($this->mso_billing->type->getLabel())
+                            ->append(' BILLING')
+                            ->append(' - as of ')
+                            ->append($this->mso_billing->date->format('F Y'))->upper();
                         $filename = $title->append('.xlsx');
                         $mso_billing_payments = MsoBillingPayment::whereBelongsTo($this->mso_billing, 'mso_billing')
                             ->join('members', 'mso_billing_payments.member_id', 'members.id')
