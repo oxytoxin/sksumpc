@@ -27,7 +27,7 @@ class ViewMember extends ViewRecord
         return [
             Action::make('credit-and-background')
                 ->label('Credit & Background')
-                ->url(MemberResource::getUrl('credit-and-background.edit', ['record' => $this->record])),
+                ->url(MemberResource::getUrl('edit', ['record' => $this->record])),
             Action::make('membership')
                 ->extraAttributes(['wire:ignore' => true])
                 ->label('Back to Membership Module')

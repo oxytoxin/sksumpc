@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Resources;
 
+use App\Data\ChildData;
 use App\Enums\MemberTypes;
 use App\Filament\App\Resources\MemberResource\Pages;
 use App\Filament\App\Resources\MemberResource\Pages\CbuAmortizationSchedule;
@@ -189,7 +190,26 @@ class MemberResource extends Resource
                                 SpatieMediaLibraryFileUpload::make('profile_photo')
                                     ->avatar()
                                     ->alignCenter()
-                                    ->collection('profile_photo'),
+                                    ->collection('profile_photo')
+                                    ->columnSpanFull(),
+                                Fieldset::make('Member Information')
+                                    ->columns(1)
+                                    ->schema([
+                                        TextInput::make('first_name')
+                                            ->label('First Name')
+                                            ->dehydrateStateUsing(fn ($state) => strtoupper($state))
+                                            ->required()
+                                            ->maxLength(125),
+                                        TextInput::make('last_name')
+                                            ->label('Last Name')
+                                            ->dehydrateStateUsing(fn ($state) => strtoupper($state))
+                                            ->required()
+                                            ->maxLength(125),
+                                        TextInput::make('middle_initial')
+                                            ->label('MI')
+                                            ->dehydrateStateUsing(fn ($state) => $state ? strtoupper($state) : null)
+                                            ->maxLength(1),
+                                    ]),
                             ])
                             ->columnSpan(1),
                         Section::make()
@@ -254,111 +274,97 @@ class MemberResource extends Resource
                     ]),
                 Grid::make(3)
                     ->schema([
-                            TextInput::make('first_name')
-                                ->label('First Name')
-                                ->dehydrateStateUsing(fn ($state) => strtoupper($state))
-                                ->required()
-                                ->maxLength(125),
-                            TextInput::make('last_name')
-                                ->label('Last Name')
-                                ->dehydrateStateUsing(fn ($state) => strtoupper($state))
-                                ->required()
-                                ->maxLength(125),
-                            TextInput::make('middle_initial')
-                                ->label('MI')
-                                ->dehydrateStateUsing(fn ($state) => $state ? strtoupper($state) : null)
-                                ->maxLength(1),
-                            TextInput::make('contact'),
-                            DatePicker::make('dob')
-                                ->before(today()->subYearsNoOverflow(10))
-                                ->validationAttribute('Date of Birth')
-                                ->live(onBlur: true)
-                                ->afterStateUpdated(fn ($set, $state) => $set('age', Carbon::make($state)?->diffInYears(today())))
-                                ->label('Date of Birth'),
-                            TextInput::make('age')->readOnly()->dehydrated(false)->formatStateUsing(fn ($record) => $record?->age),
-                            TextInput::make('place_of_birth')
-                                ->label('Place of Birth'),
-                            Section::make('Address')
-                                ->schema([
-                                    TextInput::make('address')->columnSpanFull(),
-                                    Select::make('region_id')
+                        TextInput::make('contact'),
+                        DatePicker::make('dob')
+                            ->before(today()->subYearsNoOverflow(10))
+                            ->validationAttribute('Date of Birth')
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(fn ($set, $state) => $set('age', Carbon::make($state)?->diffInYears(today())))
+                            ->label('Date of Birth'),
+                        TextInput::make('age')->readOnly()->dehydrated(false)->formatStateUsing(fn ($record) => $record?->age),
+                        TextInput::make('place_of_birth')
+                            ->label('Place of Birth'),
+                        Section::make('Address')
+                            ->schema([
+                                TextInput::make('address')->columnSpanFull(),
+                                Select::make('region_id')
                                     ->live()
                                     ->relationship('region', 'description'),
-                                    Select::make('province_id')
+                                Select::make('province_id')
                                     ->live()
                                     ->disabled(fn ($get) => ! $get('region_id'))
                                     ->relationship('province', 'name', fn ($query, $get) => $query->whereRegionId($get('region_id'))),
-                                    Select::make('municipality_id')
+                                Select::make('municipality_id')
                                     ->live()
                                     ->disabled(fn ($get) => ! $get('province_id'))
                                     ->relationship('municipality', 'name', fn ($query, $get) => $query->whereProvinceId($get('province_id'))),
-                                    Select::make('barangay_id')
+                                Select::make('barangay_id')
                                     ->disabled(fn ($get) => ! $get('municipality_id'))
                                     ->relationship('barangay', 'name', fn ($query, $get) => $query->whereMunicipalityId($get('municipality_id'))),
-                                ])->columns(2),
-                        ]),
+                            ])->columns(2),
+                    ]),
                 Grid::make(3)
                     ->schema([
-                            Select::make('gender_id')
-                                ->relationship('gender', 'name'),
-                            Select::make('civil_status_id')
-                                ->relationship('civil_status', 'name')
-                                ->default(1),
-                            Select::make('religion_id')
-                                ->relationship('religion', 'name')
-                                ->options(Religion::pluck('name', 'id')),
-                        ]),
+                        Select::make('gender_id')
+                            ->relationship('gender', 'name'),
+                        Select::make('civil_status_id')
+                            ->relationship('civil_status', 'name')
+                            ->default(1),
+                        Select::make('religion_id')
+                            ->relationship('religion', 'name')
+                            ->options(Religion::pluck('name', 'id')),
+                    ]),
                 Repeater::make('dependents')
                     ->default([])
                     ->label(fn ($get) => $get('member_type_id') == 4 ? 'Parents' : 'Dependents')
                     ->table([
-                            Repeater\TableColumn::make('Name'),
-                            Repeater\TableColumn::make('Date of Birth'),
-                            Repeater\TableColumn::make('Relationship'),
-                        ])
+                        Repeater\TableColumn::make('Name'),
+                        Repeater\TableColumn::make('Date of Birth'),
+                        Repeater\TableColumn::make('Relationship'),
+                    ])
                     ->schema([
-                            TextInput::make('name')->required(),
-                            DatePicker::make('dob')->format('Y-m-d'),
-                            Select::make('relationship')
-                                ->options([
-                                    'FATHER' => 'FATHER',
-                                    'MOTHER' => 'MOTHER',
-                                    'HUSBAND' => 'HUSBAND',
-                                    'WIFE' => 'WIFE',
-                                    'SON' => 'SON',
-                                    'DAUGHTER' => 'DAUGHTER',
-                                    'BROTHER' => 'BROTHER',
-                                    'SISTER' => 'SISTER',
-                                    'COUSIN' => 'COUSIN',
-                                    'OTHERS' => 'OTHERS',
-                                ])->required(),
-                        ])
+                        TextInput::make('name')->required(),
+                        DatePicker::make('dob')->format('Y-m-d'),
+                        Select::make('relationship')
+                            ->options([
+                                'FATHER' => 'FATHER',
+                                'MOTHER' => 'MOTHER',
+                                'HUSBAND' => 'HUSBAND',
+                                'WIFE' => 'WIFE',
+                                'SON' => 'SON',
+                                'DAUGHTER' => 'DAUGHTER',
+                                'BROTHER' => 'BROTHER',
+                                'SISTER' => 'SISTER',
+                                'COUSIN' => 'COUSIN',
+                                'OTHERS' => 'OTHERS',
+                            ])->required(),
+                    ])
                     ->columnSpanFull(),
                 Repeater::make('beneficiaries')
                     ->default([])
                     ->label('Beneficiaries')
                     ->table([
-                            Repeater\TableColumn::make('Name'),
-                            Repeater\TableColumn::make('Date of Birth'),
-                            Repeater\TableColumn::make('Relationship'),
-                        ])
+                        Repeater\TableColumn::make('Name'),
+                        Repeater\TableColumn::make('Date of Birth'),
+                        Repeater\TableColumn::make('Relationship'),
+                    ])
                     ->schema([
-                            TextInput::make('name')->required(),
-                            DatePicker::make('dob')->format('Y-m-d'),
-                            Select::make('relationship')
-                                ->options([
-                                    'FATHER' => 'FATHER',
-                                    'MOTHER' => 'MOTHER',
-                                    'HUSBAND' => 'HUSBAND',
-                                    'WIFE' => 'WIFE',
-                                    'SON' => 'SON',
-                                    'DAUGHTER' => 'DAUGHTER',
-                                    'BROTHER' => 'BROTHER',
-                                    'SISTER' => 'SISTER',
-                                    'COUSIN' => 'COUSIN',
-                                    'OTHERS' => 'OTHERS',
-                                ])->required(),
-                        ])
+                        TextInput::make('name')->required(),
+                        DatePicker::make('dob')->format('Y-m-d'),
+                        Select::make('relationship')
+                            ->options([
+                                'FATHER' => 'FATHER',
+                                'MOTHER' => 'MOTHER',
+                                'HUSBAND' => 'HUSBAND',
+                                'WIFE' => 'WIFE',
+                                'SON' => 'SON',
+                                'DAUGHTER' => 'DAUGHTER',
+                                'BROTHER' => 'BROTHER',
+                                'SISTER' => 'SISTER',
+                                'COUSIN' => 'COUSIN',
+                                'OTHERS' => 'OTHERS',
+                            ])->required(),
+                    ])
                     ->columnSpanFull(),
                 Select::make('occupation_id')
                     ->relationship('occupation', 'name')
@@ -376,31 +382,144 @@ class MemberResource extends Resource
                 TextInput::make('other_income_sources'),
                 Section::make('Membership Acceptance')
                     ->schema([
-                            TextInput::make('bod_resolution')->label('BOD Resolution'),
-                            DatePicker::make('effectivity_date')->native(false)->label('Membership Date')->required()->default(fn ($livewire) => $livewire->transaction_date),
-                            Hidden::make('type')->default(MembershipStatus::ACCEPTANCE),
-                        ])->relationship('membership_acceptance'),
+                        TextInput::make('bod_resolution')->label('BOD Resolution'),
+                        DatePicker::make('effectivity_date')->native(false)->label('Membership Date')->required()->default(fn ($livewire) => $livewire->transaction_date),
+                        Hidden::make('type')->default(MembershipStatus::ACCEPTANCE),
+                    ])->relationship('membership_acceptance'),
                 Section::make('Initial Capital Subscription')
                     ->hiddenOn('edit')
                     ->visible(fn ($get) => $get('member_type_id'))
                     ->schema([
-                            TextInput::make('number_of_terms')->readOnly()->minValue(0)->default(12),
-                            TextInput::make('number_of_shares')->minValue(0)->default(0)
-                                ->live(true)
-                                ->afterStateUpdated(function ($set, $state, $get) {
-                                    $memberType = MemberType::find($get('member_type_id'));
-                                    $data = ShareCapitalProvider::fromNumberOfShares($state, $memberType->initial_number_of_terms, $memberType->par_value);
-                                    $set('amount_subscribed', $data['amount_subscribed']);
-                                }),
-                            TextInput::make('amount_subscribed')
-                                ->moneymask()->default(0)
-                                ->afterStateUpdated(function ($set, $state, $get) {
-                                    $memberType = MemberType::find($get('member_type_id'));
-                                    $data = ShareCapitalProvider::fromAmountSubscribed($state, $memberType->initial_number_of_terms, $memberType->par_value);
-                                    $set('number_of_shares', $data['number_of_shares']);
-                                }),
-                        ]),
+                        TextInput::make('number_of_terms')->readOnly()->minValue(0)->default(12),
+                        TextInput::make('number_of_shares')->minValue(0)->default(0)
+                            ->live(true)
+                            ->afterStateUpdated(function ($set, $state, $get) {
+                                $memberType = MemberType::find($get('member_type_id'));
+                                $data = ShareCapitalProvider::fromNumberOfShares($state, $memberType->initial_number_of_terms, $memberType->par_value);
+                                $set('amount_subscribed', $data['amount_subscribed']);
+                            }),
+                        TextInput::make('amount_subscribed')
+                            ->moneymask()->default(0)
+                            ->afterStateUpdated(function ($set, $state, $get) {
+                                $memberType = MemberType::find($get('member_type_id'));
+                                $data = ShareCapitalProvider::fromAmountSubscribed($state, $memberType->initial_number_of_terms, $memberType->par_value);
+                                $set('number_of_shares', $data['number_of_shares']);
+                            }),
+                    ]),
+                Section::make('Credit & Background Investigation')
+                    ->hiddenOn('create')
+                    ->statePath('credit_and_background')
+                    ->schema(static::getCreditAndBackgroundFormSchema()),
             ]);
+    }
+
+    public static function getCreditAndBackgroundFormSchema(): array
+    {
+        return [
+            Grid::make(3)
+                ->schema([
+                    TextInput::make('nickname')->maxLength(125),
+                    TextInput::make('nationality')->maxLength(125),
+                    TextInput::make('school')->maxLength(125),
+                ]),
+            Section::make('Spouse Information')
+                ->schema([
+                    Grid::make(3)
+                        ->schema([
+                            TextInput::make('spouse_name')->label('Name')->maxLength(125),
+                            TextInput::make('spouse_nickname')->label('Nickname')->maxLength(125),
+                            TextInput::make('spouse_middle_name')->label('Middle Name')->maxLength(125),
+                        ]),
+                    Grid::make(3)
+                        ->schema([
+                            DatePicker::make('spouse_date_of_birth')->label('Date of Birth')->native(false),
+                            TextInput::make('spouse_age')->label('Age')->numeric()->maxLength(3),
+                            TextInput::make('spouse_contact_number')->label('Contact Number')->maxLength(125),
+                        ]),
+                    Grid::make(3)
+                        ->schema([
+                            TextInput::make('spouse_civil_status')->label('Civil Status')->maxLength(125),
+                            TextInput::make('spouse_nationality')->label('Nationality')->maxLength(125),
+                            TextInput::make('spouse_address')->label('Address')->maxLength(125),
+                        ]),
+                    Grid::make(2)
+                        ->schema([
+                            TextInput::make('spouse_highest_educational_attainment')->label('Highest Educational Attainment')->maxLength(125),
+                            TextInput::make('spouse_school')->label('School')->maxLength(125),
+                        ]),
+                ]),
+            Section::make('Children')
+                ->schema([
+                    Repeater::make('children')
+                        ->default([])
+                        ->hiddenLabel()
+                        ->table([
+                            Repeater\TableColumn::make('Name'),
+                            Repeater\TableColumn::make('Birthdate'),
+                            Repeater\TableColumn::make('Course and School'),
+                        ])
+                        ->schema([
+                            TextInput::make('name')->required()->maxLength(125),
+                            DatePicker::make('birthdate')->native(false)->required(),
+                            TextInput::make('course_and_school')->maxLength(255),
+                        ])
+                        ->columns(3)
+                        ->itemLabel(fn (array $state): ?string => $state['name'] ?? null),
+                ]),
+            Section::make('Employment Verification')
+                ->schema([
+                    Grid::make(3)
+                        ->schema([
+                            TextInput::make('employer')->maxLength(125),
+                            TextInput::make('office_address')->maxLength(255),
+                            TextInput::make('business_form')->maxLength(125),
+                        ]),
+                    Grid::make(3)
+                        ->schema([
+                            TextInput::make('nature_of_business')->label('Nature of Business')->maxLength(125),
+                            TextInput::make('year_connected')->label('Year Connected')->numeric()->maxLength(4),
+                            TextInput::make('position')->maxLength(125),
+                        ]),
+                    TextInput::make('employment_status')->maxLength(125),
+                ]),
+            Section::make('Income Verification')
+                ->schema([
+                    Grid::make(3)
+                        ->schema([
+                            TextInput::make('basic_salary')->numeric()->prefix('₱')->step(0.01),
+                            TextInput::make('allowances')->numeric()->prefix('₱')->step(0.01),
+                            TextInput::make('business_income')->numeric()->prefix('₱')->step(0.01),
+                        ]),
+                    Grid::make(3)
+                        ->schema([
+                            TextInput::make('other_income')->numeric()->prefix('₱')->step(0.01),
+                            TextInput::make('monthly_income')->numeric()->prefix('₱')->step(0.01),
+                            TextInput::make('annual_income')->numeric()->prefix('₱')->step(0.01),
+                        ]),
+                ]),
+        ];
+    }
+
+    public static function getCreditAndBackgroundFormData(?Member $member): array
+    {
+        $cibi = $member?->credit_and_background;
+
+        return array_filter([
+            'nickname' => $cibi?->nickname,
+            'nationality' => $cibi?->nationality,
+            'school' => $cibi?->school,
+            ...static::prefixKeys($cibi?->spouse?->toArray() ?? [], 'spouse_'),
+            'children' => collect($cibi?->children ?? [])->map(fn (ChildData $child): array => $child->toArray())->toArray(),
+            ...($cibi?->employment_verification?->toArray() ?? []),
+            ...($cibi?->income_verification?->toArray() ?? []),
+        ], fn (mixed $value): bool => $value !== null && $value !== []);
+    }
+
+    private static function prefixKeys(array $array, string $prefix): array
+    {
+        return collect($array)
+            ->mapWithKeys(fn (mixed $value, string $key): array => [$prefix.$key => $value])
+            ->toArray();
     }
 
     public static function table(Table $table): Table
@@ -494,11 +613,11 @@ class MemberResource extends Resource
             ->filtersLayout(FiltersLayout::AboveContent)
             ->persistFiltersInSession()
             ->recordActions([
-                    ActionGroup::make([
+                ActionGroup::make([
                     Action::make('credit-and-background')
                         ->label('Credit & Background')
                         ->icon('heroicon-o-identification')
-                        ->url(fn ($record) => MemberResource::getUrl('credit-and-background.edit', ['record' => $record])),
+                        ->url(fn ($record) => MemberResource::getUrl('edit', ['record' => $record])),
 
                     EditAction::make()
                         ->hidden(fn ($record) => $record->terminated_at)
@@ -560,8 +679,8 @@ class MemberResource extends Resource
                             DB::commit();
                             Notification::make()->title('Member terminated.')->success()->send();
                         }),
-                    ]),
-                ])
+                ]),
+            ])
             ->toolbarActions([])
             ->emptyStateActions([])
             ->recordUrl(fn (Member $record) => MemberResource::getUrl('view', ['record' => $record]))
