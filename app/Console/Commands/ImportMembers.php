@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use Throwable;
 use App\Actions\Memberships\CreateMemberInitialAccounts;
 use App\Models\CivilStatus;
 use App\Models\Division;
@@ -16,6 +15,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Schema;
 use Spatie\Permission\Models\Role;
 use Spatie\SimpleExcel\SimpleExcelReader;
+use Throwable;
 
 class ImportMembers extends Command
 {
@@ -82,20 +82,22 @@ class ImportMembers extends Command
                             'NOT CONNECTED' => 3,
                             default => null
                         },
-                        'occupation_description' => trim(strtoupper($row['occupation'])),
                         'division_id' => $divisions[$row['division']] ?? null,
                         'religion_id' => $religions[$row['religion']] ?? null,
                         'gender_id' => $genders[$row['gender']] ?? null,
-                        'civil_status_id' => $civil_statuses[$row['civil_status']] ?? null,
                         'dob' => $row['dob'],
                         'tin' => trim($row['tin']),
                         'place_of_birth' => filled($row['place_of_birth']) ? trim(strtoupper($row['place_of_birth'])) : null,
-                        'present_employer' => filled($row['present_employer']) ? trim(strtoupper($row['present_employer'])) : null,
-                        'annual_income' => filled($row['annual_income']) ? trim($row['annual_income']) : null,
-                        'highest_educational_attainment' => trim(strtoupper($row['highest_educational_attainment'])),
                         'membership_date' => $row['effectivity_date'] ?? '12/31/2024',
                     ]);
                     $member->refresh();
+                    $member->credit_and_background()->create([
+                        'occupation_description' => trim(strtoupper($row['occupation'])),
+                        'civil_status_id' => $civil_statuses[$row['civil_status']] ?? null,
+                        'present_employer' => filled($row['present_employer']) ? trim(strtoupper($row['present_employer'])) : null,
+                        'annual_income' => filled($row['annual_income']) ? trim($row['annual_income']) : null,
+                        'highest_educational_attainment' => trim(strtoupper($row['highest_educational_attainment'])),
+                    ]);
                     $user = User::create([
                         'member_id' => $member->id,
                         'name' => $member->full_name ?? ($member->first_name.' '.$member->last_name),

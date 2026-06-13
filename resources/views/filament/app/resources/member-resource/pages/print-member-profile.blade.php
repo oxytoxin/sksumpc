@@ -23,7 +23,7 @@
                         </tr>
                         <tr>
                             <td class="border border-black px-4">CIVIL STATUS</td>
-                            <td class="border border-black px-4">{{ $member->civil_status?->name }}</td>
+                            <td class="border border-black px-4">{{ $member->credit_and_background?->civil_status?->name }}</td>
                         </tr>
                         <tr>
                             <td class="border border-black px-4">CONTACT NUMBER</td>
@@ -35,7 +35,7 @@
                         </tr>
                         <tr>
                             <td class="border border-black px-4">HIGHEST EDUCATIONAL ATTAINMENT</td>
-                            <td class="border border-black px-4">{{ $member->highest_educational_attainment }}</td>
+                            <td class="border border-black px-4">{{ $member->credit_and_background?->highest_educational_attainment }}</td>
                         </tr>
                         <tr>
                             <td class="border border-black px-4">TIN</td>
@@ -51,24 +51,24 @@
                         </tr>
                         <tr>
                             <td class="border border-black px-4">OCCUPATION</td>
-                            <td class="border border-black px-4">{{ $member->occupation?->name }}</td>
+                            <td class="border border-black px-4">{{ $member->credit_and_background?->occupation?->name }}</td>
                         </tr>
                         <tr>
                             <td class="border border-black px-4">PRESENT EMPLOYER</td>
-                            <td class="border border-black px-4">{{ $member->present_employer }}</td>
+                            <td class="border border-black px-4">{{ $member->credit_and_background?->present_employer }}</td>
                         </tr>
                         <tr>
                             <td class="border border-black px-4">ANNUAL INCOME</td>
-                            <td class="border border-black px-4">{{ $member->annual_income }}</td>
+                            <td class="border border-black px-4">{{ $member->credit_and_background?->annual_income }}</td>
                         </tr>
                         <tr>
                             <td class="border border-black px-4">OTHER INCOME SOURCES</td>
-                            <td class="border border-black px-4">{{ $member->other_income_sources }}</td>
+                            <td class="border border-black px-4">{{ $member->credit_and_background?->other_income_sources }}</td>
                         </tr>
                         <tr>
                             <td colspan="2" class="border border-black px-4">DEPENDENTS</td>
                         </tr>
-                        @forelse ($member->dependents ?? [] as $dependent)
+                        @forelse ($member->credit_and_background?->dependents ?? [] as $dependent)
                             <tr>
                                 <td class="border border-black px-4">NAME</td>
                                 <td class="border border-black px-4">{{ $dependent->name }}</td>

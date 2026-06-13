@@ -4,12 +4,15 @@ use App\Models\Member;
 use App\Models\User;
 use App\Oxytoxin\DTO\Membership\MemberBeneficiary;
 
-it('can store and retrieve monthly salary', function () {
+it('can store and retrieve monthly salary on credit and background', function () {
     $member = Member::find(1);
 
-    $member->update(['monthly_salary' => 25000.50]);
+    $member->credit_and_background()->updateOrCreate(
+        ['member_id' => $member->id],
+        ['monthly_salary' => 25000.50],
+    );
 
-    expect($member->refresh()->monthly_salary)->toBeString('25000.50');
+    expect($member->refresh()->credit_and_background->monthly_salary)->toBeString('25000.50');
 });
 
 it('can store and retrieve beneficiaries as data collection', function () {
@@ -42,12 +45,15 @@ it('has beneficiaries_count virtual column', function () {
     expect($member->refresh()->beneficiaries_count)->toBe(3);
 });
 
-it('can access member view page with new fields', function () {
+it('can access member view page with credit and background fields', function () {
     $this->actingAs(User::find(1));
 
     $member = Member::find(1);
+    $member->credit_and_background()->updateOrCreate(
+        ['member_id' => $member->id],
+        ['monthly_salary' => 30000],
+    );
     $member->update([
-        'monthly_salary' => 30000,
         'beneficiaries' => [
             ['name' => 'BEN ONE', 'dob' => '1985-03-10', 'relationship' => 'WIFE'],
         ],
@@ -57,7 +63,7 @@ it('can access member view page with new fields', function () {
         ->assertOk();
 });
 
-it('can access member edit page with new fields', function () {
+it('can access member edit page with credit and background fields', function () {
     $this->actingAs(User::find(1));
 
     $member = Member::find(1);

@@ -2,13 +2,13 @@
 
 namespace App\Filament\App\Pages;
 
-use Filament\Actions\Action;
 use App\Filament\App\Pages\Cashier\Reports\HasSignatories;
 use App\Models\Loan;
 use App\Models\LoanType;
-use App\Models\Member;
+use App\Models\MemberCreditAndBackground;
 use App\Models\SignatureSet;
 use Auth;
+use Filament\Actions\Action;
 use Filament\Pages\Page;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -23,7 +23,7 @@ class TotalLoanReleasedReport extends Page implements HasTable
 
     protected string $view = 'filament.app.pages.total-loan-released-report';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Loan';
+    protected static string|\UnitEnum|null $navigationGroup = 'Loan';
 
     protected static ?int $navigationSort = 6;
 
@@ -70,19 +70,19 @@ class TotalLoanReleasedReport extends Page implements HasTable
                             ->when($state['value'] == 2, fn ($q) => $q->whereRelation('member', 'terminated_at', '!=', null))
                     ),
                 SelectFilter::make('civil_status')
-                    ->relationship('member.civil_status', 'name'),
+                    ->relationship('member.credit_and_background.civil_status', 'name'),
                 SelectFilter::make('occupation')
-                    ->relationship('member.occupation', 'name'),
+                    ->relationship('member.credit_and_background.occupation', 'name'),
                 SelectFilter::make('highest_educational_attainment')
                     ->label('Highest Educational Attainment')
-                    ->options(Member::whereNotNull('highest_educational_attainment')
+                    ->options(MemberCreditAndBackground::whereNotNull('highest_educational_attainment')
                         ->distinct('highest_educational_attainment')
                         ->pluck('highest_educational_attainment', 'highest_educational_attainment'))
                     ->searchable()
                     ->preload()
                     ->query(
                         fn ($query, $state) => $query
-                            ->when($state['value'], fn ($q, $v) => $q->whereRelation('member', 'highest_educational_attainment', $v))
+                            ->when($state['value'], fn ($q, $v) => $q->whereRelation('member.credit_and_background', 'highest_educational_attainment', $v))
                     ),
                 DateRangeFilter::make('release_date')
                     ->format('m/d/Y')

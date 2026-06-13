@@ -4,7 +4,6 @@ namespace App\Filament\App\Resources;
 
 use App\Data\ChildData;
 use App\Enums\MemberTypes;
-use App\Filament\App\Resources\MemberResource\Pages;
 use App\Filament\App\Resources\MemberResource\Pages\CbuAmortizationSchedule;
 use App\Filament\App\Resources\MemberResource\Pages\CbuSubsidiaryLedger;
 use App\Filament\App\Resources\MemberResource\Pages\CreateMember;
@@ -114,10 +113,10 @@ class MemberResource extends Resource
                         TextEntry::make('address')->label('Address')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                         TextEntry::make('place_of_birth')->label('Place of Birth')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                         TextEntry::make('gender.name')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
-                        TextEntry::make('civil_status.name')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
+                        TextEntry::make('credit_and_background.civil_status.name')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                         TextEntry::make('contact_number')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                         TextEntry::make('religion.name')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
-                        TextEntry::make('highest_educational_attainment')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
+                        TextEntry::make('credit_and_background.highest_educational_attainment')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                         TextEntry::make('tin')->extraAttributes(['class' => 'font-semibold'])->inlineLabel()->label('TIN'),
                         TextEntry::make('member_type.name')->extraAttributes(['class' => 'font-semibold'])->inlineLabel()->label('Member Type'),
                         TextEntry::make('division.name')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
@@ -126,11 +125,11 @@ class MemberResource extends Resource
                     ]),
                     Section::make()
                         ->schema([
-                            TextEntry::make('occupation.name')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
-                            TextEntry::make('occupation_description')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
-                            TextEntry::make('annual_income')->money('PHP')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
-                            TextEntry::make('monthly_salary')->money('PHP')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
-                            TextEntry::make('other_income_sources')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
+                            TextEntry::make('credit_and_background.occupation.name')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
+                            TextEntry::make('credit_and_background.occupation_description')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
+                            TextEntry::make('credit_and_background.annual_income')->money('PHP')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
+                            TextEntry::make('credit_and_background.monthly_salary')->money('PHP')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
+                            TextEntry::make('credit_and_background.other_income_sources')->extraAttributes(['class' => 'font-semibold'])->inlineLabel(),
                         ]),
                     Section::make()
                         ->schema([
@@ -224,6 +223,7 @@ class MemberResource extends Resource
                                             ->options(Position::pluck('name', 'id')),
                                     ]),
                                 Select::make('member_type_id')
+                                    ->label('Member Type')
                                     ->relationship('member_type', 'name')
                                     ->live()
                                     ->afterStateUpdated(function ($state, $set) {
@@ -231,12 +231,12 @@ class MemberResource extends Resource
                                         $set('number_of_shares', round($member_type->default_number_of_shares, 0));
                                         $set('amount_subscribed', round($member_type->default_amount_subscribed, 0));
                                         if ($member_type?->id == MemberTypes::REGULAR->value) {
-                                            $set('present_employer', 'SKSU-Sultan Kudarat State University');
+                                            $set('credit_and_background.present_employer', 'SKSU-Sultan Kudarat State University');
 
                                             return;
                                         }
                                         if ($member_type?->id == MemberTypes::LABORATORY->value) {
-                                            $set('dependents', [
+                                            $set('credit_and_background.dependents', [
                                                 [
                                                     'relationship' => 'FATHER',
                                                 ],
@@ -246,16 +246,18 @@ class MemberResource extends Resource
                                             ]);
                                         }
                                         $set('member_subtype_id', null);
-                                        $set('present_employer', '');
+                                        $set('credit_and_background.present_employer', '');
                                     })
                                     ->required(),
                                 Select::make('member_subtype_id')
+                                    ->label('Member Subtype')
                                     ->relationship('member_subtype', 'name')
                                     ->options(fn ($get) => MemberSubtype::whereMemberTypeId($get('member_type_id'))->pluck('name', 'id'))
                                     ->required(fn ($get) => $get('member_type_id') == MemberTypes::REGULAR->value)
                                     ->visible(fn ($get) => $get('member_type_id') == MemberTypes::REGULAR->value)
                                     ->live(),
                                 Select::make('division_id')
+                                    ->label('Division')
                                     ->visible(fn ($get) => $get('member_type_id') != MemberTypes::LABORATORY->value)
                                     ->relationship('division', 'name'),
                                 TextInput::make('grade')
@@ -288,58 +290,35 @@ class MemberResource extends Resource
                             ->schema([
                                 TextInput::make('address')->columnSpanFull(),
                                 Select::make('region_id')
+                                    ->label('Region')
                                     ->live()
                                     ->relationship('region', 'description'),
                                 Select::make('province_id')
+                                    ->label('Province')
                                     ->live()
                                     ->disabled(fn ($get) => ! $get('region_id'))
                                     ->relationship('province', 'name', fn ($query, $get) => $query->whereRegionId($get('region_id'))),
                                 Select::make('municipality_id')
+                                    ->label('Municipality')
                                     ->live()
                                     ->disabled(fn ($get) => ! $get('province_id'))
                                     ->relationship('municipality', 'name', fn ($query, $get) => $query->whereProvinceId($get('province_id'))),
                                 Select::make('barangay_id')
+                                    ->label('Barangay')
                                     ->disabled(fn ($get) => ! $get('municipality_id'))
                                     ->relationship('barangay', 'name', fn ($query, $get) => $query->whereMunicipalityId($get('municipality_id'))),
                             ])->columns(2),
                     ]),
-                Grid::make(3)
+                Grid::make(2)
                     ->schema([
                         Select::make('gender_id')
+                            ->label('Gender')
                             ->relationship('gender', 'name'),
-                        Select::make('civil_status_id')
-                            ->relationship('civil_status', 'name')
-                            ->default(1),
                         Select::make('religion_id')
+                            ->label('Religion')
                             ->relationship('religion', 'name')
                             ->options(Religion::pluck('name', 'id')),
                     ]),
-                Repeater::make('dependents')
-                    ->default([])
-                    ->label(fn ($get) => $get('member_type_id') == 4 ? 'Parents' : 'Dependents')
-                    ->table([
-                        Repeater\TableColumn::make('Name'),
-                        Repeater\TableColumn::make('Date of Birth'),
-                        Repeater\TableColumn::make('Relationship'),
-                    ])
-                    ->schema([
-                        TextInput::make('name')->required(),
-                        DatePicker::make('dob')->format('Y-m-d'),
-                        Select::make('relationship')
-                            ->options([
-                                'FATHER' => 'FATHER',
-                                'MOTHER' => 'MOTHER',
-                                'HUSBAND' => 'HUSBAND',
-                                'WIFE' => 'WIFE',
-                                'SON' => 'SON',
-                                'DAUGHTER' => 'DAUGHTER',
-                                'BROTHER' => 'BROTHER',
-                                'SISTER' => 'SISTER',
-                                'COUSIN' => 'COUSIN',
-                                'OTHERS' => 'OTHERS',
-                            ])->required(),
-                    ])
-                    ->columnSpanFull(),
                 Repeater::make('beneficiaries')
                     ->default([])
                     ->label('Beneficiaries')
@@ -366,20 +345,6 @@ class MemberResource extends Resource
                             ])->required(),
                     ])
                     ->columnSpanFull(),
-                Select::make('occupation_id')
-                    ->relationship('occupation', 'name')
-                    ->options(Occupation::pluck('name', 'id')),
-                TextInput::make('occupation_description'),
-                TextInput::make('highest_educational_attainment')
-                    ->maxLength(125),
-                TextInput::make('present_employer'),
-                TextInput::make('annual_income')
-                    ->moneymask()
-                    ->minValue(0),
-                TextInput::make('monthly_salary')
-                    ->moneymask()
-                    ->minValue(0),
-                TextInput::make('other_income_sources'),
                 Section::make('Membership Acceptance')
                     ->schema([
                         TextInput::make('bod_resolution')->label('BOD Resolution'),
@@ -421,6 +386,59 @@ class MemberResource extends Resource
                     TextInput::make('nickname')->maxLength(125),
                     TextInput::make('nationality')->maxLength(125),
                     TextInput::make('school')->maxLength(125),
+                ]),
+            Section::make('Personal Information')
+                ->schema([
+                    Grid::make(3)
+                        ->schema([
+                            Select::make('civil_status_id')
+                                ->label('Civil Status')
+                                ->options(\App\Models\CivilStatus::pluck('name', 'id'))
+                                ->default(1),
+                            Select::make('occupation_id')
+                                ->label('Occupation')
+                                ->options(Occupation::pluck('name', 'id')),
+                            TextInput::make('occupation_description'),
+                            TextInput::make('highest_educational_attainment')
+                                ->maxLength(125),
+                            TextInput::make('present_employer'),
+                            TextInput::make('other_income_sources'),
+                        ]),
+                    Grid::make(3)
+                        ->schema([
+                            TextInput::make('annual_income')
+                                ->moneymask()
+                                ->minValue(0),
+                            TextInput::make('monthly_salary')
+                                ->moneymask()
+                                ->minValue(0),
+                        ]),
+                    Repeater::make('dependents')
+                        ->default([])
+                        ->label(fn ($get) => $get('') == 4 ? 'Parents' : 'Dependents')
+                        ->table([
+                            Repeater\TableColumn::make('Name'),
+                            Repeater\TableColumn::make('Date of Birth'),
+                            Repeater\TableColumn::make('Relationship'),
+                        ])
+                        ->schema([
+                            TextInput::make('name')->required(),
+                            DatePicker::make('dob')->format('Y-m-d'),
+                            Select::make('relationship')
+                                ->options([
+                                    'FATHER' => 'FATHER',
+                                    'MOTHER' => 'MOTHER',
+                                    'HUSBAND' => 'HUSBAND',
+                                    'WIFE' => 'WIFE',
+                                    'SON' => 'SON',
+                                    'DAUGHTER' => 'DAUGHTER',
+                                    'BROTHER' => 'BROTHER',
+                                    'SISTER' => 'SISTER',
+                                    'COUSIN' => 'COUSIN',
+                                    'OTHERS' => 'OTHERS',
+                                ])->required(),
+                        ])
+                        ->columnSpanFull(),
                 ]),
             Section::make('Spouse Information')
                 ->schema([
@@ -508,18 +526,40 @@ class MemberResource extends Resource
             'nickname' => $cibi?->nickname,
             'nationality' => $cibi?->nationality,
             'school' => $cibi?->school,
-            ...static::prefixKeys($cibi?->spouse?->toArray() ?? [], 'spouse_'),
+            'civil_status_id' => $cibi?->civil_status_id,
+            'occupation_id' => $cibi?->occupation_id,
+            'occupation_description' => $cibi?->occupation_description,
+            'present_employer' => $cibi?->present_employer,
+            'highest_educational_attainment' => $cibi?->highest_educational_attainment,
+            'annual_income' => $cibi?->annual_income,
+            'monthly_salary' => $cibi?->monthly_salary,
+            'other_income_sources' => $cibi?->other_income_sources,
+            'dependents' => $cibi?->dependents ?? [],
+            'spouse_name' => $cibi?->spouse_name,
+            'spouse_nickname' => $cibi?->spouse_nickname,
+            'spouse_middle_name' => $cibi?->spouse_middle_name,
+            'spouse_date_of_birth' => $cibi?->spouse_date_of_birth,
+            'spouse_age' => $cibi?->spouse_age,
+            'spouse_contact_number' => $cibi?->spouse_contact_number,
+            'spouse_civil_status' => $cibi?->spouse_civil_status,
+            'spouse_nationality' => $cibi?->spouse_nationality,
+            'spouse_address' => $cibi?->spouse_address,
+            'spouse_highest_educational_attainment' => $cibi?->spouse_highest_educational_attainment,
+            'spouse_school' => $cibi?->spouse_school,
             'children' => collect($cibi?->children ?? [])->map(fn (ChildData $child): array => $child->toArray())->toArray(),
-            ...($cibi?->employment_verification?->toArray() ?? []),
-            ...($cibi?->income_verification?->toArray() ?? []),
+            'employer' => $cibi?->employer,
+            'office_address' => $cibi?->office_address,
+            'business_form' => $cibi?->business_form,
+            'nature_of_business' => $cibi?->nature_of_business,
+            'year_connected' => $cibi?->year_connected,
+            'position' => $cibi?->position,
+            'employment_status' => $cibi?->employment_status,
+            'basic_salary' => $cibi?->basic_salary,
+            'allowances' => $cibi?->allowances,
+            'business_income' => $cibi?->business_income,
+            'other_income' => $cibi?->other_income,
+            'monthly_income' => $cibi?->monthly_income,
         ], fn (mixed $value): bool => $value !== null && $value !== []);
-    }
-
-    private static function prefixKeys(array $array, string $prefix): array
-    {
-        return collect($array)
-            ->mapWithKeys(fn (mixed $value, string $key): array => [$prefix.$key => $value])
-            ->toArray();
     }
 
     public static function table(Table $table): Table
@@ -552,7 +592,7 @@ class MemberResource extends Resource
                 TextColumn::make('age')
                     ->numeric()
                     ->alignCenter(),
-                TextColumn::make('civil_status.name')
+                TextColumn::make('credit_and_background.civil_status.name')
                     ->alignCenter(),
                 TextColumn::make('gender.name')
                     ->sortable()
@@ -595,14 +635,8 @@ class MemberResource extends Resource
                             ->when($state['value'] == 1, fn ($q) => $q->whereNull('terminated_at'))
                             ->when($state['value'] == 2, fn ($q) => $q->whereNotNull('terminated_at'))
                     ),
-                SelectFilter::make('civil_status')
-                    ->relationship('civil_status', 'name'),
-                SelectFilter::make('occupation')
-                    ->relationship('occupation', 'name'),
-                SelectFilter::make('highest_educational_attainment')
-                    ->options(Member::whereNotNull('highest_educational_attainment')
-                        ->distinct('highest_educational_attainment')
-                        ->pluck('highest_educational_attainment', 'highest_educational_attainment'))
+                SelectFilter::make('credit_and_background.civil_status')
+                    ->relationship('credit_and_background.civil_status', 'name')
                     ->searchable()
                     ->preload(),
                 DateRangeFilter::make('membership_date')
@@ -614,11 +648,6 @@ class MemberResource extends Resource
             ->persistFiltersInSession()
             ->recordActions([
                 ActionGroup::make([
-                    Action::make('credit-and-background')
-                        ->label('Credit & Background')
-                        ->icon('heroicon-o-identification')
-                        ->url(fn ($record) => MemberResource::getUrl('edit', ['record' => $record])),
-
                     EditAction::make()
                         ->hidden(fn ($record) => $record->terminated_at)
                         ->visible(Auth::user()->can('manage members')),
@@ -704,7 +733,6 @@ class MemberResource extends Resource
             'print' => PrintMemberProfile::route('/{member}/print'),
             'print-loan-history' => PrintLoanHistory::route('/{member}/print-loan-history'),
             'edit' => EditMember::route('/{record}/edit'),
-            'credit-and-background.edit' => Pages\EditMemberCreditAndBackground::route('/{record}/credit-and-background'),
             'loan.edit' => EditMemberLoan::route('/{record}/{loan}/edit'),
             'cbu-subsidiary-ledger' => CbuSubsidiaryLedger::route('cbu-subsidiary-ledger/{member}'),
             'cbu-amortization-schedule' => CbuAmortizationSchedule::route('cbu-amortization-schedule/{cbu}'),

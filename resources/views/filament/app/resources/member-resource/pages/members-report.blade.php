@@ -31,7 +31,7 @@
                                 {{ $member->dob?->format('m/d/Y') }}
                             </td>
                             <td class="doc-table-cell">{{ $member->age }}</td>
-                            <td class="doc-table-cell">{{ $member->civil_status?->name }}
+                            <td class="doc-table-cell">{{ $member->credit_and_background?->civil_status?->name }}
                             </td>
                             <td class="doc-table-cell">{{ $member->gender?->name }}</td>
                             <td class="doc-table-cell">{{ $member->tin }}</td>
