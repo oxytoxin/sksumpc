@@ -223,28 +223,51 @@ class CreditAndBackgroundInvestigationForm extends Page
         $this->form->fill();
         if ($this->cibi->details) {
             $this->data = $this->cibi->details;
-        } else {
-
         }
+
         $comaker_members = $this->loan_application->load('comakers.member.credit_and_background')->comakers->pluck('member');
         $loan_members = collect([$this->loan_application->member])->merge($comaker_members);
-        $income_verification = collect($this->data['income_verification'] ?? [])->map(function ($item) use ($loan_members) {
-            if ($item['particulars'] == 'Annual Income') {
-                return $this->fillRepeaterComakers($item['particulars'], $loan_members->map(fn ($m) => $m?->credit_and_background?->annual_income)->toArray());
-            }
 
-            return $item;
-        });
-        $employment_verification = collect($this->data['employment_verification'] ?? [])->map(function ($item) use ($loan_members) {
-            if ($item['particulars'] == 'Employer') {
-                return $this->fillRepeaterComakers($item['particulars'], $loan_members->map(fn ($m) => $m?->credit_and_background?->present_employer)->toArray());
-            }
+        $employment_mapping = [
+            'Employer' => 'present_employer',
+            'Office Address' => 'office_address',
+            'Business Form' => 'business_form',
+            'Nature of Business' => 'nature_of_business',
+            'Year Connected' => 'year_connected',
+            'Position' => 'position',
+            'Status of Employment' => 'employment_status',
+        ];
 
-            return $item;
-        });
-        $this->data['income_verification'] = $income_verification->toArray();
-        $this->data['employment_verification'] = $employment_verification->toArray();
+        $income_mapping = [
+            'Basic Salary' => 'basic_salary',
+            'Allowances' => 'allowances',
+            'Business Income' => 'business_income',
+            'Other Income' => 'other_income',
+            'Monthly Income' => 'monthly_income',
+            'Annual Income' => 'annual_income',
+        ];
 
+        $this->data['income_verification'] = collect($this->data['income_verification'] ?? [])
+            ->map(function ($item) use ($loan_members, $income_mapping) {
+                if (isset($income_mapping[$item['particulars']])) {
+                    $column = $income_mapping[$item['particulars']];
+
+                    return $this->fillRepeaterComakers($item['particulars'], $loan_members->map(fn ($m) => $m?->credit_and_background?->{$column})->toArray());
+                }
+
+                return $item;
+            })->toArray();
+
+        $this->data['employment_verification'] = collect($this->data['employment_verification'] ?? [])
+            ->map(function ($item) use ($loan_members, $employment_mapping) {
+                if (isset($employment_mapping[$item['particulars']])) {
+                    $column = $employment_mapping[$item['particulars']];
+
+                    return $this->fillRepeaterComakers($item['particulars'], $loan_members->map(fn ($m) => $m?->credit_and_background?->{$column})->toArray());
+                }
+
+                return $item;
+            })->toArray();
     }
 
     private function fillRepeaterComakers(string $array_key, array $values)
