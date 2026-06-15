@@ -503,6 +503,8 @@
                 $this->data['transactions'] = [];
             }
 
+            $blockData['payment_type_id'] = PaymentTypes::CASH->value;
+
             $this->data['transactions'][] = [
                 'type' => $blockType,
                 'data' => $blockData,
