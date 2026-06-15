@@ -2,6 +2,8 @@
 
     namespace App\Filament\App\Resources;
 
+    use Filament\Actions\Action;
+    use Filament\Actions\ViewAction;
     use Filament\Forms\Components\Repeater;
     use Filament\Schemas\Components\Utilities\Get;
     use Filament\Schemas\Components\View;
@@ -59,8 +61,11 @@
                 ->filters([
                     //
                 ])
+                ->recordUrl(fn(Member $record) => MemberResource::getUrl('view', ['record' => $record]))
                 ->recordActions([
                     EditAction::make(),
+                    ViewAction::make('view')
+                        ->url(fn(Member $record) => MemberResource::getUrl('view', ['record' => $record]))
                 ])
                 ->toolbarActions([
                     BulkActionGroup::make([
