@@ -5,6 +5,7 @@ namespace App\Filament\App\Resources\LoanApplicationResource\Pages;
 use App\Filament\App\Resources\LoanApplicationResource;
 use App\Models\CreditAndBackgroundInvestigation;
 use App\Models\LoanApplication;
+use App\Models\MemberCreditAndBackground;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Repeater;
@@ -38,7 +39,7 @@ class CreditAndBackgroundInvestigationForm extends Page
         return $this->genericForm($schema);
     }
 
-    private function kabuhayanForm(Schema $schema)
+    private function kabuhayanForm(Schema $schema): Schema
     {
         return $schema
             ->components([
@@ -97,7 +98,7 @@ class CreditAndBackgroundInvestigationForm extends Page
             ->statePath('data');
     }
 
-    private function genericForm(Schema $schema)
+    private function genericForm(Schema $schema): Schema
     {
         return $schema->components([
             Section::make('Basic Information')
@@ -194,7 +195,7 @@ class CreditAndBackgroundInvestigationForm extends Page
         ])->statePath('data');
     }
 
-    public function save()
+    public function save(): void
     {
         $this->cibi->update([
             'details' => $this->form->getState(),
@@ -202,7 +203,7 @@ class CreditAndBackgroundInvestigationForm extends Page
         Notification::make()->title('Saved!')->success()->send();
     }
 
-    private function keyvaluefield($name, $key)
+    private function keyvaluefield(string $name, string $key): KeyValue
     {
         return KeyValue::make($key.'.'.$name)
             ->deletable(false)
@@ -215,17 +216,32 @@ class CreditAndBackgroundInvestigationForm extends Page
             ]);
     }
 
-    public function mount()
+    public function mount(): void
     {
         $this->cibi = CreditAndBackgroundInvestigation::query()->firstOrCreate([
             'loan_application_id' => $this->loan_application->id,
         ]);
+
+        $this->loan_application->loadMissing('member.credit_and_background', 'comakers.member.credit_and_background');
+
         $this->form->fill();
         if ($this->cibi->details) {
             $this->data = $this->cibi->details;
         }
 
-        $comaker_members = $this->loan_application->load('comakers.member.credit_and_background')->comakers->pluck('member');
+        $borrowerCreditAndBackground = $this->loan_application->member->credit_and_background;
+
+        $this->data['borrower'] = $this->fillBlankValues(
+            $this->data['borrower'] ?? [],
+            $this->borrowerInformation($borrowerCreditAndBackground),
+        );
+
+        $this->data['spouse'] = $this->fillBlankValues(
+            $this->data['spouse'] ?? [],
+            $this->spouseInformation($borrowerCreditAndBackground),
+        );
+
+        $comaker_members = $this->loan_application->comakers->pluck('member');
         $loan_members = collect([$this->loan_application->member])->merge($comaker_members);
 
         $employment_mapping = [
@@ -270,7 +286,59 @@ class CreditAndBackgroundInvestigationForm extends Page
             })->toArray();
     }
 
-    private function fillRepeaterComakers(string $array_key, array $values)
+    /**
+     * @return array<string, mixed>
+     */
+    private function borrowerInformation(?MemberCreditAndBackground $creditAndBackground): array
+    {
+        return [
+            'nickname' => $creditAndBackground?->nickname,
+            'nationality' => $creditAndBackground?->nationality,
+            'school' => $creditAndBackground?->school,
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function spouseInformation(?MemberCreditAndBackground $creditAndBackground): array
+    {
+        return [
+            'name' => $creditAndBackground?->spouse_name,
+            'nickname' => $creditAndBackground?->spouse_nickname,
+            'middle_name' => $creditAndBackground?->spouse_middle_name,
+            'date_of_birth' => $creditAndBackground?->spouse_date_of_birth?->format('Y-m-d'),
+            'age' => $creditAndBackground?->spouse_age,
+            'contact_number' => $creditAndBackground?->spouse_contact_number,
+            'civil_status' => $creditAndBackground?->spouse_civil_status,
+            'nationality' => $creditAndBackground?->spouse_nationality,
+            'address' => $creditAndBackground?->spouse_address,
+            'highest_educational_attainment' => $creditAndBackground?->spouse_highest_educational_attainment,
+            'school' => $creditAndBackground?->spouse_school,
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $state
+     * @param  array<string, mixed>  $defaults
+     * @return array<string, mixed>
+     */
+    private function fillBlankValues(array $state, array $defaults): array
+    {
+        foreach ($defaults as $key => $value) {
+            if (! array_key_exists($key, $state) || blank($state[$key])) {
+                $state[$key] = $value;
+            }
+        }
+
+        return $state;
+    }
+
+    /**
+     * @param  array<int, mixed>  $values
+     * @return array<string, mixed>
+     */
+    private function fillRepeaterComakers(string $array_key, array $values): array
     {
         $keys = ['borrower', 'coborrower_1', 'coborrower_2'];
 

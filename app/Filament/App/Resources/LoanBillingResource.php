@@ -47,7 +47,7 @@
                     Select::make('member_type_id')
                         ->label('Member Type')
                         ->reactive()
-                        ->options(MemberType::pluck('name', 'id')),
+                        ->options(MemberType::whereNot('name', 'ORGANIZATION')->pluck('name', 'id')),
                     Select::make('member_subtype_id')
                         ->label('Member Subtype')
                         ->visible(fn($get) => MemberSubtype::whereMemberTypeId($get('member_type_id'))->count())
