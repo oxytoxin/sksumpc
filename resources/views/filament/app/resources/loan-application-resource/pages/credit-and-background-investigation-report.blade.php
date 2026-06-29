@@ -1,4 +1,8 @@
 <x-filament-panels::page>
+    @php
+        $details = $this->reportDetails();
+    @endphp
+
     @if ($this->loan_application->loan_type_id == 5)
         <x-app.cashier.reports.report-layout>
             <div class="print:text-[8pt]">
@@ -13,12 +17,12 @@
                             <div class="px-8">
                                 <h5>Name: {{ $this->loan_application_member->full_name }}</h5>
                                 <h5>Address: {{ $this->loan_application_member->address }}</h5>
-                                <h5>Name of Spouse: {{ $cibi->details['name_of_spouse'] ?? '' }}</h5>
-                                <h5>No. of Dependents: {{ $cibi->details['number_of_dependents'] ?? '' }}</h5>
+                                <h5>Name of Spouse: {{ $details['name_of_spouse'] ?? '' }}</h5>
+                                <h5>No. of Dependents: {{ $details['number_of_dependents'] ?? '' }}</h5>
                                 <div class="mt-2 flex gap-4 px-8">
-                                    <h5>Elementary: {{ $cibi->details['elementary'] ?? '' }}</h5>
-                                    <h5>High School: {{ $cibi->details['high_school'] ?? '' }}</h5>
-                                    <h5>College: {{ $cibi->details['college'] ?? '' }}</h5>
+                                    <h5>Elementary: {{ $details['elementary'] ?? '' }}</h5>
+                                    <h5>High School: {{ $details['high_school'] ?? '' }}</h5>
+                                    <h5>College: {{ $details['college'] ?? '' }}</h5>
                                 </div>
                                 <h5>Contact No.: {{ $this->loan_application_member->contact }}</h5>
                             </div>
@@ -35,29 +39,29 @@
                             <div class="px-8">
                                 <h5>1. Source of Income:</h5>
                                 <div class="px-8">
-                                    <h6>Main: {{ $cibi->details['financial_capability']['main_income_source'] ?? '' }}</h6>
+                                    <h6>Main: {{ $details['financial_capability']['main_income_source'] ?? '' }}</h6>
                                     <h6>Others: </h6>
                                     <ul class="px-4">
-                                        @foreach ($cibi->details['financial_capability']['other_income_sources'] ?? [] as $other_income_source)
+                                        @foreach ($details['financial_capability']['other_income_sources'] ?? [] as $other_income_source)
                                             <li>{{ $other_income_source }}</li>
                                         @endforeach
                                     </ul>
                                 </div>
-                                <h5>Total Income: {{ $cibi->details['financial_capability']['total_income'] ?? '' }}</h5>
+                                <h5>Total Income: {{ $details['financial_capability']['total_income'] ?? '' }}</h5>
                             </div>
                         </div>
                         <div>
                             <h4 class="font-bold">IV. Project Information</h4>
                             <div class="px-8">
-                                <h5>1. Name of Project: {{ $cibi->details['project_information']['name'] ?? '' }}</h5>
-                                <h5>2. Date Started: {{ $cibi->details['project_information']['date_started'] ?? '' }}</h5>
-                                <h5>3. Commodities: {{ $cibi->details['project_information']['commodities'] ?? '' }}</h5>
-                                <h5>4. Starting Capital: {{ $cibi->details['project_information']['starting_capital'] ?? '' }}</h5>
-                                <h5>5. Present Capital: {{ $cibi->details['project_information']['present_capital'] ?? '' }}</h5>
-                                <h5>6. Business Income (monthly): {{ $cibi->details['project_information']['monthly_business_income'] ?? '' }}</h5>
+                                <h5>1. Name of Project: {{ $details['project_information']['name'] ?? '' }}</h5>
+                                <h5>2. Date Started: {{ $details['project_information']['date_started'] ?? '' }}</h5>
+                                <h5>3. Commodities: {{ $details['project_information']['commodities'] ?? '' }}</h5>
+                                <h5>4. Starting Capital: {{ $details['project_information']['starting_capital'] ?? '' }}</h5>
+                                <h5>5. Present Capital: {{ $details['project_information']['present_capital'] ?? '' }}</h5>
+                                <h5>6. Business Income (monthly): {{ $details['project_information']['monthly_business_income'] ?? '' }}</h5>
                                 <h5>7. Business Expenses (pls. specify):</h5>
                                 <ul class="px-8">
-                                    @foreach ($cibi->details['project_information']['business_expenses'] ?? [] as $business_expense)
+                                    @foreach ($details['project_information']['business_expenses'] ?? [] as $business_expense)
                                         <li>{{ $business_expense }}</li>
                                     @endforeach
                                 </ul>
@@ -75,7 +79,7 @@
                                     <th class="doc-table-header-cell">Status</th>
                                 </thead>
                                 <tbody>
-                                    @foreach ($cibi->details['assets'] ?? [] as $asset)
+                                    @foreach ($details['assets'] ?? [] as $asset)
                                         <tr>
                                             <td class="doc-table-cell-center">{{ $asset['name'] ?? '' }}</td>
                                             <td class="doc-table-cell-center">{{ $asset['value'] ?? '' }}</td>
@@ -95,7 +99,7 @@
                                     <th class="doc-table-header-cell">Rate</th>
                                 </thead>
                                 <tbody>
-                                    @foreach ($cibi->details['existing_structure'] ?? [] as $existing_structure)
+                                    @foreach ($details['existing_structure'] ?? [] as $existing_structure)
                                         <tr>
                                             <td class="doc-table-cell-center">{{ $existing_structure['name'] ?? '' }}</td>
                                             <td class="doc-table-cell-center">{{ $existing_structure['rate'] ?? '' }}</td>
@@ -119,7 +123,7 @@
                         </div>
                     </div>
                     <div class="mt-4">
-                        <h4>Collateral Presented: {{ $cibi->details['collateral'] ?? '' }}</h4>
+                        <h4>Collateral Presented: {{ $details['collateral'] ?? '' }}</h4>
                         <h4>Remarks:</h4>
                         <p></p>
                     </div>
@@ -210,134 +214,152 @@
                     <tr>
                         <th class="doc-table-cell">Name</th>
                         <td class="doc-table-cell">{{ $this->loan_application_member->full_name }}</td>
-                        <td class="doc-table-cell">{{ $cibi->details['spouse']['name'] ?? '' }}</td>
+                        <td class="doc-table-cell">{{ $details['spouse']['name'] ?? '' }}</td>
                     </tr>
                     <tr>
                         <th class="doc-table-cell">Nickname/Alias</th>
-                        <td class="doc-table-cell">{{ $cibi->details['borrower']['nickname'] ?? '' }}</td>
-                        <td class="doc-table-cell">{{ $cibi->details['spouse']['nickname'] ?? '' }}</td>
+                        <td class="doc-table-cell">{{ $details['borrower']['nickname'] ?? '' }}</td>
+                        <td class="doc-table-cell">{{ $details['spouse']['nickname'] ?? '' }}</td>
                     </tr>
                     <tr>
                         <th class="doc-table-cell">Middle Name</th>
                         <td class="doc-table-cell">{{ $this->loan_application_member->middle_name }}</td>
-                        <td class="doc-table-cell">{{ $cibi->details['spouse']['middle_name'] ?? '' }}</td>
+                        <td class="doc-table-cell">{{ $details['spouse']['middle_name'] ?? '' }}</td>
                     </tr>
                     <tr>
                         <th class="doc-table-cell">Date of Birth</th>
                         <td class="doc-table-cell">{{ $this->loan_application_member->dob?->format('m/d/Y') }}</td>
-                        <td class="doc-table-cell">{{ $cibi->details['spouse']['date_of_birth'] ?? null ? date_create($cibi->details['spouse']['date_of_birth'])->format('m/d/Y') : '' }}</td>
+                        <td class="doc-table-cell">{{ $this->reportValue($details['spouse'] ?? [], 'date_of_birth') }}</td>
                     </tr>
                     <tr>
                         <th class="doc-table-cell">Age</th>
                         <td class="doc-table-cell">{{ $this->loan_application_member->age }}</td>
-                        <td class="doc-table-cell">{{ $cibi->details['spouse']['age'] ?? '' }}</td>
+                        <td class="doc-table-cell">{{ $details['spouse']['age'] ?? '' }}</td>
                     </tr>
                     <tr>
                         <th class="doc-table-cell">Contact No.</th>
                         <td class="doc-table-cell">{{ $this->loan_application_member->contact }}</td>
-                        <td class="doc-table-cell">{{ $cibi->details['spouse']['contact_number'] ?? '' }}</td>
+                        <td class="doc-table-cell">{{ $details['spouse']['contact_number'] ?? '' }}</td>
                     </tr>
                     <tr>
                         <th class="doc-table-cell">Civil Status</th>
-                        <td class="doc-table-cell">{{ $this->loan_application_member->civil_status?->name }}</td>
-                        <td class="doc-table-cell">{{ $cibi->details['spouse']['civil_status'] ?? '' }}</td>
+                        <td class="doc-table-cell">{{ $details['borrower']['civil_status'] ?? '' }}</td>
+                        <td class="doc-table-cell">{{ $details['spouse']['civil_status'] ?? '' }}</td>
                     </tr>
                     <tr>
                         <th class="doc-table-cell">Nationality</th>
-                        <td class="doc-table-cell">{{ $cibi->details['borrower']['nationality'] ?? '' }}</td>
-                        <td class="doc-table-cell">{{ $cibi->details['spouse']['nationality'] ?? '' }}</td>
+                        <td class="doc-table-cell">{{ $details['borrower']['nationality'] ?? '' }}</td>
+                        <td class="doc-table-cell">{{ $details['spouse']['nationality'] ?? '' }}</td>
                     </tr>
                     <tr>
                         <th class="doc-table-cell">Address</th>
                         <td class="doc-table-cell">{{ $this->loan_application_member->address }}</td>
-                        <td class="doc-table-cell">{{ $cibi->details['spouse']['address'] ?? '' }}</td>
+                        <td class="doc-table-cell">{{ $details['spouse']['address'] ?? '' }}</td>
                     </tr>
                     <tr>
                         <th class="doc-table-cell">Highest Educational Attainment</th>
-                        <td class="doc-table-cell">{{ $this->loan_application_member->highest_educational_attainment }}</td>
-                        <td class="doc-table-cell">{{ $cibi->details['spouse']['highest_educational_attainment'] ?? '' }}</td>
+                        <td class="doc-table-cell">{{ $details['borrower']['highest_educational_attainment'] ?? '' }}</td>
+                        <td class="doc-table-cell">{{ $details['spouse']['highest_educational_attainment'] ?? '' }}</td>
                     </tr>
                     <tr>
                         <th class="doc-table-cell">School</th>
-                        <td class="doc-table-cell">{{ $cibi->details['borrower']['school'] ?? '' }}</td>
-                        <td class="doc-table-cell">{{ $cibi->details['spouse']['school'] ?? '' }}</td>
+                        <td class="doc-table-cell">{{ $details['borrower']['school'] ?? '' }}</td>
+                        <td class="doc-table-cell">{{ $details['spouse']['school'] ?? '' }}</td>
                     </tr>
                 </table>
+                @php
+                    $children = $details['children'] ?? [];
+                    $childrenColumns = $this->reportColumns($children, ['name', 'birthdate', 'age', 'course_and_school']);
+                @endphp
                 <table class="doc-table print:text-[8pt]">
                     <tr>
-                        <th class="doc-table-header-cell">2. Name of Children</th>
-                        <th class="doc-table-header-cell">Birthdate</th>
-                        <th class="doc-table-header-cell">Age</th>
-                        <th class="doc-table-header-cell">Course/School</th>
+                        @foreach ($childrenColumns as $column)
+                            <th class="doc-table-header-cell">{{ $loop->first ? '2. '.$this->reportColumnLabel($column) : $this->reportColumnLabel($column) }}</th>
+                        @endforeach
                     </tr>
-                    @forelse ($cibi->details['children'] ?? [] as $child)
+                    @forelse ($children as $child)
                         <tr>
-                            <th class="doc-table-cell">{{ $child['name'] ?? '' }}</th>
-                            <th class="doc-table-cell">{{ $child['birthdate'] ?? null ? date_create($child['birthdate'])->format('m/d/Y') : null }}</th>
-                            <td class="doc-table-cell">{{ $child['birthdate'] ?? null ? today()->diffInYears($child['birthdate']) : null }}</td>
-                            <td class="doc-table-cell">{{ $child['course_and_school'] ?? '' }}</td>
+                            @foreach ($childrenColumns as $column)
+                                <td class="doc-table-cell">{{ $this->reportValue($child, $column) }}</td>
+                            @endforeach
                         </tr>
                     @empty
                         <tr>
-                            <td class="doc-table-cell" colspan="4">No children found.</td>
+                            <td class="doc-table-cell" colspan="{{ max(1, count($childrenColumns)) }}">No children found.</td>
                         </tr>
                     @endforelse
                 </table>
+                @php
+                    $assets = $details['assets'] ?? [];
+                    $assetColumns = $this->reportColumns($assets, ['name', 'value', 'status']);
+                @endphp
                 <table class="doc-table print:text-[8pt]">
                     <tr>
-                        <th class="doc-table-header-cell">3. Assets</th>
-                        <th class="doc-table-header-cell">Value</th>
-                        <th class="doc-table-header-cell">Status</th>
+                        @foreach ($assetColumns as $column)
+                            <th class="doc-table-header-cell">{{ $loop->first ? '3. '.$this->reportColumnLabel($column) : $this->reportColumnLabel($column) }}</th>
+                        @endforeach
                     </tr>
-                    @forelse ($cibi->details['assets'] ?? [] as $asset)
+                    @forelse ($assets as $asset)
                         <tr>
-                            <th class="doc-table-cell">{{ $asset['name'] ?? '' }}</th>
-                            <td class="doc-table-cell">{{ $asset['value'] ?? '' }}</td>
-                            <td class="doc-table-cell">{{ $asset['status'] ?? '' }}</td>
+                            @foreach ($assetColumns as $column)
+                                <td class="doc-table-cell">{{ $this->reportValue($asset, $column) }}</td>
+                            @endforeach
                         </tr>
                     @empty
                         <tr>
-                            <td class="doc-table-cell" colspan="3">No assets found.</td>
+                            <td class="doc-table-cell" colspan="{{ max(1, count($assetColumns)) }}">No assets found.</td>
                         </tr>
                     @endforelse
                 </table>
+                @php
+                    $employmentVerification = $details['employment_verification'] ?? [];
+                    $employmentColumns = $this->reportColumns($employmentVerification, ['particulars', 'borrower', 'coborrower_1', 'coborrower_2']);
+                @endphp
                 <table class="doc-table print:text-[8pt]">
                     <tr>
-                        <th class="doc-table-header-cell" colspan="4">4. Employment Verification</th>
+                        <th class="doc-table-header-cell" colspan="{{ max(1, count($employmentColumns)) }}">4. Employment Verification</th>
                     </tr>
                     <tr>
-                        <th class="doc-table-header-cell">Particulars</th>
-                        <th class="doc-table-header-cell">Borrower</th>
-                        <th class="doc-table-header-cell">Co-Borrower 1</th>
-                        <th class="doc-table-header-cell">Co-Borrower 2</th>
+                        @foreach ($employmentColumns as $column)
+                            <th class="doc-table-header-cell">{{ $this->reportColumnLabel($column) }}</th>
+                        @endforeach
                     </tr>
-                    @foreach ($cibi->details['employment_verification'] ?? [] as $key => $verification_item)
+                    @forelse ($employmentVerification as $verificationItem)
                         <tr>
-                            <th class="doc-table-cell">{{ $verification_item['particulars'] }}</th>
-                            <td class="doc-table-cell">{{ $verification_item['borrower'] ?? '' }}</td>
-                            <td class="doc-table-cell">{{ $verification_item['coborrower_1'] ?? '' }}</td>
-                            <td class="doc-table-cell">{{ $verification_item['coborrower_2'] ?? '' }}</td>
+                            @foreach ($employmentColumns as $column)
+                                <td class="doc-table-cell">{{ $this->reportValue($verificationItem, $column) }}</td>
+                            @endforeach
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr>
+                            <td class="doc-table-cell" colspan="{{ max(1, count($employmentColumns)) }}">No employment verification found.</td>
+                        </tr>
+                    @endforelse
                 </table>
-                <table class="doc-table">
+                @php
+                    $incomeVerification = $details['income_verification'] ?? [];
+                    $incomeColumns = $this->reportColumns($incomeVerification, ['particulars', 'borrower', 'coborrower_1', 'coborrower_2']);
+                @endphp
+                <table class="doc-table print:text-[8pt]">
                     <tr>
-                        <th class="doc-table-header-cell" colspan="4">5. Income Verification</th>
+                        <th class="doc-table-header-cell" colspan="{{ max(1, count($incomeColumns)) }}">5. Income Verification</th>
                     </tr>
                     <tr>
-                        <th class="doc-table-header-cell">Particulars</th>
-                        <th class="doc-table-header-cell">Borrower</th>
-                        <th class="doc-table-header-cell">Co-Borrower 1</th>
-                        <th class="doc-table-header-cell">Co-Borrower 2</th>
+                        @foreach ($incomeColumns as $column)
+                            <th class="doc-table-header-cell">{{ $this->reportColumnLabel($column) }}</th>
+                        @endforeach
                     </tr>
-                    @foreach ($cibi->details['income_verification'] ?? [] as $key => $verification_item)
+                    @forelse ($incomeVerification as $verificationItem)
                         <tr>
-                            <th class="doc-table-cell">{{ $verification_item['particulars'] }}</th>
-                            <td class="doc-table-cell">{{ $verification_item['borrower'] ?? '' }}</td>
-                            <td class="doc-table-cell">{{ $verification_item['coborrower_1'] ?? '' }}</td>
-                            <td class="doc-table-cell">{{ $verification_item['coborrower_2'] ?? '' }}</td>
+                            @foreach ($incomeColumns as $column)
+                                <td class="doc-table-cell">{{ $this->reportValue($verificationItem, $column) }}</td>
+                            @endforeach
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr>
+                            <td class="doc-table-cell" colspan="{{ max(1, count($incomeColumns)) }}">No income verification found.</td>
+                        </tr>
+                    @endforelse
                 </table>
                 <table class="doc-table print:text-[8pt]">
                     <tr>
