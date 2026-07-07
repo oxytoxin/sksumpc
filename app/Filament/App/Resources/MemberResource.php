@@ -341,6 +341,8 @@
                                     'BROTHER' => 'BROTHER',
                                     'SISTER' => 'SISTER',
                                     'COUSIN' => 'COUSIN',
+                                    'NIECE' => 'NIECE',
+                                    'NEPHEW' => 'NEPHEW',
                                     'OTHERS' => 'OTHERS',
                                 ])->required(),
                         ])
@@ -459,6 +461,8 @@
                                         'BROTHER' => 'BROTHER',
                                         'SISTER' => 'SISTER',
                                         'COUSIN' => 'COUSIN',
+                                        'NIECE' => 'NIECE',
+                                        'NEPHEW' => 'NEPHEW',
                                         'OTHERS' => 'OTHERS',
                                     ])->required(),
                             ])
