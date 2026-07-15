@@ -24,6 +24,7 @@ use NumberFormatter;
  * @property int $loan_application_id
  * @property int $loan_type_id
  * @property int|null $disbursement_voucher_id
+ * @property int|null $journal_entry_voucher_id
  * @property string $reference_number
  * @property string|null $check_number
  * @property string $priority_number
@@ -43,12 +44,13 @@ use NumberFormatter;
  * @property numeric $outstanding_balance
  * @property CarbonImmutable $release_date
  * @property CarbonImmutable $transaction_date
+ * @property CarbonImmutable $maturity_date
  * @property bool $posted
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
  * @property-read \App\Models\DisbursementVoucher|null $disbursement_voucher
+ * @property-read \App\Models\JournalEntryVoucher|null $journal_entry_voucher
  * @property-read mixed $deductions_list
- * @property-read mixed $maturity_date
  * @property-read mixed $last_payment_before_transaction_date
  * @property-read \App\Models\LoanPayment|null $last_payment
  * @property-read \App\Models\LoanAccount $loan_account
@@ -115,7 +117,7 @@ class Loan extends Model
         'insurance_amount' => 'decimal:2',
         'family_insurance' => 'decimal:2',
         'loan_buyout' => 'decimal:2',
-            'interest_rate' => 'decimal:4',
+        'interest_rate' => 'decimal:4',
         'monthly_payment' => 'decimal:2',
         'outstanding_balance' => 'decimal:2',
         'release_date' => 'immutable_date',
@@ -132,6 +134,21 @@ class Loan extends Model
     public function disbursement_voucher()
     {
         return $this->belongsTo(DisbursementVoucher::class);
+    }
+
+    public function journal_entry_voucher(): BelongsTo
+    {
+        return $this->belongsTo(JournalEntryVoucher::class);
+    }
+
+    public function isZeroNetAmount(): bool
+    {
+        return $this->net_amount !== null && bccomp((string) $this->net_amount, '0.00', 2) === 0;
+    }
+
+    public function hasNegativeNetAmount(): bool
+    {
+        return $this->net_amount !== null && bccomp((string) $this->net_amount, '0.00', 2) < 0;
     }
 
     public function loan_account()

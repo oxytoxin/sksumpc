@@ -1,11 +1,12 @@
 <?php
 
-    namespace App\Models;
+namespace App\Models;
 
-    use Illuminate\Database\Eloquent\Factories\HasFactory;
-    use Illuminate\Database\Eloquent\Model;
+use Carbon\CarbonInterface;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
-    /**
+/**
  * @property int $id
  * @property int|null $voucher_type_id
  * @property string $name
@@ -21,6 +22,7 @@
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\JournalEntryVoucherItem> $journal_entry_voucher_items
  * @property-read int|null $journal_entry_voucher_items_count
  * @property-read \App\Models\VoucherType|null $voucher_type
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntryVoucher newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntryVoucher newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntryVoucher query()
@@ -36,46 +38,47 @@
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntryVoucher whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntryVoucher whereVoucherNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JournalEntryVoucher whereVoucherTypeId($value)
+ *
  * @mixin \Eloquent
  */
-    class JournalEntryVoucher extends Model
+class JournalEntryVoucher extends Model
+{
+    use HasFactory;
+
+    protected $casts = [
+        'transaction_date' => 'immutable_date',
+    ];
+
+    public function voucher_type()
     {
-        use HasFactory;
-
-        protected $casts = [
-            'transaction_date' => 'immutable_date',
-        ];
-
-        public function voucher_type()
-        {
-            return $this->belongsTo(VoucherType::class);
-        }
-
-        public function journal_entry_voucher_items()
-        {
-            return $this->hasMany(JournalEntryVoucherItem::class);
-        }
-
-        protected static function booted()
-        {
-            static::creating(function (JournalEntryVoucher $journalEntryVoucher) {
-                $journalEntryVoucher->bookkeeper_id = auth()->id();
-            });
-        }
-
-        public static function generateCode()
-        {
-            $lastCode = JournalEntryVoucher::latest()->first()?->reference_number;
-
-            $now = now()->format('Y-m');
-
-            if (!$lastCode) {
-                return "JEV {$now}-001";
-            }
-
-            preg_match('/-(\d+)$/', $lastCode, $m);
-            $next = ((int) $m[1]) + 1;
-
-            return "JEV {$now}-{$next}";
-        }
+        return $this->belongsTo(VoucherType::class);
     }
+
+    public function journal_entry_voucher_items()
+    {
+        return $this->hasMany(JournalEntryVoucherItem::class);
+    }
+
+    protected static function booted()
+    {
+        static::creating(function (JournalEntryVoucher $journalEntryVoucher) {
+            $journalEntryVoucher->bookkeeper_id = auth()->id();
+        });
+    }
+
+    public static function generateCode(?CarbonInterface $date = null): string
+    {
+        $lastCode = JournalEntryVoucher::latest()->first()?->reference_number;
+
+        $yearAndMonth = ($date ?? now())->format('Y-m');
+
+        if (! $lastCode) {
+            return "JEV {$yearAndMonth}-001";
+        }
+
+        preg_match('/-(\d+)$/', $lastCode, $m);
+        $next = ((int) ($m[1] ?? 0)) + 1;
+
+        return "JEV {$yearAndMonth}-{$next}";
+    }
+}
