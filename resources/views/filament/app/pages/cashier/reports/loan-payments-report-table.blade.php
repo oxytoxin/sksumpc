@@ -31,13 +31,13 @@
                 <tr>
                     <th class="doc-table-cell-center">{{ $loop->iteration }}</th>
                     <td class="doc-table-cell-center">
-                        {{ $record->member->full_name }}
+                        {{ $record->member_name }}
                     </td>
                     <td class="doc-table-cell-center">
-                        {{ $record->loan->loan_account->number }}
+                        {{ $record->account_number }}
                     </td>
                     <td class="doc-table-cell-center">
-                        {{ $record->loan->loan_type->name }}
+                        {{ $record->loan_type_name }}
                     </td>
                     <td class="doc-table-cell-center">
                         {{ $record->reference_number }}

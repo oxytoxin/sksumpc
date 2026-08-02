@@ -18,6 +18,9 @@ use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 
 class PaymentTransactions extends Page implements HasTable
@@ -35,21 +38,12 @@ class PaymentTransactions extends Page implements HasTable
     public function table(Table $table): Table
     {
         return $table
+            ->defaultKeySort(false)
             ->query(function ($livewire) {
                 $type = $livewire->tableFilters['transaction_type']['transaction_type'];
                 $loan_type_id = $livewire->tableFilters['transaction_type']['loan_type_id'];
                 if ($type == 'loan') {
-                    $loan_query = LoanPayment::query()->with(['loan.loan_account'])->whereIn('payment_type_id', [
-                        PaymentTypes::CASH->value,
-                        // PaymentTypes::CHECK->value,
-                        PaymentTypes::ADA->value,
-                        PaymentTypes::DEPOSIT_SLIP->value,
-                    ]);
-                    if ($loan_type_id) {
-                        $loan_query->whereRelation('loan', 'loan_type_id', $loan_type_id);
-                    }
-
-                    return $loan_query;
+                    return $this->getLoanReportQuery($loan_type_id);
                 }
                 if ($type == 'rice') {
                     return Transaction::query()->whereIn('account_id', [OthersTransactionExcludedAccounts::RICE->value])->where('transaction_type_id', TransactionTypes::CRJ->value);
@@ -129,7 +123,12 @@ class PaymentTransactions extends Page implements HasTable
                     ),
                 DateRangeFilter::make('transaction_date')
                     ->format('m/d/Y')
-                    ->displayFormat('MM/DD/YYYY'),
+                    ->displayFormat('MM/DD/YYYY')
+                    ->modifyQueryUsing(fn (Builder $query, ?Carbon $startDate, ?Carbon $endDate) => $this->applyLoanReportDateRange(
+                        $query,
+                        $startDate,
+                        $endDate,
+                    )),
                 Filter::make('transaction_type')
                     ->columns(2)
                     ->columnSpan(2)
@@ -161,6 +160,113 @@ class PaymentTransactions extends Page implements HasTable
             ])
             ->filtersLayout(FiltersLayout::AboveContent)
             ->paginated(false);
+    }
+
+    public function getLoanReportQuery(?int $loanTypeId = null): Builder
+    {
+        $query = LoanPayment::query()
+            ->join('members', 'loan_payments.member_id', '=', 'members.id')
+            ->join('loans', 'loan_payments.loan_id', '=', 'loans.id')
+            ->join('accounts as loan_accounts', 'loans.loan_account_id', '=', 'loan_accounts.id')
+            ->join('loan_types as payment_loan_types', 'loans.loan_type_id', '=', 'payment_loan_types.id')
+            ->leftJoin('loan_billings', 'loan_payments.loan_billing_id', '=', 'loan_billings.id')
+            ->leftJoin('loan_types as billing_loan_types', 'loan_billings.loan_type_id', '=', 'billing_loan_types.id')
+            ->whereIn('loan_payments.payment_type_id', [
+                PaymentTypes::CASH->value,
+                // PaymentTypes::CHECK->value,
+                PaymentTypes::ADA->value,
+                PaymentTypes::DEPOSIT_SLIP->value,
+            ])
+            ->selectRaw("
+                MIN(loan_payments.id) as id,
+                CASE
+                    WHEN loan_payments.loan_billing_id IS NULL THEN CONCAT('payment-', loan_payments.id)
+                    ELSE CONCAT('billing-', loan_payments.loan_billing_id)
+                END as row_key,
+                CASE
+                    WHEN loan_payments.loan_billing_id IS NULL THEN loan_payments.member_id
+                    ELSE NULL
+                END as member_id,
+                CASE
+                    WHEN loan_payments.loan_billing_id IS NULL THEN members.full_name
+                    ELSE loan_billings.reference_number
+                END as member_name,
+                CASE
+                    WHEN loan_payments.loan_billing_id IS NULL THEN loan_accounts.number
+                    ELSE loan_billings.reference_number
+                END as account_number,
+                CASE
+                    WHEN loan_payments.loan_billing_id IS NULL THEN payment_loan_types.name
+                    ELSE billing_loan_types.name
+                END as loan_type_name,
+                CASE
+                    WHEN loan_payments.loan_billing_id IS NULL THEN loan_payments.reference_number
+                    ELSE loan_billings.reference_number
+                END as reference_number,
+                SUM(loan_payments.amount) as amount,
+                SUM(loan_payments.principal_payment) as principal_payment,
+                SUM(loan_payments.interest_payment) as interest_payment,
+                SUM(loan_payments.surcharge_payment) as surcharge_payment,
+                {$this->getLoanReportTransactionDateExpression()} as transaction_date
+            ")
+            ->groupByRaw("
+                CASE
+                    WHEN loan_payments.loan_billing_id IS NULL THEN CONCAT('payment-', loan_payments.id)
+                    ELSE CONCAT('billing-', loan_payments.loan_billing_id)
+                END,
+                CASE
+                    WHEN loan_payments.loan_billing_id IS NULL THEN loan_payments.member_id
+                    ELSE NULL
+                END,
+                CASE
+                    WHEN loan_payments.loan_billing_id IS NULL THEN members.full_name
+                    ELSE loan_billings.reference_number
+                END,
+                CASE
+                    WHEN loan_payments.loan_billing_id IS NULL THEN loan_accounts.number
+                    ELSE loan_billings.reference_number
+                END,
+                CASE
+                    WHEN loan_payments.loan_billing_id IS NULL THEN payment_loan_types.name
+                    ELSE billing_loan_types.name
+                END,
+                CASE
+                    WHEN loan_payments.loan_billing_id IS NULL THEN loan_payments.reference_number
+                    ELSE loan_billings.reference_number
+                END,
+                {$this->getLoanReportTransactionDateExpression()}
+            ")
+            ->orderBy('transaction_date')
+            ->orderBy('id');
+
+        if ($loanTypeId) {
+            $query->whereRelation('loan', 'loan_type_id', $loanTypeId);
+        }
+
+        return $query;
+    }
+
+    public function applyLoanReportDateRange(Builder $query, ?\DateTimeInterface $startDate, ?\DateTimeInterface $endDate): Builder
+    {
+        if ($startDate === null || $endDate === null) {
+            return $query;
+        }
+
+        $from = $query->getQuery()->from;
+
+        if (is_string($from) && str_contains($from, 'loan_payments')) {
+            return $query->whereBetween(DB::raw($this->getLoanReportTransactionDateExpression()), [$startDate, $endDate]);
+        }
+
+        return $query->whereBetween('transaction_date', [$startDate, $endDate]);
+    }
+
+    public function getLoanReportTransactionDateExpression(): string
+    {
+        return 'CASE
+                    WHEN loan_payments.loan_billing_id IS NULL THEN loan_payments.transaction_date
+                    ELSE COALESCE(loan_billings.or_date, loan_billings.date)
+                END';
     }
 
     public function mount()

@@ -34,7 +34,8 @@ class PostLoanBillingPayments
                 amount: $lp->amount_paid,
                 remarks: $loanBilling->name,
                 transaction_date: $loanBilling->or_date ?? $loanBilling->date,
-                from_billing_type: FromBillingTypes::LOAN_BILLING->value
+                from_billing_type: FromBillingTypes::LOAN_BILLING->value,
+                loan_billing_id: $loanBilling->id,
             ), $transactionType);
 
             $lp->update([

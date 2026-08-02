@@ -14,6 +14,7 @@ class LoanPaymentData extends Data
         public ?string $remarks = null,
         public $transaction_date = null,
         public $from_billing_type = null,
+        public ?int $loan_billing_id = null,
     ) {
         $this->transaction_date = $transaction_date ?? today();
     }

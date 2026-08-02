@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property int $id
  * @property bool $buy_out
+ * @property int|null $loan_billing_id
  * @property int $loan_id
  * @property int $member_id
  * @property numeric $amount
@@ -23,6 +25,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Carbon\CarbonImmutable|null $created_at
  * @property \Carbon\CarbonImmutable|null $updated_at
  * @property-read \App\Models\User|null $cashier
+ * @property-read \App\Models\LoanBilling|null $loan_billing
  * @property-read \App\Models\Loan $loan
  * @property-read \App\Models\Member $member
  *
@@ -63,17 +66,22 @@ class LoanPayment extends Model
         'buy_out' => 'boolean',
     ];
 
-    public function loan()
+    public function loan_billing(): BelongsTo
+    {
+        return $this->belongsTo(LoanBilling::class);
+    }
+
+    public function loan(): BelongsTo
     {
         return $this->belongsTo(Loan::class);
     }
 
-    public function member()
+    public function member(): BelongsTo
     {
         return $this->belongsTo(Member::class);
     }
 
-    public function cashier()
+    public function cashier(): BelongsTo
     {
         return $this->belongsTo(User::class, 'cashier_id');
     }
