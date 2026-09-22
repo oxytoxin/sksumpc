@@ -2,7 +2,10 @@
 
 namespace App\Models;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Staudenmeir\LaravelAdjacencyList\Eloquent\Collection;
 
 /**
  * @property int $id
@@ -14,37 +17,38 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property string|null $tag
  * @property string|null $accountable_type
  * @property int|null $accountable_id
- * @property \Carbon\CarbonImmutable|null $created_at
- * @property \Carbon\CarbonImmutable|null $updated_at
+ * @property CarbonImmutable|null $created_at
+ * @property CarbonImmutable|null $updated_at
  * @property int $show_sum
  * @property string $sum_description
  * @property int $sort
- * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, \App\Models\ImprestAccount> $children
+ * @property-read Collection<int, ImprestAccount> $children
  * @property-read int|null $children_count
- * @property-read \App\Models\Member|null $member
- * @property-read \App\Models\ImprestAccount|null $parent
+ * @property-read Member|null $member
+ * @property-read ImprestAccount|null $parent
  * @property-read int $depth
  * @property-read string $path
  * @property-read string $fullname
- * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, \App\Models\ImprestAccount> $ancestors The model's recursive parents.
+ * @property-read Collection<int, ImprestAccount> $ancestors The model's recursive parents.
  * @property-read int|null $ancestors_count
- * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, \App\Models\ImprestAccount> $ancestorsAndSelf The model's recursive parents and itself.
+ * @property-read Collection<int, ImprestAccount> $ancestorsAndSelf The model's recursive parents and itself.
  * @property-read int|null $ancestors_and_self_count
- * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, \App\Models\ImprestAccount> $bloodline The model's ancestors, descendants and itself.
+ * @property-read Collection<int, ImprestAccount> $bloodline The model's ancestors, descendants and itself.
  * @property-read int|null $bloodline_count
- * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, \App\Models\ImprestAccount> $childrenAndSelf The model's direct children and itself.
+ * @property-read Collection<int, ImprestAccount> $childrenAndSelf The model's direct children and itself.
  * @property-read int|null $children_and_self_count
- * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, \App\Models\ImprestAccount> $descendants The model's recursive children.
+ * @property-read Collection<int, ImprestAccount> $descendants The model's recursive children.
  * @property-read int|null $descendants_count
- * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, \App\Models\ImprestAccount> $descendantsAndSelf The model's recursive children and itself.
+ * @property-read Collection<int, ImprestAccount> $descendantsAndSelf The model's recursive children and itself.
  * @property-read int|null $descendants_and_self_count
- * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, \App\Models\ImprestAccount> $parentAndSelf The model's direct parent and itself.
+ * @property-read Collection<int, ImprestAccount> $parentAndSelf The model's direct parent and itself.
  * @property-read int|null $parent_and_self_count
- * @property-read \App\Models\ImprestAccount|null $rootAncestor The model's topmost parent.
- * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, \App\Models\ImprestAccount> $siblings The parent's other children.
+ * @property-read ImprestAccount|null $rootAncestor The model's topmost parent.
+ * @property-read Collection<int, ImprestAccount> $siblings The parent's other children.
  * @property-read int|null $siblings_count
- * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, \App\Models\ImprestAccount> $siblingsAndSelf All the parent's children.
+ * @property-read Collection<int, ImprestAccount> $siblingsAndSelf All the parent's children.
  * @property-read int|null $siblings_and_self_count
+ *
  * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, static> all($columns = ['*'])
  * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|ImprestAccount breadthFirst()
  * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|ImprestAccount depthFirst()
@@ -78,13 +82,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|ImprestAccount withCode()
  * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|ImprestAccount withGlobalScopes(array $scopes)
  * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|ImprestAccount withRelationshipExpression($direction, callable $constraint, $initialDepth, $from = null, $maxDepth = null)
+ *
  * @mixin \Eloquent
  */
 class ImprestAccount extends Account
 {
     use HasFactory;
 
-    public function member()
+    public function member(): BelongsTo
     {
         return $this->belongsTo(Member::class);
     }

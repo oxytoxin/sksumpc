@@ -2,17 +2,17 @@
 
 namespace App\Filament\App\Pages\Cashier;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Actions;
-use Filament\Actions\Action;
 use App\Actions\Savings\CreateNewSavingsAccount;
 use App\Actions\Savings\GenerateAccountNumber;
 use App\Models\Member;
 use App\Oxytoxin\DTO\MSO\Accounts\SavingsAccountData;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Schema;
 
 class NewAccountTransactions extends Page
 {
@@ -27,7 +27,7 @@ class NewAccountTransactions extends Page
         return $schema
             ->components([
                 Select::make('member_id')
-                    ->options(Member::pluck('full_name', 'id'))
+                    ->options(Member::whereNull('terminated_at')->pluck('full_name', 'id'))
                     ->searchable()
                     ->preload()
                     ->label('Member')

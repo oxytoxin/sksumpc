@@ -5,6 +5,7 @@ namespace App\Actions\MSO;
 use App\Actions\Transactions\CreateTransaction;
 use App\Enums\MsoTransactionTag;
 use App\Enums\MsoType;
+use App\Models\Account;
 use App\Models\Imprest;
 use App\Models\LoveGift;
 use App\Models\Saving;
@@ -12,11 +13,14 @@ use App\Oxytoxin\DTO\Transactions\TransactionData;
 use App\Oxytoxin\Providers\ImprestsProvider;
 use App\Oxytoxin\Providers\LoveGiftProvider;
 use App\Oxytoxin\Providers\SavingsProvider;
+use Illuminate\Validation\ValidationException;
 
 class DepositToMsoAccount
 {
     public function handle(MsoType $msoType, TransactionData $data)
     {
+        $this->ensureAccountAcceptsTransactions($data);
+
         switch ($msoType) {
             case MsoType::SAVINGS:
                 $data->tag = MsoTransactionTag::MEMBER_SAVINGS_DEPOSIT->value;
@@ -41,6 +45,17 @@ class DepositToMsoAccount
         app(CreateTransaction::class)->handle($data);
 
         return $record;
+    }
+
+    private function ensureAccountAcceptsTransactions(TransactionData $data): void
+    {
+        $account = Account::find($data->account_id);
+
+        if ($account?->isClosed() || $account?->member?->terminated_at) {
+            throw ValidationException::withMessages([
+                'account_id' => 'Closed accounts cannot accept deposits.',
+            ]);
+        }
     }
 
     private function depositToSavingsAccount(TransactionData $data)

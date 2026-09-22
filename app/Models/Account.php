@@ -4,10 +4,13 @@ namespace App\Models;
 
 use App\Enums\TransactionTypes;
 use App\Oxytoxin\Traits\CreatesChildren;
+use Carbon\CarbonImmutable;
 use DB;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Staudenmeir\LaravelAdjacencyList\Eloquent\Collection;
 use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 
 /**
@@ -20,40 +23,41 @@ use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
  * @property string|null $tag
  * @property string|null $accountable_type
  * @property int|null $accountable_id
- * @property \Carbon\CarbonImmutable|null $created_at
- * @property \Carbon\CarbonImmutable|null $updated_at
+ * @property CarbonImmutable|null $created_at
+ * @property CarbonImmutable|null $updated_at
  * @property int $show_sum
  * @property string $sum_description
  * @property int $sort
- * @property-read \App\Models\AccountType $account_type
- * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, \App\Models\Account> $children
+ * @property-read AccountType $account_type
+ * @property-read Collection<int, Account> $children
  * @property-read int|null $children_count
- * @property-read \App\Models\Member|null $member
- * @property-read \App\Models\Account|null $parent
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Transaction> $transactions
+ * @property-read Member|null $member
+ * @property-read Account|null $parent
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Transaction> $transactions
  * @property-read int|null $transactions_count
  * @property-read int $depth
  * @property-read string $path
  * @property-read string $fullname
- * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, \App\Models\Account> $ancestors The model's recursive parents.
+ * @property-read Collection<int, Account> $ancestors The model's recursive parents.
  * @property-read int|null $ancestors_count
- * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, \App\Models\Account> $ancestorsAndSelf The model's recursive parents and itself.
+ * @property-read Collection<int, Account> $ancestorsAndSelf The model's recursive parents and itself.
  * @property-read int|null $ancestors_and_self_count
- * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, \App\Models\Account> $bloodline The model's ancestors, descendants and itself.
+ * @property-read Collection<int, Account> $bloodline The model's ancestors, descendants and itself.
  * @property-read int|null $bloodline_count
- * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, \App\Models\Account> $childrenAndSelf The model's direct children and itself.
+ * @property-read Collection<int, Account> $childrenAndSelf The model's direct children and itself.
  * @property-read int|null $children_and_self_count
- * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, \App\Models\Account> $descendants The model's recursive children.
+ * @property-read Collection<int, Account> $descendants The model's recursive children.
  * @property-read int|null $descendants_count
- * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, \App\Models\Account> $descendantsAndSelf The model's recursive children and itself.
+ * @property-read Collection<int, Account> $descendantsAndSelf The model's recursive children and itself.
  * @property-read int|null $descendants_and_self_count
- * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, \App\Models\Account> $parentAndSelf The model's direct parent and itself.
+ * @property-read Collection<int, Account> $parentAndSelf The model's direct parent and itself.
  * @property-read int|null $parent_and_self_count
- * @property-read \App\Models\Account|null $rootAncestor The model's topmost parent.
- * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, \App\Models\Account> $siblings The parent's other children.
+ * @property-read Account|null $rootAncestor The model's topmost parent.
+ * @property-read Collection<int, Account> $siblings The parent's other children.
  * @property-read int|null $siblings_count
- * @property-read \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, \App\Models\Account> $siblingsAndSelf All the parent's children.
+ * @property-read Collection<int, Account> $siblingsAndSelf All the parent's children.
  * @property-read int|null $siblings_and_self_count
+ *
  * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Collection<int, static> all($columns = ['*'])
  * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|Account breadthFirst()
  * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|Account depthFirst()
@@ -87,6 +91,7 @@ use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
  * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|Account withCode()
  * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|Account withGlobalScopes(array $scopes)
  * @method static \Staudenmeir\LaravelAdjacencyList\Eloquent\Builder<static>|Account withRelationshipExpression($direction, callable $constraint, $initialDepth, $from = null, $maxDepth = null)
+ *
  * @mixin \Eloquent
  */
 class Account extends Model
@@ -94,6 +99,10 @@ class Account extends Model
     use CreatesChildren, HasFactory, HasRecursiveRelationships;
 
     protected $table = 'accounts';
+
+    protected $casts = [
+        'closed_at' => 'immutable_datetime',
+    ];
 
     public function getCustomPaths()
     {
@@ -106,7 +115,7 @@ class Account extends Model
         ];
     }
 
-    public function member()
+    public function member(): BelongsTo
     {
         return $this->belongsTo(Member::class);
     }
@@ -166,6 +175,12 @@ class Account extends Model
         return Account::firstWhere('tag', 'insurance_loans');
     }
 
+    public static function getFinesPenaltiesSurcharges(): self
+    {
+        return Account::firstWhere('tag', 'fines_penalties_surcharges')
+            ?? Account::where('number', '40140')->firstOrFail();
+    }
+
     public static function getCbuDeposit($member_type_id)
     {
         return match ($member_type_id) {
@@ -189,6 +204,34 @@ class Account extends Model
     public function transactions()
     {
         return $this->hasMany(Transaction::class, 'account_id', 'id');
+    }
+
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->whereNull('closed_at');
+    }
+
+    public function scopeClosed(Builder $query): Builder
+    {
+        return $query->whereNotNull('closed_at');
+    }
+
+    public function isClosed(): bool
+    {
+        return $this->closed_at !== null;
+    }
+
+    public function isActive(): bool
+    {
+        return ! $this->isClosed();
+    }
+
+    public function close(?string $remarks = null): void
+    {
+        $this->update([
+            'closed_at' => config('app.transaction_date') ?? today(),
+            'close_remarks' => $remarks,
+        ]);
     }
 
     public function recursiveTransactions()

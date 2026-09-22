@@ -1,137 +1,186 @@
 <?php
 
-    namespace App\Filament\App\Resources;
+namespace App\Filament\App\Resources;
 
-    use Filament\Forms\Components\Repeater;
-    use Filament\Schemas\Schema;
-    use Filament\Actions\Action;
-    use App\Filament\App\Resources\JournalEntryVoucherResource\Pages\ManageJournalEntryVouchers;
-    use App\Filament\App\Resources\JournalEntryVoucherResource\Pages;
-    use App\Models\Account;
-    use App\Models\JournalEntryVoucher;
-    use App\Models\Member;
-    use App\Rules\BalancedBookkeepingEntries;
-    use Auth;
-    use Filament\Forms\Components\Select;
-    use Filament\Forms\Components\Textarea;
-    use Filament\Forms\Components\TextInput;
-    use Filament\Forms\Components\Toggle;
-    use Filament\Resources\Resource;
-    use Filament\Tables\Columns\TextColumn;
-    use Filament\Tables\Enums\FiltersLayout;
-    use Filament\Tables\Table;
-    use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
+use App\Actions\Memberships\BuildAccountClosureDisclosure;
+use App\Filament\App\Resources\JournalEntryVoucherResource\Pages\ManageJournalEntryVouchers;
+use App\Models\Account;
+use App\Models\JournalEntryVoucher;
+use App\Models\Member;
+use App\Rules\BalancedBookkeepingEntries;
+use Auth;
+use Filament\Actions\Action;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Table;
+use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 
-    class JournalEntryVoucherResource extends Resource
+class JournalEntryVoucherResource extends Resource
+{
+    protected static ?string $model = JournalEntryVoucher::class;
+
+    protected static ?int $navigationSort = 6;
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Bookkeeping';
+
+    public static function shouldRegisterNavigation(): bool
     {
-        protected static ?string $model = JournalEntryVoucher::class;
-
-        protected static ?int $navigationSort = 6;
-
-        protected static string|\UnitEnum|null $navigationGroup = 'Bookkeeping';
-
-        public static function shouldRegisterNavigation(): bool
-        {
-            return Auth::user()->can('manage bookkeeping');
-        }
-
-        public static function form(Schema $schema): Schema
-        {
-            $generated_reference = JournalEntryVoucher::generateCode();
-            return $schema
-                ->components([
-                    TextInput::make('name')->required(),
-                    TextInput::make('address')->required(),
-                    TextInput::make('reference_number')
-                        ->default($generated_reference)
-                        ->required()->unique('journal_entry_vouchers', 'reference_number'),
-                    TextInput::make('voucher_number')
-                        ->default($generated_reference)
-                        ->required()->unique('journal_entry_vouchers', 'voucher_number'),
-                    Toggle::make('compute_net')->label('Compute Net Amount')->default(false),
-                    Textarea::make('description')->columnSpanFull()->required(),
-                    Repeater::make('journal_entry_voucher_items')
-                        ->rule(new BalancedBookkeepingEntries)
-                        ->columnSpanFull()
-                        ->table([
-                            Repeater\TableColumn::make('Member')->width('13rem'),
-                            Repeater\TableColumn::make('Account')->width('13rem'),
-                            Repeater\TableColumn::make('Debit'),
-                            Repeater\TableColumn::make('Credit'),
-                        ])
-                        ->reactive()
-                        ->afterStateUpdated(function ($set, $get, $state) {
-                            if ($get('compute_net')) {
-                                $items = collect($state);
-                                $cib = Account::getCashInBankGF();
-                                $net_amount = $items->firstWhere('account_id', $cib?->id);
-                                if ($net_amount) {
-                                    $items = $items->filter(function ($i) use ($net_amount) {
-                                        return $i['account_id'] != $net_amount['account_id'];
-                                    });
-                                    $net_amount['credit'] = $items->sum('debit') - $items->sum('credit');
-                                    $items->push($net_amount);
-                                }
-                                $set('journal_entry_voucher_items', $items->toArray());
-                            }
-                        })
-                        ->reorderable(false)
-                        ->schema([
-                            Select::make('member_id')
-                                ->options(Member::pluck('full_name', 'id'))
-                                ->label('Member')
-                                ->searchable()
-                                ->reactive()
-                                ->preload(),
-                            Select::make('account_id')
-                                ->options(
-                                    fn($get) => Account::withCode()->whereDoesntHave('children', fn($q) => $q->whereNull('member_id'))->where('member_id', $get('member_id') ?? null)->pluck('code', 'id')
-                                )
-                                ->searchable()
-                                ->required()
-                                ->label('Account'),
-                            TextInput::make('debit')
-                                ->moneymask(),
-                            TextInput::make('credit')
-                                ->moneymask(),
-                        ]),
-                ]);
-        }
-
-        public static function table(Table $table): Table
-        {
-            return $table
-                ->columns([
-                    TextColumn::make('transaction_date')->date('F d, Y'),
-                    TextColumn::make('voucher_type.name'),
-                    TextColumn::make('name'),
-                    TextColumn::make('reference_number'),
-                    TextColumn::make('description')->wrap(),
-                ])
-                ->defaultSort('transaction_date', 'desc')
-                ->filters([
-                    DateRangeFilter::make('transaction_date')
-                        ->format('m/d/Y')
-                        ->displayFormat('MM/DD/YYYY'),
-                ])
-                ->filtersLayout(FiltersLayout::AboveContent)
-                ->recordActions([
-                    Action::make('view')
-                        ->button()
-                        ->color('success')
-                        ->outlined()
-                        ->modalHeading('JEV Preview')
-                        ->modalCancelAction(false)
-                        ->modalSubmitAction(false)
-                        ->modalContent(fn($record) => view('components.app.bookkeeper.reports.journal-entry-voucher-preview', ['journal_entry_voucher' => $record])),
-                ])
-                ->toolbarActions([]);
-        }
-
-        public static function getPages(): array
-        {
-            return [
-                'index' => ManageJournalEntryVouchers::route('/'),
-            ];
-        }
+        return Auth::user()->can('manage bookkeeping');
     }
+
+    public static function form(Schema $schema): Schema
+    {
+        $generated_reference = JournalEntryVoucher::generateCode();
+
+        return $schema
+            ->components([
+                Select::make('action')
+                    ->options([
+                        'closed_account' => 'Closed Account',
+                    ])
+                    ->placeholder('Standard Voucher')
+                    ->live()
+                    ->afterStateUpdated(function ($set): void {
+                        $set('closure_member_id', null);
+                        $set('journal_entry_voucher_items', []);
+                    }),
+                Select::make('closure_member_id')
+                    ->label('Member')
+                    ->options(Member::pluck('full_name', 'id'))
+                    ->searchable()
+                    ->preload()
+                    ->live()
+                    ->visible(fn ($get): bool => $get('action') === 'closed_account')
+                    ->required(fn ($get): bool => $get('action') === 'closed_account')
+                    ->afterStateUpdated(function ($state, $set): void {
+                        $member = Member::find($state);
+
+                        if (! $member) {
+                            return;
+                        }
+
+                        $disclosure = app(BuildAccountClosureDisclosure::class)->handle($member);
+                        $set('name', $member->full_name);
+                        $set('address', $member->address);
+                        $set('description', 'CLOSED ACCOUNT - WDL OF MEMBERSHIP');
+                        $set('compute_net', false);
+                        $set('journal_entry_voucher_items', $disclosure['voucher_items']);
+                    }),
+                Placeholder::make('closure_disclosure')
+                    ->label('Account Closure Disclosure')
+                    ->visible(fn ($get): bool => $get('action') === 'closed_account' && filled($get('closure_member_id')))
+                    ->content(function ($get) {
+                        $member = Member::find($get('closure_member_id'));
+
+                        return $member
+                            ? view('filament.app.components.account-closure-disclosure', [
+                                'disclosure' => app(BuildAccountClosureDisclosure::class)->handle($member),
+                            ])
+                            : null;
+                    })
+                    ->columnSpanFull(),
+                TextInput::make('name')->required(),
+                TextInput::make('address')->required(),
+                TextInput::make('reference_number')
+                    ->default($generated_reference)
+                    ->required()->unique('journal_entry_vouchers', 'reference_number'),
+                TextInput::make('voucher_number')
+                    ->default($generated_reference)
+                    ->required()->unique('journal_entry_vouchers', 'voucher_number'),
+                Toggle::make('compute_net')->label('Compute Net Amount')->default(false),
+                Textarea::make('description')->columnSpanFull()->required(),
+                Repeater::make('journal_entry_voucher_items')
+                    ->rule(new BalancedBookkeepingEntries)
+                    ->columnSpanFull()
+                    ->table([
+                        Repeater\TableColumn::make('Member')->width('13rem'),
+                        Repeater\TableColumn::make('Account')->width('13rem'),
+                        Repeater\TableColumn::make('Debit'),
+                        Repeater\TableColumn::make('Credit'),
+                    ])
+                    ->reactive()
+                    ->afterStateUpdated(function ($set, $get, $state) {
+                        if ($get('compute_net')) {
+                            $items = collect($state);
+                            $cib = Account::getCashInBankGF();
+                            $net_amount = $items->firstWhere('account_id', $cib?->id);
+                            if ($net_amount) {
+                                $items = $items->filter(function ($i) use ($net_amount) {
+                                    return $i['account_id'] != $net_amount['account_id'];
+                                });
+                                $net_amount['credit'] = $items->sum('debit') - $items->sum('credit');
+                                $items->push($net_amount);
+                            }
+                            $set('journal_entry_voucher_items', $items->toArray());
+                        }
+                    })
+                    ->reorderable(false)
+                    ->schema([
+                        Hidden::make('details'),
+                        Select::make('member_id')
+                            ->options(Member::pluck('full_name', 'id'))
+                            ->label('Member')
+                            ->searchable()
+                            ->reactive()
+                            ->preload(),
+                        Select::make('account_id')
+                            ->options(
+                                fn ($get) => Account::withCode()->whereDoesntHave('children', fn ($q) => $q->whereNull('member_id'))->where('member_id', $get('member_id') ?? null)->pluck('code', 'id')
+                            )
+                            ->searchable()
+                            ->required()
+                            ->label('Account'),
+                        TextInput::make('debit')
+                            ->moneymask(),
+                        TextInput::make('credit')
+                            ->moneymask(),
+                    ]),
+            ]);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                TextColumn::make('transaction_date')->date('F d, Y'),
+                TextColumn::make('voucher_type.name'),
+                TextColumn::make('name'),
+                TextColumn::make('reference_number'),
+                TextColumn::make('description')->wrap(),
+            ])
+            ->defaultSort('transaction_date', 'desc')
+            ->filters([
+                DateRangeFilter::make('transaction_date')
+                    ->format('m/d/Y')
+                    ->displayFormat('MM/DD/YYYY'),
+            ])
+            ->filtersLayout(FiltersLayout::AboveContent)
+            ->recordActions([
+                Action::make('view')
+                    ->button()
+                    ->color('success')
+                    ->outlined()
+                    ->modalHeading('JEV Preview')
+                    ->modalCancelAction(false)
+                    ->modalSubmitAction(false)
+                    ->modalContent(fn ($record) => view('components.app.bookkeeper.reports.journal-entry-voucher-preview', ['journal_entry_voucher' => $record])),
+            ])
+            ->toolbarActions([]);
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ManageJournalEntryVouchers::route('/'),
+        ];
+    }
+}

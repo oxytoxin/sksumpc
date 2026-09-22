@@ -17,6 +17,12 @@ class CashierTransactionsPageCbuPayment
     public static function handle(TransactionData $data): array
     {
         $member = Member::find($data->member_id);
+        if ($member?->terminated_at) {
+            throw ValidationException::withMessages([
+                'member_id' => 'Closed accounts cannot accept CBU payments.',
+            ]);
+        }
+
         if (! $member->active_capital_subscription) {
             Notification::make()
                 ->title('Error')

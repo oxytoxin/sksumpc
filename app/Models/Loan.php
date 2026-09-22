@@ -5,9 +5,11 @@ namespace App\Models;
 use App\Actions\Loans\RunLoanProcessesAfterPosting;
 use App\Actions\Loans\UpdateLoanDeductionsData;
 use App\Enums\LoanTypes;
+use App\Oxytoxin\Providers\LoansProvider;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -44,21 +46,21 @@ use NumberFormatter;
  * @property numeric $outstanding_balance
  * @property CarbonImmutable $release_date
  * @property CarbonImmutable $transaction_date
- * @property CarbonImmutable $maturity_date
+ * @property CarbonImmutable|null $maturity_date
  * @property bool $posted
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
- * @property-read \App\Models\DisbursementVoucher|null $disbursement_voucher
- * @property-read \App\Models\JournalEntryVoucher|null $journal_entry_voucher
+ * @property-read DisbursementVoucher|null $disbursement_voucher
+ * @property-read JournalEntryVoucher|null $journal_entry_voucher
  * @property-read mixed $deductions_list
  * @property-read mixed $last_payment_before_transaction_date
- * @property-read \App\Models\LoanPayment|null $last_payment
- * @property-read \App\Models\LoanAccount $loan_account
- * @property-read \App\Models\LoanApplication $loan_application
- * @property-read \App\Models\LoanType $loan_type
- * @property-read \App\Models\Member $member
+ * @property-read LoanPayment|null $last_payment
+ * @property-read LoanAccount $loan_account
+ * @property-read LoanApplication $loan_application
+ * @property-read LoanType $loan_type
+ * @property-read Member $member
  * @property-read mixed $net_amount_in_words
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\LoanPayment> $payments
+ * @property-read Collection<int, LoanPayment> $payments
  * @property-read int|null $payments_count
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Loan newModelQuery()
@@ -151,7 +153,7 @@ class Loan extends Model
         return $this->net_amount !== null && bccomp((string) $this->net_amount, '0.00', 2) < 0;
     }
 
-    public function loan_account()
+    public function loan_account(): BelongsTo
     {
         return $this->belongsTo(LoanAccount::class);
     }
@@ -219,17 +221,7 @@ class Loan extends Model
     {
 
         static::creating(function (Loan $loan) {
-            if ($loan->loan_type_id == LoanTypes::SPECIAL_LOAN->value) {
-                if ($loan->release_date > CarbonImmutable::create($loan->release_date->year, 11, 20)) {
-                    $loan->maturity_date = CarbonImmutable::create($loan->release_date->year + 1, 5, 20);
-                } elseif ($loan->release_date > CarbonImmutable::create($loan->release_date->year, 5, 20)) {
-                    $loan->maturity_date = CarbonImmutable::create($loan->release_date->year, 11, 20);
-                } else {
-                    $loan->maturity_date = CarbonImmutable::create($loan->release_date->year, 5, 20);
-                }
-            } else {
-                $loan->maturity_date = $loan->transaction_date->addMonthsNoOverflow($loan->number_of_terms);
-            }
+            $loan->maturity_date ??= LoansProvider::calculateMaturityDate($loan);
         });
 
         static::saving(function (Loan $loan) {

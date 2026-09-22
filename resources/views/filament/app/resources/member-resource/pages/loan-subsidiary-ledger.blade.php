@@ -53,7 +53,9 @@
                             <td class="doc-table-cell-right">
                                 {{ number_format($payment->amount, 2) }}
                             </td>
-                            <td class="doc-table-cell-right"></td>
+                            <td class="doc-table-cell-right">
+                                {{ number_format($payment->surcharge_payment, 2) }}
+                            </td>
                             <td class="doc-table-cell-right">
                                 {{ number_format($payment->interest_payment, 2) }}
                             </td>
@@ -76,7 +78,7 @@
                         <td class="doc-table-cell-right">
                             {{ number_format($loan->payments->sum('amount'), 2) }}
                         </td>
-                        <td class="doc-table-cell-right">{{ number_format(0, 2) }}</td>
+                        <td class="doc-table-cell-right">{{ number_format($loan->payments->sum('surcharge_payment'), 2) }}</td>
                         <td class="doc-table-cell-right">
                             {{ number_format($loan->payments->sum('interest_payment'), 2) }}
                         </td>
@@ -103,9 +105,9 @@
                 <p>INTEREST</p>
                 <p class="text-right">{{ number_format($loan->payments->sum('interest_payment'), 2) }}</p>
                 <p>SURCHARGE</p>
-                <p class="text-right">{{ number_format(0, 2) }}</p>
+                <p class="text-right">{{ number_format($loan->payments->sum('surcharge_payment'), 2) }}</p>
                 <p>&nbsp;</p>
-                <p class="border-t-2 border-black text-right">{{ number_format($loan->payments->sum('principal_payment') + $loan->payments->sum('interest_payment') + 0, 2) }}</p>
+                <p class="border-t-2 border-black text-right">{{ number_format($loan->payments->sum('principal_payment') + $loan->payments->sum('interest_payment') + $loan->payments->sum('surcharge_payment'), 2) }}</p>
             </div>
         </div>
     </div>

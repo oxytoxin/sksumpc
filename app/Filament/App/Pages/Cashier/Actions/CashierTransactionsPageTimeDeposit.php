@@ -12,12 +12,19 @@ use App\Models\TransactionType;
 use App\Oxytoxin\DTO\MSO\TimeDepositData;
 use App\Oxytoxin\DTO\Transactions\TransactionData;
 use App\Oxytoxin\Providers\TimeDepositsProvider;
+use Illuminate\Validation\ValidationException;
 
 class CashierTransactionsPageTimeDeposit
 {
     public function handle(TransactionData $data, $rate, $days)
     {
         $member = Member::find($data->member_id);
+        if ($member?->terminated_at) {
+            throw ValidationException::withMessages([
+                'member_id' => 'Closed accounts cannot accept time deposits.',
+            ]);
+        }
+
         $td = app(CreateTimeDeposit::class)->handle(timeDepositData: new TimeDepositData(
             member_id: $data->member_id,
             maturity_date: TimeDepositsProvider::getMaturityDate($data->transaction_date, $days),

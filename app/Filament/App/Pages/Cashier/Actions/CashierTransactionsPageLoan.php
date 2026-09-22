@@ -12,6 +12,7 @@ use App\Models\PaymentType;
 use App\Models\TransactionType;
 use App\Oxytoxin\DTO\Loan\LoanPaymentData;
 use App\Oxytoxin\DTO\Transactions\TransactionData;
+use App\Oxytoxin\Providers\LoansProvider;
 use Filament\Notifications\Notification;
 use Illuminate\Validation\ValidationException;
 
@@ -22,10 +23,17 @@ class CashierTransactionsPageLoan
         $loan_account = LoanAccount::find($data->account_id);
         $loan = $loan_account?->loan;
         $member = Member::find($data->member_id);
-        if ($loan->outstanding_balance < $data->credit) {
-            Notification::make()->title('Loan Overpayment')->body('Payment amount exceeds outstanding balance.')->danger()->send();
+        if ($member?->terminated_at) {
             throw ValidationException::withMessages([
-                'mountedTableActionsData.0.amount' => 'Loan Overpayment. Payment amount exceeds outstanding balance.',
+                'member_id' => 'Closed accounts cannot accept loan payments.',
+            ]);
+        }
+
+        $settlementAmount = LoansProvider::computeSettlementAmount($loan, $data->transaction_date);
+        if ($settlementAmount < $data->credit) {
+            Notification::make()->title('Loan Overpayment')->body('Payment amount exceeds the total loan settlement amount.')->danger()->send();
+            throw ValidationException::withMessages([
+                'mountedTableActionsData.0.amount' => 'Loan Overpayment. Payment amount exceeds the total loan settlement amount.',
             ]);
         }
         app(PayLoan::class)->handle($loan, new LoanPaymentData(

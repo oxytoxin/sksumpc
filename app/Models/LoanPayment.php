@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Carbon\CarbonImmutable;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -20,14 +22,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $payment_type_id
  * @property string $reference_number
  * @property string|null $remarks
- * @property \Carbon\CarbonImmutable $transaction_date
+ * @property CarbonImmutable $transaction_date
  * @property int|null $cashier_id
- * @property \Carbon\CarbonImmutable|null $created_at
- * @property \Carbon\CarbonImmutable|null $updated_at
- * @property-read \App\Models\User|null $cashier
- * @property-read \App\Models\LoanBilling|null $loan_billing
- * @property-read \App\Models\Loan $loan
- * @property-read \App\Models\Member $member
+ * @property CarbonImmutable|null $created_at
+ * @property CarbonImmutable|null $updated_at
+ * @property-read User|null $cashier
+ * @property-read LoanBilling|null $loan_billing
+ * @property-read Loan $loan
+ * @property-read Member $member
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanPayment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LoanPayment newQuery()
@@ -93,33 +95,31 @@ class LoanPayment extends Model
         });
     }
 
-    public function getTransactions(): \Illuminate\Database\Eloquent\Collection
+    public function getTransactions(): Collection
     {
         return Transaction::query()
-            ->when($this->principal_payment, fn ($query) => $query->where(function ($query) {
+            ->where('reference_number', $this->reference_number)
+            ->where('member_id', $this->member_id)
+            ->where('transaction_date', $this->transaction_date)
+            ->where(function ($query) {
                 $query
-                    ->where('reference_number', $this->reference_number)
-                    ->where('member_id', $this->member_id)
-                    ->where('transaction_date', $this->transaction_date)
-                    ->where('credit', $this->principal_payment)
-                    ->where('remarks', 'Member Loan Payment Principal');
-            }))
-            ->when($this->interest_payment, fn ($query) => $query->orWhere(function ($query) {
-                $query
-                    ->where('reference_number', $this->reference_number)
-                    ->where('member_id', $this->member_id)
-                    ->where('transaction_date', $this->transaction_date)
-                    ->where('credit', $this->interest_payment)
-                    ->where('remarks', 'Member Loan Payment Interest');
-            }))
-            ->orWhere(function ($query) {
-                $query
-                    ->where('reference_number', $this->reference_number)
-                    ->where('member_id', $this->member_id)
-                    ->where('transaction_date', $this->transaction_date)
-                    ->whereIn('account_id', [2, 4])
-                    ->whereNull('credit')
-                    ->where('debit', $this->amount);
+                    ->when($this->principal_payment, fn ($query) => $query->orWhere(function ($query) {
+                        $query->where('credit', $this->principal_payment)
+                            ->where('remarks', 'Member Loan Payment Principal');
+                    }))
+                    ->when($this->interest_payment, fn ($query) => $query->orWhere(function ($query) {
+                        $query->where('credit', $this->interest_payment)
+                            ->where('remarks', 'Member Loan Payment Interest');
+                    }))
+                    ->when($this->surcharge_payment, fn ($query) => $query->orWhere(function ($query) {
+                        $query->where('credit', $this->surcharge_payment)
+                            ->where('remarks', 'Member Loan Payment Surcharge');
+                    }))
+                    ->orWhere(function ($query) {
+                        $query->whereIn('account_id', [2, 4])
+                            ->whereNull('credit')
+                            ->where('debit', $this->amount);
+                    });
             })
             ->get();
     }
