@@ -47,6 +47,20 @@
                     </ul>
                 </details>
             </li>
+            @if ($member && auth()->user()?->can('manage payments'))
+                <li>
+                    <details class="mb-2">
+                        <summary class="cursor-pointer rounded-lg bg-red-200 px-4 py-2 text-left shadow">
+                            <span class="font-semibold">MEMBER ACCOUNT</span>
+                        </summary>
+                        <ul class="space-y-2 bg-white p-4">
+                            <li>
+                                <button type="button" wire:click="openCloseMemberAccount" class="w-full cursor-pointer rounded-lg px-4 py-2 text-left font-semibold shadow">CLOSE MEMBER ACCOUNT</button>
+                            </li>
+                        </ul>
+                    </details>
+                </li>
+            @endif
         </ul>
     </details>
 </div>

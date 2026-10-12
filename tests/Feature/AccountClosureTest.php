@@ -156,6 +156,32 @@ it('shows the closure disclosure from the membership action', function () {
         ->assertMountedActionModalSee('Loan Full Payment');
 });
 
+it('closes the selected member from cashier transactions', function () {
+    $account = savingsAccountWithBalance();
+    $member = $account->member;
+    $disclosure = app(BuildAccountClosureDisclosure::class)->handle($member);
+    $action = TestAction::make('closeMemberAccount')->schemaComponent();
+
+    livewire(PaymentTransactions::class)
+        ->fillForm(['member_id' => $member->id])
+        ->mountAction($action)
+        ->assertMountedActionModalSee('Total Savings')
+        ->assertMountedActionModalSee('Loan Full Payment')
+        ->fillForm([
+            'bod_resolution' => 'TEST CASHIER BOD RESOLUTION',
+            'termination_date' => '2026-09-22',
+            'termination_voucher_number' => 'TEST-CASHIER-CLOSURE-001',
+            'capital_amount_closed' => $disclosure['cbu'],
+        ])
+        ->callMountedAction()
+        ->assertHasNoFormErrors()
+        ->assertSet('data.member_id', null);
+
+    expect($member->fresh()->terminated_at)->not->toBeNull()
+        ->and($member->accounts()->active()->exists())->toBeFalse()
+        ->and($member->membership_termination->termination_voucher_number)->toBe('TEST-CASHIER-CLOSURE-001');
+});
+
 it('closes the membership and all member accounts in one transaction', function () {
     $member = Member::query()
         ->whereNull('terminated_at')

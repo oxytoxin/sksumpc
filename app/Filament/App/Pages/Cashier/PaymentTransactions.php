@@ -2,6 +2,8 @@
 
 namespace App\Filament\App\Pages\Cashier;
 
+use App\Actions\Memberships\BuildAccountClosureDisclosure;
+use App\Actions\Memberships\CloseMemberAccount;
 use App\Actions\Savings\CreateNewSavingsAccount;
 use App\Enums\MsoType;
 use App\Enums\OtherPaymentTransactionExcludedAccounts;
@@ -29,6 +31,7 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Builder\Block;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -94,6 +97,43 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                     ->searchable()
                     ->afterStateUpdated(fn ($set) => $set('transactions', []))
                     ->reactive(),
+                Actions::make([
+                    Action::make('closeMemberAccount')
+                        ->label('Close Member Account')
+                        ->visible(fn (): bool => filled($this->data['member_id'] ?? null) && auth()->user()?->can('manage payments'))
+                        ->requiresConfirmation()
+                        ->modalHeading('Close Member Account')
+                        ->modalSubmitActionLabel('Close Account')
+                        ->schema([
+                            Placeholder::make('closure_disclosure')
+                                ->label('Account Closure Disclosure')
+                                ->content(fn () => view('filament.app.components.account-closure-disclosure', [
+                                    'disclosure' => app(BuildAccountClosureDisclosure::class)->handle($this->memberToClose()),
+                                ])),
+                            TextInput::make('bod_resolution')->label('BOD Resolution')->required(),
+                            DatePicker::make('termination_date')->default(config('app.transaction_date') ?? today())->native(false)->required(),
+                            TextInput::make('termination_voucher_number')->label('Reference (JEV/DV No.)')->required(),
+                            TextInput::make('capital_amount_closed')->label('Capital Amount Closed')->numeric()->prefix('₱')
+                                ->default(fn () => app(BuildAccountClosureDisclosure::class)->handle($this->memberToClose())['cbu'])
+                                ->required(),
+                        ])
+                        ->action(function (array $data): void {
+                            abort_unless(auth()->user()?->can('manage payments'), 403);
+
+                            app(CloseMemberAccount::class)->handle(
+                                member: $this->memberToClose(),
+                                bodResolution: $data['bod_resolution'],
+                                terminationDate: $data['termination_date'],
+                                voucherNumber: $data['termination_voucher_number'],
+                                capitalAmount: (float) $data['capital_amount_closed'],
+                            );
+
+                            $this->form->fill();
+                            Notification::make()->title('Member terminated.')->success()->send();
+                        }),
+                ])
+                    ->visible(fn (): bool => filled($this->data['member_id'] ?? null))
+                    ->extraAttributes(['style' => 'display: none']),
                 Placeholder::make('member_type')
                     ->content(fn ($get) => Member::find($get('member_id'))?->member_type->name),
                 Builder::make('transactions')
@@ -467,6 +507,26 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                         ->requiresConfirmation(),
                 ]),
             ]);
+    }
+
+    private function memberToClose(): Member
+    {
+        $member = Member::query()
+            ->whereNull('terminated_at')
+            ->find($this->data['member_id'] ?? null);
+
+        if (! $member) {
+            throw ValidationException::withMessages([
+                'member_id' => 'Select an active member account to close.',
+            ]);
+        }
+
+        return $member;
+    }
+
+    public function openCloseMemberAccount(): void
+    {
+        $this->mountAction('closeMemberAccount', [], ['schemaComponent' => 'form']);
     }
 
     public function addTransaction($block)
