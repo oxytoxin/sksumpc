@@ -27,7 +27,7 @@ class NewAccountTransactions extends Page
         return $schema
             ->components([
                 Select::make('member_id')
-                    ->options(Member::whereNull('terminated_at')->pluck('full_name', 'id'))
+                    ->options(fn () => Member::whereNull('terminated_at')->pluck('full_name', 'id'))
                     ->searchable()
                     ->preload()
                     ->label('Member')

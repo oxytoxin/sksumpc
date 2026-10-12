@@ -69,7 +69,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                 ->hiddenLabel()
                                 ->searchable(['number', 'name'])
                                 ->options(
-                                    Account::whereNotNull('member_id')
+                                    fn () => Account::whereNotNull('member_id')
                                         ->whereIn('tag', ['regular_savings', 'imprest_savings', 'love_gift_savings', 'member_time_deposits', 'member_loans_receivable'])
                                         ->active()
                                         ->whereHas('member', fn ($query) => $query->whereNull('terminated_at'))
@@ -93,7 +93,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                     ->content($this->transaction_date?->format('m/d/Y')),
                 Select::make('member_id')
                     ->label('Member')
-                    ->options(Member::whereNull('terminated_at')->pluck('full_name', 'id'))
+                    ->options(fn () => Member::whereNull('terminated_at')->pluck('full_name', 'id'))
                     ->searchable()
                     ->afterStateUpdated(fn ($set) => $set('transactions', []))
                     ->reactive(),
