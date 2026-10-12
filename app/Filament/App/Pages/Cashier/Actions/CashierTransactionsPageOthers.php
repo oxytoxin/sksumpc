@@ -7,12 +7,19 @@ use App\Enums\PaymentTypes;
 use App\Models\Account;
 use App\Models\PaymentType;
 use App\Oxytoxin\DTO\Transactions\TransactionData;
+use Illuminate\Validation\ValidationException;
 
 class CashierTransactionsPageOthers
 {
     public static function handle(TransactionData $data)
     {
         $account = Account::find($data->account_id);
+        if (! $account || $account->isClosed() || $account->member?->terminated_at) {
+            throw ValidationException::withMessages([
+                'account_id' => 'Closed accounts cannot accept cashier transactions.',
+            ]);
+        }
+
         $data->remarks = 'Cashier Transaction for Other Accounts';
         app(CreateTransaction::class)->handle($data);
         $data->debit = $data->credit;
@@ -30,7 +37,7 @@ class CashierTransactionsPageOthers
             'account_number' => $account->number,
             'account_name' => $account->name,
             'reference_number' => $data->reference_number,
-            'amount' => $data->debit, //this is originally credit
+            'amount' => $data->debit, // this is originally credit
             'payment_type' => PaymentType::find($data->payment_type_id)->name,
             'payee' => $data->payee,
             'remarks' => 'OTHER PAYMENTS',

@@ -2,8 +2,6 @@
 
 namespace App\Filament\App\Pages\Cashier;
 
-use App\Actions\Memberships\BuildAccountClosureDisclosure;
-use App\Actions\Memberships\CloseMemberAccount;
 use App\Actions\Savings\CreateNewSavingsAccount;
 use App\Enums\MsoType;
 use App\Enums\OtherPaymentTransactionExcludedAccounts;
@@ -31,9 +29,9 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Builder\Block;
-use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -98,38 +96,41 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                     ->afterStateUpdated(fn ($set) => $set('transactions', []))
                     ->reactive(),
                 Actions::make([
-                    Action::make('closeMemberAccount')
-                        ->label('Close Member Account')
+                    Action::make('closeSavingsAccount')
+                        ->label('Close Savings Account')
                         ->visible(fn (): bool => filled($this->data['member_id'] ?? null) && auth()->user()?->can('manage payments'))
                         ->requiresConfirmation()
-                        ->modalHeading('Close Member Account')
+                        ->modalHeading('Close Savings Account')
                         ->modalSubmitActionLabel('Close Account')
                         ->schema([
-                            Placeholder::make('closure_disclosure')
-                                ->label('Account Closure Disclosure')
-                                ->content(fn () => view('filament.app.components.account-closure-disclosure', [
-                                    'disclosure' => app(BuildAccountClosureDisclosure::class)->handle($this->memberToClose()),
-                                ])),
-                            TextInput::make('bod_resolution')->label('BOD Resolution')->required(),
-                            DatePicker::make('termination_date')->default(config('app.transaction_date') ?? today())->native(false)->required(),
-                            TextInput::make('termination_voucher_number')->label('Reference (JEV/DV No.)')->required(),
-                            TextInput::make('capital_amount_closed')->label('Capital Amount Closed')->numeric()->prefix('₱')
-                                ->default(fn () => app(BuildAccountClosureDisclosure::class)->handle($this->memberToClose())['cbu'])
+                            Select::make('savings_account_id')
+                                ->label('Savings Account')
+                                ->options(fn () => SavingsAccount::query()
+                                    ->whereMemberId($this->data['member_id'] ?? null)
+                                    ->active()
+                                    ->pluck('number', 'id'))
+                                ->searchable()
                                 ->required(),
+                            Textarea::make('remarks')->label('Remarks'),
                         ])
                         ->action(function (array $data): void {
                             abort_unless(auth()->user()?->can('manage payments'), 403);
 
-                            app(CloseMemberAccount::class)->handle(
-                                member: $this->memberToClose(),
-                                bodResolution: $data['bod_resolution'],
-                                terminationDate: $data['termination_date'],
-                                voucherNumber: $data['termination_voucher_number'],
-                                capitalAmount: (float) $data['capital_amount_closed'],
-                            );
+                            $account = SavingsAccount::query()
+                                ->whereMemberId($this->data['member_id'] ?? null)
+                                ->active()
+                                ->find($data['savings_account_id']);
 
-                            $this->form->fill();
-                            Notification::make()->title('Member terminated.')->success()->send();
+                            if (! $account || $account->member?->terminated_at) {
+                                throw ValidationException::withMessages([
+                                    'savings_account_id' => 'Select an active savings account to close.',
+                                ]);
+                            }
+
+                            $account->close($data['remarks'] ?? null);
+
+                            $this->form->fill(['member_id' => $account->member_id]);
+                            Notification::make()->title('Savings account closed successfully.')->success()->send();
                         }),
                 ])
                     ->visible(fn (): bool => filled($this->data['member_id'] ?? null))
@@ -174,7 +175,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                         TextInput::make('payee')->required()->default(fn ($get) => Member::find($get('../../../member_id'))?->full_name),
                                         Select::make('account_id')
                                             ->options(
-                                                fn ($get) => Account::withCode()->whereDoesntHave('children', fn ($q) => $q->whereNull('member_id'))
+                                                fn ($get) => Account::withCode()->active()->whereDoesntHave('children', fn ($q) => $q->whereNull('member_id'))
                                                     ->whereDoesntHave('ancestorsAndSelf', fn ($q) => $q->whereIn('id', OtherPaymentTransactionExcludedAccounts::get()))
                                                     ->where('member_id', $get('member_accounts') ? $get('../../../member_id') : null)
                                                     ->pluck('code', 'id')
@@ -380,7 +381,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                             ->required(),
                                         TextInput::make('reference_number')->required()
                                             ->unique('loan_payments'),
-                                        TextInput::make('amount')->required()->moneymask(),
+                                        TextInput::make('amount')->required()->moneymask()->live(false),
                                         TextInput::make('remarks'),
                                     ]),
                             ]),
@@ -390,7 +391,7 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                     ->content(fn ($get) => view('filament.app.pages.cashier.transaction-selector', ['member' => $get('member_id')])),
                 Actions::make([
                     Action::make('submit')
-                        ->action(function () {
+                        ->action(function (Action $action) {
                             $form = $this->getSchema('form');
                             if ($form === null) {
                                 throw new \LogicException('The cashier transaction form is unavailable.');
@@ -402,6 +403,44 @@ class PaymentTransactions extends Component implements HasActions, HasForms
                                 throw ValidationException::withMessages([
                                     'member_id' => 'Closed accounts cannot accept cashier transactions.',
                                 ]);
+                            }
+
+                            foreach ($formData['transactions'] as $transaction) {
+                                if ($transaction['type'] === 'savings') {
+                                    $isActive = SavingsAccount::query()
+                                        ->whereMemberId($member?->id)
+                                        ->active()
+                                        ->whereKey($transaction['data']['savings_account_id'])
+                                        ->exists();
+                                } elseif ($transaction['type'] === 'others') {
+                                    $account = Account::find($transaction['data']['account_id']);
+                                    $isActive = $account && $account->isActive() && ! $account->member?->terminated_at;
+                                } else {
+                                    continue;
+                                }
+
+                                if (! $isActive) {
+                                    throw ValidationException::withMessages([
+                                        'transactions' => 'Closed accounts cannot accept cashier transactions.',
+                                    ]);
+                                }
+                            }
+
+                            foreach ($formData['transactions'] as $transaction) {
+                                if ($transaction['type'] !== 'loan') {
+                                    continue;
+                                }
+
+                                $loan = LoanAccount::find($transaction['data']['loan_account_id'])?->loan;
+                                if ($loan && round((float) $transaction['data']['amount'], 2) > LoansProvider::computeSettlementAmount($loan, $this->transaction_date)) {
+                                    Notification::make()
+                                        ->title('Loan Overpayment')
+                                        ->body('Payment amount exceeds the total loan settlement amount.')
+                                        ->danger()
+                                        ->send();
+
+                                    $action->halt();
+                                }
                             }
 
                             DB::beginTransaction();
@@ -509,24 +548,9 @@ class PaymentTransactions extends Component implements HasActions, HasForms
             ]);
     }
 
-    private function memberToClose(): Member
+    public function openCloseSavingsAccount(): void
     {
-        $member = Member::query()
-            ->whereNull('terminated_at')
-            ->find($this->data['member_id'] ?? null);
-
-        if (! $member) {
-            throw ValidationException::withMessages([
-                'member_id' => 'Select an active member account to close.',
-            ]);
-        }
-
-        return $member;
-    }
-
-    public function openCloseMemberAccount(): void
-    {
-        $this->mountAction('closeMemberAccount', [], ['schemaComponent' => 'form']);
+        $this->mountAction('closeSavingsAccount', [], ['schemaComponent' => 'form']);
     }
 
     public function addTransaction($block)
