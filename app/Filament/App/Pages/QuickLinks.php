@@ -7,7 +7,6 @@ use App\Filament\App\Pages\Bookkeeper\BookkeeperReports;
 use App\Filament\App\Pages\Bookkeeper\FinancialStatementReport;
 use App\Filament\App\Pages\Bookkeeper\TransactionsList;
 use App\Filament\App\Pages\Cashier\CashierTransactionsPage;
-use App\Filament\App\Pages\Cashier\Reports\BillingTransactions;
 use App\Filament\App\Pages\Cashier\Reports\CashProof;
 use App\Filament\App\Pages\Cashier\Reports\DailyCollectionsReport;
 use App\Filament\App\Pages\Cashier\Reports\MsoTransactions;
@@ -114,9 +113,8 @@ class QuickLinks extends Page
                     'items' => [
                         ['label' => 'Cashier Reports', 'url' => Reports::getUrl(), 'icon' => 'heroicon-o-document-chart-bar'],
                         ['label' => 'Daily Collections', 'url' => DailyCollectionsReport::getUrl(), 'icon' => 'heroicon-o-calendar-days'],
-                        ['label' => 'Payment Transactions', 'url' => PaymentTransactions::getUrl(), 'icon' => 'heroicon-o-credit-card'],
+                        ['label' => 'OR Transactions', 'url' => PaymentTransactions::getUrl(), 'icon' => 'heroicon-o-credit-card'],
                         ['label' => 'MSO Transactions', 'url' => MsoTransactions::getUrl(), 'icon' => 'heroicon-o-arrow-path'],
-                        ['label' => 'Billing Transactions', 'url' => BillingTransactions::getUrl(), 'icon' => 'heroicon-o-receipt-percent'],
                         ['label' => 'Cash Proof', 'url' => CashProof::getUrl(), 'icon' => 'heroicon-o-banknotes'],
                         ['label' => 'Loan Released', 'url' => TotalLoanReleasedReport::getUrl(), 'icon' => 'heroicon-o-chart-bar'],
                         ['label' => 'CBU Schedule', 'url' => CbuSchedule::getUrl(), 'icon' => 'heroicon-o-table-cells'],
