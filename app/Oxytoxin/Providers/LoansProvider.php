@@ -86,8 +86,7 @@ class LoansProvider
         $transactionDate = CarbonImmutable::parse($transactionDate);
 
         if (
-            $loan->loan_type_id !== LoanTypes::SPECIAL_LOAN->value
-            || $transactionDate->isBefore(self::getSurchargeStartDate($loan))
+            $transactionDate->isBefore(self::getSurchargeStartDate($loan))
             || (float) $loan->outstanding_balance <= 0
         ) {
             return 0;

@@ -20,6 +20,9 @@
                 <p>Interest Rate: {{ $loan->interest_rate * 100 }}%</p>
                 <p>Monthly Amortization: {{ renumber_format($loan->monthly_payment, 2) }}</p>
                 <p>Interest Due: {{ renumber_format($this->accrued_interest, 2) }}</p>
+                @if ($this->surchargeDue > 0)
+                    <p>Surcharge: {{ renumber_format($this->surchargeDue, 2) }}</p>
+                @endif
             </div>
         </div>
 
@@ -105,9 +108,9 @@
                 <p>INTEREST</p>
                 <p class="text-right">{{ number_format($loan->payments->sum('interest_payment'), 2) }}</p>
                 <p>SURCHARGE</p>
-                <p class="text-right">{{ number_format($loan->payments->sum('surcharge_payment'), 2) }}</p>
+                <p class="text-right">{{ number_format($this->surchargeDue, 2) }}</p>
                 <p>&nbsp;</p>
-                <p class="border-t-2 border-black text-right">{{ number_format($loan->payments->sum('principal_payment') + $loan->payments->sum('interest_payment') + $loan->payments->sum('surcharge_payment'), 2) }}</p>
+                <p class="border-t-2 border-black text-right">{{ number_format($loan->payments->sum('principal_payment') + $loan->payments->sum('interest_payment') + $this->surchargeDue, 2) }}</p>
             </div>
         </div>
     </div>
